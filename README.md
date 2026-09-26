@@ -74,3 +74,7 @@ Edite o array `GAMES` no início do `<script>` em `index.html`:
 ## Dica
 
 No celular, abra o painel e use **"Adicionar à tela inicial"** no menu do navegador. Ele vira um ícone de app e abre em tela cheia.
+
+## Créditos
+
+A peça de quebra-cabeça do ícone é o ícone "puzzle" do [Lucide](https://lucide.dev), preenchido, usado sob a licença ISC.
