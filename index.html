@@ -9,7 +9,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Jogos do Dia">
 <title>Jogos do Dia</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+<link rel="icon" id="favicon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -230,6 +232,7 @@
 <ul id="done"></ul>
 
 <footer>
+  <button id="badgeBtn" hidden>🔔 Mostrar pendentes no ícone</button>
   <button id="toggleTab"></button>
   <button id="reset">Desmarcar tudo</button>
 </footer>
@@ -400,6 +403,67 @@ function render() {
   $("streak").textContent = `🔥 ${s} dia${s > 1 ? "s" : ""} seguido${s > 1 ? "s" : ""} completo${s > 1 ? "s" : ""}`;
 
   $("toggleTab").textContent = state.newTab ? "↗ Abrindo em nova aba" : "↩ Abrindo na mesma aba";
+
+  drawFavicon(n, total);
+  updateBadge(total - n);
+}
+
+/* ---------- Ícone da aba: anel de progresso desenhado ao vivo ---------- */
+function drawFavicon(n, total) {
+  const S = 128, c = document.createElement("canvas");
+  c.width = c.height = S;
+  const x = c.getContext("2d");
+  const complete = n === total;
+  // fundo arredondado: escuro durante o dia, verde quando tudo está feito
+  x.fillStyle = complete ? "#5fbf6a" : "#0f1115";
+  x.beginPath(); x.roundRect(0, 0, S, S, 28); x.fill();
+  const r = 40, w = 14;
+  x.lineWidth = w; x.lineCap = "round";
+  x.strokeStyle = complete ? "rgba(255,255,255,.35)" : "#262a34";
+  x.beginPath(); x.arc(S/2, S/2, r, 0, Math.PI * 2); x.stroke();
+  if (n > 0) {
+    x.strokeStyle = complete ? "#ffffff" : "#5fbf6a";
+    x.beginPath(); x.arc(S/2, S/2, r, -Math.PI/2, -Math.PI/2 + Math.PI * 2 * n / total); x.stroke();
+  }
+  if (complete) {
+    x.strokeStyle = "#ffffff"; x.lineWidth = 11; x.lineJoin = "round";
+    x.beginPath(); x.moveTo(47, 65); x.lineTo(59, 77); x.lineTo(82, 52); x.stroke();
+  }
+  $("favicon").href = c.toDataURL("image/png");
+}
+
+/* ---------- Número no ícone do app (Badging API) ----------
+   Funciona no app instalado no iPhone (iOS 16.4+, com notificações permitidas)
+   e em computadores. O Chrome do Android não mostra esse número. */
+const canBadge = "setAppBadge" in navigator;
+const isStandalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+
+function updateBadge(pending) {
+  if (!canBadge) return;
+  const p = pending > 0 ? navigator.setAppBadge(pending) : navigator.clearAppBadge();
+  p?.catch?.(() => {});
+}
+
+// no iPhone o número só aparece depois de permitir notificações uma vez
+if (canBadge && isStandalone && "Notification" in window && Notification.permission === "default") {
+  $("badgeBtn").hidden = false;
+  $("badgeBtn").addEventListener("click", async () => {
+    try { await Notification.requestPermission(); } catch {}
+    $("badgeBtn").hidden = true;
+    render();
+  });
+}
+
+/* ---------- Virada do dia com o app aberto ---------- */
+function scheduleMidnight() {
+  const now = new Date(), next = new Date(now);
+  next.setHours(24, 0, 5, 0);
+  setTimeout(() => { renderDate(); render(); scheduleMidnight(); }, next - now);
+}
+
+/* ---------- Instalável / offline ---------- */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 }
 
 function renderDate() {
@@ -417,6 +481,7 @@ window.addEventListener("pageshow", () => { renderDate(); render(); });
 
 renderDate();
 render();
+scheduleMidnight();
 </script>
 </body>
 </html>
