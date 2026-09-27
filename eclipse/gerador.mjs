@@ -228,7 +228,7 @@ export function logicSolve(reg, givens) {
 }
 
 // ---------- 4. monta um desafio com solução única ----------
-function makePuzzle() {
+export function makePuzzle() {
   for (let attempt = 0; attempt < 200; attempt++) {
     const sol = randomSolution(); if (!sol) continue;
     const reg = makeRegions(sol); if (!reg) continue;

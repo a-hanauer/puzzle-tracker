@@ -123,19 +123,6 @@
   .cell .x { width: 34%; height: 34%; }
   .cell .x { stroke: var(--x); stroke-width: 3.2; stroke-linecap: round; fill: none; }
   .cell .x.auto { stroke-width: 2.4; opacity: .5; }   /* ✕ colocado automaticamente */
-  .cell svg.hint { width: 40%; height: 40%; opacity: .8; }          /* "só sol" / "só lua" */
-  .cell svg.hint.auto { opacity: .42; }
-  .brushes { display: flex; gap: 8px; margin-top: 10px; }
-  .brushes[hidden] { display: none; }
-  .brushes button {
-    flex: 1; padding: 9px 0; border-radius: 12px; border: 2px solid transparent; cursor: pointer;
-    background: var(--surface); color: var(--ink); box-shadow: var(--shadow);
-    font: inherit; font-weight: 700; font-size: .82rem;
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .brushes button svg { width: 18px; height: 18px; }
-  .brushes button .bx { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; fill: none; width: 14px; height: 14px; }
-  .brushes button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
   .cell.given::after {
     content: ""; position: absolute; inset: 14%; border-radius: 50%;
     box-shadow: inset 0 0 0 2px rgba(0,0,0,.18);
@@ -151,7 +138,19 @@
   .board.won .cell { transition: filter .4s; }
   .board.won .cell:not(.sym) { filter: saturate(.6); }
 
-  /* ---------- controles ---------- */
+  .cell svg.dim { opacity: .3; }                     /* peça do outro modo, só de referência */
+  .seg {
+    flex: 1.25; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px;
+    background: var(--surface); border-radius: 14px; box-shadow: var(--shadow);
+  }
+  .seg button {
+    border: none; border-radius: 11px; cursor: pointer; padding: 0; background: none; color: var(--muted);
+    font: inherit; font-weight: 700; font-size: .88rem; box-shadow: none !important;
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .seg button svg { width: 18px; height: 18px; }
+  #modeSun[aria-pressed="true"] { background: color-mix(in srgb, var(--sun) 26%, var(--surface)); color: var(--ink); }
+  #modeMoon[aria-pressed="true"] { background: color-mix(in srgb, var(--moon) 22%, var(--surface)); color: var(--ink); }
   .controls { display: flex; gap: 10px; margin-top: 14px; }
   .controls button {
     flex: 1; padding: 12px 0; border-radius: 14px; border: none; cursor: pointer;
@@ -257,21 +256,16 @@
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
     Desfazer
   </button>
-  <button id="notesBtn" aria-pressed="false" title="Anotar: marque o que não cabe em cada casa">
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4.5L16 4.5a2.1 2.1 0 0 1 3 3L8 18.5z"/><path d="M14 6.5l3 3"/></svg>
-    Anotar
-  </button>
+  <div class="seg" role="group" aria-label="Modo">
+    <button id="modeSun" aria-pressed="true"><svg><use href="#i-sun"/></svg>Sol</button>
+    <button id="modeMoon" aria-pressed="false"><svg><use href="#i-moon"/></svg>Lua</button>
+  </div>
   <button id="clearBtn">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
     Limpar
   </button>
 </div>
-<div class="brushes" id="brushes" hidden role="group" aria-label="Tipo de anotação">
-  <button data-b="x" aria-pressed="true"><svg class="bx"><use href="#i-x"/></svg>Nada</button>
-  <button data-b="s" aria-pressed="false"><svg><use href="#i-sun"/></svg>Só sol</button>
-  <button data-b="m" aria-pressed="false"><svg><use href="#i-moon"/></svg>Só lua</button>
-</div>
-<div class="tip" id="tip">Toque: <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> → <svg><use href="#i-sun"/></svg> → <svg><use href="#i-moon"/></svg> → vazio · arraste para desenhar <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg><br>Automáticas (claras): <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> nada · <svg style="opacity:.6"><use href="#i-sun"/></svg> só sol · <svg style="opacity:.6"><use href="#i-moon"/></svg> só lua</div>
+<div class="tip" id="tip"><b id="tipMode">Modo sol</b>: toque = <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> → <svg><use id="tipSym" href="#i-sun"/></svg> → vazio · arraste desenha <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg><br><svg><use href="#i-x" style="stroke:var(--muted);stroke-width:2.4;stroke-linecap:round;opacity:.55"/></svg> claros são automáticos</div></div>
 
 <!-- Como jogar -->
 <div class="overlay" id="helpOverlay">
@@ -295,14 +289,13 @@
         <span></span><span></span><span></span>
       </div>encostadas: erro</figure>
     </div>
-    <p>Toque numa casa para alternar entre <b>✕</b>, sol, lua e vazio. Arraste o dedo para desenhar vários ✕.</p>
-    <p><b>Anotações</b> mostram o que ainda cabe em cada casa:</p>
+    <p>Jogue <b>um símbolo de cada vez</b>, como dois Queens sobrepostos. Use a chave <b>Sol / Lua</b> embaixo do tabuleiro:</p>
     <ul>
-      <li><b>✕</b>: não cabe nada.</li>
-      <li><svg class="sym" style="opacity:.6"><use href="#i-sun"/></svg> pequeno: <b>só sol</b> (a lua não pode).</li>
-      <li><svg class="sym" style="opacity:.6"><use href="#i-moon"/></svg> pequena: <b>só lua</b> (o sol não pode).</li>
+      <li>No <b>modo sol</b>, toque numa casa para marcar <b>✕</b> ("sol não cabe aqui"), toque de novo para pôr o <b>sol</b> e mais uma vez para limpar. Arraste o dedo para desenhar vários ✕.</li>
+      <li>As luas aparecem apagadas, só de referência. No <b>modo lua</b> é o mesmo, para as luas.</li>
+      <li>Os ✕ claros são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
     </ul>
-    <p>O jogo anota sozinho, em tom mais claro: vizinhas de uma peça ficam com ✕; na linha, coluna e região de um sol, as casas ficam "só lua"; nas de uma lua, "só sol". Para anotar à mão, ligue <b>Anotar</b>, escolha o tipo e toque ou arraste pelas casas. Conflitos aparecem listrados em vermelho.</p>
+    <p>Conflitos aparecem listrados em vermelho.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia: mais fácil no começo da semana, mais difícil no fim de semana.</p>
     <button class="btn" data-close>Jogar</button>
   </div>
@@ -338,7 +331,7 @@
     return Math.max(1, Math.round((today0() - new Date(epoch[0], epoch[1], epoch[2])) / 86400000) + 1);
   }
 
-  let N, P, dayNum, regions, givens, cells, history = [], timer = null, startedAt = 0, elapsed = 0, finished = false;
+  let PID = "", N, P, dayNum, regions, givens, cells, history = [], timer = null, startedAt = 0, elapsed = 0, finished = false;
 
   fetch("desafios.json").then(r => r.json()).then(data => {
     N = data.n;
@@ -346,7 +339,10 @@
     P = data.puzzles[(dayNum - 1) % data.puzzles.length];
     regions = [...P.r].map(ch => parseInt(ch, 36));
     givens = new Map(P.g.split(",").map(t => [+t.slice(1), t[0]]));
-    const saved = load("dia:" + dayNum, null);
+    // se o desafio do dia mudar (ex.: troca por um mais fácil), a partida salva é descartada
+    PID = P.r + "|" + P.g;
+    let saved = load("dia:" + dayNum, null);
+    if (saved && saved.pid !== PID) saved = null;
     cells = saved?.cells ? [...saved.cells] : new Array(N * N).fill(".");
     for (const [i, v] of givens) cells[i] = v;
     elapsed = saved?.elapsed || 0;
@@ -383,18 +379,20 @@
     }
   }
 
-  // Valores guardados por casa: "." vazia · "x" nada cabe · "s" só sol · "m" só lua · "S" sol · "M" lua
-  // Bits de "proibido": 1 = sol não pode, 2 = lua não pode.
-  const MANUAL_BITS = { ".": 0, x: 3, s: 2, m: 1 };
+  // Valores guardados por casa: "S" sol · "M" lua · ou uma anotação em bits:
+  // "." nada anotado (0) · "m" sol não cabe (1) · "s" lua não cabe (2) · "x" nenhum cabe (3)
+  const BITS = { ".": 0, m: 1, s: 2, x: 3 }, CHAR = [".", "m", "s", "x"];
   const ICON = {
     S: '<svg><use href="#i-sun"/></svg>', M: '<svg><use href="#i-moon"/></svg>',
+    Sd: '<svg class="dim"><use href="#i-sun"/></svg>', Md: '<svg class="dim"><use href="#i-moon"/></svg>',
     X: '<svg class="x"><use href="#i-x"/></svg>', Xa: '<svg class="x auto"><use href="#i-x"/></svg>',
-    oS: '<svg class="hint"><use href="#i-sun"/></svg>', oSa: '<svg class="hint auto"><use href="#i-sun"/></svg>',
-    oM: '<svg class="hint"><use href="#i-moon"/></svg>', oMa: '<svg class="hint auto"><use href="#i-moon"/></svg>',
     "": "",
   };
-  const NAME = { S: "sol", M: "lua", X: "nada cabe", Xa: "nada cabe (automático)", oS: "só sol", oSa: "só sol (automático)",
-                 oM: "só lua", oMa: "só lua (automático)", "": "vazia" };
+  let mode = "S";                              // "S" = modo sol · "M" = modo lua
+  const modeBit = () => (mode === "S" ? 1 : 2);
+  const other = () => (mode === "S" ? "M" : "S");
+  const nameOf = v => ({ S: "sol", M: "lua", Sd: "sol (outro modo)", Md: "lua (outro modo)",
+    X: `${mode === "S" ? "sol" : "lua"} não cabe`, Xa: `${mode === "S" ? "sol" : "lua"} não cabe (automático)`, "": "vazia" })[v];
 
   // Anotação automática, calculada a partir das peças (some sozinha quando a peça sai):
   // vizinhas → nada cabe; mesma linha/coluna/região de um sol → sol não pode; de uma lua → lua não pode.
@@ -423,13 +421,12 @@
     return bits;
   }
   let AUTO = [];
-  function shown(i) {                         // o que aparece na casa
+  function shown(i) {                         // o que aparece na casa, no modo atual
     const v = cells[i];
-    if (v === "S" || v === "M") return v;
-    const man = MANUAL_BITS[v] || 0, f = man | (AUTO[i] || 0), auto = man === 0 ? "a" : "";
-    if (f === 3) return "X" + (man === 3 ? "" : auto);
-    if (f === 1) return "oM" + auto;          // sol não pode → só lua
-    if (f === 2) return "oS" + auto;          // lua não pode → só sol
+    if (v === mode) return v;
+    if (v === other()) return v + "d";
+    const man = BITS[v] || 0, b = modeBit();
+    if ((man | (AUTO[i] || 0)) & b) return man & b ? "X" : "Xa";
     return "";
   }
 
@@ -466,11 +463,11 @@
     for (let i = 0; i < N * N; i++) {
       const v = shown(i), el = cellEls[i];
       if (el.dataset.v !== v) { el.innerHTML = ICON[v]; el.dataset.v = v; }
-      el.classList.toggle("sym", v === "S" || v === "M");
+      el.classList.toggle("sym", cells[i] === "S" || cells[i] === "M");
       el.classList.toggle("bad", bad.has(i));
       el.classList.toggle("pop", i === popIdx);
-      el.setAttribute("aria-label", `linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}: ${NAME[v]}${givens.has(i) ? " (revelada)" : ""}`);
-      if (v === "S") s++; if (v === "M") m++;
+      el.setAttribute("aria-label", `linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}: ${nameOf(v)}${givens.has(i) ? " (revelada)" : ""}`);
+      if (cells[i] === "S") s++; if (cells[i] === "M") m++;
     }
     $("cSun").querySelector("b").textContent = s;
     $("cMoon").querySelector("b").textContent = m;
@@ -484,28 +481,28 @@
 
   function persist() {
     const started = cells.some((v, i) => !givens.has(i) && v !== ".");
-    save("dia:" + dayNum, { cells: cells.join(""), elapsed: currentElapsed(), done: finished, time: finished ? elapsed : null, started });
+    save("dia:" + dayNum, { pid: PID, cells: cells.join(""), elapsed: currentElapsed(), done: finished, time: finished ? elapsed : null, started });
   }
 
   // ---------- toque e arrasto ----------
-  let notes = false, brush = "x";
-  $("notesBtn").addEventListener("click", () => {
-    notes = !notes;
-    $("notesBtn").setAttribute("aria-pressed", notes);
-    $("brushes").hidden = !notes;
-  });
-  $("brushes").addEventListener("click", e => {
-    const b = e.target.closest("button"); if (!b) return;
-    brush = b.dataset.b;
-    $("brushes").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
-  });
-  // toque normal: ✕ → sol → lua → vazio (se nada cabe na casa, pula direto para o sol)
-  function nextValue(i) {
+  function setMode(m) {
+    mode = m;
+    $("modeSun").setAttribute("aria-pressed", m === "S");
+    $("modeMoon").setAttribute("aria-pressed", m === "M");
+    $("tipMode").textContent = m === "S" ? "Modo sol" : "Modo lua";
+    $("tipSym").setAttribute("href", m === "S" ? "#i-sun" : "#i-moon");
+    render();
+  }
+  $("modeSun").addEventListener("click", () => setMode("S"));
+  $("modeMoon").addEventListener("click", () => setMode("M"));
+  // toque: ✕ (não cabe) → peça do modo → vazio. Se a casa já está bloqueada, vai direto para a peça.
+  function tapValue(i) {
     const v = cells[i];
-    if (v === "x") return "S";
-    if (v === "S") return "M";
-    if (v === "M") return ".";
-    return shown(i).startsWith("X") ? "S" : "x";
+    if (v === mode) return ".";
+    if (v === other()) return v;              // a peça do outro modo não muda aqui
+    const man = BITS[v] || 0, b = modeBit();
+    if ((man | (AUTO[i] || 0)) & b) return mode;
+    return CHAR[man | b];
   }
   let drag = null;
   const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.classList.contains("cell") ? +el.dataset.i : -1; };
@@ -525,9 +522,7 @@
     if (!drag.moved) {
       // o arrasto marca ✕ se começou numa casa vazia, e apaga ✕ se começou num ✕
       drag.moved = true;
-      const b = notes ? brush : "x";
-      drag.mode = cells[drag.start] === b ? "." : b;     // começa numa casa já marcada → apaga
-      drag.brush = b;
+      drag.mode = (BITS[cells[drag.start]] || 0) & modeBit() ? "erase" : "paint";   // começa num ✕ → apaga
       paint(drag.start);
     }
     drag.touched.add(i);
@@ -537,8 +532,8 @@
     if (givens.has(i)) return;
     const v = cells[i];
     if (v === "S" || v === "M") return;          // o arrasto nunca apaga peças
-    if (drag.mode === ".") { if (v === drag.brush) cells[i] = "."; }
-    else cells[i] = drag.mode;
+    const man = BITS[v] || 0, b = modeBit();
+    cells[i] = CHAR[drag.mode === "erase" ? man & ~b : man | b];
     render();
   }
   const endDrag = () => {
@@ -546,12 +541,7 @@
     const d = drag; drag = null;
     if (!d.moved) {
       if (givens.has(d.start)) return;
-      const v = cells[d.start];
-      if (notes) {                       // Anotar: o toque só marca ou apaga a anotação escolhida
-        if (v !== "S" && v !== "M") cells[d.start] = v === brush ? "." : brush;
-      } else {
-        cells[d.start] = nextValue(d.start);
-      }
+      cells[d.start] = tapValue(d.start);
       render(d.start);
     }
     if (cells.join("") !== d.before) { history.push(d.before); if (history.length > 200) history.shift(); }
