@@ -31,17 +31,17 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 
 ## Como funciona
 
-- **Tocar em um jogo externo** abre o jogo e já o marca como feito.
-- **Sanduba e Quinhentos são 100% automáticos:** não têm switch. O painel lê a partida salva pelos jogos e mostra um anel que enche a cada tentativa ("3/14"), virando um ✔ verde quando a partida termina, com vitória ou derrota.
-- **O switch à direita** (só nos jogos externos) marca ou desmarca o jogo manualmente. Ligado, fica verde com ✔ e "Feito".
-- Os jogos ficam separados em **A fazer** e **Feitos**; os feitos ficam riscados e com uma faixa verde.
-- Cada jogo usa o **ícone do próprio site**. Se o ícone não carregar, aparece o emoji definido na lista.
-- O **anel de progresso** no topo mostra quantos jogos do dia já foram feitos.
-- A **sequência 🔥** conta os dias seguidos em que todos os jogos foram concluídos.
+- Os jogos aparecem numa **grade de ícones**, como a tela inicial do celular, sempre na mesma ordem, para você jogar na sequência que quiser.
+- **Tocar num jogo** abre o jogo. Nos jogos externos, isso já marca o jogo como feito.
+- **O selo no canto** mostra o status:
+  - **Jogos externos:** é um botão; tocar nele marca ou desmarca o jogo sem abrir.
+  - **Sanduba e Quinhentos:** é automático. O anel enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado ("Acertou 5/8").
+- Jogos feitos ficam com fundo verde claro.
+- O **anel de progresso** no topo mostra quantos jogos do dia já foram feitos, e a **sequência 🔥** conta os dias seguidos com tudo feito.
 - A lista **zera sozinha à meia-noite**, no horário do aparelho.
-- Por padrão os jogos abrem **na mesma aba**: jogue e use "voltar" para retornar ao painel. O botão no rodapé troca para abrir em nova aba.
+- Por padrão os jogos abrem **na mesma aba**. O botão no rodapé troca para abrir em nova aba.
 - O link do LinkedIn sempre abre na mesma aba, o que faz o celular abrir o app do LinkedIn quando ele está instalado.
-- "Desmarcar tudo" limpa o progresso do dia.
+- "Desmarcar tudo" limpa os jogos externos do dia.
 
 O progresso fica salvo no `localStorage` do navegador, então é separado em cada aparelho e navegador. Limpar os dados do site apaga o histórico.
 
@@ -66,9 +66,11 @@ Edite o array `GAMES` no início do `<script>` em `index.html`:
 ```
 
 - `id`: identificador único. Não mude depois de criado, porque o progresso é salvo por ele.
-- `name`, `emoji`, `desc`: o que aparece no cartão. O emoji é a reserva caso o ícone do site não carregue.
+- `name`, `emoji`: o que aparece na grade. O emoji é a reserva caso o ícone do site não carregue.
+- `desc`: descrição curta, mostrada ao passar o mouse.
 - `url`: endereço do jogo, ou o nome da pasta para jogos que moram neste repositório (ex.: `"sanduba/"`).
 - `icon` (opcional): URL de um ícone específico, no lugar da busca automática.
+- `iconFull: true` (opcional): o ícone ocupa o quadrado inteiro (bom para ícones com fundo próprio).
 - `app: true` (opcional): mostra a etiqueta "APP" e sempre abre na mesma aba, para o celular repassar o link ao aplicativo.
 
 ## Jogos dentro do repositório

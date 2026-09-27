@@ -94,104 +94,74 @@
   }
   .streak[hidden] { display: none; }
 
-  /* ---------- Seções ---------- */
-  .section-title {
-    display: flex; align-items: center; justify-content: space-between;
-    margin: 24px 4px 10px;
-    font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--muted);
+  /* ---------- Grade de jogos (launchpad) ---------- */
+  .grid {
+    list-style: none; padding: 0; margin: 18px 0 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
   }
-  .section-title[hidden] { display: none; }
-  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
-
-  /* ---------- Cartão ---------- */
-  li {
+  .app {
     position: relative;
-    display: flex; align-items: center;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
     box-shadow: var(--shadow);
-    overflow: hidden;
-    transition: background .25s, border-color .25s, transform .15s;
+    transition: background .25s, border-color .25s, transform .12s;
     animation: pop .25s ease;
   }
   @keyframes pop { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-  li:active { transform: scale(.985); }
-  li.done {
-    background: var(--green-soft);
-    border-color: transparent;
-    box-shadow: none;
-  }
-  li.done::before {
-    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--green);
-  }
+  .app:active { transform: scale(.96); }
+  .app.done { background: var(--green-soft); border-color: color-mix(in srgb, var(--green) 45%, transparent); box-shadow: none; }
 
   a.game {
-    flex: 1; min-width: 0;
-    display: flex; align-items: center; gap: 14px;
-    padding: 12px 8px 12px 14px;
-    color: inherit; text-decoration: none;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 16px 6px 10px;
+    color: inherit; text-decoration: none; text-align: center;
   }
   .icon {
-    position: relative;
-    width: 46px; height: 46px; flex-shrink: 0;
-    border-radius: 12px;
+    width: 64px; height: 64px; flex-shrink: 0;
+    border-radius: 17px;
     background: var(--surface-2);
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.5rem; overflow: hidden;
+    font-size: 2.1rem; overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(127,127,127,.12);
   }
-  .icon img { width: 30px; height: 30px; object-fit: contain; border-radius: 6px; }
-  li.done .icon { filter: grayscale(.7); opacity: .65; }
-  .info { min-width: 0; }
+  .icon img { width: 44px; height: 44px; object-fit: contain; border-radius: 9px; }
+  .icon img.full { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
   .name {
-    font-weight: 700; font-size: 1.02rem; letter-spacing: -.01em;
-    display: flex; align-items: center; gap: 6px;
-  }
-  li.done .name { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--faint); }
-  .tag {
-    font-size: .6rem; font-weight: 700; letter-spacing: .05em;
-    color: var(--muted); background: var(--surface-2);
-    border-radius: 5px; padding: 2px 5px; text-decoration: none;
-  }
-  .desc {
-    color: var(--muted); font-size: .8rem; margin-top: 1px;
+    max-width: 100%;
+    font-weight: 700; font-size: .92rem; letter-spacing: -.01em;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .arrow { color: var(--faint); font-size: 1.1rem; margin-left: auto; padding-left: 4px; }
+  .status {
+    height: 1.1em; margin-top: -4px;
+    font-size: .72rem; font-weight: 600; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+  }
+  .app.done .status { color: var(--green); }
+  .tag {
+    font-size: .58rem; font-weight: 700; letter-spacing: .05em;
+    color: var(--muted); background: var(--surface-2);
+    border-radius: 5px; padding: 1px 5px;
+  }
 
-  /* ---------- Switch "Feito" ---------- */
-  .toggle {
-    flex-shrink: 0;
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-    padding: 10px 14px 10px 10px;
-    background: none; border: none; cursor: pointer; font: inherit;
-  }
-  .switch {
-    position: relative;
-    width: 52px; height: 30px;
-    border-radius: 99px;
-    background: var(--surface-2);
-    border: 1.5px solid var(--border);
-    transition: background .25s, border-color .25s;
-  }
-  .knob {
-    position: absolute; top: 2px; left: 2px;
-    width: 23px; height: 23px; border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  /* selo no canto: botão de marcar (externos) ou anel automático (nativos) */
+  .badge {
+    position: absolute; top: 7px; right: 7px;
+    width: 24px; height: 24px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    transition: transform .25s cubic-bezier(.3,.7,.3,1.3);
   }
-  .knob svg { width: 14px; height: 14px; stroke: var(--green); stroke-width: 3.2; fill: none;
-    stroke-linecap: round; stroke-linejoin: round;
-    stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .3s .1s; }
-  .auto-status {
-    flex-shrink: 0; width: 76px;
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-    padding: 10px 14px 10px 10px;
+  button.badge {
+    padding: 0; cursor: pointer; font: inherit;
+    background: var(--surface); border: 2px solid var(--border);
+    transition: background .2s, border-color .2s;
   }
-  .mini-ring { width: 30px; height: 30px; transform: rotate(-90deg); }
+  button.badge::before { content: ""; position: absolute; inset: -10px; }   /* área de toque maior */
+  button.badge svg { width: 13px; height: 13px; stroke: #fff; stroke-width: 3.4; fill: none;
+    stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .25s .05s; }
+  button.badge[aria-checked="true"] { background: var(--green); border-color: var(--green); }
+  button.badge[aria-checked="true"] svg { stroke-dashoffset: 0; }
+
+  .mini-ring { width: 26px; height: 26px; transform: rotate(-90deg); }
   .mini-ring circle { fill: none; stroke-width: 3.5; }
   .mr-track { stroke: var(--border); }
   .mr-arc {
@@ -200,19 +170,12 @@
     transition: stroke-dashoffset .4s ease, fill .25s;
   }
   .mr-check {
-    fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+    fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round;
     transform: rotate(90deg); transform-origin: 18px 18px;
     stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .3s .15s;
   }
-  .auto-status.finished .mr-arc { fill: var(--green); }
-  .auto-status.finished .mr-check { stroke-dashoffset: 0; }
-  .auto-status.playing .toggle-label { color: var(--text); }
-  .auto-status.finished .toggle-label { color: var(--green); }
-  .toggle-label { font-size: .66rem; font-weight: 700; letter-spacing: .03em; color: var(--faint); text-transform: uppercase; }
-  .toggle[aria-checked="true"] .switch { background: var(--green); border-color: var(--green); }
-  .toggle[aria-checked="true"] .knob { transform: translateX(22px); }
-  .toggle[aria-checked="true"] .knob svg { stroke-dashoffset: 0; }
-  .toggle[aria-checked="true"] .toggle-label { color: var(--green); }
+  .badge.finished .mr-arc { fill: var(--green); }
+  .badge.finished .mr-check { stroke-dashoffset: 0; }
 
   /* ---------- Tudo feito ---------- */
   .all-done {
@@ -371,13 +334,8 @@
 </section>
 
 <div id="viewToday">
-<div class="section-title" id="todoTitle"><span>A fazer</span><span id="todoCount"></span></div>
-<ul id="todo"></ul>
-
+<ul class="grid" id="grid"></ul>
 <div class="all-done" id="allDone">🎉 Tudo feito por hoje!</div>
-
-<div class="section-title" id="doneTitle"><span>Feitos</span><span id="doneCount"></span></div>
-<ul id="done"></ul>
 </div>
 
 <footer id="footerToday">
@@ -394,6 +352,7 @@
    emoji: usado enquanto o ícone carrega ou se o site não tiver ícone
    icon:  (opcional) URL de um ícone específico, ignora a busca automática
    app:   (opcional) true = link que abre o app do celular
+   iconFull: (opcional) true = o ícone ocupa o quadrado inteiro (para ícones com fundo próprio)
    ============================================================ */
 const GAMES = [
   { id: "termo",      name: "Termo",      emoji: "🟩", desc: "Wordle em português",           url: "https://term.ooo/" },
@@ -401,7 +360,7 @@ const GAMES = [
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
   { id: "sanduba",    name: "Sanduba",    emoji: "🥪", desc: "Betweenle em português",        url: "sanduba/", icon: "sanduba/icon.png" },
   { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/" },
-  { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon.png" },
+  { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon.png", iconFull: true },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
 ];
@@ -468,6 +427,7 @@ function loadIcon(g, box) {
     img.onload = () => {
       // o serviço do Google devolve um globo genérico de 16px quando não acha o ícone
       if (src.includes("google.com/s2") && img.naturalWidth <= 16) return next();
+      if (g.iconFull) img.className = "full";      // ícone ocupa o quadrado inteiro
       box.textContent = "";
       box.appendChild(img);
     };
@@ -562,36 +522,32 @@ const cards = {};
 
 function buildCard(g) {
   const li = document.createElement("li");
+  li.className = "app";
   li.innerHTML = `
-    <a class="game" href="${g.url}">
+    <a class="game" href="${g.url}" title="${g.desc || ""}">
       <span class="icon">${g.emoji}</span>
-      <span class="info">
-        <div class="name">${g.name}${g.app ? '<span class="tag">APP</span>' : ""}</div>
-        <div class="desc">${g.desc || ""}</div>
-      </span>
-    </a>
-    <button class="toggle" role="switch" aria-checked="false" aria-label="${g.name} feito">
-      <span class="switch"><span class="knob">${CHECK_SVG}</span></span>
-      <span class="toggle-label">A fazer</span>
-    </button>`;
+      <span class="name">${g.name}</span>
+      <span class="status"></span>
+    </a>`;
   loadIcon(g, li.querySelector(".icon"));
-  // jogos nativos: indicador automático (sem switch); externos: abrir já marca como feito
   if (LOCAL_PROGRESS[g.id]) {
-    li.querySelector(".toggle").outerHTML = `
-      <div class="auto-status" aria-live="polite">
+    // jogos nativos: anel automático, sem controle manual
+    li.insertAdjacentHTML("beforeend", `
+      <span class="badge auto" role="img">
         <svg class="mini-ring" viewBox="0 0 36 36" aria-hidden="true">
           <circle class="mr-track" cx="18" cy="18" r="14"/>
           <circle class="mr-arc" cx="18" cy="18" r="14"/>
           <path class="mr-check" d="M11.5 18.5l4.5 4.5 8.5-9"/>
         </svg>
-        <span class="toggle-label">A fazer</span>
-      </div>`;
+      </span>`);
     return li;
   }
+  // jogos externos: abrir já marca como feito; o selo marca/desmarca à mão
+  li.insertAdjacentHTML("beforeend",
+    `<button class="badge" role="switch" aria-checked="false" aria-label="${g.name} feito">${CHECK_SVG}</button>`);
   li.querySelector("a").addEventListener("click", () => setDone(g.id, true));
-  li.querySelector(".toggle").addEventListener("click", e => {
-    const on = e.currentTarget.getAttribute("aria-checked") === "true";
-    setDone(g.id, !on);
+  li.querySelector("button.badge").addEventListener("click", e => {
+    setDone(g.id, e.currentTarget.getAttribute("aria-checked") !== "true");
   });
   return li;
 }
@@ -603,58 +559,44 @@ const CIRC = 2 * Math.PI * 34;
 const MINI_CIRC = 2 * Math.PI * 14;
 $("arc").style.strokeDasharray = CIRC;
 
-function progressText(g, p) {
-  if (!p) return g.desc || "";
-  if (!p.finished) return `Em andamento · ${p.tries}/${p.max} tentativas`;
-  return p.won ? `Acertou em ${p.tries}/${p.max}` : "Não foi dessa vez";
+function statusText(g, p, isDone) {
+  if (p) return !p.finished ? `${p.tries}/${p.max}` : p.won ? `Acertou ${p.tries}/${p.max}` : "Não foi";
+  if (isDone) return "Feito";
+  return g.app ? '<span class="tag">APP</span>' : "";
 }
 
 function render() {
   syncLocalGames();
   const done = doneToday();
-  const todoList = $("todo"), doneList = $("done");
+  const grid = $("grid");
 
   for (const g of GAMES) {
     const li = cards[g.id];
+    if (li.parentNode !== grid) grid.appendChild(li);   // ordem fixa: a da lista GAMES
     const isDone = done.has(g.id);
-    if (LOCAL_PROGRESS[g.id]) li.querySelector(".desc").textContent = progressText(g, progressOf(g));
-    const target = isDone ? doneList : todoList;
-    if (li.parentNode !== target) target.appendChild(li);
+    const p = LOCAL_PROGRESS[g.id] ? progressOf(g) : null;
     li.classList.toggle("done", isDone);
+    li.querySelector(".status").innerHTML = statusText(g, p, isDone);
 
-    const st = li.querySelector(".auto-status");
-    if (st) {
-      const p = progressOf(g);
+    const auto = li.querySelector(".badge.auto");
+    if (auto) {
       const frac = p ? (p.finished ? 1 : p.tries / p.max) : 0;
-      st.classList.toggle("playing", !!p && !p.finished);
-      st.classList.toggle("finished", !!p?.finished);
-      st.querySelector(".mr-arc").style.strokeDashoffset = MINI_CIRC * (1 - frac);
-      st.querySelector(".toggle-label").textContent = !p ? "A fazer" : p.finished ? "Feito" : `${p.tries}/${p.max}`;
-      st.setAttribute("aria-label", `${g.name}: ${st.querySelector(".toggle-label").textContent}`);
+      auto.classList.toggle("finished", !!p?.finished);
+      auto.querySelector(".mr-arc").style.strokeDashoffset = MINI_CIRC * (1 - frac);
+      auto.setAttribute("aria-label", `${g.name}: ${!p ? "não começou" : p.finished ? "feito" : `${p.tries} de ${p.max} tentativas`}`);
     }
-    const t = li.querySelector(".toggle");
-    if (t) {
-    t.setAttribute("aria-checked", isDone);
-    t.querySelector(".toggle-label").textContent = isDone ? "Feito" : "A fazer";
-    }
+    const btn = li.querySelector("button.badge");
+    if (btn) btn.setAttribute("aria-checked", isDone);
 
     const a = li.querySelector("a");
     if (state.newTab && !g.app) { a.target = "_blank"; a.rel = "noopener"; }
     else { a.removeAttribute("target"); a.removeAttribute("rel"); }
-  }
-  // mantém a ordem da lista original dentro de cada seção
-  for (const list of [todoList, doneList]) {
-    GAMES.forEach(g => { if (cards[g.id].parentNode === list) list.appendChild(cards[g.id]); });
   }
 
   const n = GAMES.filter(g => done.has(g.id)).length, total = GAMES.length;
   $("count").innerHTML = `${n}<small>/${total}</small>`;
   $("arc").style.strokeDashoffset = CIRC * (1 - n / total);
 
-  $("todoTitle").hidden = n === total;
-  $("doneTitle").hidden = n === 0;
-  $("todoCount").textContent = total - n;
-  $("doneCount").textContent = n;
   $("allDone").classList.toggle("show", n === total);
 
   const s = streak();
