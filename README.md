@@ -85,7 +85,7 @@ O Sanduba e o Quinhentos rodam direto daqui, cada um na sua pasta:
 
 Cada jogo tem um botão **‹** à esquerda do logotipo que volta para o painel. Ele é essencial no app instalado no iPhone, que não mostra o botão "voltar" do navegador.
 
-A interface dos jogos nativos (Sanduba, Quinhentos e Eclipse) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema segue o do celular. As estatísticas continuam sendo gravadas pelos jogos e aparecem na aba **Histórico** do painel.
+A interface dos jogos nativos (Sanduba, Quinhentos e Eclipse) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema segue o do celular. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: no celular, sobem de baixo como um painel, com o ✕ sempre visível no topo, e fecham ao tocar no fundo. As estatísticas continuam sendo gravadas pelos jogos e aparecem na aba **Histórico** do painel.
 
 As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o progresso por domínio, e todos os endereços ficam em `a-hanauer.github.io`.
 

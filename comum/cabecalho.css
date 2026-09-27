@@ -86,3 +86,28 @@ header.gh {
 /* variante em que a classe "on" fica no bloco inteiro (Quinhentos) */
 .gh-free.on .gh-switch { background: var(--gh-accent); box-shadow: none; }
 .gh-free.on .gh-switch > .knob { transform: translateX(16px); }
+
+/* =========================================================================
+   Janelas (Como jogar, fim de jogo, confirmações) — iguais nos três jogos.
+   No celular viram um painel que sobe de baixo, perto do polegar, e nunca
+   entram na área do relógio/câmera. O título com o ✕ fica preso no topo
+   do painel mesmo rolando o texto. Tocar no fundo escuro também fecha.
+   Cada jogo informa o espaçamento interno das suas janelas em --mpad.
+   ========================================================================= */
+@media (max-width: 559px) {
+  .overlay { align-items: flex-end !important; justify-content: center !important; padding: 0 !important; }
+  .overlay > .modal {
+    width: 100% !important; max-width: none !important; margin: 0 !important;
+    max-height: min(80dvh, calc(100dvh - env(safe-area-inset-top, 0px) - 24px)) !important;
+    border-radius: 22px 22px 0 0 !important;
+    padding-bottom: calc(var(--mpad, 20px) + env(safe-area-inset-bottom, 0px)) !important;
+    overscroll-behavior: contain;
+  }
+}
+.modal > h2:first-child, .modal > .close-row:first-child {
+  position: sticky; top: calc(-1 * var(--mpad, 20px)); z-index: 3;
+  background: inherit;
+  margin-left: calc(-1 * var(--mpad, 20px)) !important; margin-right: calc(-1 * var(--mpad, 20px)) !important;
+  padding: calc(var(--mpad, 20px) - 6px) var(--mpad, 20px) 8px !important;
+  margin-top: calc(-1 * var(--mpad, 20px) + 6px) !important;
+}
