@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Quinhentos">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -328,48 +329,28 @@ header{
 #btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
 #overlay-end .stat-grid, #overlay-end #e-dist{display:none !important;}
 </style>
+
+<link rel="stylesheet" href="../comum/cabecalho.css">
+<style>
+  /* cores do cabeçalho comum, a partir das cores deste jogo */
+  :root { --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+</style>
 </head>
 <body>
 <div class="app">
 
-  <header>
-    <div class="brand-wrap"><a class="back-home" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><a class="brand" href="./" aria-label="Quinhentos — recarregar">
-      <svg class="mark" viewBox="-4 -3 114 47" role="img">
-        <title>Quinhentos</title>
-        <defs>
-          <filter id="mkShadow" x="-25%" y="-25%" width="150%" height="160%">
-            <feDropShadow dx="0" dy="1.4" stdDeviation="1.1" flood-opacity="0.28"/>
-          </filter>
-        </defs>
-        <g filter="url(#mkShadow)"
-           font-family="Bricolage Grotesque, Georgia, serif" font-weight="800"
-           text-anchor="middle">
-          <g transform="rotate(-8 17 21)">
-            <rect x="2" y="6" width="30" height="30" rx="9" fill="var(--accent)"/>
-            <text x="17" y="28" font-size="20" fill="var(--accent-ink)">5</text>
-          </g>
-          <g transform="rotate(6 53 19)">
-            <rect x="37" y="2" width="32" height="32" rx="9.5" fill="var(--present)"/>
-            <text x="53" y="25.5" font-size="21.5" fill="var(--present-ink)">0</text>
-          </g>
-          <g transform="rotate(-4 89 22)">
-            <rect x="74" y="7" width="30" height="30" rx="9" fill="var(--danger)"/>
-            <text x="89" y="29" font-size="20" fill="var(--danger-ink)">0</text>
-          </g>
-        </g>
-      </svg>
-    </a></div>
-    <div class="header-actions">
-      <div class="switch-wrap">
-        <span>Jogo livre</span>
-        <div class="switch" id="mode-switch"><div class="knob"></div></div>
-      </div>
-      <!-- estatísticas e configurações ficam no painel Jogos do Dia; os botões originais seguem ocultos -->
-      <button class="iconbtn" id="btn-stats" hidden aria-hidden="true" tabindex="-1">📊</button>
-      <button class="iconbtn" id="btn-settings" hidden aria-hidden="true" tabindex="-1">⚙️</button>
-      <button class="iconbtn" id="btn-help-top" title="Como jogar" aria-label="Como jogar" style="color:var(--ink-dim)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
-    </div>
+  <header class="gh">
+    <a class="gh-back back-home" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <a class="gh-brand" href="./" aria-label="Quinhentos — recarregar"><img src="icon.png" alt=""><b>QUINHENTOS</b></a>
+    <!-- estatísticas e configurações ficam no painel Jogos do Dia; os botões originais seguem ocultos -->
+    <button class="iconbtn" id="btn-stats" hidden aria-hidden="true" tabindex="-1">📊</button>
+    <button class="iconbtn" id="btn-settings" hidden aria-hidden="true" tabindex="-1">⚙️</button>
+    <button class="gh-btn" id="btn-help-top" title="Como jogar" aria-label="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
   </header>
+  <div class="gh-meta">
+    <span class="gh-info" id="ghInfo"></span>
+    <div class="gh-free" id="mode-switch" role="switch" aria-label="Jogo livre"><span>Jogo livre</span><span class="gh-switch"><span class="knob"></span></span></div>
+  </div>
 
   <div class="board-wrap">
     <div class="board" id="board"></div>
@@ -1175,6 +1156,11 @@ header{
   }
 
 })();
+</script>
+<script src="../comum/cabecalho.js"></script>
+<script>
+  ghInfo(document.getElementById("ghInfo"), () => document.getElementById("mode-switch").classList.contains("on"),
+    fn => new MutationObserver(fn).observe(document.getElementById("mode-switch"), { attributes: true, attributeFilter: ["class"] }));
 </script>
 </body>
 </html>
