@@ -40,12 +40,11 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
   - **Jogos externos:** é um botão; tocar nele marca ou desmarca o jogo sem abrir.
   - **Sanduba e Quinhentos:** é automático. O anel enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado ("Acertou 5/8").
 - Jogos feitos ficam com fundo verde claro.
-- O **anel de progresso** no topo mostra quantos jogos do dia já foram feitos, e a **sequência 🔥** conta os dias seguidos com tudo feito.
+- O **anel de progresso** no topo mostra quantos jogos do dia já foram feitos, e a **sequência** (ícone de chama) conta os dias seguidos com tudo feito.
 - A lista **zera sozinha à meia-noite**, no horário do aparelho.
-- Por padrão os jogos abrem **na mesma aba**. O botão no rodapé troca para abrir em nova aba.
+- No canto superior direito do cartão do topo há dois botões: **tema** (cada toque alterna Automático → Claro → Escuro; vale também para os jogos da casa) e **configurações**.
 - O link do LinkedIn sempre abre na mesma aba, o que faz o celular abrir o app do LinkedIn quando ele está instalado.
-- "Desmarcar tudo" limpa os jogos externos do dia.
-- **Tema:** no fim do painel, escolha Automático (segue o celular), Claro ou Escuro. A escolha vale também para o Sanduba, o Quinhentos e o Eclipse.
+- Em **configurações**: abrir jogos externos na mesma aba (padrão) ou em nova aba, desmarcar os jogos externos do dia (pede um segundo toque para confirmar) e, no app do iPhone, ativar o número de pendentes no ícone.
 
 O progresso fica salvo no `localStorage` do navegador, então é separado em cada aparelho e navegador. Limpar os dados do site apaga o histórico.
 
@@ -92,7 +91,7 @@ As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o
 
 Para atualizar um desses jogos, substitua o `index.html` da pasta dele.
 
-Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempre o da partida do dia, e "Desmarcar tudo" só afeta os jogos externos. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` no `index.html` do painel.
+Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempre o da partida do dia, e "Desmarcar jogos externos de hoje" não mexe neles. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` no `index.html` do painel.
 
 ## Eclipse
 
@@ -123,7 +122,7 @@ Para gerar os desafios de novo, rode `node eclipse/gerador.mjs [dias]` (padrão:
 ## Ícone e pendências fora do painel
 
 - **Ícone do app:** uma peça de quebra-cabeça preenchida por um mosaico colorido. O iPhone grava o ícone quando o atalho é criado; para trocar, é preciso apagar o atalho e adicionar de novo (o progresso não se perde).
-- **Número no ícone:** o app instalado mostra quantos jogos faltam no dia e some quando está tudo feito. No iPhone (iOS 16.4+) é preciso tocar uma vez em "🔔 Mostrar pendentes no ícone", no rodapé, e permitir notificações. O Chrome do Android não suporta esse número.
+- **Número no ícone:** o app instalado mostra quantos jogos faltam no dia e some quando está tudo feito. No iPhone (iOS 16.4+) é preciso abrir as configurações e tocar uma vez em "Mostrar pendentes no ícone do app", e permitir notificações. O Chrome do Android não suporta esse número.
 - O painel não consegue saber o que foi jogado direto nos outros sites. Ele registra só o que é aberto por ele ou marcado no switch.
 - O número no ícone é atualizado sempre que o painel é aberto. Depois da meia-noite ele continua mostrando o dia anterior até você abrir o painel.
 

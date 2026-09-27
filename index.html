@@ -75,6 +75,7 @@
 
   /* ---------- Cabeçalho ---------- */
   header {
+    position: relative;
     display: flex; align-items: center; gap: 16px;
     background: var(--surface);
     border: 1px solid var(--border);
@@ -100,6 +101,8 @@
   h1 { font-size: 1.35rem; font-weight: 800; margin: 0; letter-spacing: -.02em; }
   .date { color: var(--muted); font-size: .88rem; margin-top: 2px; }
   .date::first-letter { text-transform: uppercase; }
+  .streak svg { width: 13px; height: 13px; }
+  .all-done svg { width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; }
   .streak {
     display: inline-flex; align-items: center; gap: 4px;
     margin-top: 8px; padding: 3px 9px;
@@ -207,20 +210,50 @@
   }
   .all-done.show { display: block; animation: pop .35s ease; }
 
-  /* seletor de tema geral (vale para o painel e os jogos nativos) */
-  .theme-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 18px; color: var(--muted); font-size: .82rem; font-weight: 600; }
-  .theme-seg { display: inline-grid; grid-template-columns: repeat(3, auto); gap: 3px; padding: 3px; border-radius: 99px; background: var(--surface); border: 1px solid var(--border); }
-  .theme-seg button {
-    display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border: none; border-radius: 99px; cursor: pointer;
-    background: none; color: var(--muted); font: inherit; font-weight: 600; font-size: .8rem;
+  /* ações no topo: tema (alterna) e configurações */
+  .head-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; }
+  .round {
+    width: 34px; height: 34px; border-radius: 50%; border: none; padding: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--surface-2); color: var(--muted);
   }
-  .theme-seg svg { width: 15px; height: 15px; }
-  .theme-seg button[aria-checked="true"] { background: var(--surface-2); color: var(--text); }
-  footer { margin-top: 28px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-  footer button {
-    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
-    border-radius: 99px; padding: 9px 15px; font: inherit; font-size: .82rem; font-weight: 600; cursor: pointer;
+  .round:active { transform: scale(.94); }
+  .round svg { width: 18px; height: 18px; }
+
+  /* painel de configurações (sobe de baixo) */
+  .sheet-bg { position: fixed; inset: 0; z-index: 20; display: flex; align-items: flex-end; justify-content: center; background: rgba(8, 9, 12, .5); backdrop-filter: blur(3px); }
+  .sheet-bg[hidden] { display: none; }
+  .sheet {
+    width: 100%; max-width: 560px; background: var(--surface); color: var(--text);
+    border-radius: 22px 22px 0 0; padding: 16px 18px calc(20px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -10px 40px rgba(0,0,0,.25); animation: up .22s ease;
   }
+  @keyframes up { from { transform: translateY(24px); opacity: .6; } to { transform: none; opacity: 1; } }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; font-size: 1.1rem; }
+  .set-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 4px 2px 8px; }
+  .seg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); margin-bottom: 16px; }
+  .seg2 button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 0; border: none; border-radius: 11px; background: none; color: var(--muted); font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; }
+  .seg2 button[aria-checked="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+  .seg2 svg, .set-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .set-btn {
+    width: 100%; display: flex; align-items: center; gap: 10px; padding: 13px 14px; margin-top: 8px;
+    border: 1px solid var(--border); border-radius: 14px; background: none; color: var(--text);
+    font: inherit; font-weight: 600; font-size: .92rem; text-align: left; cursor: pointer;
+  }
+  .set-btn[hidden] { display: none; }
+  .set-btn.danger { color: #e5484d; }
+  .set-btn.confirm { background: #e5484d; border-color: #e5484d; color: #fff; }
+  .set-note { color: var(--muted); font-size: .78rem; margin: 10px 2px 0; line-height: 1.4; }
+
+  /* aviso rápido (ex.: "Tema: Claro") */
+  .toast {
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 30;
+    transform: translate(-50%, 12px); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 99px;
+    background: var(--text); color: var(--bg); font-weight: 700; font-size: .88rem; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast svg { width: 16px; height: 16px; }
 
   /* ---------- Abas Hoje / Histórico ---------- */
   .tabs {
@@ -323,6 +356,10 @@
     <div class="date" id="date"></div>
     <div class="streak" id="streak" hidden></div>
   </div>
+  <div class="head-actions">
+    <button class="round" id="themeBtn" aria-label="Tema"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+    <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
+  </div>
 </header>
 
 <nav class="tabs" aria-label="Seções">
@@ -367,23 +404,24 @@
 <ul class="grid" id="gridNative"></ul>
 <div class="cat"><span>Outros jogos</span><span class="cat-n" id="catExternalN"></span></div>
 <ul class="grid" id="gridExternal"></ul>
-<div class="all-done" id="allDone">🎉 Tudo feito por hoje!</div>
+<div class="all-done" id="allDone"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Tudo feito por hoje!</div>
 </div>
 
-<footer id="footerToday">
-  <button id="badgeBtn" hidden>🔔 Mostrar pendentes no ícone</button>
-  <button id="toggleTab"></button>
-  <button id="reset">Desmarcar tudo</button>
-</footer>
-
-<div class="theme-row">
-  <span>Tema</span>
-  <div class="theme-seg" role="radiogroup" aria-label="Tema">
-    <button data-t="auto" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>Auto</button>
-    <button data-t="light" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>Claro</button>
-    <button data-t="dark" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="currentColor"/></svg>Escuro</button>
+<!-- Configurações (engrenagem no topo) -->
+<div class="sheet-bg" id="settings" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+    <div class="sheet-head"><b id="setTitle">Configurações</b><button class="round" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="set-label">Abrir jogos externos</div>
+    <div class="seg2" role="radiogroup" aria-label="Abrir jogos externos">
+      <button data-tab="same" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Mesma aba</button>
+      <button data-tab="new" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Nova aba</button>
+    </div>
+    <button class="set-btn" id="badgeBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg><span>Mostrar pendentes no ícone do app</span></button>
+    <button class="set-btn danger" id="reset"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Desmarcar jogos externos de hoje</span></button>
+    <div class="set-note">Sanduba, Quinhentos e Eclipse seguem o que você jogou e não são desmarcados.</div>
   </div>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 /* ============================================================
@@ -670,9 +708,9 @@ function render() {
 
   const s = streak();
   $("streak").hidden = s === 0;
-  $("streak").textContent = `🔥 ${s} dia${s > 1 ? "s" : ""} seguido${s > 1 ? "s" : ""} completo${s > 1 ? "s" : ""}`;
+  $("streak").innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> ${s} dia${s > 1 ? "s" : ""} seguido${s > 1 ? "s" : ""} completo${s > 1 ? "s" : ""}`;
 
-  $("toggleTab").textContent = state.newTab ? "↗ Abrindo em nova aba" : "↩ Abrindo na mesma aba";
+  document.querySelectorAll(".seg2 button").forEach(b => b.setAttribute("aria-checked", (b.dataset.tab === "new") === state.newTab));
 
   if (location.hash === "#historico" && typeof renderHistory === "function") renderHistory();
   updateBadge(total - n);
@@ -729,17 +767,48 @@ function renderDate() {
   $("date").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
 }
 
-// tema geral: Automático segue o celular; Claro/Escuro forçam (painel e jogos nativos)
+// tema geral: um botão alterna Automático → Claro → Escuro (vale também para os jogos nativos)
+const THEME_ICON = {"auto": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"8.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M12 3.5a8.5 8.5 0 0 1 0 17z\" fill=\"currentColor\"/></svg>", "light": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6\"/></svg>", "dark": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z\" fill=\"currentColor\"/></svg>"};
+const THEME_NAME = { auto: "Automático", light: "Claro", dark: "Escuro" };
+const THEME_NEXT = { auto: "light", light: "dark", dark: "auto" };
+let toastTimer = null;
+function toast(html) {
+  $("toast").innerHTML = html; $("toast").classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1400);
+}
 function renderTheme() {
   const t = window.jogosTema ? jogosTema.get() : "auto";
-  document.querySelectorAll(".theme-seg button").forEach(b => b.setAttribute("aria-checked", b.dataset.t === t));
+  $("themeBtn").innerHTML = THEME_ICON[t];
+  $("themeBtn").setAttribute("aria-label", `Tema: ${THEME_NAME[t]}. Toque para trocar.`);
 }
-document.querySelectorAll(".theme-seg button").forEach(b => b.addEventListener("click", () => { jogosTema.set(b.dataset.t); renderTheme(); }));
+$("themeBtn").addEventListener("click", () => {
+  const t = THEME_NEXT[jogosTema.get()] || "auto";
+  jogosTema.set(t); renderTheme();
+  toast(`${THEME_ICON[t]}Tema: ${THEME_NAME[t]}`);
+});
 renderTheme();
 
-$("toggleTab").addEventListener("click", () => { state.newTab = !state.newTab; save(); render(); });
+// configurações: abrir jogos externos, pendentes no ícone e desmarcar
+function openSettings() { $("settings").hidden = false; resetArm(false); }
+function closeSettings() { $("settings").hidden = true; }
+$("settingsBtn").addEventListener("click", openSettings);
+$("settings").addEventListener("click", e => { if (e.target === $("settings") || e.target.closest("[data-close]")) closeSettings(); });
+document.querySelectorAll(".seg2 button").forEach(b => b.addEventListener("click", () => {
+  state.newTab = b.dataset.tab === "new"; save(); render();
+}));
+// desmarcar pede um segundo toque para confirmar
+let resetArmed = false, resetTimer = null;
+function resetArm(on) {
+  resetArmed = on;
+  $("reset").classList.toggle("confirm", on);
+  $("reset").querySelector("span").textContent = on ? "Toque de novo para confirmar" : "Desmarcar jogos externos de hoje";
+}
 $("reset").addEventListener("click", () => {
-  if (confirm("Desmarcar os jogos externos de hoje? (Sanduba e Quinhentos seguem o que você jogou.)")) { state.history[today()] = []; save(); render(); }
+  if (!resetArmed) { resetArm(true); clearTimeout(resetTimer); resetTimer = setTimeout(() => resetArm(false), 3000); return; }
+  clearTimeout(resetTimer);
+  state.history[today()] = []; save(); render();
+  resetArm(false); closeSettings();
+  toast("Jogos externos desmarcados");
 });
 
 // ao voltar para o painel (ou se virar o dia), atualiza
@@ -838,7 +907,7 @@ function showDay(k, total) {
   document.querySelectorAll("#calGrid .cell.sel").forEach(c => c.classList.remove("sel"));
   document.querySelector(`#calGrid .cell[data-day="${k}"]`)?.classList.add("sel");
   const d = new Date(k + "T00:00:00"), ids = state.history[k] || [], n = countOn(k), res = state.results[k] || {};
-  $("calDetail").innerHTML = `<b>${fmtDay(d)}</b> · ${n} de ${total} jogo${total > 1 ? "s" : ""}${n >= total ? " 🎉" : ""}
+  $("calDetail").innerHTML = `<b>${fmtDay(d)}</b> · ${n} de ${total} jogo${total > 1 ? "s" : ""}${n >= total ? " · tudo feito" : ""}
     <div class="chips">${GAMES.map(g => {
       const r = res[g.id], extra = !r ? "" : r.time != null ? ` ${fmtTime(r.time)}` : r.won ? ` ${r.tries}/${r.max}` : " ✗";
       return `<span class="chip${ids.includes(g.id) ? " on" : ""}">${esc(g.name)}${extra}</span>`;
@@ -954,7 +1023,6 @@ function route() {
   const hist = location.hash === "#historico";
   $("viewHistory").hidden = !hist;
   $("viewToday").hidden = hist;
-  $("footerToday").hidden = hist;
   $("tabToday").setAttribute("aria-current", hist ? "false" : "page");
   $("tabHistory").setAttribute("aria-current", hist ? "page" : "false");
   if (hist) renderHistory();
