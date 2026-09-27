@@ -363,6 +363,7 @@ const GAMES = [
   { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon.png", iconFull: true },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
+  { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon.png", iconFull: true },
 ];
 
 /* ============================================================ */
@@ -390,7 +391,19 @@ const LOCAL_PROGRESS = {
     if (!p || p.dayNum !== dayNum || !Array.isArray(p.guesses) || !p.guesses.length) return null;
     return { tries: p.guesses.length, max: 8, won: !!p.won, finished: !!p.finished };
   },
+  eclipse() {
+    // desafio #1 = 27/09/2026 (mesma conta do jogo)
+    const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+    const dayNum = Math.round((today0 - new Date(2026, 8, 27)) / 86400000) + 1;
+    const p = readJSON(`eclipse:dia:${dayNum}`);
+    if (!p || typeof p.cells !== "string") return null;
+    const placed = (p.cells.match(/[SM]/g) || []).length;
+    if (!p.done && !p.started) return null;             // aberto, mas nenhuma jogada ainda
+    return { tries: placed, max: 18, won: !!p.done, finished: !!p.done, time: p.done ? p.time : null };
+  },
 };
+
+const fmtTime = s => { s = Math.round(s || 0); const m = Math.floor(s / 60); return m >= 60 ? `${Math.floor(m / 60)}h${String(m % 60).padStart(2, "0")}` : `${m}:${String(s % 60).padStart(2, "0")}`; };
 
 function progressOf(g) {
   const fn = LOCAL_PROGRESS[g.id];
@@ -488,7 +501,11 @@ function syncLocalGames() {
     const p = progressOf(g), finished = !!p?.finished;
     if (finished) {
       const r = (state.results[today()] ??= {});
-      if (r[g.id]?.tries !== p.tries) { r[g.id] = { tries: p.tries, max: p.max, won: p.won }; changed = true; }
+      if (r[g.id]?.tries !== p.tries || r[g.id]?.time !== p.time) {
+        r[g.id] = { tries: p.tries, max: p.max, won: p.won };
+        if (p.time != null) r[g.id].time = p.time;
+        changed = true;
+      }
     }
     if (finished !== set.has(g.id)) {
       finished ? set.add(g.id) : set.delete(g.id);
@@ -560,7 +577,11 @@ const MINI_CIRC = 2 * Math.PI * 14;
 $("arc").style.strokeDasharray = CIRC;
 
 function statusText(g, p, isDone) {
-  if (p) return !p.finished ? `${p.tries}/${p.max}` : p.won ? `Acertou ${p.tries}/${p.max}` : "Não foi";
+  if (p) {
+    if (!p.finished) return `${p.tries}/${p.max}`;
+    if (p.time != null) return `⏱ ${fmtTime(p.time)}`;
+    return p.won ? `Acertou ${p.tries}/${p.max}` : "Não foi";
+  }
   if (isDone) return "Feito";
   return g.app ? '<span class="tag">APP</span>' : "";
 }
@@ -583,7 +604,7 @@ function render() {
       const frac = p ? (p.finished ? 1 : p.tries / p.max) : 0;
       auto.classList.toggle("finished", !!p?.finished);
       auto.querySelector(".mr-arc").style.strokeDashoffset = MINI_CIRC * (1 - frac);
-      auto.setAttribute("aria-label", `${g.name}: ${!p ? "não começou" : p.finished ? "feito" : `${p.tries} de ${p.max} tentativas`}`);
+      auto.setAttribute("aria-label", `${g.name}: ${!p ? "não começou" : p.finished ? "feito" : `${p.tries} de ${p.max} ${"time" in p ? "peças" : "tentativas"}`}`);
     }
     const btn = li.querySelector("button.badge");
     if (btn) btn.setAttribute("aria-checked", isDone);
@@ -795,7 +816,7 @@ function showDay(k, total) {
   const d = new Date(k + "T00:00:00"), ids = state.history[k] || [], n = countOn(k), res = state.results[k] || {};
   $("calDetail").innerHTML = `<b>${fmtDay(d)}</b> · ${n} de ${total} jogo${total > 1 ? "s" : ""}${n >= total ? " 🎉" : ""}
     <div class="chips">${GAMES.map(g => {
-      const r = res[g.id], extra = r ? (r.won ? ` ${r.tries}/${r.max}` : " ✗") : "";
+      const r = res[g.id], extra = !r ? "" : r.time != null ? ` ${fmtTime(r.time)}` : r.won ? ` ${r.tries}/${r.max}` : " ✗";
       return `<span class="chip${ids.includes(g.id) ? " on" : ""}">${esc(g.name)}${extra}</span>`;
     }).join("")}</div>`;
 }
@@ -860,6 +881,39 @@ function renderNative(t0) {
         <div class="readout">Barra mais baixa = menos tentativas. Cinza = não acertou.</div>`
         : `<div class="empty">Os resultados começam a aparecer aqui a partir das próximas partidas.</div>`}
       ${dist}
+    </div>`);
+  }
+  // Eclipse: o desempenho é o tempo
+  const ge = GAMES.find(x => x.id === "eclipse");
+  if (ge) {
+    const st = readJSON("eclipse:stats") || {};
+    const times = st.times || {};                            // { número do dia: segundos }
+    const e0 = new Date(2026, 8, 27);
+    const dnum = d => Math.round((d - e0) / 86400000) + 1;
+    const days = [...Array(30)].map((_, i) => addDays(t0, i - 29));
+    const vals = days.map(d => times[dnum(d)] ?? state.results[dayKey(d)]?.eclipse?.time ?? null);
+    const all = Object.values(times);
+    const best = all.length ? Math.min(...all) : null;
+    const avg = all.length ? all.reduce((a, b) => a + b, 0) / all.length : null;
+    const top = Math.max(1, ...vals.filter(v => v != null));
+    const bars = days.map((d, i) => {
+      const v = vals[i];
+      const lab = v == null ? "sem partida" : `resolvido em ${fmtTime(v)}`;
+      return `<button class="vbar ${v == null ? "none" : "full"}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${v == null ? 0 : Math.max(6, 100 * v / top)}%"></i></button>`;
+    }).join("");
+    blocks.push(`<div class="card">
+      <div class="game-head">${iconHTML(ge)}<div><h2>Eclipse</h2><div class="sub" style="margin:0">Tempo para resolver</div></div></div>
+      <div class="minis">
+        <div><div class="v">${st.played || 0}</div><div class="l">resolvidos</div></div>
+        <div><div class="v">${st.streak || 0}</div><div class="l">sequência</div></div>
+        <div><div class="v">${best == null ? "–" : fmtTime(best)}</div><div class="l">melhor</div></div>
+        <div><div class="v">${avg == null ? "–" : fmtTime(avg)}</div><div class="l">média</div></div>
+      </div>
+      <div class="mini-title">Tempo por dia · 30 dias</div>
+      ${vals.some(v => v != null) ? `<div class="vbars" style="height:80px">${bars}</div>
+        <div class="axis"><span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>hoje</span></div>
+        <div class="readout">Barra mais baixa = mais rápido. Toque numa barra para ver o tempo.</div>`
+        : `<div class="empty">Seus tempos aparecem aqui depois do primeiro desafio resolvido.</div>`}
     </div>`);
   }
   $("nativeCards").innerHTML = blocks.join("");

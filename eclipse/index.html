@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f4f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11131c" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Eclipse">
+<title>ECLIPSE — um sol e uma lua em cada linha</title>
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f2ee;
+    --surface: #ffffff;
+    --surface-2: #ece9e3;
+    --ink: #1c1d24;
+    --muted: #6d6e78;
+    --faint: #a4a5ad;
+    --line: #dedad2;
+    --wall: #2a2b33;          /* borda grossa entre regiões */
+    --grid: rgba(42, 43, 51, .16);
+    --sun: #f59e0b;
+    --sun-edge: #b45309;
+    --moon: #3730a3;
+    --moon-edge: #1e1b6b;
+    --x: rgba(28, 29, 36, .42);
+    --bad: #e5484d;
+    --accent: #5b4fd6;
+    --good: #3fa24c;
+    --r0: #f6bdb4; --r1: #fbe19a; --r2: #cde7ab; --r3: #afd2f4; --r4: #d6c6f6;
+    --r5: #f5c3de; --r6: #a9e6c8; --r7: #f4ceA4; --r8: #d9dce2;
+    --shadow: 0 1px 2px rgba(20,24,33,.06), 0 6px 18px rgba(20,24,33,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #11131c;
+      --surface: #1a1d29;
+      --surface-2: #242838;
+      --ink: #eceef6;
+      --muted: #9a9fb2;
+      --faint: #5f6478;
+      --line: #2a2f40;
+      --wall: #0a0b10;
+      --grid: rgba(255,255,255,.10);
+      --sun: #fbbf24;
+      --sun-edge: #f59e0b;
+      --moon: #c7d2fe;
+      --moon-edge: #a5b4fc;
+      --x: rgba(236, 238, 246, .45);
+      --bad: #ff6b6f;
+      --accent: #a5b4fc;
+      --good: #5fbf6a;
+      --r0: #613a35; --r1: #5c4f26; --r2: #3d5530; --r3: #2d4868; --r4: #46386a;
+      --r5: #5e3453; --r6: #265847; --r7: #5d4428; --r8: #3b414c;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.2);
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body, a, button { touch-action: manipulation; }
+  html { background: var(--bg); -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0 auto; max-width: 520px;
+    background: var(--bg); color: var(--ink);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: calc(12px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none; user-select: none;
+  }
+
+  /* ---------- cabeçalho ---------- */
+  header { display: flex; align-items: center; gap: 6px; padding: 4px 0 10px; }
+  .back-home {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; margin-left: -8px; border-radius: 50%;
+    color: var(--ink); text-decoration: none; opacity: .75;
+  }
+  .back-home:active { opacity: 1; background: rgba(127,127,127,.15); }
+  .brand { display: flex; align-items: center; gap: 8px; margin-right: auto; }
+  .brand svg { width: 30px; height: 30px; }
+  .brand b { font-size: 1.3rem; font-weight: 800; letter-spacing: .04em; }
+  .timer {
+    font-variant-numeric: tabular-nums; font-weight: 700; font-size: .95rem;
+    padding: 6px 11px; border-radius: 99px; background: var(--surface); box-shadow: var(--shadow);
+    min-width: 62px; text-align: center;
+  }
+  .iconbtn {
+    width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--surface); color: var(--muted); box-shadow: var(--shadow);
+    display: inline-flex; align-items: center; justify-content: center; padding: 0;
+  }
+
+  .meta { display: flex; align-items: center; justify-content: space-between; margin: 2px 2px 10px; font-size: .82rem; color: var(--muted); font-weight: 600; }
+  .meta .tier { text-transform: capitalize; }
+  .counts { display: flex; gap: 12px; font-variant-numeric: tabular-nums; }
+  .counts span { display: inline-flex; align-items: center; gap: 4px; }
+  .counts svg { width: 16px; height: 16px; }
+  .counts .full { color: var(--good); }
+
+  /* ---------- tabuleiro ---------- */
+  .board {
+    display: grid; grid-template-columns: repeat(var(--n), 1fr);
+    border: 3px solid var(--wall); border-radius: 10px; overflow: hidden;
+    touch-action: none;                  /* permite arrastar para marcar ✕ */
+    box-shadow: var(--shadow);
+  }
+  .cell {
+    position: relative; aspect-ratio: 1; padding: 0; margin: 0;
+    border: 0 solid var(--grid); border-width: 0 1px 1px 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font: inherit; color: inherit;
+  }
+  .cell.wr { border-right: 2.5px solid var(--wall); }
+  .cell.wb { border-bottom: 2.5px solid var(--wall); }
+  .cell.lastc { border-right: none; }
+  .cell.lastr { border-bottom: none; }
+  .cell svg { width: 72%; height: 72%; pointer-events: none; }
+  .cell .x { width: 34%; height: 34%; }
+  .cell .x path { stroke: var(--x); stroke-width: 3.2; stroke-linecap: round; }
+  .cell.given::after {
+    content: ""; position: absolute; inset: 14%; border-radius: 50%;
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,.18);
+    pointer-events: none;
+  }
+  .cell.bad {
+    background-image: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--bad) 38%, transparent) 5px 8px) !important;
+  }
+  .cell.pop svg { animation: pop .18s ease; }
+  @keyframes pop { from { transform: scale(.6); } to { transform: scale(1); } }
+  .sun-fill { fill: var(--sun); stroke: var(--sun-edge); }
+  .moon-fill { fill: var(--moon); stroke: var(--moon-edge); }
+  .board.won .cell { transition: filter .4s; }
+  .board.won .cell:not(.sym) { filter: saturate(.6); }
+
+  /* ---------- controles ---------- */
+  .controls { display: flex; gap: 10px; margin-top: 14px; }
+  .controls button {
+    flex: 1; padding: 12px 0; border-radius: 14px; border: none; cursor: pointer;
+    background: var(--surface); color: var(--ink); box-shadow: var(--shadow);
+    font: inherit; font-weight: 700; font-size: .9rem;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .controls button:disabled { opacity: .45; }
+  .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; }
+  .tip svg { width: 13px; height: 13px; vertical-align: -2px; }
+
+  /* ---------- janelas ---------- */
+  .overlay {
+    position: fixed; inset: 0; z-index: 10; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(10, 11, 16, .45); backdrop-filter: blur(3px);
+  }
+  .overlay.open { display: flex; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    width: 100%; max-width: 400px; max-height: 88vh; overflow: auto;
+    background: var(--surface); border-radius: 22px; padding: 22px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  }
+  .modal h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+  .modal .close { border: none; background: var(--surface-2); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; }
+  .modal p, .modal li { font-size: .92rem; line-height: 1.5; color: var(--ink); }
+  .modal ul { padding-left: 20px; margin: 8px 0; }
+  .modal li { margin: 4px 0; }
+  .modal .sym { display: inline-block; width: 16px; height: 16px; vertical-align: -3px; }
+  .rules-demo { display: flex; justify-content: center; gap: 18px; margin: 14px 0 6px; }
+  .rules-demo figure { margin: 0; text-align: center; font-size: .72rem; color: var(--muted); font-weight: 600; }
+  .rules-demo .mini { display: grid; width: max-content; margin: 0 auto 4px; grid-template-columns: repeat(3, 26px); border: 2px solid var(--wall); border-radius: 6px; overflow: hidden; }
+  .rules-demo .mini span { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; background: var(--r3); border: 0 solid var(--grid); border-width: 0 1px 1px 0; }
+  .rules-demo .mini span svg { width: 70%; height: 70%; }
+  .rules-demo .mini span svg.xm { width: 34%; height: 34%; stroke: var(--x); stroke-width: 3.2; stroke-linecap: round; }
+  .rules-demo .mini span.b { background-image: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--bad) 38%, transparent) 4px 6px); }
+  .btn {
+    width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer;
+    background: var(--accent); color: #fff; font: inherit; font-weight: 700; font-size: .95rem;
+  }
+  @media (prefers-color-scheme: dark) { .btn { color: #11131c; } }
+
+  .end { text-align: center; }
+  .end .art svg { width: 84px; height: 84px; }
+  .end .big { font-size: 2.6rem; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; margin: 4px 0 0; }
+  .end .sub { color: var(--muted); font-size: .88rem; margin-bottom: 18px; }
+  .end .next { margin-top: 16px; color: var(--muted); font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .end .next b { display: block; color: var(--ink); font-size: 1.2rem; letter-spacing: 0; margin-top: 2px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<!-- ícones reutilizados -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-sun" viewBox="0 0 40 40">
+      <g class="sun-fill" stroke-width="2">
+        <circle cx="20" cy="20" r="8.5"/>
+        <g stroke-linecap="round" stroke-width="3.2" style="stroke: var(--sun)">
+          <path d="M20 3.5v4.5M20 32v4.5M3.5 20h4.5M32 20h4.5M8.3 8.3l3.2 3.2M28.5 28.5l3.2 3.2M8.3 31.7l3.2-3.2M28.5 11.5l3.2-3.2"/>
+        </g>
+      </g>
+    </symbol>
+    <symbol id="i-moon" viewBox="0 0 40 40">
+      <path class="moon-fill" stroke-width="2" stroke-linejoin="round"
+        d="M26.5 6.5a14 14 0 1 0 7.2 20.6A11.3 11.3 0 0 1 26.5 6.5z"/>
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 20 20"><path d="M4 4l12 12M16 4L4 16" fill="none"/></symbol>
+    <symbol id="i-logo" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="12" fill="var(--sun)"/>
+      <circle cx="25" cy="16" r="11" fill="var(--bg)"/>
+      <circle cx="25" cy="16" r="11" fill="none" stroke="var(--moon)" stroke-width="2.4"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header>
+  <a class="back-home" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+  </a>
+  <div class="brand"><svg aria-hidden="true"><use href="#i-logo"/></svg><b>ECLIPSE</b></div>
+  <div class="timer" id="timer" aria-label="Tempo">0:00</div>
+  <button class="iconbtn" id="helpBtn" aria-label="Como jogar" title="Como jogar">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg>
+  </button>
+</header>
+
+<div class="meta">
+  <span id="dayInfo"></span>
+  <span class="counts">
+    <span id="cSun"><svg><use href="#i-sun"/></svg><span><b>0</b>/9</span></span>
+    <span id="cMoon"><svg><use href="#i-moon"/></svg><span><b>0</b>/9</span></span>
+  </span>
+</div>
+
+<div class="board" id="board" role="grid" aria-label="Tabuleiro"></div>
+
+<div class="controls">
+  <button id="undoBtn" disabled>
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+    Desfazer
+  </button>
+  <button id="clearBtn">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+    Limpar
+  </button>
+</div>
+<div class="tip">Toque: <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> → <svg><use href="#i-sun"/></svg> → <svg><use href="#i-moon"/></svg> → vazio · arraste para marcar vários <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg></div>
+
+<!-- Como jogar -->
+<div class="overlay" id="helpOverlay">
+  <div class="modal">
+    <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
+    <p>Coloque sóis <svg class="sym"><use href="#i-sun"/></svg> e luas <svg class="sym"><use href="#i-moon"/></svg> no tabuleiro:</p>
+    <ul>
+      <li>Cada <b>linha</b>, cada <b>coluna</b> e cada <b>região colorida</b> tem exatamente <b>um sol e uma lua</b>.</li>
+      <li>Nenhuma peça pode <b>encostar</b> em outra, nem na diagonal.</li>
+      <li>As peças com contorno já vêm reveladas e não mudam.</li>
+    </ul>
+    <div class="rules-demo">
+      <figure><div class="mini">
+        <span><svg class="xm"><use href="#i-x"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span>
+        <span><svg class="xm"><use href="#i-x"/></svg></span><span><svg><use href="#i-sun"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span>
+        <span><svg class="xm"><use href="#i-x"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span>
+      </div>vizinhas ficam vazias</figure>
+      <figure><div class="mini">
+        <span class="b"><svg><use href="#i-sun"/></svg></span><span class="b"><svg><use href="#i-moon"/></svg></span><span></span>
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </div>encostadas: erro</figure>
+    </div>
+    <p>Toque numa casa para alternar entre <b>✕</b> (anotação de vazio), sol, lua e vazio. Arraste o dedo para marcar vários ✕ de uma vez. Conflitos aparecem listrados em vermelho.</p>
+    <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia: mais fácil no começo da semana, mais difícil no fim de semana.</p>
+    <button class="btn" data-close>Jogar</button>
+  </div>
+</div>
+
+<!-- Fim de jogo -->
+<div class="overlay" id="endOverlay">
+  <div class="modal end">
+    <div class="art"><svg aria-hidden="true"><use href="#i-logo"/></svg></div>
+    <h2 style="justify-content:center">Eclipse completo!</h2>
+    <div class="big" id="endTime">0:00</div>
+    <div class="sub" id="endSub"></div>
+    <button class="btn" id="shareBtn">Compartilhar</button>
+    <div class="next">Próximo Eclipse em <b id="countdown">--:--:--</b></div>
+    <button class="close" data-close aria-label="Fechar" style="margin-top:14px;width:auto;padding:0 14px;border-radius:99px">Ver tabuleiro</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+  const TIERS = ["fácil", "médio", "difícil"];
+  const LS = "eclipse:";
+  const load = (k, d) => { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
+
+  // ---------- desafio do dia ----------
+  // #1 = 27/09/2026. O número do dia é o mesmo para todo mundo.
+  const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  function dayNumber(epoch) {
+    return Math.max(1, Math.round((today0() - new Date(epoch[0], epoch[1], epoch[2])) / 86400000) + 1);
+  }
+
+  let N, P, dayNum, regions, givens, cells, history = [], timer = null, startedAt = 0, elapsed = 0, finished = false;
+
+  fetch("desafios.json").then(r => r.json()).then(data => {
+    N = data.n;
+    dayNum = dayNumber(data.epoch);
+    P = data.puzzles[(dayNum - 1) % data.puzzles.length];
+    regions = [...P.r].map(ch => parseInt(ch, 36));
+    givens = new Map(P.g.split(",").map(t => [+t.slice(1), t[0]]));
+    const saved = load("dia:" + dayNum, null);
+    cells = saved?.cells ? [...saved.cells] : new Array(N * N).fill(".");
+    for (const [i, v] of givens) cells[i] = v;
+    elapsed = saved?.elapsed || 0;
+    finished = !!saved?.done;
+    $("dayInfo").innerHTML = `#${dayNum} · ${WEEK[new Date().getDay()]} · <span class="tier">${TIERS[P.t]}</span>`;
+    build();
+    render();
+    if (finished) { showTime(); showEnd(false); }
+    else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
+    else startTimer();
+  }).catch(() => { $("board").outerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
+
+  // ---------- tabuleiro ----------
+  const rowOf = i => (i / N) | 0, colOf = i => i % N;
+  let cellEls = [];
+  function build() {
+    const b = $("board");
+    b.style.setProperty("--n", N);
+    b.innerHTML = "";
+    cellEls = [];
+    for (let i = 0; i < N * N; i++) {
+      const r = rowOf(i), c = colOf(i), el = document.createElement("button");
+      el.className = "cell";
+      el.style.background = `var(--r${regions[i]})`;
+      if (c < N - 1 && regions[i + 1] !== regions[i]) el.classList.add("wr");
+      if (r < N - 1 && regions[i + N] !== regions[i]) el.classList.add("wb");
+      if (c === N - 1) el.classList.add("lastc");
+      if (r === N - 1) el.classList.add("lastr");
+      if (givens.has(i)) el.classList.add("given");
+      el.dataset.i = i;
+      el.setAttribute("role", "gridcell");
+      b.appendChild(el);
+      cellEls.push(el);
+    }
+  }
+
+  const ICON = { S: '<svg><use href="#i-sun"/></svg>', M: '<svg><use href="#i-moon"/></svg>', x: '<svg class="x"><use href="#i-x"/></svg>', ".": "" };
+  const NAME = { S: "sol", M: "lua", x: "marcada vazia", ".": "vazia" };
+
+  function conflicts() {
+    const bad = new Set();
+    const sym = i => cells[i] === "S" || cells[i] === "M";
+    for (let i = 0; i < N * N; i++) if (sym(i)) {
+      const r = rowOf(i), c = colOf(i);
+      for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+        if (!dr && !dc) continue;
+        const rr = r + dr, cc = c + dc;
+        if (rr < 0 || cc < 0 || rr >= N || cc >= N) continue;
+        const j = rr * N + cc;
+        if (sym(j)) { bad.add(i); bad.add(j); }
+      }
+    }
+    const units = [];
+    for (let k = 0; k < N; k++) {
+      units.push([...Array(N)].map((_, c) => k * N + c));
+      units.push([...Array(N)].map((_, r) => r * N + k));
+    }
+    for (let k = 0; k < N; k++) units.push([...Array(N * N).keys()].filter(i => regions[i] === k));
+    for (const u of units) for (const x of ["S", "M"]) {
+      const hits = u.filter(i => cells[i] === x);
+      if (hits.length > 1) hits.forEach(i => bad.add(i));
+    }
+    return bad;
+  }
+
+  function render(popIdx = -1) {
+    const bad = conflicts();
+    let s = 0, m = 0;
+    for (let i = 0; i < N * N; i++) {
+      const v = cells[i], el = cellEls[i];
+      if (el.dataset.v !== v) { el.innerHTML = ICON[v]; el.dataset.v = v; }
+      el.classList.toggle("sym", v === "S" || v === "M");
+      el.classList.toggle("bad", bad.has(i));
+      el.classList.toggle("pop", i === popIdx);
+      el.setAttribute("aria-label", `linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}: ${NAME[v]}${givens.has(i) ? " (revelada)" : ""}`);
+      if (v === "S") s++; if (v === "M") m++;
+    }
+    $("cSun").querySelector("b").textContent = s;
+    $("cMoon").querySelector("b").textContent = m;
+    $("cSun").classList.toggle("full", s === N);
+    $("cMoon").classList.toggle("full", m === N);
+    $("undoBtn").disabled = finished || !history.length;
+    $("clearBtn").disabled = finished;
+    $("board").classList.toggle("won", finished);
+    if (!finished && s === N && m === N && bad.size === 0) win();
+  }
+
+  function persist() {
+    const started = cells.some((v, i) => !givens.has(i) && v !== ".");
+    save("dia:" + dayNum, { cells: cells.join(""), elapsed: currentElapsed(), done: finished, time: finished ? elapsed : null, started });
+  }
+
+  // ---------- toque e arrasto ----------
+  const NEXT = { ".": "x", x: "S", S: "M", M: "." };
+  let drag = null;
+  const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.classList.contains("cell") ? +el.dataset.i : -1; };
+
+  $("board").addEventListener("pointerdown", e => {
+    if (finished) return;
+    const i = cellAt(e.clientX, e.clientY);
+    if (i < 0) return;
+    e.preventDefault();
+    drag = { start: i, moved: false, mode: null, before: cells.join(""), touched: new Set([i]) };
+    startTimer();
+  });
+  $("board").addEventListener("pointermove", e => {
+    if (!drag) return;
+    const i = cellAt(e.clientX, e.clientY);
+    if (i < 0 || drag.touched.has(i)) return;
+    if (!drag.moved) {
+      // o arrasto marca ✕ se começou numa casa vazia, e apaga ✕ se começou num ✕
+      drag.moved = true;
+      drag.mode = cells[drag.start] === "x" ? "." : "x";
+      paint(drag.start);
+    }
+    drag.touched.add(i);
+    paint(i);
+  });
+  function paint(i) {
+    if (givens.has(i)) return;
+    const v = cells[i];
+    if (drag.mode === "x" && v === ".") cells[i] = "x";
+    else if (drag.mode === "." && v === "x") cells[i] = ".";
+    render();
+  }
+  const endDrag = () => {
+    if (!drag) return;
+    const d = drag; drag = null;
+    if (!d.moved) {
+      if (givens.has(d.start)) return;
+      cells[d.start] = NEXT[cells[d.start]];
+      render(d.start);
+    }
+    if (cells.join("") !== d.before) { history.push(d.before); if (history.length > 200) history.shift(); }
+    render();
+    persist();
+  };
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+
+  $("undoBtn").addEventListener("click", () => {
+    if (!history.length || finished) return;
+    cells = [...history.pop()];
+    render(); persist();
+  });
+  $("clearBtn").addEventListener("click", () => {
+    if (finished) return;
+    const before = cells.join("");
+    cells = cells.map((v, i) => (givens.has(i) ? v : "."));
+    if (cells.join("") !== before) history.push(before);
+    render(); persist();
+  });
+
+  // ---------- cronômetro ----------
+  const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`; };
+  const currentElapsed = () => elapsed + (timer ? (Date.now() - startedAt) / 1000 : 0);
+  function showTime() { $("timer").textContent = fmt(currentElapsed()); }
+  function startTimer() {
+    if (timer || finished || document.hidden) return;
+    startedAt = Date.now();
+    timer = setInterval(() => { showTime(); }, 500);
+    showTime();
+  }
+  function stopTimer() {
+    if (!timer) return;
+    elapsed = currentElapsed();
+    clearInterval(timer); timer = null;
+    showTime();
+  }
+  // pausa quando você sai do jogo e continua quando volta
+  document.addEventListener("visibilitychange", () => {
+    if (!N) return;
+    if (document.hidden) { stopTimer(); persist(); }
+    else if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  });
+  setInterval(() => { if (timer) persist(); }, 5000);
+
+  // ---------- vitória ----------
+  function win() {
+    stopTimer();
+    finished = true;
+    elapsed = Math.round(elapsed);
+    const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
+    if (!st.times[dayNum]) {
+      st.played += 1;
+      st.streak = st.lastDay === dayNum - 1 ? st.streak + 1 : 1;
+      st.best = Math.max(st.best, st.streak);
+      st.lastDay = dayNum;
+      st.times[dayNum] = elapsed;
+      save("stats", st);
+    }
+    persist();
+    render();
+    setTimeout(() => showEnd(true), 450);
+  }
+  function showEnd(fresh) {
+    $("endTime").textContent = fmt(elapsed);
+    $("endSub").textContent = `#${dayNum} · ${TIERS[P.t]}${fresh ? "" : " · já resolvido hoje"}`;
+    openModal("endOverlay");
+  }
+  function tickCountdown() {
+    const now = new Date(), next = new Date(now); next.setHours(24, 0, 0, 0);
+    const s = Math.max(0, Math.floor((next - now) / 1000));
+    $("countdown").textContent = `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor(s / 60) % 60).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  }
+  setInterval(tickCountdown, 1000); tickCountdown();
+
+  $("shareBtn").addEventListener("click", () => {
+    const text = `ECLIPSE #${dayNum} · ${TIERS[P.t]}\n☀️🌙 ${fmt(elapsed)}\nhttps://a-hanauer.github.io/puzzle-tracker/eclipse/`;
+    const done = () => { $("shareBtn").textContent = "Copiado!"; setTimeout(() => $("shareBtn").textContent = "Compartilhar", 1500); };
+    if (navigator.share) navigator.share({ text }).catch(() => {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(text).then(done).catch(() => prompt("Copie o resultado:", text));
+    else prompt("Copie o resultado:", text);
+  });
+
+  // ---------- janelas ----------
+  function openModal(id) { $(id).classList.add("open"); stopTimer(); }
+  function closeModal(el) {
+    el.classList.remove("open");
+    if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  }
+  document.querySelectorAll(".overlay").forEach(o => {
+    o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); });
+  });
+  $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+})();
+</script>
+</body>
+</html>

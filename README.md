@@ -15,6 +15,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | `apple-touch-icon.png` | Ícone da tela inicial do iPhone |
 | `sanduba/` | O jogo Sanduba (`index.html` + `icon.png`) |
 | `quinhentos/` | O jogo Quinhentos (`index.html` + `icon.png`) |
+| `eclipse/` | O jogo Eclipse: `index.html`, `icon.png`, `desafios.json` (2 anos de desafios) e `gerador.mjs` |
 
 ## Jogos incluídos
 
@@ -28,6 +29,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | 5️⃣ Quinhentos | [`quinhentos/`](quinhentos/) (neste repositório) |
 | 🦊 Foximax | https://foximax.com/ |
 | 💼 LinkedIn (app) | https://www.linkedin.com/games/ |
+| 🌗 Eclipse | [`eclipse/`](eclipse/) (jogo próprio, neste repositório) |
 
 ## Como funciona
 
@@ -89,6 +91,29 @@ As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o
 Para atualizar um desses jogos, substitua o `index.html` da pasta dele.
 
 Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempre o da partida do dia, e "Desmarcar tudo" só afeta os jogos externos. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` no `index.html` do painel.
+
+## Eclipse
+
+Jogo de lógica próprio, na linha do Queens, com dois símbolos:
+
+- Cada **linha**, cada **coluna** e cada **região colorida** tem exatamente **um sol ☀️ e uma lua 🌙**.
+- Nenhuma peça pode **encostar** em outra, nem na diagonal.
+- De 1 a 3 peças já começam reveladas.
+
+Toque numa casa para alternar entre ✕ (anotação de vazio), sol, lua e vazio; arraste o dedo para marcar vários ✕. Conflitos aparecem listrados em vermelho. O cronômetro pausa quando você sai do jogo, e a partida fica salva.
+
+**Desafios.** Há um desafio por dia, o mesmo para todo mundo, a partir de 27/09/2026 (#1). Todos estão em `eclipse/desafios.json` e foram conferidos pelo `eclipse/gerador.mjs`:
+- cada um tem **uma única solução**;
+- cada um pode ser resolvido **só com dedução**, sem chute.
+
+**Dificuldade.** Varia pela semana:
+- **fácil** na segunda e na terça;
+- **médio** de quarta a sexta;
+- **difícil** no sábado e no domingo.
+
+**Painel.** O painel acompanha o Eclipse sozinho: o selo mostra as peças colocadas e o tempo ao terminar. O Histórico mostra tempo por dia, melhor tempo e média.
+
+Para gerar mais desafios, rode `node eclipse/gerador.mjs [dias]` (padrão: 730 dias a partir de 27/09/2026).
 
 ## Ícone e progresso fora do painel
 
