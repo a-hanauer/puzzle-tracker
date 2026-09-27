@@ -61,7 +61,13 @@ O painel guarda até 2 anos de histórico no navegador. Partidas antigas do Sand
 
 ## Adicionar ou remover jogos
 
-Edite o array `GAMES` no início do `<script>` em `index.html`:
+**Pelo próprio painel (cada pessoa, no seu aparelho):** toque em **Adicionar jogo**, no fim de "Outros jogos", ou em configurações → **Gerenciar jogos**.
+- **Adicionar:** cole o link de qualquer jogo (pode ser só o endereço, como `wordle.com`); o nome é sugerido a partir do endereço e pode ser trocado. O ícone é buscado automaticamente no site.
+- **Ocultar:** os jogos que vêm no painel (da casa e externos) podem ser ocultados e reexibidos pelo ícone de olho. Colar o link de um jogo oculto também o traz de volta.
+- **Excluir:** os jogos adicionados podem ser excluídos pela lixeira (com um segundo toque para confirmar).
+- Jogos ocultos saem do painel, da contagem do dia e da sequência. A lista fica salva no navegador de cada aparelho.
+
+**Para mudar os jogos que vêm no painel para todo mundo,** edite o array `BASE_GAMES` no início do `<script>` em `index.html`:
 
 ```js
 { id: "novojogo", name: "Novo Jogo", emoji: "🎯", desc: "Descrição curta", url: "https://exemplo.com/" },

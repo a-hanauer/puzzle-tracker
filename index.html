@@ -276,12 +276,45 @@
   .set-btn.confirm { background: #e5484d; border-color: #e5484d; color: #fff; }
   .set-note { color: var(--muted); font-size: .78rem; margin: 10px 2px 0; line-height: 1.4; }
 
+  /* adicionar / gerenciar jogos */
+  .add-row {
+    width: 100%; margin-top: 8px; padding: 13px; border-radius: 16px; cursor: pointer;
+    border: 1.5px dashed var(--border); background: none; color: var(--muted);
+    display: flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 700; font-size: .9rem;
+  }
+  .add-row svg { width: 18px; height: 18px; }
+  .sheet.tall { max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain; }
+  .add-form { display: grid; gap: 8px; margin-bottom: 18px; }
+  .add-form input {
+    width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text); font: inherit; font-size: 16px; outline: none;
+  }
+  .add-form input:focus { border-color: var(--green); }
+  .add-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: none; border-radius: 12px; cursor: pointer;
+    background: var(--green); color: #fff; font: inherit; font-weight: 800; font-size: .95rem;
+  }
+  .add-btn svg { width: 18px; height: 18px; }
+  .add-err { color: #e5484d; font-size: .82rem; font-weight: 600; }
+  .add-err[hidden] { display: none; }
+  .mlist { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .mitem { display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 10px; border-radius: 14px; border: 1px solid var(--border); }
+  .mitem.off { opacity: .5; }
+  .mitem .icon { width: 36px; height: 36px; border-radius: 10px; font-size: 1.2rem; }
+  .mitem .icon img { width: 24px; height: 24px; }
+  .mitem .mi { flex: 1; min-width: 0; }
+  .mitem .mi b { display: block; font-size: .95rem; }
+  .mitem .mi span { display: block; color: var(--muted); font-size: .76rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mitem .round.warn { background: #e5484d; color: #fff; }
+  .letter { font-weight: 800; font-size: 1.15rem; color: var(--muted); }
+
   /* aviso rápido (ex.: "Tema: Claro") */
   .toast {
     position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 30;
     transform: translate(-50%, 12px); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
     display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 99px;
     background: var(--text); color: var(--bg); font-weight: 700; font-size: .88rem; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
   .toast svg { width: 16px; height: 16px; }
@@ -435,10 +468,11 @@
 </section>
 
 <div id="viewToday">
-<div class="cat"><span>Jogos da casa</span><span class="cat-n" id="catNativeN"></span></div>
+<div class="cat" id="catNative"><span>Jogos da casa</span><span class="cat-n" id="catNativeN"></span></div>
 <ul class="grid" id="gridNative"></ul>
-<div class="cat"><span>Outros jogos</span><span class="cat-n" id="catExternalN"></span></div>
+<div class="cat" id="catExternal"><span>Outros jogos</span><span class="cat-n" id="catExternalN"></span></div>
 <ul class="list" id="gridExternal"></ul>
+<button class="add-row" id="addRow"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Adicionar jogo</button>
 <div class="all-done" id="allDone"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Tudo feito por hoje!</div>
 </div>
 
@@ -452,8 +486,25 @@
       <button data-tab="new" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Nova aba</button>
     </div>
     <button class="set-btn" id="badgeBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg><span>Mostrar pendentes no ícone do app</span></button>
+    <button class="set-btn" id="manageBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Gerenciar jogos</span></button>
     <button class="set-btn danger" id="reset"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Desmarcar jogos externos de hoje</span></button>
     <div class="set-note">Sanduba, Quinhentos e Eclipse seguem o que você jogou e não são desmarcados.</div>
+  </div>
+</div>
+<!-- Gerenciar jogos: adicionar pelo link, ocultar os que vêm no painel, excluir os adicionados -->
+<div class="sheet-bg" id="manage" hidden>
+  <div class="sheet tall" role="dialog" aria-modal="true" aria-labelledby="manTitle">
+    <div class="sheet-head"><b id="manTitle">Jogos</b><button class="round" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="set-label">Adicionar jogo</div>
+    <form class="add-form" id="addForm" novalidate>
+      <input id="addUrl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Link do jogo (ex.: wordle.com)">
+      <input id="addName" type="text" autocomplete="off" placeholder="Nome (opcional)">
+      <button class="add-btn" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Adicionar</button>
+      <div class="add-err" id="addErr" hidden></div>
+    </form>
+    <div class="set-label">Seus jogos</div>
+    <ul class="mlist" id="mlist"></ul>
+    <div class="set-note">Jogos ocultos saem do painel e da contagem do dia, mas continuam aqui para mostrar de novo. A lista fica salva neste aparelho.</div>
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -468,7 +519,7 @@
    app:   (opcional) true = link que abre o app do celular
    iconFull: (opcional) true = o ícone ocupa o quadrado inteiro (para ícones com fundo próprio)
    ============================================================ */
-const GAMES = [
+const BASE_GAMES = [
   { id: "termo",      name: "Termo",      emoji: "🟩", desc: "Wordle em português",           url: "https://term.ooo/" },
   { id: "spotle",     name: "Spotle",     emoji: "🎵", desc: "Adivinhe o artista",            url: "https://spotle.io/" },
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
@@ -574,11 +625,23 @@ function load() {
   try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { s = {}; }
   s.history ??= {};
   s.newTab ??= false;
+  s.custom ??= [];         // jogos adicionados pela pessoa: { id, name, url, desc }
+  s.hidden ??= [];         // ids dos jogos do painel que a pessoa ocultou
   return s;
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} }
 
 const state = load();
+
+// lista de jogos em uso = os que vêm no painel (menos os ocultos) + os adicionados
+const escHTML = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const customGame = c => ({ ...c, custom: true, emoji: `<span class="letter">${escHTML((c.name || "?").trim().charAt(0).toUpperCase())}</span>` });
+let GAMES = [];
+function rebuildGames() {
+  const hid = new Set(state.hidden);
+  GAMES = [...BASE_GAMES.filter(g => !hid.has(g.id)), ...state.custom.map(customGame)];
+}
+rebuildGames();
 // guarda até 2 anos (são poucos bytes por dia)
 state.results ??= {};   // resultado dos jogos nativos por dia: { "2026-09-27": { sanduba: {tries, max, won} } }
 Object.keys(state.history).sort().slice(0, -730).forEach(d => delete state.history[d]);
@@ -688,14 +751,14 @@ function buildCard(g) {
 function buildRow(g, li) {
   li.className = "row";
   li.innerHTML = `
-    <a class="game" href="${g.url}">
+    <a class="game" href="${escHTML(g.url)}">
       <span class="icon">${g.emoji}</span>
       <span class="info">
-        <span class="name">${g.name}${g.app ? '<span class="tag">APP</span>' : ""}</span>
-        <span class="desc">${g.desc || ""}</span>
+        <span class="name">${escHTML(g.name)}${g.app ? '<span class="tag">APP</span>' : ""}</span>
+        <span class="desc">${escHTML(g.desc || "")}</span>
       </span>
     </a>
-    <button class="toggle" role="switch" aria-checked="false" aria-label="${g.name} feito">
+    <button class="toggle" role="switch" aria-checked="false" aria-label="${escHTML(g.name)} feito">
       <span class="switch"><span class="knob">${CHECK_SVG}</span></span>
       <span class="toggle-label">A fazer</span>
     </button>`;
@@ -706,7 +769,7 @@ function buildRow(g, li) {
   });
   return li;
 }
-GAMES.forEach(g => cards[g.id] = buildCard(g));
+[...BASE_GAMES, ...state.custom.map(customGame)].forEach(g => cards[g.id] = buildCard(g));
 
 /* ---------- Render ---------- */
 const $ = id => document.getElementById(id);
@@ -729,6 +792,8 @@ function render() {
   const done = doneToday();
   const gridNative = $("gridNative"), gridExternal = $("gridExternal");
   let nNat = 0, dNat = 0, nExt = 0, dExt = 0;
+  const inUse = new Set(GAMES.map(g => g.id));
+  for (const id in cards) if (!inUse.has(id) && cards[id].parentNode) cards[id].remove();
 
   for (const g of GAMES) {
     const li = cards[g.id];
@@ -758,6 +823,12 @@ function render() {
     else { a.removeAttribute("target"); a.removeAttribute("rel"); }
   }
 
+  // mantém a ordem da lista (um jogo reexibido volta ao seu lugar, sem refazer as animações à toa)
+  for (const grid of [gridNative, gridExternal]) {
+    const want = GAMES.filter(g => cards[g.id].parentNode === grid).map(g => cards[g.id]);
+    if (want.some((li, k) => grid.children[k] !== li)) want.forEach(li => grid.appendChild(li));
+  }
+  $("catNative").hidden = gridNative.hidden = nNat === 0;
   $("catNativeN").textContent = `${dNat}/${nNat}`;
   $("catExternalN").textContent = `${dExt}/${nExt}`;
   const n = GAMES.filter(g => done.has(g.id)).length, total = GAMES.length;
@@ -860,6 +931,86 @@ $("settings").addEventListener("click", e => { if (e.target === $("settings") ||
 document.querySelectorAll(".seg2 button").forEach(b => b.addEventListener("click", () => {
   state.newTab = b.dataset.tab === "new"; save(); render();
 }));
+// ---------- gerenciar jogos ----------
+const EYE = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-2.7 3.6M6.6 6.6A17.4 17.4 0 0 0 2 12s3.6 7 10 7a9.8 9.8 0 0 0 4.4-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>';
+let armedDelete = null;
+function renderManage() {
+  const hid = new Set(state.hidden);
+  const all = [...BASE_GAMES.filter(g => LOCAL_PROGRESS[g.id]), ...BASE_GAMES.filter(g => !LOCAL_PROGRESS[g.id]), ...state.custom.map(customGame)];
+  $("mlist").innerHTML = "";
+  for (const g of all) {
+    const off = hid.has(g.id), li = document.createElement("li");
+    li.className = "mitem" + (off ? " off" : "");
+    const kind = g.custom ? "adicionado por você" : LOCAL_PROGRESS[g.id] ? "jogo da casa" : "outro jogo";
+    const btn = g.custom
+      ? `<button class="round${armedDelete === g.id ? " warn" : ""}" data-del="${g.id}" aria-label="${armedDelete === g.id ? "Toque de novo para excluir" : "Excluir"} ${escHTML(g.name)}">${TRASH}</button>`
+      : `<button class="round" data-hide="${g.id}" aria-label="${off ? "Mostrar" : "Ocultar"} ${escHTML(g.name)}">${off ? EYE_OFF : EYE}</button>`;
+    li.innerHTML = `<span class="icon">${g.emoji}</span><span class="mi"><b>${escHTML(g.name)}</b><span>${kind}${g.custom ? " · " + escHTML(g.desc) : ""}</span></span>${btn}`;
+    loadIcon(g, li.querySelector(".icon"));
+    $("mlist").appendChild(li);
+  }
+}
+function openManage(focusAdd) {
+  closeSettings(); armedDelete = null; renderManage();
+  $("addErr").hidden = true; $("manage").hidden = false;
+  if (focusAdd) setTimeout(() => $("addUrl").focus(), 60);
+}
+$("manageBtn").addEventListener("click", () => openManage(false));
+$("addRow").addEventListener("click", () => openManage(true));
+$("manage").addEventListener("click", e => {
+  if (e.target === $("manage") || e.target.closest("[data-close]")) { $("manage").hidden = true; return; }
+  const hideBtn = e.target.closest("[data-hide]"), delBtn = e.target.closest("[data-del]");
+  if (hideBtn) {
+    const id = hideBtn.dataset.hide, set = new Set(state.hidden);
+    set.has(id) ? set.delete(id) : set.add(id);
+    state.hidden = [...set]; save(); rebuildGames(); render(); renderManage();
+  }
+  if (delBtn) {
+    const id = delBtn.dataset.del;
+    if (armedDelete !== id) { armedDelete = id; renderManage(); return; }   // segundo toque confirma
+    armedDelete = null;
+    const g = state.custom.find(c => c.id === id);
+    state.custom = state.custom.filter(c => c.id !== id);
+    cards[id]?.remove(); delete cards[id];
+    save(); rebuildGames(); render(); renderManage();
+    toast(`${escHTML(g?.name || "Jogo")} excluído`);
+  }
+});
+// link digitado → URL válida (aceita "wordle.com", sem https)
+function parseGameUrl(text) {
+  let t = text.trim();
+  if (!t) throw new Error("Cole ou digite o link do jogo.");
+  if (!/^https?:\/\//i.test(t)) t = "https://" + t;
+  let u;
+  try { u = new URL(t); } catch { throw new Error("Esse link não parece válido."); }
+  if (!u.hostname.includes(".")) throw new Error("Esse link não parece válido.");
+  return u;
+}
+const nameFromUrl = u => { const b = u.hostname.replace(/^www\./, "").split(".")[0]; return b.charAt(0).toUpperCase() + b.slice(1); };
+$("addForm").addEventListener("submit", e => {
+  e.preventDefault();
+  let u;
+  try { u = parseGameUrl($("addUrl").value); }
+  catch (err) { $("addErr").textContent = err.message; $("addErr").hidden = false; return; }
+  const same = x => { try { const v = new URL(x.url, location.href); return v.hostname.replace(/^www\./, "") === u.hostname.replace(/^www\./, "") && v.pathname.replace(/\/$/, "") === u.pathname.replace(/\/$/, ""); } catch { return false; } };
+  const base = BASE_GAMES.find(same);
+  if (base && state.hidden.includes(base.id)) {           // era um jogo do painel oculto: só mostra de novo
+    state.hidden = state.hidden.filter(id => id !== base.id);
+    save(); rebuildGames(); render(); renderManage(); $("addForm").reset(); $("addErr").hidden = true;
+    toast(`${escHTML(base.name)} voltou para o painel`); return;
+  }
+  if (base || state.custom.some(same)) { $("addErr").textContent = "Esse jogo já está na lista."; $("addErr").hidden = false; return; }
+  const name = $("addName").value.trim() || nameFromUrl(u);
+  const g = { id: "c" + Date.now().toString(36), name: name.slice(0, 30), url: u.href, desc: u.hostname.replace(/^www\./, "") };
+  state.custom.push(g);
+  cards[g.id] = buildCard(customGame(g));
+  save(); rebuildGames(); render(); renderManage();
+  $("addForm").reset(); $("addErr").hidden = true;
+  toast(`${escHTML(name)} adicionado`);
+});
+
 // desmarcar pede um segundo toque para confirmar
 let resetArmed = false, resetTimer = null;
 function resetArm(on) {
