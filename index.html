@@ -577,7 +577,20 @@ function scheduleMidnight() {
 
 /* ---------- Instalável / offline ---------- */
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  // atualização automática: o app da tela inicial não tem botão de recarregar,
+  // então o painel procura versão nova sempre que volta para a tela e se recarrega sozinho.
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloading = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController || reloading) return;   // primeira instalação: não precisa recarregar
+    reloading = true;
+    location.reload();
+  });
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(reg => {
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) reg.update().catch(() => {}); });
+    }).catch(() => {});
+  });
 }
 
 function renderDate() {
