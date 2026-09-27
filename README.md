@@ -32,8 +32,8 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 ## Como funciona
 
 - **Tocar em um jogo externo** abre o jogo e já o marca como feito.
-- **Sanduba e Quinhentos marcam sozinhos:** o painel lê a partida salva pelos jogos e marca como feito quando ela termina, com vitória ou derrota. Enquanto isso, o cartão mostra o andamento ("Em andamento · 3/14 tentativas", "Acertou em 5/8").
-- **O switch à direita** marca ou desmarca o jogo manualmente. Ligado, fica verde com ✔ e "Feito".
+- **Sanduba e Quinhentos são 100% automáticos:** não têm switch. O painel lê a partida salva pelos jogos e mostra um anel que enche a cada tentativa ("3/14"), virando um ✔ verde quando a partida termina, com vitória ou derrota.
+- **O switch à direita** (só nos jogos externos) marca ou desmarca o jogo manualmente. Ligado, fica verde com ✔ e "Feito".
 - Os jogos ficam separados em **A fazer** e **Feitos**; os feitos ficam riscados e com uma faixa verde.
 - Cada jogo usa o **ícone do próprio site**. Se o ícone não carregar, aparece o emoji definido na lista.
 - O **anel de progresso** no topo mostra quantos jogos do dia já foram feitos.
@@ -72,7 +72,7 @@ As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o
 
 Para atualizar um desses jogos, substitua o `index.html` da pasta dele.
 
-Como o painel lê o que esses jogos salvam no navegador, ele marca a partida sozinho quando você termina. Se você desmarcar à mão, ele não remarca naquele dia. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` no `index.html` do painel.
+Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempre o da partida do dia, e "Desmarcar tudo" só afeta os jogos externos. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` no `index.html` do painel.
 
 ## Ícone e progresso fora do painel
 

@@ -186,6 +186,28 @@
   .knob svg { width: 14px; height: 14px; stroke: var(--green); stroke-width: 3.2; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
     stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .3s .1s; }
+  .auto-status {
+    flex-shrink: 0; width: 76px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    padding: 10px 14px 10px 10px;
+  }
+  .mini-ring { width: 30px; height: 30px; transform: rotate(-90deg); }
+  .mini-ring circle { fill: none; stroke-width: 3.5; }
+  .mr-track { stroke: var(--border); }
+  .mr-arc {
+    stroke: var(--green); stroke-linecap: round;
+    stroke-dasharray: 87.96; stroke-dashoffset: 87.96;
+    transition: stroke-dashoffset .4s ease, fill .25s;
+  }
+  .mr-check {
+    fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+    transform: rotate(90deg); transform-origin: 18px 18px;
+    stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .3s .15s;
+  }
+  .auto-status.finished .mr-arc { fill: var(--green); }
+  .auto-status.finished .mr-check { stroke-dashoffset: 0; }
+  .auto-status.playing .toggle-label { color: var(--text); }
+  .auto-status.finished .toggle-label { color: var(--green); }
   .toggle-label { font-size: .66rem; font-weight: 700; letter-spacing: .03em; color: var(--faint); text-transform: uppercase; }
   .toggle[aria-checked="true"] .switch { background: var(--green); border-color: var(--green); }
   .toggle[aria-checked="true"] .knob { transform: translateX(22px); }
@@ -340,7 +362,6 @@ function load() {
   let s;
   try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { s = {}; }
   s.history ??= {};
-  s.auto ??= {};           // jogos marcados automaticamente, por dia (para não remarcar se você desmarcar)
   s.newTab ??= false;
   return s;
 }
@@ -348,25 +369,21 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catc
 
 const state = load();
 Object.keys(state.history).sort().slice(0, -60).forEach(d => delete state.history[d]);
-Object.keys(state.auto).filter(d => d !== today()).forEach(d => delete state.auto[d]);
+delete state.auto;   // campo de uma versão anterior
 
-// marca como feito o jogo local que terminou hoje (uma vez por dia)
+// jogos nativos: feito = partida do dia terminada (o painel só espelha o que o jogo salvou)
 function syncLocalGames() {
-  const set = doneToday(), auto = new Set(state.auto[today()] || []);
+  const set = doneToday();
   let changed = false;
   for (const g of GAMES) {
-    const p = progressOf(g);
-    if (p?.finished && !auto.has(g.id)) {
-      auto.add(g.id);
-      set.add(g.id);
+    if (!LOCAL_PROGRESS[g.id]) continue;
+    const finished = !!progressOf(g)?.finished;
+    if (finished !== set.has(g.id)) {
+      finished ? set.add(g.id) : set.delete(g.id);
       changed = true;
     }
   }
-  if (changed) {
-    state.history[today()] = [...set];
-    state.auto[today()] = [...auto];
-    save();
-  }
+  if (changed) { state.history[today()] = [...set]; save(); }
 }
 
 const doneToday = () => new Set(state.history[today()] || []);
@@ -406,8 +423,20 @@ function buildCard(g) {
       <span class="toggle-label">A fazer</span>
     </button>`;
   loadIcon(g, li.querySelector(".icon"));
-  // jogos externos: abrir já marca como feito. Jogos locais: marcam sozinhos ao terminar a partida.
-  if (!LOCAL_PROGRESS[g.id]) li.querySelector("a").addEventListener("click", () => setDone(g.id, true));
+  // jogos nativos: indicador automático (sem switch); externos: abrir já marca como feito
+  if (LOCAL_PROGRESS[g.id]) {
+    li.querySelector(".toggle").outerHTML = `
+      <div class="auto-status" aria-live="polite">
+        <svg class="mini-ring" viewBox="0 0 36 36" aria-hidden="true">
+          <circle class="mr-track" cx="18" cy="18" r="14"/>
+          <circle class="mr-arc" cx="18" cy="18" r="14"/>
+          <path class="mr-check" d="M11.5 18.5l4.5 4.5 8.5-9"/>
+        </svg>
+        <span class="toggle-label">A fazer</span>
+      </div>`;
+    return li;
+  }
+  li.querySelector("a").addEventListener("click", () => setDone(g.id, true));
   li.querySelector(".toggle").addEventListener("click", e => {
     const on = e.currentTarget.getAttribute("aria-checked") === "true";
     setDone(g.id, !on);
@@ -419,6 +448,7 @@ GAMES.forEach(g => cards[g.id] = buildCard(g));
 /* ---------- Render ---------- */
 const $ = id => document.getElementById(id);
 const CIRC = 2 * Math.PI * 34;
+const MINI_CIRC = 2 * Math.PI * 14;
 $("arc").style.strokeDasharray = CIRC;
 
 function progressText(g, p) {
@@ -440,9 +470,21 @@ function render() {
     if (li.parentNode !== target) target.appendChild(li);
     li.classList.toggle("done", isDone);
 
+    const st = li.querySelector(".auto-status");
+    if (st) {
+      const p = progressOf(g);
+      const frac = p ? (p.finished ? 1 : p.tries / p.max) : 0;
+      st.classList.toggle("playing", !!p && !p.finished);
+      st.classList.toggle("finished", !!p?.finished);
+      st.querySelector(".mr-arc").style.strokeDashoffset = MINI_CIRC * (1 - frac);
+      st.querySelector(".toggle-label").textContent = !p ? "A fazer" : p.finished ? "Feito" : `${p.tries}/${p.max}`;
+      st.setAttribute("aria-label", `${g.name}: ${st.querySelector(".toggle-label").textContent}`);
+    }
     const t = li.querySelector(".toggle");
+    if (t) {
     t.setAttribute("aria-checked", isDone);
     t.querySelector(".toggle-label").textContent = isDone ? "Feito" : "A fazer";
+    }
 
     const a = li.querySelector("a");
     if (state.newTab && !g.app) { a.target = "_blank"; a.rel = "noopener"; }
@@ -544,7 +586,7 @@ function renderDate() {
 
 $("toggleTab").addEventListener("click", () => { state.newTab = !state.newTab; save(); render(); });
 $("reset").addEventListener("click", () => {
-  if (confirm("Desmarcar todos os jogos de hoje?")) { state.history[today()] = []; save(); render(); }
+  if (confirm("Desmarcar os jogos externos de hoje? (Sanduba e Quinhentos seguem o que você jogou.)")) { state.history[today()] = []; save(); render(); }
 });
 
 // ao voltar para o painel (ou se virar o dia), atualiza
