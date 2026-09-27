@@ -15,7 +15,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | `apple-touch-icon.png` | Ícone da tela inicial do iPhone |
 | `sanduba/` | O jogo Sanduba (`index.html` + `icon.png`) |
 | `quinhentos/` | O jogo Quinhentos (`index.html` + `icon.png`) |
-| `eclipse/` | O jogo Eclipse: `index.html`, `icon.png`, `desafios.json` (2 anos de desafios) e `gerador.mjs` |
+| `eclipse/` | O jogo Eclipse: `index.html`, `icon.png`, `desafios.json` (2 anos de desafios), `livre.json` (jogo livre) e `gerador.mjs` |
 
 ## Jogos incluídos
 
@@ -110,14 +110,13 @@ Os ✕ claros são automáticos: vizinhas de qualquer peça e a linha, coluna e 
 - cada um tem **uma única solução**;
 - cada um pode ser resolvido **só com dedução**, sem chute.
 
-**Dificuldade.** Varia pela semana:
-- **fácil** na segunda e na terça;
-- **médio** de quarta a sexta;
-- **difícil** no sábado e no domingo.
+**Dificuldade.** Sobe ao longo da semana, em 7 níveis: **segunda é nível 1** (o mais fácil) e **domingo é nível 7** (o mais difícil). Os níveis vêm do esforço de dedução que cada desafio exige, medido pelo gerador; os 3% mais extremos ficam de fora.
+
+**Jogo livre.** A chave "Jogo livre" abre desafios extras (`eclipse/livre.json`, 40 por nível), sorteados, que não contam nas estatísticas. O botão "outro" sorteia um novo. A partida do dia fica guardada enquanto isso.
 
 **Painel.** O painel acompanha o Eclipse sozinho: o selo mostra as peças colocadas e o tempo ao terminar. O Histórico mostra tempo por dia, melhor tempo e média.
 
-Para gerar mais desafios, rode `node eclipse/gerador.mjs [dias]` (padrão: 730 dias a partir de 27/09/2026).
+Para gerar os desafios de novo, rode `node eclipse/gerador.mjs [dias]` (padrão: 730 dias a partir de 27/09/2026); ele refaz `desafios.json` e `livre.json`.
 
 ## Ícone e progresso fora do painel
 

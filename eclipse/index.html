@@ -97,10 +97,16 @@
 
   .meta { display: flex; align-items: center; justify-content: space-between; margin: 2px 2px 10px; font-size: .82rem; color: var(--muted); font-weight: 600; }
   .meta .tier { text-transform: capitalize; }
-  .counts { display: flex; gap: 12px; font-variant-numeric: tabular-nums; }
-  .counts span { display: inline-flex; align-items: center; gap: 4px; }
-  .counts svg { width: 16px; height: 16px; }
-  .counts .full { color: var(--good); }
+  #cSun, #cMoon { font-variant-numeric: tabular-nums; }
+  #cSun.full, #cMoon.full { color: var(--good); }
+  /* chave "Jogo livre", igual à dos outros jogos */
+  .free { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; font-weight: 700; }
+  .free input { position: absolute; opacity: 0; pointer-events: none; }
+  .free .track { position: relative; width: 38px; height: 22px; border-radius: 99px; background: var(--surface-2); box-shadow: inset 0 0 0 1.5px var(--line); transition: background .2s; }
+  .free .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: transform .2s; }
+  .free input:checked + .track { background: var(--accent); box-shadow: none; }
+  .free input:checked + .track::after { transform: translateX(16px); }
+  .linkbtn { border: none; background: none; padding: 0 0 0 2px; font: inherit; font-weight: 700; color: var(--accent); cursor: pointer; }
 
   /* ---------- tabuleiro ---------- */
   .board {
@@ -140,15 +146,15 @@
 
   .cell svg.dim { opacity: .3; }                     /* peça do outro modo, só de referência */
   .seg {
-    flex: 1.25; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px;
+    flex: 1; min-height: 54px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px;
     background: var(--surface); border-radius: 14px; box-shadow: var(--shadow);
   }
   .seg button {
     border: none; border-radius: 11px; cursor: pointer; padding: 0; background: none; color: var(--muted);
-    font: inherit; font-weight: 700; font-size: .88rem; box-shadow: none !important;
-    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    font: inherit; font-weight: 800; font-size: 1.02rem; box-shadow: none !important;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   }
-  .seg button svg { width: 18px; height: 18px; }
+  .seg button svg { width: 24px; height: 24px; }
   #modeSun[aria-pressed="true"] { background: color-mix(in srgb, var(--sun) 26%, var(--surface)); color: var(--ink); }
   #modeMoon[aria-pressed="true"] { background: color-mix(in srgb, var(--moon) 22%, var(--surface)); color: var(--ink); }
   .controls { display: flex; gap: 10px; margin-top: 14px; }
@@ -159,6 +165,8 @@
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   }
   .controls button:disabled { opacity: .45; }
+  .controls #clearBtn { flex: 0 0 48px; padding: 0; }
+  .controls #undoBtn { flex: 0 0 auto; padding: 0 14px; }
   .controls button[aria-pressed="true"] { background: var(--accent); color: #fff; }
   @media (prefers-color-scheme: dark) { .controls button[aria-pressed="true"] { color: #11131c; } }
   .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; }
@@ -243,10 +251,10 @@
 
 <div class="meta">
   <span id="dayInfo"></span>
-  <span class="counts">
-    <span id="cSun"><svg><use href="#i-sun"/></svg><span><b>0</b>/9</span></span>
-    <span id="cMoon"><svg><use href="#i-moon"/></svg><span><b>0</b>/9</span></span>
-  </span>
+  <label class="free" title="Desafios extras, que não contam nas estatísticas">
+    <span>Jogo livre</span>
+    <input type="checkbox" id="freeToggle"><span class="track"></span>
+  </label>
 </div>
 
 <div class="board" id="board" role="grid" aria-label="Tabuleiro"></div>
@@ -257,15 +265,14 @@
     Desfazer
   </button>
   <div class="seg" role="group" aria-label="Modo">
-    <button id="modeSun" aria-pressed="true"><svg><use href="#i-sun"/></svg>Sol</button>
-    <button id="modeMoon" aria-pressed="false"><svg><use href="#i-moon"/></svg>Lua</button>
+    <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg><use href="#i-sun"/></svg><span id="cSun"><b>0</b>/9</span></button>
+    <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg><use href="#i-moon"/></svg><span id="cMoon"><b>0</b>/9</span></button>
   </div>
-  <button id="clearBtn">
+  <button id="clearBtn" aria-label="Limpar tabuleiro" title="Limpar tabuleiro">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
-    Limpar
   </button>
 </div>
-<div class="tip" id="tip"><b id="tipMode">Modo sol</b>: toque = <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> → <svg><use id="tipSym" href="#i-sun"/></svg> → vazio · arraste desenha <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg><br><svg><use href="#i-x" style="stroke:var(--muted);stroke-width:2.4;stroke-linecap:round;opacity:.55"/></svg> claros são automáticos</div></div>
+<div class="tip" id="tip"><b id="tipMode">Modo sol</b>: toque = <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> → <svg><use id="tipSym" href="#i-sun"/></svg> → vazio · arraste desenha <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg><br><svg><use href="#i-x" style="stroke:var(--muted);stroke-width:2.4;stroke-linecap:round;opacity:.55"/></svg> claros são automáticos</div>
 
 <!-- Como jogar -->
 <div class="overlay" id="helpOverlay">
@@ -296,7 +303,8 @@
       <li>Os ✕ claros são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
     </ul>
     <p>Conflitos aparecem listrados em vermelho.</p>
-    <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia: mais fácil no começo da semana, mais difícil no fim de semana.</p>
+    <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia, e a dificuldade sobe ao longo da semana: <b>segunda é nível 1</b>, o mais fácil, e <b>domingo é nível 7</b>, o mais difícil.</p>
+    <p>No <b>Jogo livre</b> você joga desafios extras, de níveis variados, que não contam nas estatísticas.</p>
     <button class="btn" data-close>Jogar</button>
   </div>
 </div>
@@ -305,11 +313,12 @@
 <div class="overlay" id="endOverlay">
   <div class="modal end">
     <div class="art"><svg aria-hidden="true"><use href="#i-logo"/></svg></div>
-    <h2 style="justify-content:center">Eclipse completo!</h2>
+    <h2 style="justify-content:center" id="endTitle">Eclipse completo!</h2>
     <div class="big" id="endTime">0:00</div>
     <div class="sub" id="endSub"></div>
     <button class="btn" id="shareBtn">Compartilhar</button>
-    <div class="next">Próximo Eclipse em <b id="countdown">--:--:--</b></div>
+    <button class="btn" id="againBtn" hidden>Jogar outro</button>
+    <div class="next" id="nextBox">Próximo Eclipse em <b id="countdown">--:--:--</b></div>
     <button class="close" data-close aria-label="Fechar" style="margin-top:14px;width:auto;padding:0 14px;border-radius:99px">Ver tabuleiro</button>
   </div>
 </div>
@@ -319,7 +328,6 @@
   "use strict";
   const $ = id => document.getElementById(id);
   const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
-  const TIERS = ["fácil", "médio", "difícil"];
   const LS = "eclipse:";
   const load = (k, d) => { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
   const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
@@ -332,25 +340,77 @@
   }
 
   let PID = "", N, P, dayNum, regions, givens, cells, history = [], timer = null, startedAt = 0, elapsed = 0, finished = false;
+  let kind = "dia", DAILY = null, FREE = null, freeIdx = -1;
 
-  fetch("desafios.json").then(r => r.json()).then(data => {
-    N = data.n;
-    dayNum = dayNumber(data.epoch);
-    P = data.puzzles[(dayNum - 1) % data.puzzles.length];
+  // estatísticas derivadas dos tempos salvos: { número do dia: segundos }
+  function recomputeStats(st) {
+    const days = Object.keys(st.times).map(Number).sort((a, b) => a - b);
+    let best = 0, run = 0, prev = -9;
+    for (const d of days) { run = d === prev + 1 ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+    st.played = days.length; st.best = best; st.streak = run; st.lastDay = days.at(-1) || 0;
+    return st;
+  }
+
+  // prepara o tabuleiro para um desafio (do dia ou livre)
+  function setup(puzzle, saved, k) {
+    stopTimer();
+    kind = k; P = puzzle;
     regions = [...P.r].map(ch => parseInt(ch, 36));
     givens = new Map(P.g.split(",").map(t => [+t.slice(1), t[0]]));
-    // se o desafio do dia mudar (ex.: troca por um mais fácil), a partida salva é descartada
     PID = P.r + "|" + P.g;
-    let saved = load("dia:" + dayNum, null);
     if (saved && saved.pid !== PID) saved = null;
     cells = saved?.cells ? [...saved.cells] : new Array(N * N).fill(".");
     for (const [i, v] of givens) cells[i] = v;
     elapsed = saved?.elapsed || 0;
     finished = !!saved?.done;
-    $("dayInfo").innerHTML = `#${dayNum} · ${WEEK[new Date().getDay()]} · <span class="tier">${TIERS[P.t]}</span>`;
-    build();
-    render();
-    if (finished) { showTime(); showEnd(false); }
+    history = []; UNITS = null;
+    $("dayInfo").innerHTML = kind === "dia"
+      ? `#${dayNum} · ${WEEK[new Date().getDay()]} · nível ${P.l}/7`
+      : `Livre · nível ${P.l}/7 · <button class="linkbtn" id="newFree">outro ↻</button>`;
+    if (kind === "livre") $("newFree").addEventListener("click", () => newFree());
+    build(); render(); showTime();
+  }
+
+  function loadDaily() {
+    const { data } = DAILY;
+    const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
+    let saved = load("dia:" + dayNum, null);
+    // se o desafio do dia mudou depois de resolvido, o tempo antigo sai das estatísticas
+    if (saved && saved.pid !== puzzle.r + "|" + puzzle.g && saved.done) {
+      const st = load("stats", null);
+      if (st?.times?.[dayNum] != null) { delete st.times[dayNum]; save("stats", recomputeStats(st)); }
+    }
+    setup(puzzle, saved, "dia");
+    persist();
+  }
+
+  async function loadFree(forceNew) {
+    if (!FREE) FREE = await fetch("livre.json").then(r => r.json());
+    const saved = load("livre", null);
+    if (!forceNew && saved && !saved.done && FREE.puzzles[saved.idx]) freeIdx = saved.idx;
+    else {
+      let k; do { k = Math.floor(Math.random() * FREE.puzzles.length); } while (FREE.puzzles.length > 1 && k === saved?.idx);
+      freeIdx = k;
+    }
+    const puzzle = FREE.puzzles[freeIdx];
+    setup(puzzle, saved && saved.idx === freeIdx ? saved : null, "livre");
+    persist();
+    if (!finished) startTimer();
+  }
+  function newFree() { closeAll(); loadFree(true); }
+
+  $("freeToggle").addEventListener("change", async e => {
+    persist();
+    if (e.target.checked) await loadFree(false);
+    else { loadDaily(); if (!finished) startTimer(); }
+  });
+
+  fetch("desafios.json").then(r => r.json()).then(data => {
+    N = data.n;
+    dayNum = dayNumber(data.epoch);
+    DAILY = { data };
+    loadDaily();
+    if (finished) showEnd(false);
     else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
     else startTimer();
   }).catch(() => { $("board").outerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
@@ -481,6 +541,8 @@
 
   function persist() {
     const started = cells.some((v, i) => !givens.has(i) && v !== ".");
+    if (!P) return;
+    if (kind === "livre") { save("livre", { idx: freeIdx, pid: PID, cells: cells.join(""), elapsed: currentElapsed(), done: finished }); return; }
     save("dia:" + dayNum, { pid: PID, cells: cells.join(""), elapsed: currentElapsed(), done: finished, time: finished ? elapsed : null, started });
   }
 
@@ -593,14 +655,9 @@
     stopTimer();
     finished = true;
     elapsed = Math.round(elapsed);
-    const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
-    if (!st.times[dayNum]) {
-      st.played += 1;
-      st.streak = st.lastDay === dayNum - 1 ? st.streak + 1 : 1;
-      st.best = Math.max(st.best, st.streak);
-      st.lastDay = dayNum;
-      st.times[dayNum] = elapsed;
-      save("stats", st);
+    if (kind === "dia") {                    // o jogo livre não conta nas estatísticas
+      const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
+      if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
     }
     persist();
     render();
@@ -608,7 +665,12 @@
   }
   function showEnd(fresh) {
     $("endTime").textContent = fmt(elapsed);
-    $("endSub").textContent = `#${dayNum} · ${TIERS[P.t]}${fresh ? "" : " · já resolvido hoje"}`;
+    const daily = kind === "dia";
+    $("endTitle").textContent = daily ? "Eclipse completo!" : "Resolvido!";
+    $("endSub").textContent = daily ? `#${dayNum} · nível ${P.l}/7${fresh ? "" : " · já resolvido hoje"}` : `Jogo livre · nível ${P.l}/7`;
+    $("shareBtn").hidden = !daily;
+    $("againBtn").hidden = daily;
+    $("nextBox").hidden = !daily;
     openModal("endOverlay");
   }
   function tickCountdown() {
@@ -619,15 +681,18 @@
   setInterval(tickCountdown, 1000); tickCountdown();
 
   $("shareBtn").addEventListener("click", () => {
-    const text = `ECLIPSE #${dayNum} · ${TIERS[P.t]}\n☀️🌙 ${fmt(elapsed)}\nhttps://a-hanauer.github.io/puzzle-tracker/eclipse/`;
+    const text = `ECLIPSE #${dayNum} · nível ${P.l}/7\n☀️🌙 ${fmt(elapsed)}\nhttps://a-hanauer.github.io/puzzle-tracker/eclipse/`;
     const done = () => { $("shareBtn").textContent = "Copiado!"; setTimeout(() => $("shareBtn").textContent = "Compartilhar", 1500); };
     if (navigator.share) navigator.share({ text }).catch(() => {});
     else if (navigator.clipboard) navigator.clipboard.writeText(text).then(done).catch(() => prompt("Copie o resultado:", text));
     else prompt("Copie o resultado:", text);
   });
 
+  $("againBtn").addEventListener("click", () => newFree());
+
   // ---------- janelas ----------
   function openModal(id) { $(id).classList.add("open"); stopTimer(); }
+  function closeAll() { document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open")); }
   function closeModal(el) {
     el.classList.remove("open");
     if (!finished && !document.querySelector(".overlay.open")) startTimer();

@@ -499,6 +499,7 @@ function syncLocalGames() {
   for (const g of GAMES) {
     if (!LOCAL_PROGRESS[g.id]) continue;
     const p = progressOf(g), finished = !!p?.finished;
+    if (!finished && state.results[today()]?.[g.id]) { delete state.results[today()][g.id]; changed = true; }
     if (finished) {
       const r = (state.results[today()] ??= {});
       if (r[g.id]?.tries !== p.tries || r[g.id]?.time !== p.time) {

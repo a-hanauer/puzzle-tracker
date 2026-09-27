@@ -5,7 +5,7 @@
 // (nem na diagonal). Algumas peças começam reveladas para a solução ser única.
 //
 // Uso:  node eclipse/gerador.mjs [dias] [tamanho] [semente]
-// Gera eclipse/desafios.json com um desafio por dia. Cada desafio é conferido pelo solucionador abaixo:
+// Gera eclipse/desafios.json (um desafio por dia) e eclipse/livre.json (jogo livre). Cada desafio é conferido pelo solucionador abaixo:
 // só entra se tiver exatamente uma solução.
 
 import { writeFileSync } from "node:fs";
@@ -185,13 +185,13 @@ export function logicSolve(reg, givens) {
 
   for (const [i, v] of givens) if (!place(cand, val, i, v)) return null;
   let level = 1;
-  const uses = { c2: 0, c3: 0, probe: 0 };
+  const uses = { c2: 0, c3: 0, probe: 0 }, elim = { c2: 0, c3: 0, probe: 0 };
   const combos = k => { const out = [], rec = (s, a) => { if (a.length === k) { out.push([...a]); return; } for (let i = s; i < N; i++) { a.push(i); rec(i + 1, a); a.pop(); } }; rec(0, []); return out; };
   const C2 = combos(2), C3 = combos(3);
 
-  function confinement(k) {                 // devolve true se eliminou algo
+  function confinement(k) {                 // devolve quantas eliminações fez
     const sets = k === 2 ? C2 : C3;
-    let any = false;
+    let any = 0;
     // pares de famílias: regiões×linhas, regiões×colunas, linhas×regiões, colunas×regiões
     const fam = [[2, 0], [2, 1], [0, 2], [1, 2]];
     for (const [a, b] of fam) for (const x of [1, 2]) for (const set of sets) {
@@ -203,25 +203,26 @@ export function logicSolve(reg, givens) {
       if (cov.size !== k) continue;
       const inside = new Set(us.flat());
       for (const t of cov) for (const i of units[b * N + t])
-        if (!inside.has(i) && (cand[i] & x) && !val[i]) { cand[i] &= ~x; any = true; }
+        if (!inside.has(i) && (cand[i] & x) && !val[i]) { cand[i] &= ~x; any++; }
     }
     return any;
   }
   function probe() {                        // testa cada candidato: se leva a contradição, elimina
-    let any = false;
+    let any = 0;
     for (let i = 0; i < C; i++) if (!val[i]) for (const x of [1, 2]) if (cand[i] & x) {
       const cd = [...cand], vl = [...val];
-      if (!place(cd, vl, i, x) || !basic(cd, vl)) { cand[i] &= ~x; any = true; }
+      if (!place(cd, vl, i, x) || !basic(cd, vl)) { cand[i] &= ~x; any++; }
     }
     return any;
   }
 
   for (let guard = 0; guard < 500; guard++) {
     if (!basic(cand, val)) return null;
-    if (done()) return { level, uses, score: uses.c2 + 2 * uses.c3 + 4 * uses.probe };
-    if (confinement(2)) { level = Math.max(level, 2); uses.c2++; continue; }
-    if (confinement(3)) { level = Math.max(level, 3); uses.c3++; continue; }
-    if (probe()) { level = Math.max(level, 3); uses.probe++; continue; }
+    // esforço: rodadas de cada técnica (peso maior) + eliminações feitas por elas (dá uma escala mais fina)
+    if (done()) return { level, uses, score: 10 * (uses.c2 + 2 * uses.c3 + 4 * uses.probe) + elim.c2 + 2 * elim.c3 + 3 * elim.probe };
+    { const e = confinement(2); if (e) { level = Math.max(level, 2); uses.c2++; elim.c2 += e; continue; } }
+    { const e = confinement(3); if (e) { level = Math.max(level, 3); uses.c3++; elim.c3 += e; continue; } }
+    { const e = probe(); if (e) { level = Math.max(level, 3); uses.probe++; elim.probe += e; continue; } }
     return { stuck: true, cand, val };
   }
   return null;
@@ -266,29 +267,41 @@ export function makePuzzle() {
 
 // ---------- execução ----------
 // Monta a agenda: um desafio por dia a partir de 27/09/2026 (desafio #1).
-// Segunda e terça: fácil · quarta a sexta: médio · sábado e domingo: difícil.
+// A dificuldade sobe ao longo da semana: segunda = nível 1 (mais fácil) … domingo = nível 7.
+// Os níveis são as 7 faixas iguais do esforço de dedução (sem os 3% mais extremos).
+// Também gera eclipse/livre.json: desafios extras para o "jogo livre", fora da agenda.
 export const EPOCH = [2026, 8, 27];            // ano, mês (0 = jan), dia
-const TIER = d => (d <= 5 ? 0 : d <= 8 ? 1 : 2);
-const DAY_TIER = [2, 0, 0, 1, 1, 1, 2];        // por dia da semana (0 = domingo)
+const LEVELS = 7;
+const levelOfDay = date => (date.getDay() + 6) % 7;   // segunda → 0 … domingo → 6
+const FREE_PER_LEVEL = 40;
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const DAYS = COUNT;
-  const need = [0, 0, 0];
-  for (let k = 0; k < DAYS; k++) need[DAY_TIER[new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k).getDay()]]++;
-  const pool = [[], [], []], t0 = Date.now();
-  while (pool.some((p, t) => p.length < need[t])) {
-    const pz = makePuzzle(); pool[TIER(pz.d)].push(pz);
-  }
+  const DAYS = COUNT, t0 = Date.now();
+  const need = new Array(LEVELS).fill(0);
+  for (let k = 0; k < DAYS; k++) need[levelOfDay(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
+  const perBin = Math.max(...need) + FREE_PER_LEVEL;
+  const total = Math.ceil((perBin * LEVELS) / 0.97);
+  const pool = [];
+  for (let k = 0; k < total; k++) pool.push(makePuzzle());
+  // ordena pelo esforço (desempate aleatório), descarta os 3% mais difíceis e fatia em 7 faixas
+  pool.forEach(p => (p.k = rand()));
+  pool.sort((a, b) => a.d - b.d || a.k - b.k);
+  const usable = pool.slice(0, perBin * LEVELS);
+  const bins = [...Array(LEVELS)].map((_, l) => shuffle(usable.slice(l * perBin, (l + 1) * perBin)));
   const out = [];
   for (let k = 0; k < DAYS; k++) {
-    const t = DAY_TIER[new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k).getDay()];
-    const { r, g, d } = pool[t].shift();
-    out.push({ r, g, d, t });
+    const l = levelOfDay(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k));
+    const { r, g, d } = bins[l].shift();
+    out.push({ r, g, d, l: l + 1 });
   }
-  const file = join(dirname(fileURLToPath(import.meta.url)), "desafios.json");
-  writeFileSync(file, JSON.stringify({ n: N, epoch: EPOCH, puzzles: out }));
-  console.log(`pronto: ${out.length} dias de desafios ${N}×${N} em ${((Date.now() - t0) / 1000).toFixed(1)}s`);
-  console.log(`por nível: fácil ${need[0]}, médio ${need[1]}, difícil ${need[2]}`);
-  const g = out.map(p => p.g.split(",").length);
-  console.log(`pistas: ${[1, 2, 3, 4].map(k => `${k} → ${g.filter(x => x === k).length}`).join(", ")}`);
+  const free = [];
+  for (let l = 0; l < LEVELS; l++) for (const { r, g, d } of bins[l].slice(0, FREE_PER_LEVEL)) free.push({ r, g, d, l: l + 1 });
+  const dir = dirname(fileURLToPath(import.meta.url));
+  writeFileSync(join(dir, "desafios.json"), JSON.stringify({ n: N, epoch: EPOCH, puzzles: out }));
+  writeFileSync(join(dir, "livre.json"), JSON.stringify({ n: N, puzzles: free }));
+  console.log(`pronto: ${out.length} dias + ${free.length} livres, ${N}×${N}, em ${((Date.now() - t0) / 1000).toFixed(1)}s`);
+  for (let l = 0; l < LEVELS; l++) {
+    const ds = out.filter(p => p.l === l + 1).map(p => p.d);
+    console.log(`nível ${l + 1}: ${ds.length} dias · esforço ${Math.min(...ds)}–${Math.max(...ds)}`);
+  }
 }
