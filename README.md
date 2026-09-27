@@ -100,7 +100,7 @@ Jogo de lógica próprio, na linha do Queens, com dois símbolos:
 - Nenhuma peça pode **encostar** em outra, nem na diagonal.
 - De 1 a 3 peças já começam reveladas.
 
-Toque numa casa para alternar entre ✕ (anotação de vazio), sol, lua e vazio; arraste o dedo para marcar vários ✕. Conflitos aparecem listrados em vermelho. O cronômetro pausa quando você sai do jogo, e a partida fica salva.
+Toque numa casa para alternar entre ✕ (anotação de vazio), sol, lua e vazio. Para desenhar vários ✕, arraste o dedo ou ligue o **Modo ✕**, em que cada toque só marca ou apaga ✕. Ao colocar uma peça, as vizinhas recebem ✕ automaticamente (mais claro que o ✕ manual); quando uma linha, coluna ou região já tem sol e lua, o resto dela também. Os ✕ automáticos somem se a peça for retirada. Conflitos aparecem listrados em vermelho. O cronômetro pausa quando você sai do jogo, e a partida fica salva.
 
 **Desafios.** Há um desafio por dia, o mesmo para todo mundo, a partir de 27/09/2026 (#1). Todos estão em `eclipse/desafios.json` e foram conferidos pelo `eclipse/gerador.mjs`:
 - cada um tem **uma única solução**;

@@ -121,7 +121,8 @@
   .cell.lastr { border-bottom: none; }
   .cell svg { width: 72%; height: 72%; pointer-events: none; }
   .cell .x { width: 34%; height: 34%; }
-  .cell .x path { stroke: var(--x); stroke-width: 3.2; stroke-linecap: round; }
+  .cell .x { stroke: var(--x); stroke-width: 3.2; stroke-linecap: round; fill: none; }
+  .cell .x.auto { stroke-width: 2.4; opacity: .5; }   /* ✕ colocado automaticamente */
   .cell.given::after {
     content: ""; position: absolute; inset: 14%; border-radius: 50%;
     box-shadow: inset 0 0 0 2px rgba(0,0,0,.18);
@@ -146,6 +147,8 @@
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   }
   .controls button:disabled { opacity: .45; }
+  .controls button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .controls button[aria-pressed="true"] { color: #11131c; } }
   .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; }
   .tip svg { width: 13px; height: 13px; vertical-align: -2px; }
 
@@ -241,12 +244,16 @@
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
     Desfazer
   </button>
+  <button id="xModeBtn" aria-pressed="false" title="Desenhar ✕: toque ou arraste para marcar casas vazias">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4.5L16 4.5a2.1 2.1 0 0 1 3 3L8 18.5z"/><path d="M14 6.5l3 3"/></svg>
+    Modo ✕
+  </button>
   <button id="clearBtn">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
     Limpar
   </button>
 </div>
-<div class="tip">Toque: <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> → <svg><use href="#i-sun"/></svg> → <svg><use href="#i-moon"/></svg> → vazio · arraste para marcar vários <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg></div>
+<div class="tip" id="tip">Toque: <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> → <svg><use href="#i-sun"/></svg> → <svg><use href="#i-moon"/></svg> → vazio · arraste para desenhar <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg><br>As vizinhas de cada peça recebem <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> sozinhas.</div>
 
 <!-- Como jogar -->
 <div class="overlay" id="helpOverlay">
@@ -270,7 +277,8 @@
         <span></span><span></span><span></span>
       </div>encostadas: erro</figure>
     </div>
-    <p>Toque numa casa para alternar entre <b>✕</b> (anotação de vazio), sol, lua e vazio. Arraste o dedo para marcar vários ✕ de uma vez. Conflitos aparecem listrados em vermelho.</p>
+    <p>Toque numa casa para alternar entre <b>✕</b> (anotação de vazio), sol, lua e vazio. Para desenhar vários ✕, arraste o dedo pelo tabuleiro ou ligue o <b>Modo ✕</b>: aí cada toque só marca ou apaga ✕.</p>
+    <p>Ao colocar uma peça, as casas vizinhas recebem ✕ automaticamente. Quando uma linha, coluna ou região já tem o sol e a lua, o resto dela também. Conflitos aparecem listrados em vermelho.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia: mais fácil no começo da semana, mais difícil no fim de semana.</p>
     <button class="btn" data-close>Jogar</button>
   </div>
@@ -351,8 +359,35 @@
     }
   }
 
-  const ICON = { S: '<svg><use href="#i-sun"/></svg>', M: '<svg><use href="#i-moon"/></svg>', x: '<svg class="x"><use href="#i-x"/></svg>', ".": "" };
-  const NAME = { S: "sol", M: "lua", x: "marcada vazia", ".": "vazia" };
+  const ICON = { S: '<svg><use href="#i-sun"/></svg>', M: '<svg><use href="#i-moon"/></svg>', x: '<svg class="x"><use href="#i-x"/></svg>', a: '<svg class="x auto"><use href="#i-x"/></svg>', ".": "" };
+  const NAME = { S: "sol", M: "lua", x: "marcada vazia", a: "vazia (automático)", ".": "vazia" };
+
+  // ✕ automático: vizinhas de cada peça e o resto de unidades que já têm sol e lua.
+  // É calculado a partir das peças, então some sozinho quando a peça sai.
+  let UNITS = null;
+  function autoX() {
+    if (!UNITS) {
+      UNITS = [];
+      for (let k = 0; k < N; k++) {
+        UNITS.push([...Array(N)].map((_, c) => k * N + c));
+        UNITS.push([...Array(N)].map((_, r) => r * N + k));
+        UNITS.push([...Array(N * N).keys()].filter(i => regions[i] === k));
+      }
+    }
+    const out = new Set();
+    for (let i = 0; i < N * N; i++) if (cells[i] === "S" || cells[i] === "M") {
+      const r = rowOf(i), c = colOf(i);
+      for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+        const rr = r + dr, cc = c + dc;
+        if ((dr || dc) && rr >= 0 && cc >= 0 && rr < N && cc < N) out.add(rr * N + cc);
+      }
+    }
+    for (const u of UNITS) if (u.some(i => cells[i] === "S") && u.some(i => cells[i] === "M")) u.forEach(i => out.add(i));
+    for (const i of [...out]) if (cells[i] !== ".") out.delete(i);
+    return out;
+  }
+  let AUTO = new Set();
+  const shown = i => (cells[i] === "." && AUTO.has(i) ? "a" : cells[i]);
 
   function conflicts() {
     const bad = new Set();
@@ -382,9 +417,10 @@
 
   function render(popIdx = -1) {
     const bad = conflicts();
+    AUTO = autoX();
     let s = 0, m = 0;
     for (let i = 0; i < N * N; i++) {
-      const v = cells[i], el = cellEls[i];
+      const v = shown(i), el = cellEls[i];
       if (el.dataset.v !== v) { el.innerHTML = ICON[v]; el.dataset.v = v; }
       el.classList.toggle("sym", v === "S" || v === "M");
       el.classList.toggle("bad", bad.has(i));
@@ -408,7 +444,12 @@
   }
 
   // ---------- toque e arrasto ----------
-  const NEXT = { ".": "x", x: "S", S: "M", M: "." };
+  const NEXT = { ".": "x", a: "S", x: "S", S: "M", M: "." };   // casa com ✕ automático pula direto para o sol
+  let xMode = false;
+  $("xModeBtn").addEventListener("click", () => {
+    xMode = !xMode;
+    $("xModeBtn").setAttribute("aria-pressed", xMode);
+  });
   let drag = null;
   const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.classList.contains("cell") ? +el.dataset.i : -1; };
 
@@ -445,7 +486,14 @@
     const d = drag; drag = null;
     if (!d.moved) {
       if (givens.has(d.start)) return;
-      cells[d.start] = NEXT[cells[d.start]];
+      const cur = shown(d.start);
+      if (xMode) {                       // Modo ✕: o toque só marca ou apaga ✕
+        if (cur === ".") cells[d.start] = "x";
+        else if (cur === "x") cells[d.start] = ".";
+      } else {
+        const nxt = NEXT[cur];
+        cells[d.start] = nxt === "a" ? "." : nxt;
+      }
       render(d.start);
     }
     if (cells.join("") !== d.before) { history.push(d.before); if (history.length > 200) history.shift(); }
