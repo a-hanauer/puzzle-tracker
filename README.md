@@ -35,9 +35,9 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 ## Como funciona
 
 - O **topo** mostra uma saudação conforme a hora (bom dia, boa tarde, boa noite), quantos jogos faltam hoje, a **sequência** de dias seguidos com tudo feito e um anel pequeno com o progresso do dia.
-- **Jogos da casa** (Sanduba, Quinhentos e Eclipse) aparecem numa grade de ícones; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um switch "Feito". A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
+- **Jogos da casa** (Sanduba, Quinhentos e Eclipse) aparecem numa grade de ícones; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um check. A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
 - **Status de cada jogo:**
-  - **Outros jogos:** o switch à direita marca ou desmarca; abrir o jogo pelo painel já marca como feito.
+  - **Outros jogos:** o check à direita marca ou desmarca; abrir o jogo pelo painel já marca como feito.
   - **Jogos da casa:** um anel no canto enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado ("Acertou 5/8", ou o tempo no Eclipse).
 - Jogos feitos ficam com fundo verde claro.
 - A lista **zera sozinha à meia-noite**, no horário do aparelho.
@@ -128,7 +128,7 @@ Para gerar os desafios de novo, rode `node eclipse/gerador.mjs [dias]` (padrão:
 
 - **Ícone do app:** uma peça de quebra-cabeça preenchida por um mosaico colorido. O iPhone grava o ícone quando o atalho é criado; para trocar, é preciso apagar o atalho e adicionar de novo (o progresso não se perde).
 - **Número no ícone:** o app instalado mostra quantos jogos faltam no dia e some quando está tudo feito. No iPhone (iOS 16.4+) é preciso abrir as configurações e tocar uma vez em "Mostrar pendentes no ícone do app", e permitir notificações. O Chrome do Android não suporta esse número.
-- O painel não consegue saber o que foi jogado direto nos outros sites. Ele registra só o que é aberto por ele ou marcado no switch.
+- O painel não consegue saber o que foi jogado direto nos outros sites. Ele registra só o que é aberto por ele ou marcado no check.
 - O número no ícone é atualizado sempre que o painel é aberto. Depois da meia-noite ele continua mostrando o dia anterior até você abrir o painel.
 
 ## Publicar no GitHub Pages

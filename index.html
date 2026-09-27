@@ -119,27 +119,22 @@
   .row .info { min-width: 0; display: flex; flex-direction: column; }
   .row .name { display: flex; align-items: center; gap: 6px; font-size: .98rem; }
   .row .desc { display: block; color: var(--muted); font-size: .78rem; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* check dos outros jogos: círculo vazio → verde com ✔ */
   .toggle {
-    flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 8px 14px 8px 8px; background: none; border: none; cursor: pointer; font: inherit;
+    flex-shrink: 0; align-self: stretch; display: flex; align-items: center; justify-content: center;
+    padding: 0 16px 0 10px; background: none; border: none; cursor: pointer;
   }
-  .switch {
-    position: relative; width: 48px; height: 28px; border-radius: 99px;
-    background: var(--surface-2); border: 1.5px solid var(--border); transition: background .25s, border-color .25s;
-  }
-  .knob {
-    position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; border-radius: 50%;
-    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  .check {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid var(--border); background: var(--surface);
     display: flex; align-items: center; justify-content: center;
-    transition: transform .25s cubic-bezier(.3,.7,.3,1.3);
+    transition: background .2s, border-color .2s, transform .15s;
   }
-  .knob svg { width: 13px; height: 13px; stroke: var(--green); stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round;
-    stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .3s .1s; }
-  .toggle-label { font-size: .62rem; font-weight: 700; letter-spacing: .03em; color: var(--faint); text-transform: uppercase; }
-  .toggle[aria-checked="true"] .switch { background: var(--green); border-color: var(--green); }
-  .toggle[aria-checked="true"] .knob { transform: translateX(20px); }
-  .toggle[aria-checked="true"] .knob svg { stroke-dashoffset: 0; }
-  .toggle[aria-checked="true"] .toggle-label { color: var(--green); }
+  .toggle:active .check { transform: scale(.9); }
+  .check svg { width: 16px; height: 16px; stroke: #fff; stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .25s .05s; }
+  .toggle[aria-checked="true"] .check { background: var(--green); border-color: var(--green); }
+  .toggle[aria-checked="true"] .check svg { stroke-dashoffset: 0; }
   .streak[hidden] { display: none; }
 
   /* ---------- Grade de jogos (launchpad) ---------- */
@@ -717,7 +712,7 @@ const cards = {};
 
 function buildCard(g) {
   const li = document.createElement("li");
-  if (!LOCAL_PROGRESS[g.id]) return buildRow(g, li);   // outros jogos: linha com switch
+  if (!LOCAL_PROGRESS[g.id]) return buildRow(g, li);   // outros jogos: linha com check
   li.className = "app";
   li.innerHTML = `
     <a class="game" href="${g.url}" title="${g.desc || ""}">
@@ -747,7 +742,7 @@ function buildCard(g) {
   });
   return li;
 }
-// linha da lista de outros jogos: ícone, nome e descrição, e o switch "Feito"
+// linha da lista de outros jogos: ícone, nome e descrição, e o check
 function buildRow(g, li) {
   li.className = "row";
   li.innerHTML = `
@@ -758,9 +753,8 @@ function buildRow(g, li) {
         <span class="desc">${escHTML(g.desc || "")}</span>
       </span>
     </a>
-    <button class="toggle" role="switch" aria-checked="false" aria-label="${escHTML(g.name)} feito">
-      <span class="switch"><span class="knob">${CHECK_SVG}</span></span>
-      <span class="toggle-label">A fazer</span>
+    <button class="toggle" role="checkbox" aria-checked="false" aria-label="${escHTML(g.name)} feito">
+      <span class="check">${CHECK_SVG}</span>
     </button>`;
   loadIcon(g, li.querySelector(".icon"));
   li.querySelector("a").addEventListener("click", () => setDone(g.id, true));   // abrir já marca como feito
@@ -815,8 +809,6 @@ function render() {
     }
     const btn = li.querySelector("button.badge, button.toggle");
     if (btn) btn.setAttribute("aria-checked", isDone);
-    const tl = li.querySelector(".toggle-label");
-    if (tl) tl.textContent = isDone ? "Feito" : "A fazer";
 
     const a = li.querySelector("a");
     if (state.newTab && !g.app) { a.target = "_blank"; a.rel = "noopener"; }
