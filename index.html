@@ -229,6 +229,91 @@
     background: var(--surface); border: 1px solid var(--border); color: var(--muted);
     border-radius: 99px; padding: 9px 15px; font: inherit; font-size: .82rem; font-weight: 600; cursor: pointer;
   }
+
+  /* ---------- Abas Hoje / Histórico ---------- */
+  .tabs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+    margin-top: 14px; padding: 4px;
+    background: var(--surface-2); border-radius: 14px;
+  }
+  .tabs a {
+    text-align: center; padding: 9px 0; border-radius: 10px;
+    color: var(--muted); text-decoration: none; font-weight: 700; font-size: .9rem;
+  }
+  .tabs a[aria-current="page"] { background: var(--surface); color: var(--green); box-shadow: var(--shadow), inset 0 0 0 1.5px var(--green); }
+  [hidden] { display: none !important; }
+
+  /* ---------- Histórico ---------- */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 16px; box-shadow: var(--shadow);
+  }
+  .card + .card, .tiles + .card { margin-top: 12px; }
+  .card h2 { margin: 0 0 2px; font-size: 1rem; font-weight: 800; letter-spacing: -.01em; }
+  .card .sub { color: var(--muted); font-size: .8rem; margin-bottom: 12px; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px; box-shadow: var(--shadow); }
+  .tile .v { font-size: 1.7rem; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .tile .v small { font-size: .9rem; color: var(--muted); font-weight: 700; margin-left: 2px; }
+  .tile .l { color: var(--muted); font-size: .78rem; font-weight: 600; margin-top: 2px; }
+
+  /* calendário */
+  .cal { display: grid; grid-template-columns: 18px 1fr; gap: 6px; }
+  .cal-days { display: grid; grid-template-rows: repeat(7, 1fr); gap: 3px; font-size: .62rem; color: var(--faint); font-weight: 600; }
+  .cal-days span { display: flex; align-items: center; }
+  .cal-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 1fr); gap: 3px; }
+  .cell {
+    aspect-ratio: 1; border-radius: 4px; border: none; padding: 0; cursor: pointer;
+    background: var(--surface-2);
+  }
+  .cell.l1 { background: color-mix(in srgb, var(--green) 28%, var(--surface-2)); }
+  .cell.l2 { background: color-mix(in srgb, var(--green) 52%, var(--surface-2)); }
+  .cell.l3 { background: color-mix(in srgb, var(--green) 76%, var(--surface-2)); }
+  .cell.l4 { background: var(--green); }
+  .cell.before, .cell.future { background: transparent; box-shadow: inset 0 0 0 1px var(--border); cursor: default; }
+  .cell.future { visibility: hidden; }
+  .cell.sel { outline: 2px solid var(--text); outline-offset: 1px; }
+  .cal-months { display: grid; grid-auto-flow: column; font-size: .62rem; color: var(--faint); font-weight: 600; margin: 0 0 4px 24px; }
+  .legend { display: flex; align-items: center; gap: 4px; justify-content: flex-end; margin-top: 10px; font-size: .68rem; color: var(--muted); }
+  .legend .cell { width: 11px; cursor: default; }
+  .detail { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: .85rem; min-height: 1.2em; }
+  .detail b { font-weight: 700; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { font-size: .75rem; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: var(--surface-2); color: var(--muted); }
+  .chip.on { background: var(--green-soft); color: var(--green); }
+
+  /* barras verticais */
+  .vbars { position: relative; height: 120px; display: flex; align-items: flex-end; gap: 2px; border-bottom: 1px solid var(--border); }
+  .vbars .guide { position: absolute; left: 0; right: 0; top: 0; border-top: 1px dashed var(--border); pointer-events: none; }
+  .vbars .guide span { position: absolute; right: 0; top: -15px; font-size: .62rem; color: var(--faint); font-weight: 600; }
+  .vbar { flex: 1; height: 100%; display: flex; align-items: flex-end; cursor: pointer; background: none; border: none; padding: 0; }
+  .vbar i { display: block; width: 100%; border-radius: 4px 4px 0 0; background: color-mix(in srgb, var(--green) 55%, var(--surface-2)); min-height: 0; }
+  .vbar.full i { background: var(--green); }
+  .vbar.lost i { background: var(--faint); }
+  .vbar.none i { height: 3px !important; background: var(--surface-2); border-radius: 2px; }
+  .vbar.sel i { outline: 2px solid var(--text); outline-offset: 1px; }
+  .axis { display: flex; justify-content: space-between; font-size: .62rem; color: var(--faint); font-weight: 600; margin-top: 5px; }
+  .readout { font-size: .8rem; color: var(--muted); margin-top: 8px; min-height: 1.2em; }
+  .readout b { color: var(--text); }
+
+  /* barras horizontais */
+  .hrow { display: grid; grid-template-columns: 24px 88px 1fr 44px; align-items: center; gap: 8px; margin: 7px 0; font-size: .85rem; }
+  .hrow img, .hrow .em { width: 20px; height: 20px; border-radius: 5px; object-fit: contain; font-size: 1rem; line-height: 20px; text-align: center; }
+  .hrow .nm { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hrow .track { height: 10px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+  .hrow .track i { display: block; height: 100%; background: var(--green); border-radius: 99px; }
+  .hrow .val { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; font-size: .78rem; font-weight: 600; }
+
+  /* jogos nativos */
+  .game-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .game-head img { width: 34px; height: 34px; border-radius: 9px; object-fit: contain; background: var(--surface-2); }
+  .minis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px; text-align: center; }
+  .minis .v { font-size: 1.25rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .minis .l { font-size: .66rem; color: var(--muted); font-weight: 600; }
+  .mini-title { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; }
+  .dist .hrow { grid-template-columns: 14px 1fr 30px; margin: 4px 0; }
+  .dist .n { color: var(--muted); font-weight: 700; font-size: .78rem; }
+  .empty { color: var(--muted); font-size: .82rem; padding: 6px 0; }
 </style>
 </head>
 <body>
@@ -248,6 +333,44 @@
   </div>
 </header>
 
+<nav class="tabs" aria-label="Seções">
+  <a href="#" id="tabToday" aria-current="page">Hoje</a>
+  <a href="#historico" id="tabHistory">Histórico</a>
+</nav>
+
+<section id="viewHistory" hidden>
+  <div class="tiles" id="hTiles"></div>
+
+  <div class="card">
+    <h2>Últimas 12 semanas</h2>
+    <div class="sub">Quanto mais verde, mais jogos feitos no dia. Toque num dia para ver.</div>
+    <div class="cal-months" id="calMonths"></div>
+    <div class="cal">
+      <div class="cal-days"><span>S</span><span></span><span>Q</span><span></span><span>S</span><span></span><span>D</span></div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div class="legend">menos <span class="cell"></span><span class="cell l1"></span><span class="cell l2"></span><span class="cell l3"></span><span class="cell l4"></span> tudo</div>
+    <div class="detail" id="calDetail"></div>
+  </div>
+
+  <div class="card">
+    <h2>Jogos por dia</h2>
+    <div class="sub">Últimos 30 dias · verde forte = dia completo</div>
+    <div class="vbars" id="dayBars"></div>
+    <div class="axis" id="dayAxis"></div>
+    <div class="readout" id="dayReadout"></div>
+  </div>
+
+  <div class="card">
+    <h2>Por jogo</h2>
+    <div class="sub" id="perGameSub"></div>
+    <div id="perGame"></div>
+  </div>
+
+  <div id="nativeCards"></div>
+</section>
+
+<div id="viewToday">
 <div class="section-title" id="todoTitle"><span>A fazer</span><span id="todoCount"></span></div>
 <ul id="todo"></ul>
 
@@ -255,8 +378,9 @@
 
 <div class="section-title" id="doneTitle"><span>Feitos</span><span id="doneCount"></span></div>
 <ul id="done"></ul>
+</div>
 
-<footer>
+<footer id="footerToday">
   <button id="badgeBtn" hidden>🔔 Mostrar pendentes no ícone</button>
   <button id="toggleTab"></button>
   <button id="reset">Desmarcar tudo</button>
@@ -368,7 +492,31 @@ function load() {
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} }
 
 const state = load();
-Object.keys(state.history).sort().slice(0, -60).forEach(d => delete state.history[d]);
+// guarda até 2 anos (são poucos bytes por dia)
+state.results ??= {};   // resultado dos jogos nativos por dia: { "2026-09-27": { sanduba: {tries, max, won} } }
+Object.keys(state.history).sort().slice(0, -730).forEach(d => delete state.history[d]);
+Object.keys(state.results).sort().slice(0, -730).forEach(d => delete state.results[d]);
+
+// recupera partidas antigas do Sanduba, que ele guarda por data
+function backfillSanduba() {
+  let changed = false;
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    const m = k && k.match(/^sanduba-daily-(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (!m) continue;
+    const day = `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}`;
+    if (day === today() || state.results[day]?.sanduba) continue;
+    const p = readJSON(k);
+    if (!p || !Array.isArray(p.guesses) || !p.guesses.length) continue;
+    const tries = p.guesses.length, won = p.guesses.some(g => g.word === p.secret);
+    if (!won && tries < 14) continue;          // partida largada no meio: não conta
+    (state.results[day] ??= {}).sanduba = { tries, max: 14, won };
+    const set = new Set(state.history[day] || []); set.add("sanduba"); state.history[day] = [...set];
+    changed = true;
+  }
+  if (changed) save();
+}
+backfillSanduba();
 delete state.auto;   // campo de uma versão anterior
 
 // jogos nativos: feito = partida do dia terminada (o painel só espelha o que o jogo salvou)
@@ -377,7 +525,11 @@ function syncLocalGames() {
   let changed = false;
   for (const g of GAMES) {
     if (!LOCAL_PROGRESS[g.id]) continue;
-    const finished = !!progressOf(g)?.finished;
+    const p = progressOf(g), finished = !!p?.finished;
+    if (finished) {
+      const r = (state.results[today()] ??= {});
+      if (r[g.id]?.tries !== p.tries) { r[g.id] = { tries: p.tries, max: p.max, won: p.won }; changed = true; }
+    }
     if (finished !== set.has(g.id)) {
       finished ? set.add(g.id) : set.delete(g.id);
       changed = true;
@@ -512,6 +664,7 @@ function render() {
   $("toggleTab").textContent = state.newTab ? "↗ Abrindo em nova aba" : "↩ Abrindo na mesma aba";
 
   drawFavicon(n, total);
+  if (location.hash === "#historico" && typeof renderHistory === "function") renderHistory();
   updateBadge(total - n);
 }
 
@@ -608,8 +761,191 @@ window.addEventListener("pageshow", () => { renderDate(); render(); });
 // se um jogo estiver aberto em outra aba e terminar, o painel atualiza sozinho
 window.addEventListener("storage", () => render());
 
+/* ================= HISTÓRICO ================= */
+const WEEK = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const fmtDay = d => `${WEEK[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+const countOn = k => (state.history[k] || []).filter(id => GAMES.some(g => g.id === id)).length;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function firstDay() {
+  const ks = Object.keys(state.history).filter(k => (state.history[k] || []).length).sort();
+  return ks.length ? new Date(ks[0] + "T00:00:00") : startOfToday();
+}
+function iconHTML(g) {
+  const img = cards[g.id]?.querySelector(".icon img");
+  return img ? `<img src="${esc(img.src)}" alt="">` : `<span class="em">${g.emoji}</span>`;
+}
+function bestStreak() {
+  const ks = Object.keys(state.history).sort();
+  if (!ks.length) return 0;
+  let best = 0, run = 0;
+  for (let d = new Date(ks[0] + "T00:00:00"); d <= startOfToday(); d = addDays(d, 1)) {
+    run = countOn(dayKey(d)) >= GAMES.length ? run + 1 : 0;
+    best = Math.max(best, run);
+  }
+  return best;
+}
+
+function renderHistory() {
+  const total = GAMES.length, t0 = startOfToday(), first = firstDay();
+  // janela de 30 dias (ou desde o primeiro uso, se for mais recente)
+  const winStart = new Date(Math.max(addDays(t0, -29), first));
+  const winDays = Math.round((t0 - winStart) / 86400000) + 1;
+  let winDone = 0, fullDays = 0;
+  for (let i = 0; i < winDays; i++) winDone += countOn(dayKey(addDays(winStart, i)));
+  for (const k of Object.keys(state.history)) if (countOn(k) >= total) fullDays++;
+
+  $("hTiles").innerHTML = [
+    [streak(), "dias", "Sequência atual"],
+    [bestStreak(), "dias", "Melhor sequência"],
+    [fullDays, "", "Dias com tudo feito"],
+    [Math.round(100 * winDone / (winDays * total)), "%", `Aproveitamento · ${winDays} dia${winDays > 1 ? "s" : ""}`],
+  ].map(([v, u, l]) => `<div class="tile"><div class="v">${v}<small>${u}</small></div><div class="l">${l}</div></div>`).join("");
+
+  renderCalendar(t0, first, total);
+  renderDayBars(t0, first, total);
+
+  // por jogo
+  $("perGameSub").textContent = `Dias em que você fez cada jogo · ${winDays === 30 ? "últimos 30 dias" : `desde ${fmtDay(winStart)}`}`;
+  $("perGame").innerHTML = GAMES.map(g => {
+    let n = 0;
+    for (let i = 0; i < winDays; i++) if ((state.history[dayKey(addDays(winStart, i))] || []).includes(g.id)) n++;
+    return `<div class="hrow">${iconHTML(g)}<span class="nm">${esc(g.name)}</span>
+      <span class="track"><i style="width:${100 * n / winDays}%"></i></span><span class="val">${n}/${winDays}</span></div>`;
+  }).join("");
+
+  renderNative(t0);
+}
+
+let calSel = null;
+function renderCalendar(t0, first, total) {
+  // 12 colunas (semanas), começando na segunda-feira
+  const mondayThisWeek = addDays(t0, -((t0.getDay() + 6) % 7));
+  const start = addDays(mondayThisWeek, -7 * 11);
+  const grid = $("calGrid"); grid.innerHTML = "";
+  const months = [];
+  for (let w = 0; w < 12; w++) {
+    const wk = addDays(start, 7 * w);
+    months.push(wk.getDate() <= 7 || w === 0 ? MONTHS[wk.getMonth()] : "");
+    for (let d = 0; d < 7; d++) {
+      const day = addDays(wk, d), k = dayKey(day), n = countOn(k);
+      const b = document.createElement("button");
+      b.className = "cell";
+      if (day > t0) b.classList.add("future");
+      else if (day < first) b.classList.add("before");
+      else if (n) b.classList.add("l" + Math.max(1, Math.min(4, Math.ceil(4 * n / total))));
+      b.dataset.day = k;
+      b.setAttribute("aria-label", `${fmtDay(day)}: ${n} de ${total}`);
+      if (day <= t0 && day >= first) b.addEventListener("click", () => { calSel = k; showDay(k, total); });
+      grid.appendChild(b);
+    }
+  }
+  $("calMonths").style.gridTemplateColumns = "repeat(12, 1fr)";
+  $("calMonths").innerHTML = months.map(m => `<span>${m}</span>`).join("");
+  showDay(calSel || dayKey(t0), total);
+}
+function showDay(k, total) {
+  document.querySelectorAll("#calGrid .cell.sel").forEach(c => c.classList.remove("sel"));
+  document.querySelector(`#calGrid .cell[data-day="${k}"]`)?.classList.add("sel");
+  const d = new Date(k + "T00:00:00"), ids = state.history[k] || [], n = countOn(k), res = state.results[k] || {};
+  $("calDetail").innerHTML = `<b>${fmtDay(d)}</b> · ${n} de ${total} jogo${total > 1 ? "s" : ""}${n >= total ? " 🎉" : ""}
+    <div class="chips">${GAMES.map(g => {
+      const r = res[g.id], extra = r ? (r.won ? ` ${r.tries}/${r.max}` : " ✗") : "";
+      return `<span class="chip${ids.includes(g.id) ? " on" : ""}">${esc(g.name)}${extra}</span>`;
+    }).join("")}</div>`;
+}
+
+function renderDayBars(t0, first, total) {
+  const box = $("dayBars"); box.innerHTML = `<div class="guide"><span>${total}</span></div>`;
+  const days = [...Array(30)].map((_, i) => addDays(t0, i - 29));
+  const read = (d, n) => { $("dayReadout").innerHTML = `<b>${fmtDay(d)}</b> · ${d < first ? "antes do primeiro uso" : `${n} de ${total} jogos`}`; };
+  days.forEach(d => {
+    const n = countOn(dayKey(d)), b = document.createElement("button");
+    b.className = "vbar" + (n >= total ? " full" : "") + (n === 0 ? " none" : "");
+    b.innerHTML = `<i style="height:${100 * n / total}%"></i>`;
+    b.setAttribute("aria-label", `${fmtDay(d)}: ${n} de ${total}`);
+    b.addEventListener("click", () => { box.querySelectorAll(".sel").forEach(x => x.classList.remove("sel")); b.classList.add("sel"); read(d, n); });
+    box.appendChild(b);
+  });
+  $("dayAxis").innerHTML = `<span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>${days[15].getDate()} ${MONTHS[days[15].getMonth()]}</span><span>hoje</span>`;
+  read(t0, countOn(dayKey(t0)));
+}
+
+function renderNative(t0) {
+  const blocks = [];
+  const specs = [
+    { id: "sanduba", stats: () => { const s = readJSON("sanduba-stats") || {}; return { played: s.played || 0, wins: s.wins || 0, streak: s.streak || 0, best: s.best || 0 }; } },
+    { id: "quinhentos", stats: () => { const s = readJSON("quinhentao:stats:padrao") || {}; return { played: s.played || 0, wins: s.wins || 0, streak: s.streak || 0, best: s.maxStreak || 0, dist: s.dist }; } },
+  ];
+  for (const sp of specs) {
+    const g = GAMES.find(x => x.id === sp.id);
+    if (!g) continue;
+    const s = sp.stats();
+    const pct = s.played ? Math.round(100 * s.wins / s.played) : 0;
+    // tentativas por dia (últimos 30)
+    const days = [...Array(30)].map((_, i) => addDays(t0, i - 29));
+    const rs = days.map(d => state.results[dayKey(d)]?.[g.id]);
+    const withData = rs.filter(Boolean);
+    const avg = withData.filter(r => r.won).map(r => r.tries);
+    const max = withData[0]?.max || (g.id === "sanduba" ? 14 : 8);
+    const bars = days.map((d, i) => {
+      const r = rs[i];
+      const cls = !r ? "none" : r.won ? "full" : "lost";
+      const h = !r ? 0 : r.won ? 100 * r.tries / max : 100;
+      const lab = !r ? "sem partida" : r.won ? `acertou em ${r.tries}/${r.max}` : "não acertou";
+      return `<button class="vbar ${cls}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${h}%"></i></button>`;
+    }).join("");
+    let dist = "";
+    if (Array.isArray(s.dist) && s.dist.some(Boolean)) {
+      const top = Math.max(...s.dist);
+      dist = `<div class="mini-title">Acertou em quantas tentativas</div><div class="dist">${s.dist.map((v, i) =>
+        `<div class="hrow"><span class="n">${i + 1}</span><span class="track"><i style="width:${top ? 100 * v / top : 0}%"></i></span><span class="val">${v}</span></div>`).join("")}</div>`;
+    }
+    blocks.push(`<div class="card">
+      <div class="game-head">${iconHTML(g).replace('class="em"', 'class="em" style="font-size:1.6rem"')}<div><h2>${esc(g.name)}</h2><div class="sub" style="margin:0">Estatísticas do próprio jogo</div></div></div>
+      <div class="minis">
+        <div><div class="v">${s.played}</div><div class="l">jogadas</div></div>
+        <div><div class="v">${pct}%</div><div class="l">vitórias</div></div>
+        <div><div class="v">${s.streak}</div><div class="l">sequência</div></div>
+        <div><div class="v">${s.best}</div><div class="l">melhor</div></div>
+      </div>
+      <div class="mini-title">Tentativas por dia · 30 dias${avg.length ? ` · média ${(avg.reduce((a, b) => a + b, 0) / avg.length).toFixed(1).replace(".", ",")}` : ""}</div>
+      ${withData.length ? `<div class="vbars" style="height:80px">${bars}</div>
+        <div class="axis"><span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>hoje</span></div>
+        <div class="readout">Barra mais baixa = menos tentativas. Cinza = não acertou.</div>`
+        : `<div class="empty">Os resultados começam a aparecer aqui a partir das próximas partidas.</div>`}
+      ${dist}
+    </div>`);
+  }
+  $("nativeCards").innerHTML = blocks.join("");
+  $("nativeCards").querySelectorAll(".vbar").forEach(b => b.addEventListener("click", () => {
+    const card = b.closest(".card");
+    card.querySelectorAll(".vbar.sel").forEach(x => x.classList.remove("sel"));
+    b.classList.add("sel");
+    card.querySelector(".readout").innerHTML = esc(b.dataset.lab);
+  }));
+}
+
+/* ---------- Abas ---------- */
+function route() {
+  const hist = location.hash === "#historico";
+  $("viewHistory").hidden = !hist;
+  $("viewToday").hidden = hist;
+  $("footerToday").hidden = hist;
+  $("tabToday").setAttribute("aria-current", hist ? "false" : "page");
+  $("tabHistory").setAttribute("aria-current", hist ? "page" : "false");
+  if (hist) renderHistory();
+}
+$("tabToday").addEventListener("click", e => { e.preventDefault(); history.replaceState(null, "", location.pathname); route(); });
+$("tabHistory").addEventListener("click", e => { e.preventDefault(); history.replaceState(null, "", "#historico"); route(); });
+window.addEventListener("hashchange", route);
+
 renderDate();
 render();
+route();
 scheduleMidnight();
 </script>
 </body>

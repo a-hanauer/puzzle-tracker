@@ -45,6 +45,18 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 
 O progresso fica salvo no `localStorage` do navegador, então é separado em cada aparelho e navegador. Limpar os dados do site apaga o histórico.
 
+## Histórico
+
+A aba **Histórico** mostra:
+
+- **Resumo:** sequência atual e melhor sequência de dias com tudo feito, total de dias completos e aproveitamento dos últimos 30 dias.
+- **Últimas 12 semanas:** calendário em que cada dia fica mais verde conforme os jogos feitos. Tocar num dia mostra quais jogos você fez e o resultado do Sanduba e do Quinhentos.
+- **Jogos por dia:** barras dos últimos 30 dias.
+- **Por jogo:** em quantos dias você fez cada jogo.
+- **Sanduba e Quinhentos:** estatísticas do próprio jogo (jogadas, vitórias, sequência), tentativas por dia e, no Quinhentos, a distribuição de tentativas.
+
+O painel guarda até 2 anos de histórico no navegador. Partidas antigas do Sanduba são recuperadas automaticamente; os resultados diários do Quinhentos passam a ser registrados a partir desta versão.
+
 ## Adicionar ou remover jogos
 
 Edite o array `GAMES` no início do `<script>` em `index.html`:
