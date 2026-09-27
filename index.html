@@ -74,18 +74,21 @@
   }
 
   /* ---------- Cabeçalho ---------- */
-  header {
-    position: relative;
-    display: flex; align-items: center; gap: 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 18px;
-    box-shadow: var(--shadow);
-  }
-  .ring { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+  /* topo: marca pequena + ações; saudação com resumo do dia e anel pequeno */
+  header.top { padding: 2px 2px 0; }
+  .top-row { display: flex; align-items: center; justify-content: space-between; }
+  .app-mark { display: inline-flex; align-items: center; gap: 8px; font-size: .74rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .app-mark img { width: 24px; height: 24px; border-radius: 7px; }
+  .greet { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+  .greet-text { min-width: 0; flex: 1; }
+  h1 { font-size: 1.85rem; font-weight: 800; margin: 0; letter-spacing: -.03em; line-height: 1.1; }
+  #summary { margin: 6px 0 0; color: var(--muted); font-size: .92rem; line-height: 1.35; }
+  #summary b { color: var(--text); }
+  #summary .fl { display: inline-flex; align-items: center; gap: 3px; color: var(--gold); font-weight: 700; white-space: nowrap; }
+  #summary .fl svg { width: 13px; height: 13px; }
+  .ring { position: relative; width: 58px; height: 58px; flex-shrink: 0; }
   .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .ring circle { fill: none; stroke-width: 7; }
+  .ring circle { fill: none; stroke-width: 8; }
   .ring .track { stroke: var(--surface-2); }
   .ring .arc {
     stroke: var(--green); stroke-linecap: round;
@@ -94,21 +97,49 @@
   .ring .num {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 1.05rem; font-variant-numeric: tabular-nums;
+    font-weight: 800; font-size: .92rem; font-variant-numeric: tabular-nums;
   }
-  .ring .num small { color: var(--muted); font-weight: 600; font-size: .75rem; }
-  .head-text { min-width: 0; }
-  h1 { font-size: 1.35rem; font-weight: 800; margin: 0; letter-spacing: -.02em; }
-  .date { color: var(--muted); font-size: .88rem; margin-top: 2px; }
-  .date::first-letter { text-transform: uppercase; }
-  .streak svg { width: 13px; height: 13px; }
+  .ring .num small { color: var(--muted); font-weight: 600; font-size: .68rem; }
   .all-done svg { width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; }
-  .streak {
-    display: inline-flex; align-items: center; gap: 4px;
-    margin-top: 8px; padding: 3px 9px;
-    border-radius: 99px; font-size: .78rem; font-weight: 600;
-    background: rgba(224,184,79,.14); color: var(--gold);
+
+  /* lista dos outros jogos (sites externos) */
+  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .row {
+    display: flex; align-items: center;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    box-shadow: var(--shadow); transition: background .25s, border-color .25s;
   }
+  .row.done { background: var(--green-soft); border-color: color-mix(in srgb, var(--green) 40%, transparent); box-shadow: none; }
+  .row a.game {
+    flex: 1; min-width: 0; display: flex; flex-direction: row; align-items: center; gap: 12px; text-align: left;
+    padding: 10px 6px 10px 12px; color: inherit; text-decoration: none;
+  }
+  .row .icon { width: 42px; height: 42px; border-radius: 11px; font-size: 1.4rem; }
+  .row .icon img { width: 28px; height: 28px; }
+  .row .info { min-width: 0; display: flex; flex-direction: column; }
+  .row .name { display: flex; align-items: center; gap: 6px; font-size: .98rem; }
+  .row .desc { display: block; color: var(--muted); font-size: .78rem; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toggle {
+    flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 14px 8px 8px; background: none; border: none; cursor: pointer; font: inherit;
+  }
+  .switch {
+    position: relative; width: 48px; height: 28px; border-radius: 99px;
+    background: var(--surface-2); border: 1.5px solid var(--border); transition: background .25s, border-color .25s;
+  }
+  .knob {
+    position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .25s cubic-bezier(.3,.7,.3,1.3);
+  }
+  .knob svg { width: 13px; height: 13px; stroke: var(--green); stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .3s .1s; }
+  .toggle-label { font-size: .62rem; font-weight: 700; letter-spacing: .03em; color: var(--faint); text-transform: uppercase; }
+  .toggle[aria-checked="true"] .switch { background: var(--green); border-color: var(--green); }
+  .toggle[aria-checked="true"] .knob { transform: translateX(20px); }
+  .toggle[aria-checked="true"] .knob svg { stroke-dashoffset: 0; }
+  .toggle[aria-checked="true"] .toggle-label { color: var(--green); }
   .streak[hidden] { display: none; }
 
   /* ---------- Grade de jogos (launchpad) ---------- */
@@ -211,7 +242,7 @@
   .all-done.show { display: block; animation: pop .35s ease; }
 
   /* ações no topo: tema (alterna) e configurações */
-  .head-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; }
+  .head-actions { display: flex; gap: 6px; }
   .round {
     width: 34px; height: 34px; border-radius: 50%; border: none; padding: 0; cursor: pointer;
     display: inline-flex; align-items: center; justify-content: center;
@@ -343,22 +374,26 @@
 </head>
 <body>
 
-<header>
-  <div class="ring">
-    <svg viewBox="0 0 80 80">
-      <circle class="track" cx="40" cy="40" r="34"/>
-      <circle class="arc" id="arc" cx="40" cy="40" r="34"/>
-    </svg>
-    <div class="num" id="count"></div>
-  </div>
-  <div class="head-text">
-    <h1>Jogos do Dia</h1>
-    <div class="date" id="date"></div>
-    <div class="streak" id="streak" hidden></div>
-  </div>
+<header class="top">
+  <div class="top-row">
+    <div class="app-mark"><img src="icon-192.png?v=6" alt=""><span>Jogos do Dia</span></div>
   <div class="head-actions">
     <button class="round" id="themeBtn" aria-label="Tema"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
     <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
+  </div>
+  </div>
+  <div class="greet">
+    <div class="greet-text">
+      <h1 id="greet">Olá!</h1>
+      <p id="summary"></p>
+    </div>
+    <div class="ring" aria-hidden="true">
+      <svg viewBox="0 0 80 80">
+        <circle class="track" cx="40" cy="40" r="34"/>
+        <circle class="arc" id="arc" cx="40" cy="40" r="34"/>
+      </svg>
+      <div class="num" id="count"></div>
+    </div>
   </div>
 </header>
 
@@ -403,7 +438,7 @@
 <div class="cat"><span>Jogos da casa</span><span class="cat-n" id="catNativeN"></span></div>
 <ul class="grid" id="gridNative"></ul>
 <div class="cat"><span>Outros jogos</span><span class="cat-n" id="catExternalN"></span></div>
-<ul class="grid" id="gridExternal"></ul>
+<ul class="list" id="gridExternal"></ul>
 <div class="all-done" id="allDone"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Tudo feito por hoje!</div>
 </div>
 
@@ -619,6 +654,7 @@ const cards = {};
 
 function buildCard(g) {
   const li = document.createElement("li");
+  if (!LOCAL_PROGRESS[g.id]) return buildRow(g, li);   // outros jogos: linha com switch
   li.className = "app";
   li.innerHTML = `
     <a class="game" href="${g.url}" title="${g.desc || ""}">
@@ -644,6 +680,28 @@ function buildCard(g) {
     `<button class="badge" role="switch" aria-checked="false" aria-label="${g.name} feito">${CHECK_SVG}</button>`);
   li.querySelector("a").addEventListener("click", () => setDone(g.id, true));
   li.querySelector("button.badge").addEventListener("click", e => {
+    setDone(g.id, e.currentTarget.getAttribute("aria-checked") !== "true");
+  });
+  return li;
+}
+// linha da lista de outros jogos: ícone, nome e descrição, e o switch "Feito"
+function buildRow(g, li) {
+  li.className = "row";
+  li.innerHTML = `
+    <a class="game" href="${g.url}">
+      <span class="icon">${g.emoji}</span>
+      <span class="info">
+        <span class="name">${g.name}${g.app ? '<span class="tag">APP</span>' : ""}</span>
+        <span class="desc">${g.desc || ""}</span>
+      </span>
+    </a>
+    <button class="toggle" role="switch" aria-checked="false" aria-label="${g.name} feito">
+      <span class="switch"><span class="knob">${CHECK_SVG}</span></span>
+      <span class="toggle-label">A fazer</span>
+    </button>`;
+  loadIcon(g, li.querySelector(".icon"));
+  li.querySelector("a").addEventListener("click", () => setDone(g.id, true));   // abrir já marca como feito
+  li.querySelector(".toggle").addEventListener("click", e => {
     setDone(g.id, e.currentTarget.getAttribute("aria-checked") !== "true");
   });
   return li;
@@ -681,7 +739,7 @@ function render() {
     const isDone = done.has(g.id);
     const p = LOCAL_PROGRESS[g.id] ? progressOf(g) : null;
     li.classList.toggle("done", isDone);
-    li.querySelector(".status").innerHTML = statusText(g, p, isDone);
+    if (native) li.querySelector(".status").innerHTML = statusText(g, p, isDone);
 
     const auto = li.querySelector(".badge.auto");
     if (auto) {
@@ -690,8 +748,10 @@ function render() {
       auto.querySelector(".mr-arc").style.strokeDashoffset = MINI_CIRC * (1 - frac);
       auto.setAttribute("aria-label", `${g.name}: ${!p ? "não começou" : p.finished ? "feito" : `${p.tries} de ${p.max} ${"time" in p ? "peças" : "tentativas"}`}`);
     }
-    const btn = li.querySelector("button.badge");
+    const btn = li.querySelector("button.badge, button.toggle");
     if (btn) btn.setAttribute("aria-checked", isDone);
+    const tl = li.querySelector(".toggle-label");
+    if (tl) tl.textContent = isDone ? "Feito" : "A fazer";
 
     const a = li.querySelector("a");
     if (state.newTab && !g.app) { a.target = "_blank"; a.rel = "noopener"; }
@@ -706,9 +766,11 @@ function render() {
 
   $("allDone").classList.toggle("show", n === total);
 
-  const s = streak();
-  $("streak").hidden = s === 0;
-  $("streak").innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> ${s} dia${s > 1 ? "s" : ""} seguido${s > 1 ? "s" : ""} completo${s > 1 ? "s" : ""}`;
+  const s = streak(), left = total - n;
+  const fire = s > 0 ? ` · <span class="fl"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>${s} dia${s > 1 ? "s" : ""} seguido${s > 1 ? "s" : ""}</span>` : "";
+  $("summary").innerHTML = left === 0
+    ? `<b>Tudo feito por hoje</b>${fire}`
+    : `Falta${left > 1 ? "m" : ""} <b>${left} jogo${left > 1 ? "s" : ""}</b> hoje${fire}`;
 
   document.querySelectorAll(".seg2 button").forEach(b => b.setAttribute("aria-checked", (b.dataset.tab === "new") === state.newTab));
 
@@ -763,8 +825,10 @@ if ("serviceWorker" in navigator) {
   });
 }
 
+// saudação conforme a hora do dia
 function renderDate() {
-  $("date").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+  const hr = new Date().getHours();
+  $("greet").textContent = hr >= 5 && hr < 12 ? "Bom dia!" : hr >= 12 && hr < 18 ? "Boa tarde!" : "Boa noite!";
 }
 
 // tema geral: um botão alterna Automático → Claro → Escuro (vale também para os jogos nativos)

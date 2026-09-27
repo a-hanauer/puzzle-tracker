@@ -34,15 +34,14 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 
 ## Como funciona
 
-- Os jogos aparecem numa **grade de ícones**, como a tela inicial do celular, sempre na mesma ordem, em duas seções: **Jogos da casa** (Sanduba, Quinhentos e Eclipse, que moram neste repositório) e **Outros jogos** (sites externos). Cada seção mostra quantos já foram feitos hoje. A seção de cada jogo é automática: os que têm leitura de progresso em `LOCAL_PROGRESS` vão para Jogos da casa.
-- **Tocar num jogo** abre o jogo. Nos jogos externos, isso já marca o jogo como feito.
-- **O selo no canto** mostra o status:
-  - **Jogos externos:** é um botão; tocar nele marca ou desmarca o jogo sem abrir.
-  - **Sanduba e Quinhentos:** é automático. O anel enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado ("Acertou 5/8").
+- O **topo** mostra uma saudação conforme a hora (bom dia, boa tarde, boa noite), quantos jogos faltam hoje, a **sequência** de dias seguidos com tudo feito e um anel pequeno com o progresso do dia.
+- **Jogos da casa** (Sanduba, Quinhentos e Eclipse) aparecem numa grade de ícones; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um switch "Feito". A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
+- **Status de cada jogo:**
+  - **Outros jogos:** o switch à direita marca ou desmarca; abrir o jogo pelo painel já marca como feito.
+  - **Jogos da casa:** um anel no canto enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado ("Acertou 5/8", ou o tempo no Eclipse).
 - Jogos feitos ficam com fundo verde claro.
-- O **anel de progresso** no topo mostra quantos jogos do dia já foram feitos, e a **sequência** (ícone de chama) conta os dias seguidos com tudo feito.
 - A lista **zera sozinha à meia-noite**, no horário do aparelho.
-- No canto superior direito do cartão do topo há dois botões: **tema** (cada toque alterna Automático → Claro → Escuro; vale também para os jogos da casa) e **configurações**.
+- No canto superior direito há dois botões: **tema** (cada toque alterna Automático → Claro → Escuro; vale também para os jogos da casa) e **configurações**.
 - O link do LinkedIn sempre abre na mesma aba, o que faz o celular abrir o app do LinkedIn quando ele está instalado.
 - Em **configurações**: abrir jogos externos na mesma aba (padrão) ou em nova aba, desmarcar os jogos externos do dia (pede um segundo toque para confirmar) e, no app do iPhone, ativar o número de pendentes no ícone.
 
