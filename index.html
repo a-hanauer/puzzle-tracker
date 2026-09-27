@@ -109,8 +109,14 @@
   .streak[hidden] { display: none; }
 
   /* ---------- Grade de jogos (launchpad) ---------- */
+  /* categorias: jogos da casa (nativos) e outros jogos (sites externos) */
+  .cat {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin: 20px 4px 8px; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+  }
+  .cat-n { font-variant-numeric: tabular-nums; letter-spacing: .02em; }
   .grid {
-    list-style: none; padding: 0; margin: 18px 0 0;
+    list-style: none; padding: 0; margin: 0;
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
   }
   .app {
@@ -357,7 +363,10 @@
 </section>
 
 <div id="viewToday">
-<ul class="grid" id="grid"></ul>
+<div class="cat"><span>Jogos da casa</span><span class="cat-n" id="catNativeN"></span></div>
+<ul class="grid" id="gridNative"></ul>
+<div class="cat"><span>Outros jogos</span><span class="cat-n" id="catExternalN"></span></div>
+<ul class="grid" id="gridExternal"></ul>
 <div class="all-done" id="allDone">🎉 Tudo feito por hoje!</div>
 </div>
 
@@ -622,11 +631,15 @@ function statusText(g, p, isDone) {
 function render() {
   syncLocalGames();
   const done = doneToday();
-  const grid = $("grid");
+  const gridNative = $("gridNative"), gridExternal = $("gridExternal");
+  let nNat = 0, dNat = 0, nExt = 0, dExt = 0;
 
   for (const g of GAMES) {
     const li = cards[g.id];
+    const native = !!LOCAL_PROGRESS[g.id];              // jogos deste repositório ficam em "Jogos da casa"
+    const grid = native ? gridNative : gridExternal;
     if (li.parentNode !== grid) grid.appendChild(li);   // ordem fixa: a da lista GAMES
+    if (native) { nNat++; if (done.has(g.id)) dNat++; } else { nExt++; if (done.has(g.id)) dExt++; }
     const isDone = done.has(g.id);
     const p = LOCAL_PROGRESS[g.id] ? progressOf(g) : null;
     li.classList.toggle("done", isDone);
@@ -647,6 +660,8 @@ function render() {
     else { a.removeAttribute("target"); a.removeAttribute("rel"); }
   }
 
+  $("catNativeN").textContent = `${dNat}/${nNat}`;
+  $("catExternalN").textContent = `${dExt}/${nExt}`;
   const n = GAMES.filter(g => done.has(g.id)).length, total = GAMES.length;
   $("count").innerHTML = `${n}<small>/${total}</small>`;
   $("arc").style.strokeDashoffset = CIRC * (1 - n / total);

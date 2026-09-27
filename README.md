@@ -34,7 +34,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 
 ## Como funciona
 
-- Os jogos aparecem numa **grade de ícones**, como a tela inicial do celular, sempre na mesma ordem, para você jogar na sequência que quiser.
+- Os jogos aparecem numa **grade de ícones**, como a tela inicial do celular, sempre na mesma ordem, em duas seções: **Jogos da casa** (Sanduba, Quinhentos e Eclipse, que moram neste repositório) e **Outros jogos** (sites externos). Cada seção mostra quantos já foram feitos hoje. A seção de cada jogo é automática: os que têm leitura de progresso em `LOCAL_PROGRESS` vão para Jogos da casa.
 - **Tocar num jogo** abre o jogo. Nos jogos externos, isso já marca o jogo como feito.
 - **O selo no canto** mostra o status:
   - **Jogos externos:** é um botão; tocar nele marca ou desmarca o jogo sem abrir.
