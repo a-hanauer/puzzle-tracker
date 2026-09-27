@@ -12,6 +12,7 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
+<script src="comum/tema.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -30,7 +31,7 @@
     --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.18);
   }
   @media (prefers-color-scheme: light) {
-    :root {
+    :root:not([data-theme="dark"]) {
       --bg: #f3f4f7;
       --surface: #ffffff;
       --surface-2: #eef0f4;
@@ -43,6 +44,19 @@
       --gold: #b8871c;
       --shadow: 0 1px 2px rgba(20,24,33,.06), 0 6px 18px rgba(20,24,33,.06);
     }
+  }
+  :root[data-theme="light"] {
+      --bg: #f3f4f7;
+      --surface: #ffffff;
+      --surface-2: #eef0f4;
+      --text: #171a21;
+      --muted: #676d7d;
+      --faint: #a2a7b3;
+      --border: #e3e5ea;
+      --green: #3fa24c;
+      --green-soft: rgba(63, 162, 76, .10);
+      --gold: #b8871c;
+      --shadow: 0 1px 2px rgba(20,24,33,.06), 0 6px 18px rgba(20,24,33,.06);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   /* sem zoom por dois toques: o navegador trata cada toque como clique imediato */
@@ -187,6 +201,15 @@
   }
   .all-done.show { display: block; animation: pop .35s ease; }
 
+  /* seletor de tema geral (vale para o painel e os jogos nativos) */
+  .theme-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 18px; color: var(--muted); font-size: .82rem; font-weight: 600; }
+  .theme-seg { display: inline-grid; grid-template-columns: repeat(3, auto); gap: 3px; padding: 3px; border-radius: 99px; background: var(--surface); border: 1px solid var(--border); }
+  .theme-seg button {
+    display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border: none; border-radius: 99px; cursor: pointer;
+    background: none; color: var(--muted); font: inherit; font-weight: 600; font-size: .8rem;
+  }
+  .theme-seg svg { width: 15px; height: 15px; }
+  .theme-seg button[aria-checked="true"] { background: var(--surface-2); color: var(--text); }
   footer { margin-top: 28px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
   footer button {
     background: var(--surface); border: 1px solid var(--border); color: var(--muted);
@@ -343,6 +366,15 @@
   <button id="toggleTab"></button>
   <button id="reset">Desmarcar tudo</button>
 </footer>
+
+<div class="theme-row">
+  <span>Tema</span>
+  <div class="theme-seg" role="radiogroup" aria-label="Tema">
+    <button data-t="auto" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>Auto</button>
+    <button data-t="light" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>Claro</button>
+    <button data-t="dark" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="currentColor"/></svg>Escuro</button>
+  </div>
+</div>
 
 <script>
 /* ============================================================
@@ -681,6 +713,14 @@ if ("serviceWorker" in navigator) {
 function renderDate() {
   $("date").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
 }
+
+// tema geral: Automático segue o celular; Claro/Escuro forçam (painel e jogos nativos)
+function renderTheme() {
+  const t = window.jogosTema ? jogosTema.get() : "auto";
+  document.querySelectorAll(".theme-seg button").forEach(b => b.setAttribute("aria-checked", b.dataset.t === t));
+}
+document.querySelectorAll(".theme-seg button").forEach(b => b.addEventListener("click", () => { jogosTema.set(b.dataset.t); renderTheme(); }));
+renderTheme();
 
 $("toggleTab").addEventListener("click", () => { state.newTab = !state.newTab; save(); render(); });
 $("reset").addEventListener("click", () => {

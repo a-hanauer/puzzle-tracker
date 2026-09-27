@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<script src="../comum/tema.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -42,46 +43,46 @@
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#191410;
+      --bg:#2f271f;
       --bg-elev:#fffaf0;
-      --card:#2a231b;
-      --border:#463a2c;
+      --card:#3d3329;
+      --border:#5e4d3b;
       --text:#fdf1dc;
-      --text-dim:#a4917a;
+      --text-dim:#bca88f;
       --accent:#f4795b;
-      --accent-soft:#5c3527;
+      --accent-soft:#6b3e2f;
       --tile:#f0b876;
-      --tile-ghost:#4a3d2e;
+      --tile-ghost:#51432f;
       --tile-text:#221c14;
       --key:#f6dfb8;
       --key-text:#221c14;
       --good:#8ed05a;
-      --good-soft:#37492c;
+      --good-soft:#435838;
       --bad:#f2685a;
-      --bad-soft:#4a2620;
+      --bad-soft:#5e3029;
       --ink:#221c14;
       --cheese:#fbe08a;
       --bread-2:#dfa059;
     }
   }
   :root[data-theme="dark"]{
-    --bg:#191410;
+    --bg:#2f271f;
     --bg-elev:#fffaf0;
-    --card:#2a231b;
-    --border:#463a2c;
+    --card:#3d3329;
+    --border:#5e4d3b;
     --text:#fdf1dc;
-    --text-dim:#a4917a;
+    --text-dim:#bca88f;
     --accent:#f4795b;
-    --accent-soft:#5c3527;
+    --accent-soft:#6b3e2f;
     --tile:#f0b876;
-    --tile-ghost:#4a3d2e;
+    --tile-ghost:#51432f;
     --tile-text:#221c14;
     --key:#f6dfb8;
     --key-text:#221c14;
     --good:#8ed05a;
-    --good-soft:#37492c;
+    --good-soft:#435838;
     --bad:#f2685a;
-    --bad-soft:#4a2620;
+    --bad-soft:#5e3029;
     --ink:#221c14;
     --cheese:#fbe08a;
     --bread-2:#dfa059;
@@ -1111,9 +1112,8 @@
     applyThemeTag();
   });
   (function initTheme(){
-    // o tema segue o do celular, como o painel: descarta escolha manual antiga
+    // o tema vem da escolha geral do painel (comum/tema.js); descarta a escolha antiga deste jogo
     try{ localStorage.removeItem(THEME_KEY); }catch(e){}
-    document.documentElement.removeAttribute('data-theme');
     applyThemeTag();
   })();
 

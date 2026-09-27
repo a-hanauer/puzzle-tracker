@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png">
+<script src="../comum/tema.js"></script>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,9 +37,10 @@
     --r0: #f6bdb4; --r1: #fbe19a; --r2: #cde7ab; --r3: #afd2f4; --r4: #d6c6f6;
     --r5: #f5c3de; --r6: #a9e6c8; --r7: #f4ceA4; --r8: #d9dce2;
     --shadow: 0 1px 2px rgba(20,24,33,.06), 0 6px 18px rgba(20,24,33,.07);
+    --on-accent: #fff;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --bg: #11131c;
       --surface: #1a1d29;
       --surface-2: #242838;
@@ -59,7 +61,31 @@
       --r0: #613a35; --r1: #5c4f26; --r2: #3d5530; --r3: #2d4868; --r4: #46386a;
       --r5: #5e3453; --r6: #265847; --r7: #5d4428; --r8: #3b414c;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.2);
+      --on-accent: #11131c;
     }
+  }
+  :root[data-theme="dark"] {
+      --bg: #11131c;
+      --surface: #1a1d29;
+      --surface-2: #242838;
+      --ink: #eceef6;
+      --muted: #9a9fb2;
+      --faint: #5f6478;
+      --line: #2a2f40;
+      --wall: #0a0b10;
+      --grid: rgba(255,255,255,.10);
+      --sun: #fbbf24;
+      --sun-edge: #f59e0b;
+      --moon: #c7d2fe;
+      --moon-edge: #a5b4fc;
+      --x: rgba(236, 238, 246, .45);
+      --bad: #ff6b6f;
+      --accent: #a5b4fc;
+      --good: #5fbf6a;
+      --r0: #613a35; --r1: #5c4f26; --r2: #3d5530; --r3: #2d4868; --r4: #46386a;
+      --r5: #5e3453; --r6: #265847; --r7: #5d4428; --r8: #3b414c;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.2);
+    --on-accent: #11131c;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body, a, button { touch-action: manipulation; }
@@ -136,8 +162,7 @@
   .controls button:disabled { opacity: .45; }
   .controls #clearBtn { flex: 0 0 48px; padding: 0; }
   .controls #undoBtn { flex: 0 0 48px; padding: 0; }
-  .controls button[aria-pressed="true"] { background: var(--accent); color: #fff; }
-  @media (prefers-color-scheme: dark) { .controls button[aria-pressed="true"] { color: #11131c; } }
+  .controls button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
   .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; }
   .tip svg { width: 13px; height: 13px; vertical-align: -2px; }
 
@@ -169,9 +194,8 @@
   .rules-demo .mini span.b { background-image: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--bad) 38%, transparent) 4px 6px); }
   .btn {
     width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer;
-    background: var(--accent); color: #fff; font: inherit; font-weight: 700; font-size: .95rem;
+    background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
-  @media (prefers-color-scheme: dark) { .btn { color: #11131c; } }
 
   .end { text-align: center; }
   .end .art svg { width: 84px; height: 84px; }

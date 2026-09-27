@@ -16,7 +16,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | `sanduba/` | O jogo Sanduba (`index.html` + `icon.png`) |
 | `quinhentos/` | O jogo Quinhentos (`index.html` + `icon.png`) |
 | `eclipse/` | O jogo Eclipse: `index.html`, `icon.png`, `desafios.json` (2 anos de desafios), `livre.json` (jogo livre) e `gerador.mjs` |
-| `comum/` | Cabeçalho comum dos jogos nativos (`cabecalho.css` e `cabecalho.js`) |
+| `comum/` | Partes comuns: cabeçalho e janelas dos jogos (`cabecalho.css`, `cabecalho.js`) e tema geral (`tema.js`) |
 
 ## Jogos incluídos
 
@@ -45,6 +45,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 - Por padrão os jogos abrem **na mesma aba**. O botão no rodapé troca para abrir em nova aba.
 - O link do LinkedIn sempre abre na mesma aba, o que faz o celular abrir o app do LinkedIn quando ele está instalado.
 - "Desmarcar tudo" limpa os jogos externos do dia.
+- **Tema:** no fim do painel, escolha Automático (segue o celular), Claro ou Escuro. A escolha vale também para o Sanduba, o Quinhentos e o Eclipse.
 
 O progresso fica salvo no `localStorage` do navegador, então é separado em cada aparelho e navegador. Limpar os dados do site apaga o histórico.
 
@@ -85,7 +86,7 @@ O Sanduba e o Quinhentos rodam direto daqui, cada um na sua pasta:
 
 Cada jogo tem um botão **‹** à esquerda do logotipo que volta para o painel. Ele é essencial no app instalado no iPhone, que não mostra o botão "voltar" do navegador.
 
-A interface dos jogos nativos (Sanduba, Quinhentos e Eclipse) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema segue o do celular. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: no celular, sobem de baixo como um painel, com o ✕ sempre visível no topo, e fecham ao tocar no fundo. As estatísticas continuam sendo gravadas pelos jogos e aparecem na aba **Histórico** do painel.
+A interface dos jogos nativos (Sanduba, Quinhentos e Eclipse) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema é o escolhido no painel. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: no celular, sobem de baixo como um painel, com o ✕ sempre visível no topo, e fecham ao tocar no fundo. As estatísticas continuam sendo gravadas pelos jogos e aparecem na aba **Histórico** do painel.
 
 As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o progresso por domínio, e todos os endereços ficam em `a-hanauer.github.io`.
 

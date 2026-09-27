@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Quinhentos">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="../comum/tema.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -502,7 +503,7 @@ header{
 
   var diff = 'padrao';
   var practiceMode = false; // nunca memorizado — sempre começa desligado
-  var theme = 'auto'; // o tema segue o do celular, como o painel
+  var theme = (window.jogosTema && jogosTema.get()) || 'auto'; // tema geral, escolhido no painel
 
   var state = null; // jogo atual
 
