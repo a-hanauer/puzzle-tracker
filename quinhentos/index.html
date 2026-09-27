@@ -323,6 +323,10 @@ header{
 /* voltar ao painel Jogos do Dia */
 .back-home{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;margin-left:-8px;border-radius:50%;color:var(--ink);text-decoration:none;flex-shrink:0;opacity:.75;-webkit-tap-highlight-color:transparent;transition:opacity .15s,background .15s;}.back-home:hover,.back-home:active{opacity:1;background:rgba(127,127,127,.15);}
 .brand-wrap{display:flex;align-items:center;gap:2px;flex-shrink:0;}
+
+/* simplificado: estatísticas ficam no painel Jogos do Dia */
+#btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
+#overlay-end .stat-grid, #overlay-end #e-dist{display:none !important;}
 </style>
 </head>
 <body>
@@ -360,8 +364,10 @@ header{
         <span>Jogo livre</span>
         <div class="switch" id="mode-switch"><div class="knob"></div></div>
       </div>
-      <button class="iconbtn" id="btn-stats" title="Estatísticas" aria-label="Estatísticas">📊</button>
-      <button class="iconbtn" id="btn-settings" title="Configurações" aria-label="Configurações">⚙️</button>
+      <!-- estatísticas e configurações ficam no painel Jogos do Dia; os botões originais seguem ocultos -->
+      <button class="iconbtn" id="btn-stats" hidden aria-hidden="true" tabindex="-1">📊</button>
+      <button class="iconbtn" id="btn-settings" hidden aria-hidden="true" tabindex="-1">⚙️</button>
+      <button class="iconbtn" id="btn-help-top" title="Como jogar" aria-label="Como jogar" style="color:var(--ink-dim)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
     </div>
   </header>
 
@@ -515,7 +521,7 @@ header{
 
   var diff = 'padrao';
   var practiceMode = false; // nunca memorizado — sempre começa desligado
-  var theme = load('theme', 'auto');
+  var theme = 'auto'; // o tema segue o do celular, como o painel
 
   var state = null; // jogo atual
 
@@ -1105,6 +1111,7 @@ header{
   document.getElementById('btn-share2').addEventListener('click', doShare);
   onTap(document.getElementById('btn-settings'), function(){ openModal('overlay-settings'); });
   document.getElementById('btn-help').addEventListener('click', function(){ closeModal('overlay-settings'); openModal('overlay-help'); });
+  document.getElementById('btn-help-top').addEventListener('click', function(){ openModal('overlay-help'); });
   document.getElementById('btn-restart').addEventListener('click', function(){
     closeModal('overlay-settings');
     clearCurrent();

@@ -80,7 +80,9 @@ O Sanduba e o Quinhentos rodam direto daqui, cada um na sua pasta:
 - https://a-hanauer.github.io/puzzle-tracker/sanduba/
 - https://a-hanauer.github.io/puzzle-tracker/quinhentos/
 
-Cada jogo tem um botão **‹** à esquerda do logotipo que volta para o painel. Ele é essencial no app instalado no iPhone, que não mostra o botão "voltar" do navegador.
+Cada jogo tem um botão **‹** à esquerda do logotipo que volta para o painel.
+
+A interface dos dois foi simplificada: não há mais configurações nem telas de estatísticas dentro deles. O cabeçalho tem só o botão de voltar, o modo "Jogo livre" e um **?** com as regras; o tema segue o do celular. As estatísticas continuam sendo gravadas pelos jogos e aparecem na aba **Histórico** do painel. Ele é essencial no app instalado no iPhone, que não mostra o botão "voltar" do navegador.
 
 As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o progresso por domínio, e todos os endereços ficam em `a-hanauer.github.io`.
 

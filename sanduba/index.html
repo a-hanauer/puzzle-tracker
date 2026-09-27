@@ -347,6 +347,10 @@
 
 /* voltar ao painel Jogos do Dia */
 .back-home{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;margin-left:-8px;border-radius:50%;color:var(--text);text-decoration:none;flex-shrink:0;opacity:.75;-webkit-tap-highlight-color:transparent;transition:opacity .15s,background .15s;}.back-home:hover,.back-home:active{opacity:1;background:rgba(127,127,127,.15);}
+
+  /* simplificado: configurações ficam no painel Jogos do Dia */
+  #settings-btn[hidden]{display:none !important;}
+  #help-btn svg{display:block;margin:auto;}
 </style>
 </head>
 <body>
@@ -388,7 +392,9 @@
         <input type="checkbox" id="practice-toggle" autocomplete="off">
         <span class="mode-switch-track"></span>
       </label>
-      <button class="icon-btn" id="settings-btn" title="Configurações" aria-label="Configurações">
+      <button class="icon-btn" id="help-btn" title="Como jogar" aria-label="Como jogar"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
+      <!-- configurações e estatísticas ficam no painel Jogos do Dia; o botão original segue oculto -->
+      <button class="icon-btn" id="settings-btn" hidden aria-hidden="true" tabindex="-1">
         <svg viewBox="0 0 24 24" class="gear-icon" aria-hidden="true">
           <g fill="none" stroke="var(--ink)" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round">
             <path d="M12 3.2l2 1.7 2.6-.5 1 2.4 2.4 1-.5 2.6 1.7 2-1.7 2 .5 2.6-2.4 1-1 2.4-2.6-.5-2 1.7-2-1.7-2.6.5-1-2.4-2.4-1 .5-2.6-1.7-2 1.7-2-.5-2.6 2.4-1 1-2.4 2.6.5z" fill="var(--tile)"/>
@@ -1018,6 +1024,7 @@
   });
 
   document.getElementById('settings-btn').addEventListener('click', function(){ openModal('settings-overlay'); });
+  document.getElementById('help-btn').addEventListener('click', function(){ openModal('help-overlay'); });
   document.getElementById('settings-help').addEventListener('click', function(){
     closeModal('settings-overlay'); openModal('help-overlay');
   });
@@ -1102,10 +1109,9 @@
     applyThemeTag();
   });
   (function initTheme(){
-    try{
-      var saved = localStorage.getItem(THEME_KEY);
-      if(saved) document.documentElement.setAttribute('data-theme', saved);
-    }catch(e){}
+    // o tema segue o do celular, como o painel: descarta escolha manual antiga
+    try{ localStorage.removeItem(THEME_KEY); }catch(e){}
+    document.documentElement.removeAttribute('data-theme');
     applyThemeTag();
   })();
 
