@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Jogos do Dia">
 <title>Jogos do Dia</title>
-<link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=4">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
+<link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=5">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=5">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -243,6 +243,7 @@
 <script>
 /* ============================================================
    LISTA DE JOGOS — para adicionar um jogo, copie uma linha.
+   url:   endereço completo, ou o nome da pasta para jogos dentro deste repositório (ex.: "sanduba/")
    id:    identificador único (não mude depois, é usado no progresso)
    emoji: usado enquanto o ícone carrega ou se o site não tiver ícone
    icon:  (opcional) URL de um ícone específico, ignora a busca automática
@@ -252,25 +253,56 @@ const GAMES = [
   { id: "termo",      name: "Termo",      emoji: "🟩", desc: "Wordle em português",           url: "https://term.ooo/" },
   { id: "spotle",     name: "Spotle",     emoji: "🎵", desc: "Adivinhe o artista",            url: "https://spotle.io/" },
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
-  { id: "sanduba",    name: "Sanduba",    emoji: "🥪", desc: "Betweenle em português",        url: "https://a-hanauer.github.io/sanduba-jogo/" },
+  { id: "sanduba",    name: "Sanduba",    emoji: "🥪", desc: "Betweenle em português",        url: "sanduba/", icon: "sanduba/icon.png" },
   { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/" },
-  { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "https://a-hanauer.github.io/500/" },
+  { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon.png" },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
 ];
 
 /* ============================================================ */
 
+/* ---------- Progresso dos jogos deste repositório ----------
+   Sanduba e Quinhentos rodam no mesmo endereço do painel, então o painel
+   consegue ler a partida do dia que eles salvam no navegador.
+   Cada função devolve null (não começou) ou { tries, max, finished, won }. */
+function readJSON(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
+
+const LOCAL_PROGRESS = {
+  sanduba() {
+    const d = new Date();                    // o Sanduba usa a data sem zeros: 2026-9-27
+    const p = readJSON(`sanduba-daily-${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`);
+    if (!p || !Array.isArray(p.guesses) || !p.guesses.length) return null;
+    const max = 14, tries = p.guesses.length;
+    const won = p.guesses.some(g => g.word === p.secret);
+    return { tries, max, won, finished: won || tries >= max };
+  },
+  quinhentos() {
+    const p = readJSON("quinhentao:game:padrao");
+    // mesmo cálculo do jogo: dias desde 1º/jan/2024, contando a partir de 1
+    const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+    const dayNum = Math.floor((today0 - new Date(2024, 0, 1)) / 86400000) + 1;
+    if (!p || p.dayNum !== dayNum || !Array.isArray(p.guesses) || !p.guesses.length) return null;
+    return { tries: p.guesses.length, max: 8, won: !!p.won, finished: !!p.finished };
+  },
+};
+
+function progressOf(g) {
+  const fn = LOCAL_PROGRESS[g.id];
+  if (!fn) return null;
+  try { return fn(); } catch { return null; }
+}
+
 /* ---------- Ícones ----------
    Tenta, em ordem: ícone definido → favicon do próprio caminho do site
    → serviço de favicons do Google. Se nada servir, fica o emoji. */
 function iconCandidates(g) {
   if (g.icon) return [g.icon];
-  const u = new URL(g.url);
+  const u = new URL(g.url, location.href);   // aceita endereços relativos (jogos dentro deste repositório)
   const base = u.origin + u.pathname.replace(/[^/]*$/, "");
   const list = [];
   // sites em github.io compartilham domínio: procura o ícone dentro da pasta do jogo
-  if (u.hostname.endsWith("github.io")) {
+  if (u.origin === location.origin || u.hostname.endsWith("github.io")) {
     list.push(base + "favicon.svg", base + "favicon.png", base + "favicon.ico", base + "apple-touch-icon.png");
   } else {
     list.push(`https://www.google.com/s2/favicons?domain=${u.hostname}&sz=128`);
@@ -308,6 +340,7 @@ function load() {
   let s;
   try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { s = {}; }
   s.history ??= {};
+  s.auto ??= {};           // jogos marcados automaticamente, por dia (para não remarcar se você desmarcar)
   s.newTab ??= false;
   return s;
 }
@@ -315,6 +348,26 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catc
 
 const state = load();
 Object.keys(state.history).sort().slice(0, -60).forEach(d => delete state.history[d]);
+Object.keys(state.auto).filter(d => d !== today()).forEach(d => delete state.auto[d]);
+
+// marca como feito o jogo local que terminou hoje (uma vez por dia)
+function syncLocalGames() {
+  const set = doneToday(), auto = new Set(state.auto[today()] || []);
+  let changed = false;
+  for (const g of GAMES) {
+    const p = progressOf(g);
+    if (p?.finished && !auto.has(g.id)) {
+      auto.add(g.id);
+      set.add(g.id);
+      changed = true;
+    }
+  }
+  if (changed) {
+    state.history[today()] = [...set];
+    state.auto[today()] = [...auto];
+    save();
+  }
+}
 
 const doneToday = () => new Set(state.history[today()] || []);
 function setDone(id, value) {
@@ -353,7 +406,8 @@ function buildCard(g) {
       <span class="toggle-label">A fazer</span>
     </button>`;
   loadIcon(g, li.querySelector(".icon"));
-  li.querySelector("a").addEventListener("click", () => setDone(g.id, true));
+  // jogos externos: abrir já marca como feito. Jogos locais: marcam sozinhos ao terminar a partida.
+  if (!LOCAL_PROGRESS[g.id]) li.querySelector("a").addEventListener("click", () => setDone(g.id, true));
   li.querySelector(".toggle").addEventListener("click", e => {
     const on = e.currentTarget.getAttribute("aria-checked") === "true";
     setDone(g.id, !on);
@@ -367,13 +421,21 @@ const $ = id => document.getElementById(id);
 const CIRC = 2 * Math.PI * 34;
 $("arc").style.strokeDasharray = CIRC;
 
+function progressText(g, p) {
+  if (!p) return g.desc || "";
+  if (!p.finished) return `Em andamento · ${p.tries}/${p.max} tentativas`;
+  return p.won ? `Acertou em ${p.tries}/${p.max}` : "Não foi dessa vez";
+}
+
 function render() {
+  syncLocalGames();
   const done = doneToday();
   const todoList = $("todo"), doneList = $("done");
 
   for (const g of GAMES) {
     const li = cards[g.id];
     const isDone = done.has(g.id);
+    if (LOCAL_PROGRESS[g.id]) li.querySelector(".desc").textContent = progressText(g, progressOf(g));
     const target = isDone ? doneList : todoList;
     if (li.parentNode !== target) target.appendChild(li);
     li.classList.toggle("done", isDone);
@@ -488,6 +550,8 @@ $("reset").addEventListener("click", () => {
 // ao voltar para o painel (ou se virar o dia), atualiza
 document.addEventListener("visibilitychange", () => { if (!document.hidden) { renderDate(); render(); } });
 window.addEventListener("pageshow", () => { renderDate(); render(); });
+// se um jogo estiver aberto em outra aba e terminar, o painel atualiza sozinho
+window.addEventListener("storage", () => render());
 
 renderDate();
 render();

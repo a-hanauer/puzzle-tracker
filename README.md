@@ -13,6 +13,8 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | `sw.js` | Deixa o painel instalável e funcionando offline |
 | `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` | Ícones do app (Android e computador) |
 | `apple-touch-icon.png` | Ícone da tela inicial do iPhone |
+| `sanduba/` | O jogo Sanduba (`index.html` + `icon.png`) |
+| `quinhentos/` | O jogo Quinhentos (`index.html` + `icon.png`) |
 
 ## Jogos incluídos
 
@@ -21,15 +23,16 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | 🟩 Termo | https://term.ooo/ |
 | 🎵 Spotle | https://spotle.io/ |
 | ↕️ Betweenle | https://betweenle.com/ |
-| 🥪 Sanduba | https://a-hanauer.github.io/sanduba-jogo/ |
+| 🥪 Sanduba | [`sanduba/`](sanduba/) (neste repositório) |
 | 🔢 Word500 | https://word500.com/ |
-| 5️⃣ Quinhentos | https://a-hanauer.github.io/500/ |
+| 5️⃣ Quinhentos | [`quinhentos/`](quinhentos/) (neste repositório) |
 | 🦊 Foximax | https://foximax.com/ |
 | 💼 LinkedIn (app) | https://www.linkedin.com/games/ |
 
 ## Como funciona
 
-- **Tocar em um jogo** abre o jogo e já o marca como feito.
+- **Tocar em um jogo externo** abre o jogo e já o marca como feito.
+- **Sanduba e Quinhentos marcam sozinhos:** o painel lê a partida salva pelos jogos e marca como feito quando ela termina, com vitória ou derrota. Enquanto isso, o cartão mostra o andamento ("Em andamento · 3/14 tentativas", "Acertou em 5/8").
 - **O switch à direita** marca ou desmarca o jogo manualmente. Ligado, fica verde com ✔ e "Feito".
 - Os jogos ficam separados em **A fazer** e **Feitos**; os feitos ficam riscados e com uma faixa verde.
 - Cada jogo usa o **ícone do próprio site**. Se o ícone não carregar, aparece o emoji definido na lista.
@@ -52,9 +55,24 @@ Edite o array `GAMES` no início do `<script>` em `index.html`:
 
 - `id`: identificador único. Não mude depois de criado, porque o progresso é salvo por ele.
 - `name`, `emoji`, `desc`: o que aparece no cartão. O emoji é a reserva caso o ícone do site não carregue.
-- `url`: endereço do jogo.
+- `url`: endereço do jogo, ou o nome da pasta para jogos que moram neste repositório (ex.: `"sanduba/"`).
 - `icon` (opcional): URL de um ícone específico, no lugar da busca automática.
 - `app: true` (opcional): mostra a etiqueta "APP" e sempre abre na mesma aba, para o celular repassar o link ao aplicativo.
+
+## Jogos dentro do repositório
+
+O Sanduba e o Quinhentos rodam direto daqui, cada um na sua pasta:
+
+- https://a-hanauer.github.io/puzzle-tracker/sanduba/
+- https://a-hanauer.github.io/puzzle-tracker/quinhentos/
+
+Cada jogo tem um botão **‹** à esquerda do logotipo que volta para o painel. Ele é essencial no app instalado no iPhone, que não mostra o botão "voltar" do navegador.
+
+As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o progresso por domínio, e todos os endereços ficam em `a-hanauer.github.io`.
+
+Para atualizar um desses jogos, substitua o `index.html` da pasta dele.
+
+Como o painel lê o que esses jogos salvam no navegador, ele marca a partida sozinho quando você termina. Se você desmarcar à mão, ele não remarca naquele dia. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` no `index.html` do painel.
 
 ## Ícone e progresso fora do painel
 
