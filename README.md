@@ -119,11 +119,10 @@ Os ✕ claros são automáticos: vizinhas de qualquer peça e a linha, coluna e 
 
 Para gerar os desafios de novo, rode `node eclipse/gerador.mjs [dias]` (padrão: 730 dias a partir de 27/09/2026); ele refaz `desafios.json` e `livre.json`.
 
-## Ícone e progresso fora do painel
+## Ícone e pendências fora do painel
 
-- **Ícone da tela inicial:** fixo, com o anel como logotipo. Celulares não deixam um site redesenhar esse ícone depois de instalado.
+- **Ícone do app:** uma peça de quebra-cabeça preenchida por um mosaico colorido. O iPhone grava o ícone quando o atalho é criado; para trocar, é preciso apagar o atalho e adicionar de novo (o progresso não se perde).
 - **Número no ícone:** o app instalado mostra quantos jogos faltam no dia e some quando está tudo feito. No iPhone (iOS 16.4+) é preciso tocar uma vez em "🔔 Mostrar pendentes no ícone", no rodapé, e permitir notificações. O Chrome do Android não suporta esse número.
-- **Ícone da aba:** no navegador, o ícone da aba é redesenhado ao vivo com o anel de progresso e fica verde quando tudo está feito.
 - O painel não consegue saber o que foi jogado direto nos outros sites. Ele registra só o que é aberto por ele ou marcado no switch.
 - O número no ícone é atualizado sempre que o painel é aberto. Depois da meia-noite ele continua mostrando o dia anterior até você abrir o painel.
 
@@ -140,4 +139,4 @@ No celular, abra o painel e use **"Adicionar à tela inicial"** no menu do naveg
 
 ## Créditos
 
-A peça de quebra-cabeça do ícone é o ícone "puzzle" do [Lucide](https://lucide.dev), preenchido, usado sob a licença ISC.
+A peça de quebra-cabeça do ícone do app é o ícone "puzzle" do [Lucide](https://lucide.dev), preenchido com um mosaico, usado sob a licença ISC.

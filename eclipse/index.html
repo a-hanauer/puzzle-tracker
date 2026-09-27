@@ -115,15 +115,15 @@
 
   .cell svg.dim { opacity: .3; }                     /* peça do outro modo, só de referência */
   .seg {
-    flex: 1; min-height: 54px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px;
+    flex: 1; min-height: 62px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px;
     background: var(--surface); border-radius: 14px; box-shadow: var(--shadow);
   }
   .seg button {
     border: none; border-radius: 11px; cursor: pointer; padding: 0; background: none; color: var(--muted);
-    font: inherit; font-weight: 800; font-size: 1.02rem; box-shadow: none !important;
+    font: inherit; font-weight: 800; font-size: 1.15rem; box-shadow: none !important;
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   }
-  .seg button svg { width: 24px; height: 24px; }
+  .seg button svg { width: 30px; height: 30px; }
   #modeSun[aria-pressed="true"] { background: color-mix(in srgb, var(--sun) 26%, var(--surface)); color: var(--ink); }
   #modeMoon[aria-pressed="true"] { background: color-mix(in srgb, var(--moon) 22%, var(--surface)); color: var(--ink); }
   .controls { display: flex; gap: 10px; margin-top: 14px; }
@@ -135,7 +135,7 @@
   }
   .controls button:disabled { opacity: .45; }
   .controls #clearBtn { flex: 0 0 48px; padding: 0; }
-  .controls #undoBtn { flex: 0 0 auto; padding: 0 14px; }
+  .controls #undoBtn { flex: 0 0 48px; padding: 0; }
   .controls button[aria-pressed="true"] { background: var(--accent); color: #fff; }
   @media (prefers-color-scheme: dark) { .controls button[aria-pressed="true"] { color: #11131c; } }
   .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; }
@@ -230,9 +230,8 @@
 <div class="board" id="board" role="grid" aria-label="Tabuleiro"></div>
 
 <div class="controls">
-  <button id="undoBtn" disabled>
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
-    Desfazer
+  <button id="undoBtn" disabled aria-label="Desfazer" title="Desfazer">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
   </button>
   <div class="seg" role="group" aria-label="Modo">
     <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg><use href="#i-sun"/></svg><span id="cSun"><b>0</b>/9</span></button>
@@ -276,6 +275,16 @@
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia, e a dificuldade sobe ao longo da semana: <b>segunda é nível 1</b>, o mais fácil, e <b>domingo é nível 7</b>, o mais difícil.</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, de níveis variados, que não contam nas estatísticas.</p>
     <button class="btn" data-close>Jogar</button>
+  </div>
+</div>
+
+<!-- Confirmação para limpar -->
+<div class="overlay" id="clearOverlay">
+  <div class="modal" style="max-width:320px;text-align:center">
+    <h2 style="justify-content:center">Limpar o tabuleiro?</h2>
+    <p style="color:var(--muted);margin:0 0 18px">Todas as peças e marcações saem. As peças reveladas ficam. Dá para desfazer depois.</p>
+    <button class="btn" id="clearYes" style="background:var(--bad);color:#fff">Limpar</button>
+    <button class="close" data-close style="margin-top:12px;width:auto;padding:0 18px;height:36px;border-radius:99px">Cancelar</button>
   </div>
 </div>
 
@@ -590,6 +599,12 @@
     render(); persist();
   });
   $("clearBtn").addEventListener("click", () => {
+    if (finished) return;
+    if (!cells.some((v, i) => !givens.has(i) && v !== ".")) return;   // nada para limpar
+    openModal("clearOverlay");
+  });
+  $("clearYes").addEventListener("click", () => {
+    closeModal($("clearOverlay"));
     if (finished) return;
     const before = cells.join("");
     cells = cells.map((v, i) => (givens.has(i) ? v : "."));

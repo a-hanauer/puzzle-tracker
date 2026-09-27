@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Jogos do Dia">
 <title>Jogos do Dia</title>
-<link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=5">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=5">
+<link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -627,40 +627,8 @@ function render() {
 
   $("toggleTab").textContent = state.newTab ? "↗ Abrindo em nova aba" : "↩ Abrindo na mesma aba";
 
-  drawFavicon(n, total);
   if (location.hash === "#historico" && typeof renderHistory === "function") renderHistory();
   updateBadge(total - n);
-}
-
-/* ---------- Ícone da aba: anel de progresso desenhado ao vivo ---------- */
-// peça "puzzle" do Lucide (https://lucide.dev, licença ISC)
-const PUZZLE_PATH = new Path2D("M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z");
-function drawFavicon(n, total) {
-  const S = 128, c = document.createElement("canvas");
-  c.width = c.height = S;
-  const x = c.getContext("2d");
-  const complete = n === total;
-  // fundo arredondado: escuro durante o dia, verde quando tudo está feito
-  x.fillStyle = complete ? "#5fbf6a" : "#0f1115";
-  x.beginPath(); x.roundRect(0, 0, S, S, 28); x.fill();
-  // mesma geometria do ícone do app: anel grande, peça "puzzle" do Lucide preenchida
-  const w = S * 0.08, r = S * 0.38 - w / 2;
-  x.lineWidth = w; x.lineCap = "round";
-  x.strokeStyle = complete ? "rgba(255,255,255,.35)" : "#262a34";
-  x.beginPath(); x.arc(S/2, S/2, r, 0, Math.PI * 2); x.stroke();
-  if (n > 0) {
-    x.strokeStyle = complete ? "#ffffff" : "#5fbf6a";
-    x.beginPath(); x.arc(S/2, S/2, r, -Math.PI/2, -Math.PI/2 + Math.PI * 2 * n / total); x.stroke();
-  }
-  const size = S * 0.40, scale = size / 24;
-  x.save();
-  x.translate((S - size) / 2, (S - size) / 2);
-  x.scale(scale, scale);
-  x.fillStyle = x.strokeStyle = complete ? "#ffffff" : "#eef0f5";
-  x.lineWidth = 0.5; x.lineJoin = "round"; x.lineCap = "round";
-  x.fill(PUZZLE_PATH); x.stroke(PUZZLE_PATH);
-  x.restore();
-  $("favicon").href = c.toDataURL("image/png");
 }
 
 /* ---------- Número no ícone do app (Badging API) ----------
