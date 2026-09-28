@@ -189,6 +189,11 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
   }
   .app.done .status { color: var(--green); }
+  /* marcador: ícone + número (cronômetro, ✓ vitória, ✕ derrota) */
+  .status { display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-variant-numeric: tabular-nums; }
+  .status .si { width: 13px; height: 13px; flex: none; }
+  .status .dim { opacity: .55; font-weight: 500; }
+  .status .lose { display: inline-flex; align-items: center; gap: 3px; color: #e5484d; }
   .tag {
     font-size: .58rem; font-weight: 700; letter-spacing: .05em;
     color: var(--muted); background: var(--surface-2);
@@ -694,11 +699,19 @@ const CIRC = 2 * Math.PI * 34;
 const MINI_CIRC = 2 * Math.PI * 14;
 $("arc").style.strokeDasharray = CIRC;
 
+// ícones pequenos do marcador (cronômetro, vitória, derrota)
+const ST_ICON = {
+  tempo: '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V10M10 3h4M18.5 6.5l1.5-1.5"/></g></svg>',
+  ok: '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  erro: '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+};
 function statusText(g, p, isDone) {
   if (p) {
-    if (!p.finished) return `${p.tries}/${p.max}`;
-    if (p.time != null) return `⏱ ${fmtTime(p.time)}`;
-    return p.won ? `Acertou ${p.tries}/${p.max}` : "Não foi";
+    if (!p.finished) return `<span class="dim">${p.tries}/${p.max}</span>`;
+    if (p.time != null) return `${ST_ICON.tempo}${fmtTime(p.time)}`;
+    return p.won
+      ? `${ST_ICON.ok}${p.tries}<span class="dim">/${p.max}</span>`
+      : `<span class="lose">${ST_ICON.erro}${p.tries}/${p.max}</span>`;
   }
   if (isDone) return "Feito";
   return g.app ? '<span class="tag">APP</span>' : "";
@@ -1087,7 +1100,7 @@ function renderNative(t0) {
     let dist = "";
     if (Array.isArray(s.dist) && s.dist.some(Boolean)) {
       const top = Math.max(...s.dist);
-      dist = `<div class="mini-title">Acertou em quantas tentativas</div><div class="dist">${s.dist.map((v, i) =>
+      dist = `<div class="mini-title">Vitórias por nº de tentativas</div><div class="dist">${s.dist.map((v, i) =>
         `<div class="hrow"><span class="n">${i + 1}</span><span class="track"><i style="width:${top ? 100 * v / top : 0}%"></i></span><span class="val">${v}</span></div>`).join("")}</div>`;
     }
     blocks.push(`<div class="card">
