@@ -157,7 +157,7 @@ header{
 .row{display:grid;grid-template-columns:repeat(5,1fr) 82px;gap:5px;}
 .row .cnt{margin-left:5px;}
 .tile{
-  aspect-ratio:1/1;border-radius:11px;border:2px solid var(--line);
+  aspect-ratio:var(--casa-ar,1/1);min-width:0;min-height:0;overflow:hidden;border-radius:11px;border:2px solid var(--line);
   display:flex;align-items:center;justify-content:center;
   font-family:var(--font-display);font-weight:800;font-size:clamp(18px,6.4vw,29px);
   letter-spacing:-0.5px;
@@ -224,18 +224,18 @@ header{
   50%{transform:translateY(0);}
 }
 /* ===== keyboard ===== */
-.keyboard{display:flex;flex-direction:column;gap:6px;padding:8px 0 6px;user-select:none;}
-.krow{display:flex;gap:5px;justify-content:center;}
+.keyboard{display:flex;flex-direction:column;gap:var(--kb-row-gap);padding:8px 0 6px;user-select:none;}
+.krow{display:flex;gap:var(--kb-gap);justify-content:center;}
 .key{
-  flex:1;max-width:40px;height:48px;border-radius:9px;border:1px solid transparent;
+  flex:1;max-width:var(--kb-max);height:var(--kb-h);border-radius:var(--kb-r);border:1px solid transparent;
   background:var(--key-bg);color:var(--key-ink);font-family:var(--font-body);
-  font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:var(--kb-fs);display:flex;align-items:center;justify-content:center;
   cursor:pointer;text-transform:uppercase;
   transition:transform .08s ease,background .12s ease;
 }
 .key:active{transform:translateY(1px);}
 .key.del{color:var(--ink-dim);}
-.key.enter{flex:1.7;max-width:72px;background:var(--ink);color:var(--bg);font-size:11px;letter-spacing:0.8px;font-weight:700;}
+.key.enter{flex:var(--kb-enter);max-width:var(--kb-enter-max);background:var(--ink);color:var(--bg);font-size:var(--kb-enter-fs);letter-spacing:0.8px;font-weight:700;}
 .key.used{background:transparent;border-color:var(--line);color:var(--ink-dim);}
 .key.correct{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
 .key.present{background:var(--present);color:var(--present-ink);border-color:var(--present);}
@@ -686,8 +686,9 @@ header{
   }
   buildBoard();
 
-  // Tabuleiro do tamanho da tela: mede a altura livre entre o cabeçalho e o
-  // teclado e escolhe o maior tamanho de casa que faz as 8 linhas caberem.
+  // Tabuleiro na largura toda da tela. Se a altura livre (entre o cabeçalho
+  // e o teclado) não comportar 8 linhas de casas quadradas, as casas ficam
+  // um pouco mais baixas que largas, para o teclado nunca sair da tela.
   // Linha = 5 casas + 5 vãos de 5px (entre as 6 colunas) + coluna do placar (82px).
   function ajustarTabuleiro(){
     var wrap = document.querySelector('.board-wrap');
@@ -695,10 +696,12 @@ header{
     boardEl.style.display = 'none';                  // tira o tabuleiro da conta
     var livre = wrap.clientHeight - 20;              // padding vertical do .board-wrap
     boardEl.style.display = '';
-    if(livre < 200) return;                          // medida estranha: fica o padrão
-    var casa = (livre - 7 * 6) / 8;
-    var larg = Math.floor(5 * casa + 5 * 5 + 82);   // 5 casas + 5 vãos da grade + coluna do placar
-    boardEl.style.maxWidth = Math.min(460, larg) + 'px';
+    boardEl.style.maxWidth = '';
+    var largura = boardEl.clientWidth;
+    var casaL = (largura - 5 * 5 - 82) / 5;
+    var casaA = (livre - 7 * 6) / 8;
+    if(livre < 200 || casaL <= 0 || casaA >= casaL){ boardEl.style.removeProperty('--casa-ar'); return; }
+    boardEl.style.setProperty('--casa-ar', casaL.toFixed(2) + ' / ' + Math.max(casaA, casaL * 0.55).toFixed(2));
   }
   ajustarTabuleiro();
   window.addEventListener('resize', ajustarTabuleiro);

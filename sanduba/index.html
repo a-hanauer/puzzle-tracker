@@ -288,21 +288,19 @@
   .lp-letter.excluded{color:var(--text-dim);font-weight:400;text-decoration:line-through;opacity:.45;}
 
   /* ---- teclado QWERTY em tela (substitui o teclado nativo) ---- */
+  /* teclado: medidas padrão do app (comum/cabecalho.css, as mesmas do Quinhentos);
+     cores, borda e sombra do Sanduba */
   #keyboard{
-    display:flex;
-    flex-direction:column;
-    align-items:stretch;
-    gap:8px;
-    margin:2px 0 6px;
+    display:flex;flex-direction:column;align-items:stretch;
+    gap:var(--kb-row-gap);margin:2px 0 6px;
   }
-  .kb-row{display:flex;gap:clamp(3px,1.2vw,6px);width:100%;}
+  .kb-row{display:flex;gap:var(--kb-gap);justify-content:center;width:100%;}
   .kb-key{
-    flex:1 1 0;
-    min-width:0;
-    height:clamp(36px,10.5vw,46px);
-    border-radius:11px;border:var(--stroke) solid var(--ink);cursor:pointer;
+    flex:1;min-width:0;max-width:var(--kb-max);
+    height:var(--kb-h);
+    border-radius:var(--kb-r);border:var(--stroke) solid var(--ink);cursor:pointer;
     display:flex;align-items:center;justify-content:center;
-    font-weight:800;font-size:clamp(.68rem,3.6vw,.9rem);text-transform:uppercase;
+    font-weight:800;font-size:var(--kb-fs);text-transform:uppercase;
     background:var(--key);color:var(--key-text);
     padding:0;
     box-shadow:0 3px 0 var(--ink);
@@ -310,10 +308,10 @@
   }
   .kb-key:active{transform:translateY(3px);box-shadow:none;}
   .kb-key:disabled{background:var(--tile-ghost);color:var(--text-dim);border-color:var(--border);cursor:default;opacity:.7;box-shadow:none;}
-  .kb-key.kb-back{flex:1.3 1 0;font-size:clamp(.85rem,4vw,1.05rem);}
+  .kb-key.kb-back{font-size:calc(var(--kb-fs) + 3px);}
   .kb-key.kb-enter{
-    flex:2.1 1 0;background:var(--accent);color:#fff;
-    font-size:clamp(.62rem,3.1vw,.78rem);letter-spacing:.5px;
+    flex:var(--kb-enter);max-width:var(--kb-enter-max);background:var(--accent);color:#fff;
+    font-size:var(--kb-enter-fs);letter-spacing:.8px;
   }
   .kb-key.kb-enter:disabled{background:var(--accent);opacity:.4;color:#fff;}
 

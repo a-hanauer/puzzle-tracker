@@ -196,3 +196,19 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
   color: var(--gh-muted);
 }
 .modal .fim-count b { display: block; font-weight: 800; margin-top: 3px; font-size: 1.25rem; letter-spacing: 0; color: var(--gh-ink); font-variant-numeric: tabular-nums; }
+
+/* =========================================================================
+   Teclado padrão dos jogos (medidas do Quinhentos). Cada jogo mantém as suas
+   cores, bordas e sombras; tamanhos e espaçamentos vêm daqui.
+   ========================================================================= */
+:root {
+  --kb-h: 48px;          /* altura da tecla */
+  --kb-gap: 5px;         /* entre teclas */
+  --kb-row-gap: 6px;     /* entre fileiras */
+  --kb-r: 9px;           /* raio */
+  --kb-fs: 13px;         /* letra */
+  --kb-max: 40px;        /* largura máxima da tecla de letra */
+  --kb-enter: 1.7;       /* ENTER ocupa 1,7 tecla */
+  --kb-enter-max: 72px;
+  --kb-enter-fs: 11px;
+}
