@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png">
-<script src="../comum/tema.js?v=53"></script>
+<script src="../comum/tema.js?v=59"></script>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,7 +38,7 @@
     --accent: #4f4fd0;
     --good: #3fa24c;
     --r0: #f6c1b9; --r1: #f9dd8f; --r2: #c6e5aa; --r3: #b2d2f5; --r4: #d4c5f6;
-    --r5: #f4c2de; --r6: #a9e4cd; --r7: #f7cca2; --r8: #dce0ea;
+    --r5: #f4c2de; --r6: #a9e4cd; --r7: #f7cca2; --r8: #dce0ea; --r9: #e8d7ae;
     --shadow: 0 1px 2px rgba(20,24,40,.06), 0 6px 18px rgba(20,24,40,.07);
     --on-accent: #fff;
   }
@@ -65,7 +65,7 @@
       --accent: #a5b4fc;
       --good: #5fbf6a;
       --r0: #652838; --r1: #634a14; --r2: #235232; --r3: #1a4577; --r4: #432f80;
-      --r5: #662358; --r6: #115851; --r7: #633819; --r8: #2e3650;
+      --r5: #662358; --r6: #115851; --r7: #633819; --r8: #2e3650; --r9: #4f4322;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.2);
       --on-accent: #0b1020;
     }
@@ -92,7 +92,7 @@
       --accent: #a5b4fc;
       --good: #5fbf6a;
       --r0: #652838; --r1: #634a14; --r2: #235232; --r3: #1a4577; --r4: #432f80;
-      --r5: #662358; --r6: #115851; --r7: #633819; --r8: #2e3650;
+      --r5: #662358; --r6: #115851; --r7: #633819; --r8: #2e3650; --r9: #4f4322;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.2);
       --on-accent: #0b1020;
   }
@@ -114,6 +114,7 @@
 
   #cSun, #cMoon { font-variant-numeric: tabular-nums; }
   #cSun.full, #cMoon.full { color: var(--good); }
+  #cSun i, #cMoon i { font-style: normal; }
   .linkbtn { border: none; background: none; padding: 0 0 0 2px; font: inherit; font-weight: 700; color: var(--accent); cursor: pointer; }
 
   /* ---------- tabuleiro ----------
@@ -273,7 +274,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=53">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=59">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -332,8 +333,8 @@
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
   </button>
   <div class="seg" role="group" aria-label="Modo">
-    <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg class="sun"><use href="#i-orb"/></svg><span id="cSun"><b>0</b>/9</span></button>
-    <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg class="moon"><use href="#i-luna"/></svg><span id="cMoon"><b>0</b>/9</span></button>
+    <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg class="sun"><use href="#i-orb"/></svg><span id="cSun"><b>0</b>/<i>9</i></span></button>
+    <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg class="moon"><use href="#i-luna"/></svg><span id="cMoon"><b>0</b>/<i>9</i></span></button>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
       <svg class="ecl" viewBox="0 0 66 44" aria-hidden="true">
         <circle class="corona" cx="33" cy="22" r="19" fill="url(#g-corona)"/>
@@ -371,7 +372,7 @@
       <li>Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
     </ul>
     <p>Conflitos aparecem destacados com listras vermelhas.</p>
-    <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia, e a dificuldade sobe ao longo da semana: <b>segunda é nível 1</b>, o mais fácil, e <b>domingo é nível 7</b>, o mais difícil.</p>
+    <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia, e a dificuldade sobe ao longo da semana: <b>segunda é nível 1</b>, o mais fácil, e <b>domingo é nível 7</b>, o mais difícil. O tabuleiro cresce junto: 8×8 no começo da semana, 9×9 no meio e 10×10 no fim de semana.</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, de níveis variados, que não contam nas estatísticas.</p>
     <button class="btn" data-close>Jogar</button>
   </div>
@@ -435,6 +436,7 @@
   function setup(puzzle, saved, k) {
     stopTimer();
     kind = k; P = puzzle;
+    N = P.n || 9;                          // o tabuleiro cresce ao longo da semana (8×8 a 10×10)
     regions = [...P.r].map(ch => parseInt(ch, 36));
     givens = new Map(P.g.split(",").map(t => [+t.slice(1), t[0]]));
     PID = P.r + "|" + P.g;
@@ -486,7 +488,6 @@
   });
 
   fetch("desafios.json").then(r => r.json()).then(data => {
-    N = data.n;
     dayNum = dayNumber(data.epoch);
     DAILY = { data };
     loadDaily();
@@ -679,6 +680,7 @@
     }
     $("cSun").querySelector("b").textContent = s;
     $("cMoon").querySelector("b").textContent = m;
+    $("cSun").querySelector("i").textContent = $("cMoon").querySelector("i").textContent = N;
     $("cSun").classList.toggle("full", s === N);
     $("cMoon").classList.toggle("full", m === N);
     $("undoBtn").disabled = finished || !history.length;
@@ -878,7 +880,7 @@
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 })();
 </script>
-<script src="../comum/catalogo.js?v=53"></script>
-<script src="../comum/proximo.js?v=53" data-jogo="eclipse"></script>
+<script src="../comum/catalogo.js?v=59"></script>
+<script src="../comum/proximo.js?v=59" data-jogo="eclipse"></script>
 </body>
 </html>

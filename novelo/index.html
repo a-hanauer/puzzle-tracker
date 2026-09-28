@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f5efe6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17141a" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Novelo">
+<title>NOVELO — um fio por todas as casas</title>
+<link rel="icon" type="image/png" href="icon.png">
+<script src="../comum/tema.js?v=59"></script>
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5efe6;
+    --surface: #fffaf3;
+    --surface-2: #efe6d8;
+    --ink: #2b2430;
+    --muted: #8b7f73;
+    --line: #e6dccc;
+    --board: #fbf6ed;
+    --board-edge: #eadfcd;
+    --weave: rgba(150, 110, 70, .07);
+    --mark: rgba(110, 80, 50, .30);
+    --hem: rgba(110, 80, 50, .30);
+    --thread: #e0475a;
+    --thread-dk: #b2303f;
+    --twist: rgba(110, 15, 35, .20);
+    --sheen: rgba(255, 255, 255, .30);
+    --wall: #3a2f3d;
+    --wall-st: rgba(255, 255, 255, .5);
+    --btn: #2b2430;
+    --btn-ink: #fff;
+    --btn-rim: rgba(255, 255, 255, .42);
+    --accent: #e0475a;
+    --on-accent: #fff;
+    --bad: #d64545;
+    --shadow: 0 1px 2px rgba(60, 40, 20, .07), 0 6px 18px rgba(60, 40, 20, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17141a;
+      --surface: #25212a;
+      --surface-2: #302a35;
+      --ink: #f2eae1;
+      --muted: #a0958b;
+      --line: #342e38;
+      --board: #221e26;
+      --board-edge: #2c2731;
+      --weave: rgba(255, 255, 255, .025);
+      --mark: rgba(255, 255, 255, .22);
+      --hem: rgba(255, 255, 255, .16);
+      --thread: #ff6b7a;
+      --thread-dk: #c8414f;
+      --twist: rgba(90, 0, 25, .26);
+      --sheen: rgba(255, 255, 255, .22);
+      --wall: #f2eae1;
+      --wall-st: rgba(0, 0, 0, .35);
+      --btn: #f2eae1;
+      --btn-ink: #221e26;
+      --btn-rim: rgba(0, 0, 0, .3);
+      --accent: #ff6b7a;
+      --on-accent: #1d1519;
+      --bad: #ff6b6b;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
+    }
+  }
+  :root[data-theme="dark"] {
+      --bg: #17141a;
+      --surface: #25212a;
+      --surface-2: #302a35;
+      --ink: #f2eae1;
+      --muted: #a0958b;
+      --line: #342e38;
+      --board: #221e26;
+      --board-edge: #2c2731;
+      --weave: rgba(255, 255, 255, .025);
+      --mark: rgba(255, 255, 255, .22);
+      --hem: rgba(255, 255, 255, .16);
+      --thread: #ff6b7a;
+      --thread-dk: #c8414f;
+      --twist: rgba(90, 0, 25, .26);
+      --sheen: rgba(255, 255, 255, .22);
+      --wall: #f2eae1;
+      --wall-st: rgba(0, 0, 0, .35);
+      --btn: #f2eae1;
+      --btn-ink: #221e26;
+      --btn-rim: rgba(0, 0, 0, .3);
+      --accent: #ff6b7a;
+      --on-accent: #1d1519;
+      --bad: #ff6b6b;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body, a, button { touch-action: manipulation; }
+  html { height: 100%; background: var(--bg); -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0 auto; max-width: 520px;
+    background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
+    /* tela inteira: tabuleiro no meio, controles presos embaixo */
+    min-height: calc(100% + var(--sobra, 0px));
+    display: flex; flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none; user-select: none;
+  }
+  .linkbtn { border: none; background: none; padding: 0 0 0 2px; font: inherit; font-weight: 700; color: var(--accent); cursor: pointer; }
+
+  /* ---------- tabuleiro ----------
+     Um SVG só: tecido, marquinhas de ponto-cruz entre as casas, paredes
+     costuradas, o fio de lã e os números como botões de roupa. */
+  .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 4px 0; }
+  #board { display: block; touch-action: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(40, 25, 10, .08)) drop-shadow(0 8px 20px rgba(40, 25, 10, .08)); }
+  .b-bg { fill: var(--board); stroke: var(--board-edge); stroke-width: 1.5; }
+  .b-weave { fill: url(#weave); }
+  .b-hem { fill: none; stroke: var(--hem); stroke-width: 2; stroke-dasharray: 7 6; stroke-linecap: round; }
+  .b-mark { stroke: var(--mark); stroke-width: 2.2; stroke-linecap: round; }
+  .wv-a { fill: var(--weave); }
+  .wall { stroke: var(--wall); stroke-width: 11; stroke-linecap: round; }
+  .wall-st { stroke: var(--wall-st); stroke-width: 2; stroke-dasharray: 5 5; stroke-linecap: round; }
+  .th { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .th-shadow { stroke: rgba(40, 10, 15, .16); stroke-width: 50; transform: translateY(3px); }
+  .th-edge { stroke: var(--thread-dk); stroke-width: 48; }
+  .th-main { stroke: var(--thread); stroke-width: 42; }
+  .th-twist { stroke: url(#twist); stroke-width: 42; }
+  .th-sheen { stroke: var(--sheen); stroke-width: 6; }
+  .tw-a { fill: var(--twist); }
+  .head { fill: var(--thread); stroke: var(--board); stroke-width: 7; }
+  .head-ring { fill: none; stroke: var(--thread); stroke-width: 7; }
+  .btn-shadow { fill: rgba(30, 15, 10, .2); }
+  .btn { fill: var(--btn); }
+  .btn-rim { fill: none; stroke: var(--btn-rim); stroke-width: 2.2; stroke-dasharray: 4.5 4.5; }
+  .btn-n { fill: var(--btn-ink); font: 800 38px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
+  .next-ring { fill: none; stroke: var(--thread); stroke-width: 4; opacity: .9; animation: pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes pulse { 0%, 100% { opacity: .25; transform: scale(.96); } 50% { opacity: .95; transform: scale(1.04); } }
+  .won .th-sheen { stroke-dasharray: 60 2000; animation: shine 1.6s ease .1s both; stroke: rgba(255, 255, 255, .7); stroke-width: 8; }
+  @keyframes shine { from { stroke-dashoffset: 60; } to { stroke-dashoffset: -2200; } }
+  .shake { animation: shake .35s ease; }
+  @keyframes shake { 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+  @media (prefers-reduced-motion: reduce) { .next-ring, .won .th-sheen, .shake { animation: none !important; } }
+
+  /* ---------- controles ---------- */
+  .controls { display: flex; gap: 10px; padding-top: 14px; }
+  .controls > button {
+    flex: 0 0 52px; height: 56px; padding: 0; border-radius: 16px; border: none; cursor: pointer;
+    background: var(--surface); color: var(--muted); box-shadow: var(--shadow);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: flex-basis .45s ease, margin .45s ease, opacity .25s ease; overflow: hidden;
+  }
+  .controls > button:active { transform: scale(.95); }
+  .controls > button:disabled { opacity: .45; }
+  .controls > button svg { width: 22px; height: 22px; }
+  .prog {
+    position: relative; overflow: hidden; flex: 1; height: 56px; border-radius: 16px;
+    background: var(--surface); box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 12px; padding: 0 18px;
+    transition: background .5s ease;
+  }
+  .prog .bar { flex: 1; height: 8px; border-radius: 9px; background: var(--surface-2); overflow: hidden; }
+  .prog .bar i { display: block; height: 100%; width: 0; border-radius: 9px; background: var(--thread); transition: width .2s ease; }
+  .prog .n { font-weight: 700; font-size: .95rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .prog .n b { color: var(--ink); font-weight: 800; }
+  .prog > .bar, .prog > .n { transition: opacity .25s ease; }
+  /* completo: desfazer e limpar recolhem e a barra vira o resultado */
+  .controls.done > button { flex-basis: 0; opacity: 0; pointer-events: none; }
+  .controls.done #undoBtn { margin-right: -10px; }
+  .controls.done #clearBtn { margin-left: -10px; }
+  .controls.done .prog { background: linear-gradient(120deg, #b2303f 0%, #d9435a 55%, #e8716a 100%); box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(178, 48, 63, .3); }
+  .controls.done .prog > .bar, .controls.done .prog > .n { opacity: 0; }
+  .done-bar {
+    position: absolute; inset: 0; display: flex; align-items: center; gap: 12px;
+    padding: 0 18px; margin: 0; border: 0; background: none; color: #fff; font: inherit; text-align: left; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity .3s ease .15s;
+  }
+  .controls.done .done-bar { opacity: 1; pointer-events: auto; }
+  .done-bar svg.ball { width: 40px; height: 40px; flex-shrink: 0; }
+  .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .done-bar .txt b { font-size: 1.02rem; font-weight: 800; }
+  .done-bar .txt span { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.78); font-variant-numeric: tabular-nums; }
+  .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,255,255,.75); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .controls.play .done-bar svg.ball { animation: roll .8s cubic-bezier(.3,.7,.2,1) .15s both; }
+  @keyframes roll { from { transform: translateX(-30px) rotate(-200deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; min-height: 2.3em; }
+  .tip b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tip.warn b { color: var(--bad); }
+
+  /* ---------- janelas ---------- */
+  .overlay {
+    position: fixed; inset: 0; z-index: 10; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(20, 12, 10, .42); backdrop-filter: blur(3px);
+  }
+  .overlay.open { display: flex; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    width: 100%; max-width: 400px; max-height: 88vh; overflow: auto;
+    background: var(--surface); border-radius: 22px; padding: 22px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  }
+  .modal h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+  .modal .close { border: none; background: var(--surface-2); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; }
+  .modal p, .modal li { font-size: .92rem; line-height: 1.5; color: var(--ink); }
+  .modal ul { padding-left: 20px; margin: 8px 0; }
+  .modal li { margin: 4px 0; }
+  .demo { display: flex; justify-content: center; gap: 18px; margin: 14px 0 6px; }
+  .demo figure { margin: 0; text-align: center; font-size: .72rem; color: var(--muted); font-weight: 600; }
+  .demo svg { display: block; width: 116px; height: 116px; margin: 0 auto 6px; }
+  .btn-main {
+    width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer;
+    background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
+  }
+</style>
+<link rel="stylesheet" href="../comum/cabecalho.css?v=59">
+<style>
+  :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- novelo: usado na barra de fim e na janela de resultado -->
+    <symbol id="i-ball" viewBox="0 0 64 64">
+      <path d="M45 44c7 4 10 9 6 15" fill="none" stroke="#f36b79" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="30" cy="30" r="21" fill="#e0475a"/>
+      <g fill="none" stroke="#a82b3a" stroke-width="2.4" stroke-linecap="round" opacity=".85">
+        <path d="M12 23c9 4 25 4 35-5"/><path d="M10 32c12 5 29 3 39-8"/><path d="M14 43c10 2 24-2 33-14"/><path d="M22 11c-4 10-4 27 4 40"/><path d="M33 9c-3 9-2 25 8 38"/>
+      </g>
+      <circle cx="23" cy="21" r="5" fill="#fff" opacity=".18"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="gh">
+  <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+  <a class="gh-brand" href="./" aria-label="Novelo — recarregar"><img src="icon.png" alt=""><b>NOVELO</b></a>
+  <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
+  <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
+</header>
+
+<div class="gh-meta">
+  <span class="gh-info" id="dayInfo"></span>
+  <label class="gh-free" title="Desafios extras, que não contam nas estatísticas">
+    <span>Jogo livre</span>
+    <input type="checkbox" id="freeToggle"><span class="gh-switch"></span>
+  </label>
+</div>
+
+<div class="stage" id="stage"><svg id="board" role="img" aria-label="Tabuleiro"></svg></div>
+
+<div class="controls" id="controls">
+  <button id="undoBtn" disabled aria-label="Desfazer" title="Desfazer">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+  </button>
+  <div class="prog" aria-live="polite">
+    <span class="bar"><i id="progBar"></i></span><span class="n" id="progN"><b>0</b>/0</span>
+    <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
+      <svg class="ball" aria-hidden="true"><use href="#i-ball"/></svg>
+      <span class="txt"><b id="doneTitle">Novelo completo</b><span id="doneSub"></span></span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <button id="clearBtn" aria-label="Recomeçar" title="Recomeçar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+  </button>
+</div>
+<div class="tip" id="tip"></div>
+
+<!-- Como jogar -->
+<div class="overlay" id="helpOverlay">
+  <div class="modal">
+    <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
+    <p>Desenrole o fio de lã por <b>todas as casas</b> do tabuleiro:</p>
+    <ul>
+      <li>Comece no <b>1</b> e passe pelos números <b>em ordem</b>. O fio termina no último número.</li>
+      <li>O fio passa por <b>cada casa uma vez só</b> e anda só na horizontal e na vertical.</li>
+      <li>O fio não atravessa as <b>paredes</b> (os traços escuros entre as casas).</li>
+    </ul>
+    <div class="demo">
+      <figure><svg id="demoA" viewBox="0 0 330 330"></svg>assim: tudo coberto</figure>
+      <figure><svg id="demoB" viewBox="0 0 330 330"></svg>parede: dá a volta</figure>
+    </div>
+    <p>Arraste o dedo para desenhar. Para voltar atrás, arraste de volta pelo fio ou toque numa casa do fio: ele é cortado ali.</p>
+    <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b> (9×9).</p>
+    <p>No <b>Jogo livre</b> você joga desafios extras, de níveis variados, que não contam nas estatísticas.</p>
+    <button class="btn-main" data-close>Jogar</button>
+  </div>
+</div>
+
+<!-- Confirmação para recomeçar -->
+<div class="overlay" id="clearOverlay">
+  <div class="modal" style="max-width:320px;text-align:center">
+    <h2 style="justify-content:center">Recomeçar o fio?</h2>
+    <p style="color:var(--muted);margin:0 0 18px">O fio volta para o 1. Dá para desfazer depois.</p>
+    <button class="btn-main" id="clearYes">Recomeçar</button>
+    <button class="close" data-close style="margin-top:12px;width:auto;padding:0 18px;height:36px;border-radius:99px">Cancelar</button>
+  </div>
+</div>
+
+<!-- Fim de jogo -->
+<div class="overlay" id="endOverlay">
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><svg viewBox="0 0 64 64" aria-hidden="true" style="height:92px"><use href="#i-ball"/></svg></div>
+    <h2 class="fim-title" id="endTitle">Novelo completo!</h2>
+    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div></div>
+    <p class="fim-sub" id="endSub"></p>
+    <button class="fim-btn" id="shareBtn">Compartilhar</button>
+    <button class="fim-btn" id="againBtn" hidden>Jogar outro</button>
+    <div class="fim-count" id="nextBox">Próximo Novelo em <b id="countdown" data-contagem>--:--:--</b></div>
+    <div data-proximo hidden></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+  const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const LS = "novelo:";
+  const load = (k, d) => { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
+  const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
+
+  // ---------- estado ----------
+  let N = 0, C = 0, P = null, PID = "", numAt = null, K = 0, start = 0, walls = new Set();
+  let path = [], history = [], finished = false, kind = "dia", dayNum = 0, DAILY = null, FREE = null, freeIdx = -1;
+  let timer = null, startedAt = 0, elapsed = 0;
+  const U = 100, PAD = 22;                              // unidade do SVG: 1 casa = 100
+  const key = (a, b) => Math.min(a, b) + ":" + Math.max(a, b);
+  const rc = i => [(i / N) | 0, i % N];
+  const cx = i => PAD + (i % N) * U + U / 2, cy = i => PAD + ((i / N) | 0) * U + U / 2;
+
+  function recomputeStats(st) {
+    const days = Object.keys(st.times).map(Number).sort((a, b) => a - b);
+    let best = 0, run = 0, prev = -9;
+    for (const d of days) { run = d === prev + 1 ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+    st.played = days.length; st.best = best; st.streak = run; st.lastDay = days.at(-1) || 0;
+    return st;
+  }
+
+  function setup(puzzle, saved, k) {
+    stopTimer();
+    kind = k; P = puzzle; N = P.n; C = N * N;
+    const nums = P.k.split(",").map(Number);
+    numAt = new Int16Array(C); nums.forEach((c, j) => (numAt[c] = j + 1));
+    K = nums.length; start = nums[0];
+    walls = new Set();
+    for (const w of (P.w ? P.w.split(",") : [])) { const i = parseInt(w), d = w.slice(-1); walls.add(key(i, d === "r" ? i + 1 : i + N)); }
+    PID = P.k + "|" + P.w;
+    if (saved && saved.pid !== PID) saved = null;
+    path = [start];
+    if (saved?.path) { const p = saved.path.split(",").map(Number); if (validPath(p)) path = p; }
+    elapsed = saved?.elapsed || 0;
+    finished = !!saved?.done;
+    history = [];
+    const now = new Date();
+    $("dayInfo").innerHTML = kind === "dia"
+      ? `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`
+      : `Extra · nível ${P.l}/7 · <button class="linkbtn" id="newFree">outro ↻</button>`;
+    if (kind === "livre") $("newFree").addEventListener("click", () => newFree());
+    build(); fit(); render(); showTime();
+  }
+  function validPath(p) {
+    if (!p.length || p[0] !== start) return false;
+    const seen = new Set([p[0]]); let want = 2;
+    for (let j = 1; j < p.length; j++) {
+      if (seen.has(p[j]) || !adjacent(p[j - 1], p[j]) || walls.has(key(p[j - 1], p[j]))) return false;
+      if (numAt[p[j]]) { if (numAt[p[j]] !== want) return false; want++; }
+      seen.add(p[j]);
+    }
+    return true;
+  }
+  const adjacent = (a, b) => { const [r1, c1] = rc(a), [r2, c2] = rc(b); return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1; };
+
+  function loadDaily() {
+    const { data } = DAILY;
+    const puzzle = data.puzzles[Math.min(dayNum, data.puzzles.length) - 1];
+    setup(puzzle, load("dia:" + dayNum, null), "dia");
+    persist();
+  }
+  async function loadFree(forceNew) {
+    if (!FREE) FREE = await fetch("livre.json").then(r => r.json());
+    const saved = load("livre", null);
+    if (!forceNew && saved && !saved.done && FREE.puzzles[saved.idx]) freeIdx = saved.idx;
+    else { let k; do { k = Math.floor(Math.random() * FREE.puzzles.length); } while (FREE.puzzles.length > 1 && k === saved?.idx); freeIdx = k; }
+    setup(FREE.puzzles[freeIdx], saved && saved.idx === freeIdx ? saved : null, "livre");
+    persist();
+    if (!finished) startTimer();
+  }
+  function newFree() { closeAll(); loadFree(true); }
+  $("freeToggle").addEventListener("change", async e => {
+    persist();
+    if (e.target.checked) await loadFree(false);
+    else { loadDaily(); if (!finished) startTimer(); }
+  });
+
+  fetch("desafios.json").then(r => r.json()).then(data => {
+    dayNum = dayNumber(data.epoch);
+    DAILY = { data };
+    loadDaily();
+    if (finished) showEnd(false);
+    else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
+    else startTimer();
+  }).catch(() => { $("stage").innerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
+
+  // ---------- desenho ----------
+  const S = "http://www.w3.org/2000/svg";
+  let gThread, gTop, W = 0;
+  function build() {
+    W = N * U + 2 * PAD;
+    const b = $("board");
+    b.setAttribute("viewBox", `0 0 ${W} ${W}`);
+    let s = `<defs>
+      <pattern id="weave" width="12" height="12" patternUnits="userSpaceOnUse"><rect class="wv-a" x="0" y="5" width="12" height="2"/><rect class="wv-a" x="5" y="0" width="2" height="12"/></pattern>
+      <pattern id="twist" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect class="tw-a" x="0" y="0" width="6" height="16"/></pattern>
+    </defs>
+    <rect class="b-bg" x="1" y="1" width="${W - 2}" height="${W - 2}" rx="30"/>
+    <rect class="b-weave" x="1" y="1" width="${W - 2}" height="${W - 2}" rx="30"/>
+    <rect class="b-hem" x="9" y="9" width="${W - 18}" height="${W - 18}" rx="22"/>`;
+    // ponto-cruz nos cruzamentos entre as casas
+    let marks = "";
+    for (let r = 1; r < N; r++) for (let c = 1; c < N; c++) {
+      const x = PAD + c * U, y = PAD + r * U;
+      marks += `M${x - 4.5} ${y - 4.5}L${x + 4.5} ${y + 4.5}M${x + 4.5} ${y - 4.5}L${x - 4.5} ${y + 4.5}`;
+    }
+    s += `<path class="b-mark" d="${marks}"/>`;
+    s += `<g id="gThread"></g>`;
+    // paredes costuradas
+    let wl = "";
+    for (const k of walls) {
+      const [a, bb] = k.split(":").map(Number);
+      const [r, c] = rc(a);
+      if (bb === a + 1) { const x = PAD + (c + 1) * U, y = PAD + r * U; wl += `M${x} ${y + 12}L${x} ${y + U - 12}`; }
+      else { const x = PAD + c * U, y = PAD + (r + 1) * U; wl += `M${x + 12} ${y}L${x + U - 12} ${y}`; }
+    }
+    if (wl) s += `<path class="wall" d="${wl}"/><path class="wall-st" d="${wl}"/>`;
+    s += `<g id="gTop"></g>`;
+    b.innerHTML = s;
+    gThread = $("gThread"); gTop = $("gTop");
+  }
+  // o tabuleiro ocupa o maior quadrado que cabe entre o cabeçalho e os controles
+  function fit() {
+    const st = $("stage"), b = $("board");
+    if (!st || !b) return;
+    b.style.width = b.style.height = "0px";
+    const size = Math.floor(Math.min(st.clientWidth, st.clientHeight - 8));
+    b.style.width = b.style.height = Math.max(160, size) + "px";
+  }
+  window.addEventListener("resize", () => { if (N) fit(); });
+  if (window.visualViewport) visualViewport.addEventListener("resize", () => { if (N) fit(); });
+
+  const nextNum = () => { let m = 0; for (const c of path) if (numAt[c]) m = numAt[c]; return m + 1; };
+  function render() {
+    // fio
+    let d = "";
+    if (path.length > 1) d = "M" + path.map(i => `${cx(i)} ${cy(i)}`).join("L");
+    gThread.innerHTML = d ? `<path class="th th-shadow" d="${d}"/><path class="th th-edge" d="${d}"/><path class="th th-main" d="${d}"/><path class="th th-twist" d="${d}"/><path class="th th-sheen" d="${d}"/>` : "";
+    const head = path.at(-1);
+    let top = "";
+    if (path.length > 1 && !numAt[head] && !finished) top += `<circle class="head" cx="${cx(head)}" cy="${cy(head)}" r="27"/>`;
+    // números: botões de roupa
+    const nx = nextNum();
+    for (let i = 0; i < C; i++) if (numAt[i]) {
+      const x = cx(i), y = cy(i);
+      if (!finished && (numAt[i] === nx || (path.length === 1 && numAt[i] === 1))) top += `<circle class="next-ring" cx="${x}" cy="${y}" r="42"/>`;
+      if (i === head && path.length > 1 && !finished) top += `<circle class="head-ring" cx="${x}" cy="${y}" r="40"/>`;
+      top += `<circle class="btn-shadow" cx="${x}" cy="${y + 3}" r="33"/><circle class="btn" cx="${x}" cy="${y}" r="33"/><circle class="btn-rim" cx="${x}" cy="${y}" r="26.5"/><text class="btn-n" x="${x}" y="${y + 1}">${numAt[i]}</text>`;
+    }
+    gTop.innerHTML = top;
+    // progresso
+    $("progBar").style.width = (100 * path.length / C) + "%";
+    $("progN").innerHTML = `<b>${path.length}</b>/${C}`;
+    $("undoBtn").disabled = finished || !history.length;
+    $("clearBtn").disabled = finished || path.length < 2;
+    $("board").classList.toggle("won", finished);
+    $("controls").classList.toggle("done", finished);
+    if (!finished) $("controls").classList.remove("play");
+    $("doneBar").tabIndex = finished ? 0 : -1;
+    if (finished) {
+      $("doneTitle").textContent = kind === "dia" ? "Novelo completo" : "Resolvido";
+      $("doneSub").textContent = `${fmt(elapsed)} · nível ${P.l}/7 · ${kind === "dia" ? "ver resultado" : "jogar outro"}`;
+    }
+    updateTip();
+    $("board").setAttribute("aria-label", `Tabuleiro ${N} por ${N}: fio com ${path.length} de ${C} casas, próximo número ${Math.min(nx, K)}`);
+  }
+
+  function persist() {
+    if (!P) return;
+    const data = { pid: PID, path: path.join(","), elapsed: currentElapsed(), done: finished, prog: [path.length, C], started: path.length > 1 };
+    if (kind === "livre") { save("livre", { idx: freeIdx, ...data }); return; }
+    save("dia:" + dayNum, { ...data, time: finished ? elapsed : null });
+  }
+
+  // ---------- desenhar o fio ----------
+  function canStep(a, b) {
+    if (b < 0 || b >= C || !adjacent(a, b) || walls.has(key(a, b)) || path.includes(b)) return false;
+    if (numAt[a] === K) return false;                              // o fio termina no último número
+    if (numAt[b] && numAt[b] !== nextNum()) return false;          // números em ordem
+    return true;
+  }
+  // anda da ponta do fio em direção à casa alvo (o dedo pode pular casas num arrasto rápido)
+  function extendTo(t) {
+    let moved = false;
+    for (let guard = 0; guard < 2 * N; guard++) {
+      const h = path.at(-1);
+      if (h === t) break;
+      const [hr, hc] = rc(h), [tr, tc] = rc(t);
+      const dr = Math.sign(tr - hr), dc = Math.sign(tc - hc);
+      const v = dr ? h + dr * N : -1, hz = dc ? h + dc : -1;
+      const opts = Math.abs(tr - hr) >= Math.abs(tc - hc) ? [v, hz] : [hz, v];
+      const nx = opts.find(x => x >= 0 && canStep(h, x));
+      if (nx === undefined) break;
+      path.push(nx); moved = true;
+    }
+    return moved;
+  }
+  function cellAt(e) {
+    const r = $("board").getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width * W - PAD, y = (e.clientY - r.top) / r.height * W - PAD;
+    if (x < 0 || y < 0 || x >= N * U || y >= N * U) return -1;
+    return ((y / U) | 0) * N + ((x / U) | 0);
+  }
+  let drag = null;
+  $("board").addEventListener("pointerdown", e => {
+    if (finished || !N) return;
+    const i = cellAt(e);
+    if (i < 0) return;
+    e.preventDefault();
+    const before = path.join(",");
+    const at = path.indexOf(i);
+    if (at >= 0) path.length = at + 1;                            // toca no fio: corta ali
+    else if (!extendTo(i)) { nudge(i); return; }
+    drag = { before };
+    startTimer();
+    render();
+  });
+  $("board").addEventListener("pointermove", e => {
+    if (!drag) return;
+    const i = cellAt(e);
+    if (i < 0 || i === path.at(-1)) return;
+    const at = path.indexOf(i);
+    if (at >= 0) { path.length = at + 1; render(); return; }      // voltando pelo fio
+    if (extendTo(i)) render();
+  });
+  const endDrag = () => {
+    if (!drag) return;
+    const d = drag; drag = null;
+    if (path.join(",") !== d.before) { history.push(d.before); if (history.length > 300) history.shift(); }
+    checkWin();
+    render(); persist();
+  };
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+  // toque fora do alcance: o número seguinte pisca para lembrar a ordem
+  function nudge(i) {
+    if (numAt[i] && numAt[i] !== nextNum()) {
+      const el = $("board"); el.classList.remove("shake"); void el.getBBox; requestAnimationFrame(() => el.classList.add("shake"));
+    }
+  }
+
+  $("undoBtn").addEventListener("click", () => {
+    if (!history.length || finished) return;
+    path = history.pop().split(",").map(Number);
+    render(); persist();
+  });
+  $("clearBtn").addEventListener("click", () => { if (!finished && path.length > 1) openModal("clearOverlay"); });
+  $("clearYes").addEventListener("click", () => {
+    closeModal($("clearOverlay"));
+    if (finished || path.length < 2) return;
+    history.push(path.join(","));
+    path = [start];
+    render(); persist();
+  });
+
+  // ---------- cronômetro ----------
+  const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`; };
+  const currentElapsed = () => elapsed + (timer ? (Date.now() - startedAt) / 1000 : 0);
+  function showTime() { $("timer").textContent = fmt(currentElapsed()); }
+  function startTimer() {
+    if (timer || finished || document.hidden || !N) return;
+    startedAt = Date.now();
+    timer = setInterval(showTime, 500);
+    showTime();
+  }
+  function stopTimer() {
+    if (!timer) return;
+    elapsed = currentElapsed();
+    clearInterval(timer); timer = null;
+    showTime();
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (!N) return;
+    if (document.hidden) { stopTimer(); persist(); }
+    else if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  });
+  setInterval(() => { if (timer) persist(); }, 5000);
+
+  // ---------- vitória ----------
+  function checkWin() {
+    if (finished || path.length !== C || numAt[path.at(-1)] !== K) return;
+    stopTimer();
+    finished = true;
+    $("controls").classList.add("play");
+    elapsed = Math.round(elapsed);
+    showTime();
+    if (kind === "dia") {
+      const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
+      if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
+    }
+    persist();
+    setTimeout(() => showEnd(true), 1500);
+  }
+  function showEnd() {
+    $("endTime").textContent = fmt(elapsed);
+    const daily = kind === "dia";
+    $("endSub").textContent = daily ? `#${dayNum} · nível ${P.l}/7 · ${N}×${N}` : `Jogo livre · nível ${P.l}/7 · ${N}×${N}`;
+    $("shareBtn").hidden = !daily;
+    $("againBtn").hidden = daily;
+    $("nextBox").hidden = !daily;
+    openModal("endOverlay");
+  }
+  function updateTip() {
+    const t = $("tip");
+    t.classList.remove("warn");
+    if (finished) {
+      t.innerHTML = kind === "dia" ? `Próximo Novelo em <b data-contagem>${$("countdown").textContent}</b>` : "Desafio extra resolvido · não conta nas estatísticas";
+      return;
+    }
+    const nx = nextNum();
+    if (nx > K) { t.classList.add("warn"); t.innerHTML = `Chegou no ${K}, mas faltam <b>${C - path.length}</b> casas.<br>Volte o fio e passe por todas.`; }
+    else if (path.length === 1) t.innerHTML = "Arraste a partir do <b>1</b> e passe pelos números em ordem,<br>cobrindo todas as casas.";
+    else t.innerHTML = `Próximo número: <b>${nx}</b> · faltam <b>${C - path.length}</b> casas`;
+  }
+
+  $("shareBtn").addEventListener("click", () => {
+    const text = `NOVELO #${dayNum} · nível ${P.l}/7\n🧶 ${fmt(elapsed)}\nhttps://a-hanauer.github.io/puzzle-tracker/novelo/`;
+    const done = () => { $("shareBtn").textContent = "Copiado!"; setTimeout(() => $("shareBtn").textContent = "Compartilhar", 1500); };
+    if (navigator.share) navigator.share({ text }).catch(() => {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(text).then(done).catch(() => prompt("Copie o resultado:", text));
+    else prompt("Copie o resultado:", text);
+  });
+  $("againBtn").addEventListener("click", () => newFree());
+  $("doneBar").addEventListener("click", () => { if (finished) (kind === "dia" ? showEnd() : newFree()); });
+
+  // ---------- janelas ----------
+  function openModal(id) { $(id).classList.add("open"); stopTimer(); }
+  function closeAll() { document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open")); }
+  function closeModal(el) {
+    el.classList.remove("open");
+    if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  }
+  document.querySelectorAll(".overlay").forEach(o => {
+    o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); });
+  });
+  $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+
+  // exemplos no Como jogar (3×3)
+  function demo(id, cells, nums, wall) {
+    const u = 100, p = 15, pt = i => `${p + (i % 3) * u + u / 2} ${p + ((i / 3) | 0) * u + u / 2}`;
+    let s = `<defs><pattern id="tw-${id}" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect class="tw-a" width="6" height="16"/></pattern></defs>
+      <rect class="b-bg" x="1" y="1" width="328" height="328" rx="26"/>`;
+    const d = "M" + cells.map(pt).join("L");
+    s += `<path class="th th-edge" d="${d}"/><path class="th th-main" d="${d}"/><path class="th" style="stroke:url(#tw-${id});stroke-width:42" d="${d}"/>`;
+    if (wall) s += `<path class="wall" d="${wall}"/><path class="wall-st" d="${wall}"/>`;
+    for (const [i, n] of nums) { const [x, y] = pt(i).split(" ").map(Number); s += `<circle class="btn" cx="${x}" cy="${y}" r="33"/><circle class="btn-rim" cx="${x}" cy="${y}" r="26.5"/><text class="btn-n" x="${x}" y="${y + 1}">${n}</text>`; }
+    $(id).innerHTML = s;
+  }
+  demo("demoA", [0, 1, 2, 5, 4, 3, 6, 7, 8], [[0, 1], [4, 2], [8, 3]]);
+  demo("demoB", [0, 3, 6, 7, 4, 1, 2, 5, 8], [[0, 1], [8, 2]], "M115 27L115 203");
+})();
+</script>
+<script src="../comum/catalogo.js?v=59"></script>
+<script src="../comum/proximo.js?v=59" data-jogo="novelo"></script>
+</body>
+</html>

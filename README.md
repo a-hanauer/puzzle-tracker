@@ -16,6 +16,8 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | `sanduba/` | O jogo Sanduba (`index.html` + `icon.png`) |
 | `quinhentos/` | O jogo Quinhentos (`index.html` + `icon.png`) |
 | `eclipse/` | O jogo Eclipse: `index.html`, `icon.png`, `desafios.json` (2 anos de desafios), `livre.json` (jogo livre) e `gerador.mjs` |
+| `novelo/` | O jogo Novelo: `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
+| `retalhos/` | O jogo Retalhos: `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
 | `comum/` | Partes comuns: cabeçalho e janelas dos jogos (`cabecalho.css`, `cabecalho.js`) e tema geral (`tema.js`) |
 
 ## Jogos incluídos
@@ -31,15 +33,17 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | 🦊 Foximax | https://foximax.com/ |
 | 💼 LinkedIn (app) | https://www.linkedin.com/games/ |
 | 🌗 Eclipse | [`eclipse/`](eclipse/) (jogo próprio, neste repositório) |
+| 🧶 Novelo | [`novelo/`](novelo/) (Zip em português, neste repositório) |
+| 🧵 Retalhos | [`retalhos/`](retalhos/) (Patches em português, neste repositório) |
 
 ## Como funciona
 
 - **Destaque para o que falta:** jogos pendentes aparecem em cartões cheios; os concluídos ficam esmaecidos (sem cartão, ícone acinzentado, check neutro). Na lista dos outros jogos, os pendentes ficam sempre no topo.
 - O **topo** mostra o nome do produto ("Jogos do Dia") em destaque, os botões de **estatísticas** e **configurações** e, logo abaixo, a **barra de progresso do dia**: um trecho por jogo, que fica verde conforme os jogos são feitos, com o contador ("3/9") à direita, no mesmo estilo dos contadores das seções. A sequência de dias fica na página de estatísticas.
-- **Jogos da casa** (Sanduba, Quinhentos e Eclipse) aparecem numa grade de ícones; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um check. A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
+- **Jogos da casa** (Sanduba, Quinhentos, Eclipse, Novelo e Retalhos) aparecem numa grade de ícones; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um check. A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
 - **Status de cada jogo:**
   - **Outros jogos:** o check à direita marca ou desmarca; abrir o jogo pelo painel já marca como feito.
-  - **Jogos da casa:** um anel no canto enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado (✓ 5/8, ✕ 8/8, ou o tempo com cronômetro no Eclipse).
+  - **Jogos da casa:** um anel no canto enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado (✓ 5/8, ✕ 8/8, ou o tempo com cronômetro no Eclipse, no Novelo e no Retalhos).
 - Jogos feitos ficam com fundo verde claro.
 - A lista **zera sozinha à meia-noite**, no horário do aparelho.
 - As **Configurações** são uma página própria (`#configuracoes`), com título e voltar: **tema** (Automático, Claro ou Escuro; vale também para os jogos da casa), como abrir os jogos externos, gerenciar jogos e desmarcar os externos do dia.
@@ -54,7 +58,7 @@ O botão de gráfico no cabeçalho (ao lado das configurações) abre a página 
 
 - **Resumo:** sequência atual, melhor sequência, dias completos e quanto foi feito no período escolhido.
 - **Atividade:** um só quadro com o período escolhido no controle (**7 dias**, **30 dias** ou **12 semanas**). Em 7 e 30 dias, barras por dia; em 12 semanas, o calendário que fica mais verde conforme os jogos feitos. Tocar num dia mostra quais jogos você fez e os resultados. Embaixo, **Por jogo**: em quantos dias do período você fez cada jogo.
-- **Jogos da casa:** um só quadro, com um controle para trocar entre Sanduba, Quinhentos e Eclipse: estatísticas do próprio jogo, tentativas (ou tempo) por dia e, no Quinhentos, vitórias por número de tentativas.
+- **Jogos da casa:** um só quadro, com um controle para trocar entre os jogos da casa (só o selecionado mostra o nome; os outros, só o ícone): estatísticas do próprio jogo, tentativas (ou tempo) por dia e, no Quinhentos, vitórias por número de tentativas.
 
 O painel guarda até 2 anos de histórico no navegador. Partidas antigas do Sanduba são recuperadas automaticamente; os resultados diários do Quinhentos passam a ser registrados a partir desta versão.
 
@@ -89,7 +93,7 @@ O Sanduba e o Quinhentos rodam direto daqui, cada um na sua pasta:
 
 Cada jogo tem um botão **‹** à esquerda do logotipo que volta para o painel. Ele é essencial no app instalado no iPhone, que não mostra o botão "voltar" do navegador.
 
-A interface dos jogos nativos (Sanduba, Quinhentos e Eclipse) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema é o escolhido no painel. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: sobem de baixo como uma bandeja presa à borda da tela (inclusive no app instalado no iPhone), com o ✕ sempre visível no topo, e fecham ao tocar no fundo. A bandeja de fim de jogo tem a mesma estrutura nos três: ✕, arte do jogo, título ("… completo!" ou "Não foi dessa vez"), resultado, linha de detalhe, **Compartilhar** (desafio do dia) ou **Jogar outro** (jogo livre), contagem para o próximo desafio e **Próximo jogo**. As estatísticas continuam sendo gravadas pelos jogos e aparecem nas **Estatísticas** do painel.
+A interface dos jogos nativos (Sanduba, Quinhentos, Eclipse, Novelo e Retalhos) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema é o escolhido no painel. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: sobem de baixo como uma bandeja presa à borda da tela (inclusive no app instalado no iPhone), com o ✕ sempre visível no topo, e fecham ao tocar no fundo. A bandeja de fim de jogo tem a mesma estrutura em todos: ✕, arte do jogo, título ("… completo!" ou "Não foi dessa vez"), resultado, linha de detalhe, **Compartilhar** (desafio do dia) ou **Jogar outro** (jogo livre), contagem para o próximo desafio e **Próximo jogo**. As estatísticas continuam sendo gravadas pelos jogos e aparecem nas **Estatísticas** do painel.
 
 As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o progresso por domínio, e todos os endereços ficam em `a-hanauer.github.io`.
 
@@ -119,13 +123,42 @@ Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, colu
 - cada um tem **uma única solução**;
 - cada um pode ser resolvido **só com dedução**, sem chute.
 
-**Dificuldade.** Sobe ao longo da semana, em 7 níveis: **segunda é nível 1** (o mais fácil) e **domingo é nível 7** (o mais difícil). Os níveis vêm do esforço de dedução que cada desafio exige, medido pelo gerador; os 3% mais extremos ficam de fora.
+**Dificuldade.** Sobe ao longo da semana, em 7 níveis: **segunda é nível 1** (o mais fácil) e **domingo é nível 7** (o mais difícil), e o tabuleiro cresce junto: **8×8** na segunda e na terça, **9×9** de quarta a sexta e **10×10** no fim de semana (7×7 não tem solução com essas regras). Cada dia gera vários candidatos do seu tamanho e fica com uma faixa do esforço de dedução medido pelo gerador. Os desafios que já tinham saído (#1 e #2) continuam iguais.
 
-**Jogo livre.** A chave "Jogo livre" abre desafios extras (`eclipse/livre.json`, 40 por nível), sorteados, que não contam nas estatísticas. O botão "outro" sorteia um novo. A partida do dia fica guardada enquanto isso.
+**Jogo livre.** A chave "Jogo livre" abre desafios extras (`eclipse/livre.json`, 40 por nível, nos mesmos tamanhos), sorteados, que não contam nas estatísticas. O botão "outro" sorteia um novo. A partida do dia fica guardada enquanto isso.
 
 **Painel.** O painel acompanha o Eclipse sozinho: o selo mostra as peças colocadas e o tempo ao terminar. O Histórico mostra tempo por dia, melhor tempo e média.
 
 Para gerar os desafios de novo, rode `node eclipse/gerador.mjs [dias]` (padrão: 730 dias a partir de 27/09/2026); ele refaz `desafios.json` e `livre.json`.
+
+## Novelo
+
+O Zip (LinkedIn) em português, com cara de costura: um **fio de lã** que se desenrola pelo tabuleiro.
+
+- Um único fio passa por **todas as casas**, uma vez cada, só na horizontal e na vertical.
+- Ele começa no **1**, passa pelos números **em ordem** e termina no último número.
+- O fio não atravessa as **paredes** (traços escuros costurados entre as casas).
+
+Desenha-se arrastando o dedo a partir do 1 (ou da ponta do fio); arrastar de volta pelo fio desfaz, e tocar numa casa do fio corta ali. O fio não entra num número fora de ordem nem continua depois do último. O próximo número pulsa com um anel, e a linha de baixo diz qual é e quantas casas faltam. Controles embaixo: desfazer, barra de progresso (casas cobertas) e recomeçar. Ao completar, a barra vira "Novelo completo" com o tempo, e o fio ganha um brilho que corre de ponta a ponta.
+
+**Desafios.** Um por dia a partir de 28/09/2026 (#1), em `novelo/desafios.json`, todos conferidos pelo `novelo/gerador.mjs` (com `novelo/motor.mjs`): **solução única** e resolvíveis **só com dedução**. O gerador sorteia um caminho que cobre o tabuleiro (por "mordidas" sucessivas, o que dá formas bem variadas), põe números até a solução ser única e depois tira os que sobram. O resolvedor "humano" usa três níveis de técnica: (1) cada casa tem duas ligações, sem ciclos e sem juntar números fora de ordem; (2) passagens obrigatórias entre partes do tabuleiro; (3) testar uma ligação e ver que ela leva a contradição.
+
+**Semana.** Segunda 6×6 (só técnicas simples e uns números a mais), terça 6×6, quarta 7×7, quinta 7×7, sexta 8×8, sábado 8×8 e domingo 9×9, com o esforço de dedução subindo dia a dia. Três estilos se alternam: **fio** (só números), **paredes** (algumas paredes) e **labirinto** (muitas paredes e pouquíssimos números).
+
+## Retalhos
+
+O Patches (LinkedIn) em português, como uma **colcha de retalhos**.
+
+- Divida o tabuleiro em **retângulos**, sem sobrar casa e sem sobrepor.
+- Cada retalho tem **exatamente uma etiqueta**. A etiqueta mostra o **formato** (quadrado, mais largo que alto, mais alto que largo, ou qualquer — tracejado) e/ou o **número de casas**.
+
+Arraste de um canto ao outro para desenhar um retalho (aparece o tamanho, ex.: 3×2); desenhar por cima substitui os retalhos que ficam embaixo; tocar num retalho o desfaz, e tocar numa casa livre cria um 1×1. Retalhos certos ganham o tecido da cor da etiqueta (poá, listras ou xadrez, com pesponto); retalho sem etiqueta fica neutro e retalho que não bate fica com listras vermelhas. A barra de baixo conta os retalhos certos.
+
+**Desafios.** Um por dia a partir de 28/09/2026 (#1), em `retalhos/desafios.json`, conferidos pelo `retalhos/gerador.mjs` (com `retalhos/motor.mjs`): **solução única** e **só dedução**. O gerador sorteia uma colcha equilibrada (formatos variados, poucos 1×1), põe uma etiqueta em cada retalho e esconde informações (número ou formato) enquanto a solução continuar única e dentro do nível do dia. As cores são escolhidas para retalhos vizinhos nunca ficarem iguais.
+
+**Semana.** Segunda 6×6 com etiquetas completas, terça 6×6, quarta e quinta 7×7, sexta e sábado 8×8, domingo 9×9, escondendo cada vez mais informação. Estilos: **colcha**, **formas** (quase só formatos), **números** (quase só números), **grandes** e **miúdos**.
+
+**Nos dois:** jogo livre (`livre.json`, 20 por dia da semana), cronômetro que pausa, partida salva, estatísticas por tempo no painel. Para gerar de novo: `node novelo/gerador.mjs [dias]` e `node retalhos/gerador.mjs [dias]` (padrão: 364 dias a partir de 28/09/2026).
 
 ## Ícone e pendências fora do painel
 

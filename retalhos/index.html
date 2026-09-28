@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f2ede4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161513" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Retalhos">
+<title>RETALHOS — uma colcha de retângulos</title>
+<link rel="icon" type="image/png" href="icon.png">
+<script src="../comum/tema.js?v=59"></script>
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f2ede4;
+    --surface: #fffcf6;
+    --surface-2: #ece5d8;
+    --ink: #2b2823;
+    --muted: #867d70;
+    --line: #e2dacb;
+    --board: #e7dfcf;
+    --cell: #f5f0e6;
+    --cell-line: rgba(120, 100, 70, .10);
+    --stitch: rgba(255, 255, 255, .85);
+    --tag: #fffdf8;
+    --tag-line: #d8ccb6;
+    --tag-on: rgba(255, 253, 248, .94);
+    --tag-ink: #2b2823;
+    --empty: #d9d1c1;
+    --empty-st: rgba(80, 70, 55, .35);
+    --bad: #d64545;
+    --bad-soft: #f4d9d4;
+    --fab-o: rgba(255, 255, 255, .26);
+    --f0: #e8835f; --f1: #6fa3d8; --f2: #efc14a; --f3: #86bb6d; --f4: #d97aa0; --f5: #9d8fd9;
+    --accent: #d9694a;
+    --on-accent: #fff;
+    --shadow: 0 1px 2px rgba(60, 45, 20, .07), 0 6px 18px rgba(60, 45, 20, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161513;
+      --surface: #25231f;
+      --surface-2: #302d28;
+      --ink: #f1ebe0;
+      --muted: #9b9285;
+      --line: #34312b;
+      --board: #1f1d1a;
+      --cell: #2a2824;
+      --cell-line: rgba(255, 255, 255, .04);
+      --stitch: rgba(255, 255, 255, .5);
+      --tag: #36332d;
+      --tag-line: #4a463e;
+      --tag-on: rgba(22, 20, 18, .78);
+      --tag-ink: #f1ebe0;
+      --empty: #3d3a34;
+      --empty-st: rgba(255, 255, 255, .25);
+      --bad: #ff6b6b;
+      --bad-soft: #4a2826;
+      --fab-o: rgba(255, 255, 255, .13);
+      --f0: #b8583a; --f1: #3f72a6; --f2: #b08a26; --f3: #578a42; --f4: #a44c70; --f5: #6a5ca6;
+      --accent: #f09a74;
+      --on-accent: #1d1712;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
+    }
+  }
+  :root[data-theme="dark"] {
+      --bg: #161513;
+      --surface: #25231f;
+      --surface-2: #302d28;
+      --ink: #f1ebe0;
+      --muted: #9b9285;
+      --line: #34312b;
+      --board: #1f1d1a;
+      --cell: #2a2824;
+      --cell-line: rgba(255, 255, 255, .04);
+      --stitch: rgba(255, 255, 255, .5);
+      --tag: #36332d;
+      --tag-line: #4a463e;
+      --tag-on: rgba(22, 20, 18, .78);
+      --tag-ink: #f1ebe0;
+      --empty: #3d3a34;
+      --empty-st: rgba(255, 255, 255, .25);
+      --bad: #ff6b6b;
+      --bad-soft: #4a2826;
+      --fab-o: rgba(255, 255, 255, .13);
+      --f0: #b8583a; --f1: #3f72a6; --f2: #b08a26; --f3: #578a42; --f4: #a44c70; --f5: #6a5ca6;
+      --accent: #f09a74;
+      --on-accent: #1d1712;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body, a, button { touch-action: manipulation; }
+  html { height: 100%; background: var(--bg); -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0 auto; max-width: 520px;
+    background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
+    min-height: calc(100% + var(--sobra, 0px));
+    display: flex; flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none; user-select: none;
+  }
+  .linkbtn { border: none; background: none; padding: 0 0 0 2px; font: inherit; font-weight: 700; color: var(--accent); cursor: pointer; }
+
+  /* ---------- tabuleiro ----------
+     Um SVG só: fundo de linho com as casas, os retalhos (tecido estampado
+     com pesponto) e as etiquetas por cima. */
+  .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 4px 0; }
+  #board { display: block; touch-action: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(40, 25, 10, .08)) drop-shadow(0 8px 20px rgba(40, 25, 10, .08)); }
+  .b-bg { fill: var(--board); }
+  .b-cell { fill: var(--cell); stroke: var(--cell-line); stroke-width: 1.5; }
+  .p-shadow { fill: rgba(30, 20, 10, .16); }
+  .p-st { fill: none; stroke: var(--stitch); stroke-width: 3; stroke-dasharray: 9 7; stroke-linecap: round; }
+  .p-empty { fill: var(--empty); }
+  .p-empty + .p-st, .p-st.e { stroke: var(--empty-st); }
+  .p-bad { fill: url(#hatch); }
+  .p-st.b { stroke: var(--bad); }
+  .hb { fill: var(--bad-soft); } .hl { fill: var(--bad); opacity: .45; }
+  .f0 { fill: var(--f0); } .f1 { fill: var(--f1); } .f2 { fill: var(--f2); } .f3 { fill: var(--f3); } .f4 { fill: var(--f4); } .f5 { fill: var(--f5); }
+  .fo { fill: var(--fab-o); }
+  .prev { fill: rgba(127, 110, 80, .08); stroke: var(--ink); stroke-width: 4; stroke-dasharray: 14 10; stroke-linecap: round; }
+  .prev-badge { fill: var(--ink); }
+  .prev-t { fill: var(--bg); font: 800 30px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
+  .tag { fill: var(--tag); stroke: var(--tag-line); stroke-width: 2; }
+  .tag.on { fill: var(--tag-on); stroke: none; }
+  .tag-g { fill: color-mix(in srgb, var(--tag-ink) 16%, transparent); stroke: var(--tag-ink); stroke-width: 3.6; stroke-linejoin: round; }
+  .tag-g.any { fill: none; }
+  .tag-g.any { stroke-dasharray: 5 4; }
+  .tag-n { fill: var(--tag-ink); font: 800 34px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
+  .won .patch { animation: puff .45s cubic-bezier(.3,1.6,.5,1) both; transform-box: fill-box; transform-origin: center; }
+  @keyframes puff { 0% { transform: scale(1); } 45% { transform: scale(1.045); } 100% { transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .won .patch { animation: none !important; } }
+
+  /* ---------- controles ---------- */
+  .controls { display: flex; gap: 10px; padding-top: 14px; }
+  .controls > button {
+    flex: 0 0 52px; height: 56px; padding: 0; border-radius: 16px; border: none; cursor: pointer;
+    background: var(--surface); color: var(--muted); box-shadow: var(--shadow);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: flex-basis .45s ease, margin .45s ease, opacity .25s ease; overflow: hidden;
+  }
+  .controls > button:active { transform: scale(.95); }
+  .controls > button:disabled { opacity: .45; }
+  .controls > button svg { width: 22px; height: 22px; }
+  .prog {
+    position: relative; overflow: hidden; flex: 1; height: 56px; border-radius: 16px;
+    background: var(--surface); box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 12px; padding: 0 18px;
+    transition: background .5s ease;
+  }
+  .prog .bar { flex: 1; height: 8px; border-radius: 9px; background: var(--surface-2); overflow: hidden; }
+  .prog .bar i { display: block; height: 100%; width: 0; border-radius: 9px; background: var(--accent); transition: width .2s ease; }
+  .prog .n { font-weight: 700; font-size: .95rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .prog .n b { color: var(--ink); font-weight: 800; }
+  .prog > .bar, .prog > .n { transition: opacity .25s ease; }
+  .controls.done > button { flex-basis: 0; opacity: 0; pointer-events: none; }
+  .controls.done #undoBtn { margin-right: -10px; }
+  .controls.done #clearBtn { margin-left: -10px; }
+  .controls.done .prog { background: linear-gradient(120deg, #b9573a 0%, #d9694a 50%, #e6a24a 100%); box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(185, 87, 58, .3); }
+  .controls.done .prog > .bar, .controls.done .prog > .n { opacity: 0; }
+  .done-bar {
+    position: absolute; inset: 0; display: flex; align-items: center; gap: 12px;
+    padding: 0 18px; margin: 0; border: 0; background: none; color: #fff; font: inherit; text-align: left; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity .3s ease .15s;
+  }
+  .controls.done .done-bar { opacity: 1; pointer-events: auto; }
+  .done-bar svg.quilt { width: 38px; height: 38px; flex-shrink: 0; border-radius: 9px; }
+  .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .done-bar .txt b { font-size: 1.02rem; font-weight: 800; }
+  .done-bar .txt span { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.8); font-variant-numeric: tabular-nums; }
+  .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,255,255,.75); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .controls.play .done-bar svg.quilt { animation: fold .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
+  @keyframes fold { from { transform: scale(.3) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; min-height: 2.3em; }
+  .tip b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tip.warn b { color: var(--bad); }
+
+  /* ---------- janelas ---------- */
+  .overlay {
+    position: fixed; inset: 0; z-index: 10; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(20, 15, 10, .42); backdrop-filter: blur(3px);
+  }
+  .overlay.open { display: flex; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    width: 100%; max-width: 400px; max-height: 88vh; overflow: auto;
+    background: var(--surface); border-radius: 22px; padding: 22px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  }
+  .modal h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+  .modal .close { border: none; background: var(--surface-2); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; }
+  .modal p, .modal li { font-size: .92rem; line-height: 1.5; color: var(--ink); }
+  .modal ul { padding-left: 20px; margin: 8px 0; }
+  .modal li { margin: 4px 0; }
+  .modal .g { display: inline-block; width: 26px; height: 18px; vertical-align: -4px; }
+  .demo { display: flex; justify-content: center; gap: 18px; margin: 14px 0 6px; }
+  .demo figure { margin: 0; text-align: center; font-size: .72rem; color: var(--muted); font-weight: 600; }
+  .demo svg { display: block; width: 124px; height: 124px; margin: 0 auto 6px; }
+  .btn-main {
+    width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer;
+    background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
+  }
+</style>
+<link rel="stylesheet" href="../comum/cabecalho.css?v=59">
+<style>
+  :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- colcha pequena: barra de fim e janela de resultado -->
+    <symbol id="i-quilt" viewBox="0 0 64 64">
+      <rect width="64" height="64" rx="14" fill="#efe6d6"/>
+      <rect x="7" y="7" width="30" height="19" rx="4.5" fill="#e8835f"/>
+      <rect x="40" y="7" width="17" height="30" rx="4.5" fill="#6fa3d8"/>
+      <rect x="7" y="29" width="13" height="28" rx="4.5" fill="#86bb6d"/>
+      <rect x="23" y="29" width="14" height="14" rx="4.5" fill="#efc14a"/>
+      <rect x="23" y="46" width="34" height="11" rx="4.5" fill="#d97aa0"/>
+      <g fill="none" stroke="#fff" stroke-width="1.1" stroke-dasharray="2.2 1.8" stroke-linecap="round" opacity=".9">
+        <rect x="9.3" y="9.3" width="25.4" height="14.4" rx="2.6"/><rect x="42.3" y="9.3" width="12.4" height="25.4" rx="2.6"/>
+        <rect x="9.3" y="31.3" width="8.4" height="23.4" rx="2.6"/><rect x="25.3" y="31.3" width="9.4" height="9.4" rx="2.6"/>
+        <rect x="25.3" y="48.3" width="29.4" height="6.4" rx="2.6"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="gh">
+  <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+  <a class="gh-brand" href="./" aria-label="Retalhos — recarregar"><img src="icon.png" alt=""><b>RETALHOS</b></a>
+  <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
+  <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
+</header>
+
+<div class="gh-meta">
+  <span class="gh-info" id="dayInfo"></span>
+  <label class="gh-free" title="Desafios extras, que não contam nas estatísticas">
+    <span>Jogo livre</span>
+    <input type="checkbox" id="freeToggle"><span class="gh-switch"></span>
+  </label>
+</div>
+
+<div class="stage" id="stage"><svg id="board" role="img" aria-label="Tabuleiro"></svg></div>
+
+<div class="controls" id="controls">
+  <button id="undoBtn" disabled aria-label="Desfazer" title="Desfazer">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+  </button>
+  <div class="prog" aria-live="polite">
+    <span class="bar"><i id="progBar"></i></span><span class="n" id="progN"><b>0</b>/0</span>
+    <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
+      <svg class="quilt" aria-hidden="true"><use href="#i-quilt"/></svg>
+      <span class="txt"><b id="doneTitle">Colcha completa</b><span id="doneSub"></span></span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <button id="clearBtn" aria-label="Recomeçar" title="Recomeçar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+  </button>
+</div>
+<div class="tip" id="tip"></div>
+
+<!-- Como jogar -->
+<div class="overlay" id="helpOverlay">
+  <div class="modal">
+    <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
+    <p>Costure uma colcha: divida o tabuleiro em <b>retalhos retangulares</b>, sem sobrar casa e sem sobrepor.</p>
+    <ul>
+      <li>Cada retalho tem <b>exatamente uma etiqueta</b>.</li>
+      <li>O <b>número</b> da etiqueta é quantas casas o retalho tem.</li>
+      <li>O desenho é o <b>formato</b>: <svg class="g" viewBox="0 0 26 18"><rect x="7" y="3" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></svg> quadrado,
+        <svg class="g" viewBox="0 0 26 18"><rect x="4" y="4.5" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></svg> mais largo que alto,
+        <svg class="g" viewBox="0 0 26 18"><rect x="8.5" y="1" width="9" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></svg> mais alto que largo e
+        <svg class="g" viewBox="0 0 26 18"><rect x="6" y="2" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2.4"/></svg> qualquer formato.</li>
+      <li>Algumas etiquetas mostram só o formato, ou só o número.</li>
+    </ul>
+    <div class="demo">
+      <figure><svg id="demoA" viewBox="0 0 330 330"></svg>etiquetas</figure>
+      <figure><svg id="demoB" viewBox="0 0 330 330"></svg>colcha pronta</figure>
+    </div>
+    <p>Arraste o dedo de um canto ao outro para desenhar um retalho. Toque num retalho para desfazê-lo. Retalhos que não batem com a etiqueta aparecem com listras vermelhas.</p>
+    <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b> (9×9).</p>
+    <p>No <b>Jogo livre</b> você joga desafios extras, de níveis variados, que não contam nas estatísticas.</p>
+    <button class="btn-main" data-close>Jogar</button>
+  </div>
+</div>
+
+<!-- Confirmação para recomeçar -->
+<div class="overlay" id="clearOverlay">
+  <div class="modal" style="max-width:320px;text-align:center">
+    <h2 style="justify-content:center">Desfazer a colcha?</h2>
+    <p style="color:var(--muted);margin:0 0 18px">Todos os retalhos saem. Dá para desfazer depois.</p>
+    <button class="btn-main" id="clearYes">Recomeçar</button>
+    <button class="close" data-close style="margin-top:12px;width:auto;padding:0 18px;height:36px;border-radius:99px">Cancelar</button>
+  </div>
+</div>
+
+<!-- Fim de jogo -->
+<div class="overlay" id="endOverlay">
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><svg viewBox="0 0 64 64" aria-hidden="true" style="height:88px"><use href="#i-quilt"/></svg></div>
+    <h2 class="fim-title" id="endTitle">Colcha completa!</h2>
+    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div></div>
+    <p class="fim-sub" id="endSub"></p>
+    <button class="fim-btn" id="shareBtn">Compartilhar</button>
+    <button class="fim-btn" id="againBtn" hidden>Jogar outro</button>
+    <div class="fim-count" id="nextBox">Próximo Retalhos em <b id="countdown" data-contagem>--:--:--</b></div>
+    <div data-proximo hidden></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+  const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const LS = "retalhos:";
+  const load = (k, d) => { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
+  const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
+
+  // ---------- estado ----------
+  // etiqueta: { i: casa, f: "q" quadrado | "l" largo | "a" alto | "*" qualquer, n: casas (0 = sem número), c: cor }
+  let N = 0, C = 0, P = null, PID = "", clues = [], clueAt = null;
+  let patches = [], history = [], finished = false, kind = "dia", dayNum = 0, DAILY = null, FREE = null, freeIdx = -1;
+  let timer = null, startedAt = 0, elapsed = 0;
+  const U = 100, PAD = 14;
+  const shapeOf = (h, w) => (h === w ? "q" : w > h ? "l" : "a");
+
+  function recomputeStats(st) {
+    const days = Object.keys(st.times).map(Number).sort((a, b) => a - b);
+    let best = 0, run = 0, prev = -9;
+    for (const d of days) { run = d === prev + 1 ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+    st.played = days.length; st.best = best; st.streak = run; st.lastDay = days.at(-1) || 0;
+    return st;
+  }
+
+  function setup(puzzle, saved, k) {
+    stopTimer();
+    kind = k; P = puzzle; N = P.n; C = N * N;
+    clues = P.e.split(",").map((t, j) => { const m = t.match(/^(\d+)([qla*])(\d*)$/); return { i: +m[1], f: m[2], n: +(m[3] || 0), c: +(P.c[j] || 0) }; });
+    clueAt = new Int16Array(C).fill(-1);
+    clues.forEach((c, j) => (clueAt[c.i] = j));
+    PID = P.e;
+    if (saved && saved.pid !== PID) saved = null;
+    patches = saved?.patches ? parsePatches(saved.patches) : [];
+    elapsed = saved?.elapsed || 0;
+    finished = !!saved?.done;
+    history = [];
+    const now = new Date();
+    $("dayInfo").innerHTML = kind === "dia"
+      ? `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`
+      : `Extra · nível ${P.l}/7 · <button class="linkbtn" id="newFree">outro ↻</button>`;
+    if (kind === "livre") $("newFree").addEventListener("click", () => newFree());
+    build(); fit(); render(); showTime();
+  }
+  const packPatches = () => patches.map(p => `${p.r0}.${p.c0}.${p.h}.${p.w}`).join(",");
+  function parsePatches(s) {
+    if (!s) return [];
+    const out = [];
+    for (const t of s.split(",")) {
+      const [r0, c0, h, w] = t.split(".").map(Number);
+      if ([r0, c0, h, w].some(x => !Number.isInteger(x)) || r0 < 0 || c0 < 0 || h < 1 || w < 1 || r0 + h > N || c0 + w > N) continue;
+      const p = { r0, c0, h, w };
+      if (!out.some(q => overlap(p, q))) out.push(p);
+    }
+    return out;
+  }
+  const overlap = (a, b) => a.r0 < b.r0 + b.h && b.r0 < a.r0 + a.h && a.c0 < b.c0 + b.w && b.c0 < a.c0 + a.w;
+  const contains = (p, i) => { const r = (i / N) | 0, c = i % N; return r >= p.r0 && r < p.r0 + p.h && c >= p.c0 && c < p.c0 + p.w; };
+
+  // estado de um retalho: índice da etiqueta se estiver certo; -1 sem etiqueta; -2 errado
+  function statusOf(p) {
+    const inside = clues.filter(c => contains(p, c.i));
+    if (!inside.length) return { s: -1 };
+    if (inside.length > 1) return { s: -2 };
+    const c = inside[0];
+    const ok = (!c.n || c.n === p.h * p.w) && (c.f === "*" || c.f === shapeOf(p.h, p.w));
+    return ok ? { s: clues.indexOf(c) } : { s: -2, c: clues.indexOf(c) };
+  }
+
+  function loadDaily() {
+    const { data } = DAILY;
+    const puzzle = data.puzzles[Math.min(dayNum, data.puzzles.length) - 1];
+    setup(puzzle, load("dia:" + dayNum, null), "dia");
+    persist();
+  }
+  async function loadFree(forceNew) {
+    if (!FREE) FREE = await fetch("livre.json").then(r => r.json());
+    const saved = load("livre", null);
+    if (!forceNew && saved && !saved.done && FREE.puzzles[saved.idx]) freeIdx = saved.idx;
+    else { let k; do { k = Math.floor(Math.random() * FREE.puzzles.length); } while (FREE.puzzles.length > 1 && k === saved?.idx); freeIdx = k; }
+    setup(FREE.puzzles[freeIdx], saved && saved.idx === freeIdx ? saved : null, "livre");
+    persist();
+    if (!finished) startTimer();
+  }
+  function newFree() { closeAll(); loadFree(true); }
+  $("freeToggle").addEventListener("change", async e => {
+    persist();
+    if (e.target.checked) await loadFree(false);
+    else { loadDaily(); if (!finished) startTimer(); }
+  });
+
+  fetch("desafios.json").then(r => r.json()).then(data => {
+    dayNum = dayNumber(data.epoch);
+    DAILY = { data };
+    loadDaily();
+    if (finished) showEnd();
+    else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
+    else startTimer();
+  }).catch(() => { $("stage").innerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
+
+  // ---------- desenho ----------
+  // tecidos: cada cor tem uma estampa (poá, listras ou xadrez)
+  const PRINT = ["dots", "stripes", "check", "dots", "stripes", "check"];
+  function fabricDefs(prefix) {
+    let s = "";
+    for (let k = 0; k < 6; k++) {
+      s += `<pattern id="${prefix}${k}" width="24" height="24" patternUnits="userSpaceOnUse"${PRINT[k] === "stripes" ? ' patternTransform="rotate(45)"' : ""}><rect class="f${k}" width="24" height="24"/>`;
+      if (PRINT[k] === "dots") s += `<circle class="fo" cx="6" cy="6" r="2.6"/><circle class="fo" cx="18" cy="18" r="2.6"/>`;
+      if (PRINT[k] === "stripes") s += `<rect class="fo" width="8" height="24"/>`;
+      if (PRINT[k] === "check") s += `<rect class="fo" width="12" height="24"/><rect class="fo" width="24" height="12"/>`;
+      s += `</pattern>`;
+    }
+    return s;
+  }
+  let gP, gT, gV, W = 0;
+  function build() {
+    W = N * U + 2 * PAD;
+    const b = $("board");
+    b.setAttribute("viewBox", `0 0 ${W} ${W}`);
+    let s = `<defs>${fabricDefs("fab")}
+      <pattern id="hatch" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="hb" width="18" height="18"/><rect class="hl" width="5" height="18"/></pattern></defs>
+      <rect class="b-bg" width="${W}" height="${W}" rx="30"/>`;
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) s += `<rect class="b-cell" x="${PAD + c * U + 4}" y="${PAD + r * U + 4}" width="${U - 8}" height="${U - 8}" rx="16"/>`;
+    s += `<g id="gP"></g><g id="gT"></g><g id="gV"></g>`;
+    b.innerHTML = s;
+    gP = $("gP"); gT = $("gT"); gV = $("gV");
+  }
+  function fit() {
+    const st = $("stage"), b = $("board");
+    if (!st || !b) return;
+    b.style.width = b.style.height = "0px";
+    const size = Math.floor(Math.min(st.clientWidth, st.clientHeight - 8));
+    b.style.width = b.style.height = Math.max(160, size) + "px";
+  }
+  window.addEventListener("resize", () => { if (N) fit(); });
+  if (window.visualViewport) visualViewport.addEventListener("resize", () => { if (N) fit(); });
+
+  function patchSVG(p, st, k) {
+    const x = PAD + p.c0 * U + 4, y = PAD + p.r0 * U + 4, w = p.w * U - 8, h = p.h * U - 8;
+    const fill = st.s >= 0 ? `style="fill:url(#fab${clues[st.s].c})"` : st.s === -1 ? 'class="p-empty"' : 'class="p-bad"';
+    const stc = st.s >= 0 ? "" : st.s === -1 ? " e" : " b";
+    return `<g class="patch" style="animation-delay:${k * 45}ms"><rect class="p-shadow" x="${x}" y="${y + 4}" width="${w}" height="${h}" rx="18"/>
+      <rect ${fill} x="${x}" y="${y}" width="${w}" height="${h}" rx="18"/>
+      <rect class="p-st${stc}" x="${x + 10}" y="${y + 10}" width="${w - 20}" height="${h - 20}" rx="10"/></g>`;
+  }
+  function glyph(f, x, y, big) {
+    const k = big ? 1.25 : 1, R = (w, h) => `<rect class="tag-g${f === "*" ? " any" : ""}" x="${x - w * k / 2}" y="${y - h * k / 2}" width="${w * k}" height="${h * k}" rx="${3.5 * k}"/>`;
+    if (f === "q") return R(18, 18);
+    if (f === "l") return R(26, 15);
+    if (f === "a") return R(15, 26);
+    return R(19, 19);
+  }
+  // etiqueta: formato em cima, número embaixo (sem número, só o formato, maior)
+  function tagSVG(c, on) {
+    const x = PAD + (c.i % N) * U + U / 2, y = PAD + ((c.i / N) | 0) * U + U / 2;
+    const tw = 62, th = c.n ? 78 : 56;
+    let s = `<rect class="tag${on ? " on" : ""}" x="${x - tw / 2}" y="${y - th / 2}" width="${tw}" height="${th}" rx="13"/>`;
+    if (c.n) s += glyph(c.f, x, y - 19) + `<text class="tag-n" x="${x}" y="${y + 15}">${c.n}</text>`;
+    else s += glyph(c.f, x, y, true);
+    return s;
+  }
+  function render() {
+    const sts = patches.map(statusOf);
+    gP.innerHTML = patches.map((p, k) => patchSVG(p, sts[k], k)).join("");
+    const covered = new Set();
+    patches.forEach((p, k) => { if (sts[k].s >= 0) covered.add(sts[k].s); });
+    gT.innerHTML = clues.map((c, j) => tagSVG(c, covered.has(j))).join("");
+    const good = covered.size;
+    $("progBar").style.width = (100 * good / clues.length) + "%";
+    $("progN").innerHTML = `<b>${good}</b>/${clues.length}`;
+    $("undoBtn").disabled = finished || !history.length;
+    $("clearBtn").disabled = finished || !patches.length;
+    $("board").classList.toggle("won", finished);
+    $("controls").classList.toggle("done", finished);
+    if (!finished) $("controls").classList.remove("play");
+    $("doneBar").tabIndex = finished ? 0 : -1;
+    if (finished) {
+      $("doneTitle").textContent = kind === "dia" ? "Colcha completa" : "Resolvido";
+      $("doneSub").textContent = `${fmt(elapsed)} · nível ${P.l}/7 · ${kind === "dia" ? "ver resultado" : "jogar outro"}`;
+    }
+    updateTip(sts);
+    $("board").setAttribute("aria-label", `Tabuleiro ${N} por ${N}: ${good} de ${clues.length} retalhos certos`);
+  }
+
+  function persist() {
+    if (!P) return;
+    const good = new Set(patches.map(statusOf).filter(s => s.s >= 0).map(s => s.s)).size;
+    const data = { pid: PID, patches: packPatches(), elapsed: currentElapsed(), done: finished, prog: [good, clues.length], started: patches.length > 0 };
+    if (kind === "livre") { save("livre", { idx: freeIdx, ...data }); return; }
+    save("dia:" + dayNum, { ...data, time: finished ? elapsed : null });
+  }
+
+  // ---------- desenhar retalhos ----------
+  function cellAt(e, clamp) {
+    const r = $("board").getBoundingClientRect();
+    let x = (e.clientX - r.left) / r.width * W - PAD, y = (e.clientY - r.top) / r.height * W - PAD;
+    if (!clamp && (x < 0 || y < 0 || x >= N * U || y >= N * U)) return -1;
+    x = Math.max(0, Math.min(N * U - 1, x)); y = Math.max(0, Math.min(N * U - 1, y));
+    return ((y / U) | 0) * N + ((x / U) | 0);
+  }
+  const rectOf = (a, b) => {
+    const r1 = (a / N) | 0, c1 = a % N, r2 = (b / N) | 0, c2 = b % N;
+    return { r0: Math.min(r1, r2), c0: Math.min(c1, c2), h: Math.abs(r1 - r2) + 1, w: Math.abs(c1 - c2) + 1 };
+  };
+  function preview(p) {
+    if (!p) { gV.innerHTML = ""; return; }
+    const x = PAD + p.c0 * U + 4, y = PAD + p.r0 * U + 4, w = p.w * U - 8, h = p.h * U - 8;
+    const label = `${p.w}×${p.h}`, bw = 22 * label.length + 20;
+    gV.innerHTML = `<rect class="prev" x="${x}" y="${y}" width="${w}" height="${h}" rx="18"/>
+      <rect class="prev-badge" x="${x + w - bw - 8}" y="${y + h - 52}" width="${bw}" height="44" rx="22"/>
+      <text class="prev-t" x="${x + w - bw / 2 - 8}" y="${y + h - 29}">${label}</text>`;
+  }
+  let drag = null;
+  $("board").addEventListener("pointerdown", e => {
+    if (finished || !N) return;
+    const i = cellAt(e, false);
+    if (i < 0) return;
+    e.preventDefault();
+    drag = { a: i, b: i, moved: false, before: packPatches() };
+    startTimer();
+  });
+  $("board").addEventListener("pointermove", e => {
+    if (!drag) return;
+    const i = cellAt(e, true);
+    if (i === drag.b) return;
+    drag.b = i;
+    if (i !== drag.a) drag.moved = true;
+    preview(drag.moved ? rectOf(drag.a, drag.b) : null);
+  });
+  const endDrag = () => {
+    if (!drag) return;
+    const d = drag; drag = null;
+    preview(null);
+    if (!d.moved) {
+      const k = patches.findIndex(p => contains(p, d.a));
+      if (k >= 0) patches.splice(k, 1);                      // toque num retalho: desfaz
+      else patches.push(rectOf(d.a, d.a));                   // toque numa casa livre: retalho 1×1
+    } else {
+      const p = rectOf(d.a, d.b);
+      patches = patches.filter(q => !overlap(p, q));
+      patches.push(p);
+    }
+    if (packPatches() !== d.before) { history.push(d.before); if (history.length > 300) history.shift(); }
+    checkWin();
+    render(); persist();
+  };
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+
+  $("undoBtn").addEventListener("click", () => {
+    if (!history.length || finished) return;
+    patches = parsePatches(history.pop());
+    render(); persist();
+  });
+  $("clearBtn").addEventListener("click", () => { if (!finished && patches.length) openModal("clearOverlay"); });
+  $("clearYes").addEventListener("click", () => {
+    closeModal($("clearOverlay"));
+    if (finished || !patches.length) return;
+    history.push(packPatches());
+    patches = [];
+    render(); persist();
+  });
+
+  // ---------- cronômetro ----------
+  const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`; };
+  const currentElapsed = () => elapsed + (timer ? (Date.now() - startedAt) / 1000 : 0);
+  function showTime() { $("timer").textContent = fmt(currentElapsed()); }
+  function startTimer() {
+    if (timer || finished || document.hidden || !N) return;
+    startedAt = Date.now();
+    timer = setInterval(showTime, 500);
+    showTime();
+  }
+  function stopTimer() {
+    if (!timer) return;
+    elapsed = currentElapsed();
+    clearInterval(timer); timer = null;
+    showTime();
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (!N) return;
+    if (document.hidden) { stopTimer(); persist(); }
+    else if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  });
+  setInterval(() => { if (timer) persist(); }, 5000);
+
+  // ---------- vitória ----------
+  function checkWin() {
+    if (finished) return;
+    const area = patches.reduce((s, p) => s + p.h * p.w, 0);
+    if (area !== C || patches.length !== clues.length || !patches.every(p => statusOf(p).s >= 0)) return;
+    stopTimer();
+    finished = true;
+    $("controls").classList.add("play");
+    elapsed = Math.round(elapsed);
+    showTime();
+    if (kind === "dia") {
+      const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
+      if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
+    }
+    persist();
+    setTimeout(() => showEnd(), 1400);
+  }
+  function showEnd() {
+    $("endTime").textContent = fmt(elapsed);
+    const daily = kind === "dia";
+    $("endSub").textContent = daily ? `#${dayNum} · nível ${P.l}/7 · ${N}×${N}` : `Jogo livre · nível ${P.l}/7 · ${N}×${N}`;
+    $("shareBtn").hidden = !daily;
+    $("againBtn").hidden = daily;
+    $("nextBox").hidden = !daily;
+    openModal("endOverlay");
+  }
+  function updateTip(sts) {
+    const t = $("tip");
+    t.classList.remove("warn");
+    if (finished) {
+      t.innerHTML = kind === "dia" ? `Próximo Retalhos em <b data-contagem>${$("countdown").textContent}</b>` : "Desafio extra resolvido · não conta nas estatísticas";
+      return;
+    }
+    const free = C - patches.reduce((s, p) => s + p.h * p.w, 0);
+    if (sts.some(s => s.s === -2)) { t.classList.add("warn"); t.innerHTML = "Tem retalho que <b>não bate</b> com a etiqueta<br>(listras vermelhas)."; }
+    else if (!patches.length) t.innerHTML = "Arraste de um canto ao outro para desenhar um retalho.<br>Toque num retalho para desfazê-lo.";
+    else if (!free && sts.some(s => s.s === -1)) { t.classList.add("warn"); t.innerHTML = "Todo retalho precisa de <b>uma etiqueta</b>."; }
+    else t.innerHTML = `Faltam <b>${free}</b> casas para fechar a colcha`;
+  }
+
+  $("shareBtn").addEventListener("click", () => {
+    const text = `RETALHOS #${dayNum} · nível ${P.l}/7\n🧵 ${fmt(elapsed)}\nhttps://a-hanauer.github.io/puzzle-tracker/retalhos/`;
+    const done = () => { $("shareBtn").textContent = "Copiado!"; setTimeout(() => $("shareBtn").textContent = "Compartilhar", 1500); };
+    if (navigator.share) navigator.share({ text }).catch(() => {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(text).then(done).catch(() => prompt("Copie o resultado:", text));
+    else prompt("Copie o resultado:", text);
+  });
+  $("againBtn").addEventListener("click", () => newFree());
+  $("doneBar").addEventListener("click", () => { if (finished) (kind === "dia" ? showEnd() : newFree()); });
+
+  // ---------- janelas ----------
+  function openModal(id) { $(id).classList.add("open"); stopTimer(); }
+  function closeAll() { document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open")); }
+  function closeModal(el) {
+    el.classList.remove("open");
+    if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  }
+  document.querySelectorAll(".overlay").forEach(o => {
+    o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); });
+  });
+  $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+
+  // exemplo no Como jogar (3×3): etiquetas soltas e a colcha pronta
+  function demo(id, solved) {
+    const saveN = N, saveClues = clues;
+    N = 3;
+    clues = [{ i: 0, f: "l", n: 3, c: 0 }, { i: 5, f: "a", n: 0, c: 1 }, { i: 6, f: "*", n: 4, c: 3 }];
+    const ps = [{ r0: 0, c0: 0, h: 1, w: 3 }, { r0: 1, c0: 2, h: 2, w: 1 }, { r0: 1, c0: 0, h: 2, w: 2 }];
+    let s = `<defs>${fabricDefs("dfab" + id)}</defs><rect class="b-bg" width="330" height="330" rx="26"/>`;
+    for (let k = 0; k < 9; k++) s += `<rect class="b-cell" x="${PAD + (k % 3) * U + 4}" y="${PAD + ((k / 3) | 0) * U + 4}" width="92" height="92" rx="16"/>`;
+    if (solved) s += ps.map((p, k) => patchSVG(p, { s: k }, k).replace(/url\(#fab/g, `url(#dfab${id}`)).join("");
+    s += clues.map(c => tagSVG(c, solved)).join("");
+    $(id).innerHTML = s;
+    N = saveN; clues = saveClues;
+  }
+  demo("demoA", false);
+  demo("demoB", true);
+})();
+</script>
+<script src="../comum/catalogo.js?v=59"></script>
+<script src="../comum/proximo.js?v=59" data-jogo="retalhos"></script>
+</body>
+</html>

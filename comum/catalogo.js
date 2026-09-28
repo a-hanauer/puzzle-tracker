@@ -26,6 +26,8 @@ const BASE_GAMES = [
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon.png", iconFull: true },
+  { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png", iconFull: true },
+  { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png", iconFull: true },
 ];
 
 /* ============================================================ */
@@ -61,9 +63,21 @@ const LOCAL_PROGRESS = {
     if (!p || typeof p.cells !== "string") return null;
     const placed = (p.cells.match(/[SM]/g) || []).length;
     if (!p.done && !p.started) return null;             // aberto, mas nenhuma jogada ainda
-    return { tries: placed, max: 18, won: !!p.done, finished: !!p.done, time: p.done ? p.time : null };
+    const max = 2 * Math.round(Math.sqrt(p.cells.length));   // o tabuleiro vai de 8×8 a 10×10
+    return { tries: placed, max, won: !!p.done, finished: !!p.done, time: p.done ? p.time : null };
   },
+  // Novelo e Retalhos: desafio #1 = 28/09/2026; prog = [feito, total]
+  novelo() { return progressoPorTempo("novelo"); },
+  retalhos() { return progressoPorTempo("retalhos"); },
 };
+function progressoPorTempo(jogo) {
+  const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+  const dayNum = Math.round((today0 - new Date(2026, 8, 28)) / 86400000) + 1;
+  const p = readJSON(`${jogo}:dia:${dayNum}`);
+  if (!p || (!p.done && !p.started)) return null;
+  const [tries, max] = Array.isArray(p.prog) ? p.prog : [0, 0];
+  return { tries, max, won: !!p.done, finished: !!p.done, time: p.done ? p.time : null };
+}
 
 const fmtTime = s => { s = Math.round(s || 0); const m = Math.floor(s / 60); return m >= 60 ? `${Math.floor(m / 60)}h${String(m % 60).padStart(2, "0")}` : `${m}:${String(s % 60).padStart(2, "0")}`; };
 
