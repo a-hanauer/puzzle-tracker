@@ -152,8 +152,10 @@
   .board.won .regions path.reg { filter: saturate(.7); }
   .cell > svg.dim { opacity: .28; filter: none; }         /* peça do outro modo, só de referência */
   .seg {
+    position: relative; overflow: hidden;
     flex: 1; min-height: 62px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px;
     background: var(--surface); border-radius: 14px; box-shadow: var(--shadow);
+    transition: background .5s ease;
   }
   .seg button {
     border: none; border-radius: 11px; cursor: pointer; padding: 0; background: none; color: var(--muted);
@@ -175,8 +177,42 @@
   .controls button:disabled { opacity: .45; }
   .controls #clearBtn { flex: 0 0 48px; padding: 0; }
   .controls #undoBtn { flex: 0 0 48px; padding: 0; }
+  .controls #clearBtn, .controls #undoBtn { transition: flex-basis .45s ease, margin .45s ease, opacity .25s ease; overflow: hidden; }
+
+  /* ---------- jogo completo: a chave vira o eclipse ----------
+     Desfazer e limpar recolhem, a chave ocupa a linha toda e sol e lua
+     deslizam um sobre o outro. Tocar abre o resultado. */
+  .controls.done #undoBtn { flex-basis: 0; margin-right: -10px; opacity: 0; pointer-events: none; }
+  .controls.done #clearBtn { flex-basis: 0; margin-left: -10px; opacity: 0; pointer-events: none; }
+  .controls.done .seg { background: linear-gradient(120deg, #141a3f 0%, #272464 55%, #3a2c6e 100%); box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 8px 22px rgba(39, 36, 100, .35); }
+  .seg > button:not(.done-bar) { transition: opacity .25s ease, transform .25s ease; }
+  .controls.done .seg > button:not(.done-bar) { opacity: 0; transform: scale(.9); pointer-events: none; }
+  .done-bar {
+    position: absolute; inset: 0; display: flex !important; align-items: center; justify-content: center; gap: 12px;
+    padding: 0 18px !important; margin: 0; border: 0; border-radius: 14px !important; background: none !important;
+    box-shadow: none !important; color: #fff !important; font: inherit; text-align: left; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity .3s ease .15s;
+  }
+  .controls.done .done-bar { opacity: 1; pointer-events: auto; }
+  .done-bar .ecl { width: 66px; height: 44px; flex-shrink: 0; overflow: visible; }
+  .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .done-bar .txt b { font-size: 1.02rem; font-weight: 800; letter-spacing: .01em; }
+  .done-bar .txt span { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.72); font-variant-numeric: tabular-nums; }
+  .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,255,255,.7); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .done-bar .ecl .corona { opacity: 1; transform-origin: 33px 22px; }
+  /* animação só na hora da vitória; ao reabrir um jogo já resolvido, fica parado */
+  .controls.play .done-bar .ecl .s { animation: ecl-s .9s cubic-bezier(.3,.7,.2,1) .2s both; }
+  .controls.play .done-bar .ecl .m { animation: ecl-m .9s cubic-bezier(.3,.7,.2,1) .2s both; }
+  .controls.play .done-bar .ecl .corona { animation: ecl-c .7s ease 1s both; }
+  .controls.play .done-bar .txt { animation: ecl-t .5s ease .9s both; }
+  @keyframes ecl-s { from { transform: translateX(-15px); } to { transform: none; } }
+  @keyframes ecl-m { from { transform: translateX(17px); } to { transform: none; } }
+  @keyframes ecl-c { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+  @keyframes ecl-t { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .controls.play .done-bar * { animation: none !important; } }
   .controls button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
   .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; }
+  .tip b#tipCount { font-variant-numeric: tabular-nums; color: var(--ink); }
   .tip svg { width: 18px; height: 18px; vertical-align: -3.5px; margin: -2px -1px; }
 
   /* ---------- janelas ---------- */
@@ -255,17 +291,22 @@
       <stop offset=".42" stop-color="#ffd23f"/>
       <stop offset="1" stop-color="#f08c00"/>
     </radialGradient>
+    <radialGradient id="g-corona" cx="50%" cy="50%" r="50%">
+      <stop offset=".55" stop-color="#fff4c2" stop-opacity=".95"/>
+      <stop offset=".7" stop-color="#ffc83d" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ffb020" stop-opacity="0"/>
+    </radialGradient>
+    <symbol id="i-eclipse" viewBox="0 0 44 44">
+      <circle cx="22" cy="22" r="19" fill="url(#g-corona)"/>
+      <circle cx="22" cy="22" r="12.5" fill="url(#g-sun)"/>
+      <circle cx="23.2" cy="21" r="11.9" fill="#0d1233"/>
+    </symbol>
     <symbol id="i-orb" viewBox="0 0 40 40">
       <circle cx="20" cy="20" r="12.6" fill="url(#g-sun)"/>
     </symbol>
     <symbol id="i-dot" viewBox="0 0 40 40"><circle cx="20" cy="20" r="3.4"/></symbol>
     <symbol id="i-luna" viewBox="0 0 40 40">
       <path transform="translate(20 20) scale(1.05) translate(-20 -20)" d="M20.61 6.01A13.2 13.2 0 1 0 34.01 22.39A10.6 10.6 0 0 1 20.61 6.01Z" style="fill: var(--moon)"/>
-    </symbol>
-    <symbol id="i-logo" viewBox="0 0 40 40">
-      <circle cx="20" cy="20" r="12" fill="var(--sun)"/>
-      <circle cx="25" cy="16" r="11" fill="var(--bg)"/>
-      <circle cx="25" cy="16" r="11" fill="none" stroke="var(--moon)" stroke-width="2.4"/>
     </symbol>
   </defs>
 </svg>
@@ -294,12 +335,21 @@
   <div class="seg" role="group" aria-label="Modo">
     <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg class="sun"><use href="#i-orb"/></svg><span id="cSun"><b>0</b>/9</span></button>
     <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg class="moon"><use href="#i-luna"/></svg><span id="cMoon"><b>0</b>/9</span></button>
+    <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
+      <svg class="ecl" viewBox="0 0 66 44" aria-hidden="true">
+        <circle class="corona" cx="33" cy="22" r="19" fill="url(#g-corona)"/>
+        <g class="s"><circle cx="33" cy="22" r="12.5" fill="url(#g-sun)"/></g>
+        <g class="m"><circle cx="34.2" cy="21" r="11.9" fill="#0d1233"/></g>
+      </svg>
+      <span class="txt"><b id="doneTitle">Eclipse completo</b><span id="doneSub"></span></span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
   </div>
   <button id="clearBtn" aria-label="Limpar tabuleiro" title="Limpar tabuleiro">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
   </button>
 </div>
-<div class="tip" id="tip"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-orb"/></svg>&nbsp;→&nbsp;vazio<br>Pontos pequenos <i class="dt a"></i> são automáticos · arraste marca vários</div>
+<div class="tip" id="tip"><span id="tipPlay"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-orb"/></svg>&nbsp;→&nbsp;vazio<br>Pontos pequenos <i class="dt a"></i> são automáticos · arraste marca vários</span><span id="tipDone" hidden></span></div>
 
 <!-- Como jogar -->
 <div class="overlay" id="helpOverlay">
@@ -341,7 +391,7 @@
 <!-- Fim de jogo -->
 <div class="overlay" id="endOverlay">
   <div class="modal end">
-    <div class="art"><svg aria-hidden="true"><use href="#i-logo"/></svg></div>
+    <div class="art"><svg aria-hidden="true"><use href="#i-eclipse"/></svg></div>
     <h2 style="justify-content:center" id="endTitle">Eclipse completo!</h2>
     <div class="big" id="endTime">0:00</div>
     <div class="sub" id="endSub"></div>
@@ -634,6 +684,15 @@
     $("undoBtn").disabled = finished || !history.length;
     $("clearBtn").disabled = finished;
     $("board").classList.toggle("won", finished);
+    document.querySelector(".controls").classList.toggle("done", finished);
+    if (!finished) document.querySelector(".controls").classList.remove("play");
+    $("doneBar").tabIndex = finished ? 0 : -1;
+    $("modeSun").tabIndex = $("modeMoon").tabIndex = finished ? -1 : 0;
+    if (finished) {
+      $("doneTitle").textContent = kind === "dia" ? "Eclipse completo" : "Resolvido";
+      $("doneSub").textContent = `${fmt(elapsed)} · nível ${P.l}/7 · ${kind === "dia" ? "ver resultado" : "jogar outro"}`;
+    }
+    updateTip();
     if (!finished && s === N && m === N && bad.size === 0) win();
   }
 
@@ -757,15 +816,17 @@
   // ---------- vitória ----------
   function win() {
     stopTimer();
+    document.querySelector(".controls").classList.add("play");
     finished = true;
     elapsed = Math.round(elapsed);
+    showTime();                              // o relógio mostra o mesmo tempo do resultado
     if (kind === "dia") {                    // o jogo livre não conta nas estatísticas
       const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
       if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
     }
     persist();
     render();
-    setTimeout(() => showEnd(true), 450);
+    setTimeout(() => showEnd(true), 1700);   // depois que o eclipse da chave se fecha
   }
   function showEnd(fresh) {
     $("endTime").textContent = fmt(elapsed);
@@ -777,10 +838,19 @@
     $("nextBox").hidden = !daily;
     openModal("endOverlay");
   }
+  // dica embaixo: instruções durante o jogo; depois, quando vem o próximo desafio
+  function updateTip() {
+    $("tipPlay").hidden = finished;
+    $("tipDone").hidden = !finished;
+    if (finished) $("tipDone").innerHTML = kind === "dia"
+      ? `Próximo Eclipse em <b id="tipCount">${$("countdown").textContent}</b>`
+      : "Desafio extra resolvido · não conta nas estatísticas";
+  }
   function tickCountdown() {
     const now = new Date(), next = new Date(now); next.setHours(24, 0, 0, 0);
     const s = Math.max(0, Math.floor((next - now) / 1000));
     $("countdown").textContent = `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor(s / 60) % 60).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+    if ($("tipCount")) $("tipCount").textContent = $("countdown").textContent;
   }
   setInterval(tickCountdown, 1000); tickCountdown();
 
@@ -793,6 +863,7 @@
   });
 
   $("againBtn").addEventListener("click", () => newFree());
+  $("doneBar").addEventListener("click", () => { if (finished) showEnd(false); });
 
   // ---------- janelas ----------
   function openModal(id) { $(id).classList.add("open"); stopTimer(); }

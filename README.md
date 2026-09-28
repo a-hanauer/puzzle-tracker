@@ -110,7 +110,7 @@ Joga-se **um símbolo de cada vez**, como dois Queens sobrepostos, com a chave *
 - no **modo sol**, o toque alterna entre ponto ("sol não cabe"), sol e vazio, e arrastar o dedo marca várias casas; as luas aparecem apagadas, só de referência;
 - no **modo lua**, o mesmo para as luas.
 
-Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua). Eles somem se a peça for retirada. Conflitos aparecem destacados com listras vermelhas. As regiões são desenhadas em SVG, com cantos arredondados e um vão entre elas, e as casas por cima têm tamanho idêntico, para que peças e pontos fiquem sempre centralizados. O cronômetro pausa quando você sai do jogo, e a partida fica salva.
+Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua). Eles somem se a peça for retirada. Conflitos aparecem destacados com listras vermelhas. As regiões são desenhadas em SVG, com cantos arredondados e um vão entre elas, e as casas por cima têm tamanho idêntico, para que peças e pontos fiquem sempre centralizados. O cronômetro pausa quando você sai do jogo, e a partida fica salva. Ao completar, desfazer e limpar recolhem e a chave Sol / Lua vira um eclipse (sol e lua se encontram) com o tempo final; tocar nela abre o resultado, e embaixo aparece a contagem para o próximo desafio.
 
 **Desafios.** Há um desafio por dia, o mesmo para todo mundo, a partir de 27/09/2026 (#1). Todos estão em `eclipse/desafios.json` e foram conferidos pelo `eclipse/gerador.mjs`:
 - cada um tem **uma única solução**;
