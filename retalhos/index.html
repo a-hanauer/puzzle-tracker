@@ -36,7 +36,8 @@
     --bad: #d64545;
     --bad-soft: #f4d9d4;
     --fab-o: rgba(255, 255, 255, .26);
-    --f0: #e8835f; --f1: #6fa3d8; --f2: #efc14a; --f3: #86bb6d; --f4: #d97aa0; --f5: #9d8fd9;
+    --f0: #e5675f; --f1: #33427f; --f2: #dca444; --f3: #5f8a4f; --f4: #c9678a; --f5: #3d8c8c;
+    --ok: #4f8a3f;
     --accent: #d9694a;
     --on-accent: #fff;
     --shadow: 0 1px 2px rgba(60, 45, 20, .07), 0 6px 18px rgba(60, 45, 20, .08);
@@ -62,7 +63,8 @@
       --bad: #ff6b6b;
       --bad-soft: #4a2826;
       --fab-o: rgba(255, 255, 255, .13);
-      --f0: #b8583a; --f1: #3f72a6; --f2: #b08a26; --f3: #578a42; --f4: #a44c70; --f5: #6a5ca6;
+      --f0: #b8503f; --f1: #3a4a8c; --f2: #a8792a; --f3: #4b7040; --f4: #9c4d6a; --f5: #2f6e6e;
+      --ok: #6fb05d;
       --accent: #f09a74;
       --on-accent: #1d1712;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
@@ -88,7 +90,8 @@
       --bad: #ff6b6b;
       --bad-soft: #4a2826;
       --fab-o: rgba(255, 255, 255, .13);
-      --f0: #b8583a; --f1: #3f72a6; --f2: #b08a26; --f3: #578a42; --f4: #a44c70; --f5: #6a5ca6;
+      --f0: #b8503f; --f1: #3a4a8c; --f2: #a8792a; --f3: #4b7040; --f4: #9c4d6a; --f5: #2f6e6e;
+      --ok: #6fb05d;
       --accent: #f09a74;
       --on-accent: #1d1712;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
@@ -126,13 +129,22 @@
   .fo { fill: var(--fab-o); }
   .prev { fill: rgba(127, 110, 80, .08); stroke: var(--ink); stroke-width: 4; stroke-dasharray: 14 10; stroke-linecap: round; }
   .prev-badge { fill: var(--ink); }
-  .prev-t { fill: var(--bg); font: 800 30px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
-  .tag { fill: var(--tag); stroke: var(--tag-line); stroke-width: 2; }
-  .tag.on { fill: var(--tag-on); stroke: none; }
-  .tag-g { fill: color-mix(in srgb, var(--tag-ink) 16%, transparent); stroke: var(--tag-ink); stroke-width: 3.6; stroke-linejoin: round; }
-  .tag-g.any { fill: none; }
-  .tag-g.any { stroke-dasharray: 5 4; }
-  .tag-n { fill: var(--tag-ink); font: 800 34px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
+  .prev-t { fill: var(--bg); font: 800 28px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
+  /* etiqueta = o próprio formato (largo, alto, quadrado) na cor do tecido, com o número dentro */
+  .tg-sh { stroke: rgba(0, 0, 0, .12); stroke-width: 1.5; }
+  .tg-st { fill: none; stroke: rgba(255, 255, 255, .75); stroke-width: 2.6; stroke-dasharray: 7 5; stroke-linecap: round; }
+  .tg-any { fill: color-mix(in srgb, var(--tag-ink) 7%, transparent); stroke: var(--tag-ink); stroke-width: 3.6; stroke-dasharray: 9 6; stroke-linecap: round; }
+  .tg-n { fill: #fff; font: 800 36px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
+  .tg-n.dk { fill: #2b2823; }
+  .tg-any + .tg-n, .tg-n.any { fill: var(--tag-ink); }
+  /* etiqueta já dentro do retalho certo: vira um contorno branco sobre o tecido */
+  .tg.on .tg-sh, .tg.on .tg-any { fill: rgba(255, 255, 255, .16); stroke: rgba(255, 255, 255, .92); stroke-width: 3.2; stroke-dasharray: none; }
+  .tg.on .tg-st { display: none; }
+  .tg.on .tg-n { fill: #fff; }
+  .prev.ok { stroke: var(--ok); fill: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .prev.bad { stroke: var(--bad); fill: color-mix(in srgb, var(--bad) 8%, transparent); }
+  .prev-badge.ok { fill: var(--ok); } .prev-badge.bad { fill: var(--bad); }
+  .prev-t.lt { fill: #fff; }
   .won .patch { animation: puff .45s cubic-bezier(.3,1.6,.5,1) both; transform-box: fill-box; transform-origin: center; }
   @keyframes puff { 0% { transform: scale(1); } 45% { transform: scale(1.045); } 100% { transform: scale(1); } }
   @media (prefers-reduced-motion: reduce) { .won .patch { animation: none !important; } }
@@ -217,7 +229,7 @@
 
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Retalhos — recarregar"><img src="icon.png?v=2" alt=""><b>RETALHOS</b></a>
+  <a class="gh-brand" href="./" aria-label="Retalhos — recarregar"><img src="icon.png?v=3" alt=""><b>RETALHOS</b></a>
   <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
@@ -239,7 +251,7 @@
   <div class="prog" aria-live="polite">
     <span class="bar"><i id="progBar"></i></span><span class="n" id="progN"><b>0</b>/0</span>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
-      <img class="quilt" src="icon.png?v=2" alt="">
+      <img class="quilt" src="icon.png?v=3" alt="">
       <span class="txt"><b id="doneTitle">Colcha completa</b><span id="doneSub"></span></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
@@ -257,18 +269,18 @@
     <p>Costure uma colcha: divida o tabuleiro em <b>retalhos retangulares</b>, sem sobrar casa e sem sobrepor.</p>
     <ul>
       <li>Cada retalho tem <b>exatamente uma etiqueta</b>.</li>
-      <li>O <b>número</b> da etiqueta é quantas casas o retalho tem.</li>
-      <li>O desenho é o <b>formato</b>: <svg class="g" viewBox="0 0 26 18"><rect x="7" y="3" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></svg> quadrado,
-        <svg class="g" viewBox="0 0 26 18"><rect x="4" y="4.5" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></svg> mais largo que alto,
-        <svg class="g" viewBox="0 0 26 18"><rect x="8.5" y="1" width="9" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></svg> mais alto que largo e
-        <svg class="g" viewBox="0 0 26 18"><rect x="6" y="2" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2.4"/></svg> qualquer formato.</li>
+      <li>O <b>número</b> dentro da etiqueta é quantas casas o retalho tem.</li>
+      <li>O <b>formato da etiqueta</b> é o formato do retalho: <svg class="g" viewBox="0 0 26 18"><rect x="7" y="2" width="14" height="14" rx="3" fill="#5f8a4f"/></svg> quadrado,
+        <svg class="g" viewBox="0 0 26 18"><rect x="2" y="4" width="22" height="11" rx="3" fill="#e5675f"/></svg> mais largo que alto,
+        <svg class="g" viewBox="0 0 26 18"><rect x="8" y="0.5" width="11" height="17" rx="3" fill="#33427f"/></svg> mais alto que largo e
+        <svg class="g" viewBox="0 0 26 18"><rect x="6" y="2" width="14" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2.4"/></svg> tracejado: qualquer formato.</li>
       <li>Algumas etiquetas mostram só o formato, ou só o número.</li>
     </ul>
     <div class="demo">
       <figure><svg id="demoA" viewBox="0 0 330 330"></svg>etiquetas</figure>
       <figure><svg id="demoB" viewBox="0 0 330 330"></svg>colcha pronta</figure>
     </div>
-    <p>Arraste o dedo de um canto ao outro para desenhar um retalho. Toque num retalho para desfazê-lo. Retalhos que não batem com a etiqueta aparecem com listras vermelhas.</p>
+    <p>Arraste o dedo de um canto ao outro para desenhar um retalho. Toque num retalho para desfazê-lo. Enquanto você arrasta, o contorno fica verde quando o retalho bate com a etiqueta e vermelho quando não bate (com o que falta). Retalhos errados ficam com listras vermelhas.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b> (9×9).</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, de níveis variados, que não contam nas estatísticas.</p>
     <button class="btn-main" data-close>Jogar</button>
@@ -289,7 +301,7 @@
 <div class="overlay" id="endOverlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon.png?v=2" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,45,20,.15)"></div>
+    <div class="fim-art"><img src="icon.png?v=3" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,45,20,.15)"></div>
     <h2 class="fim-title" id="endTitle">Colcha completa!</h2>
     <div class="fim-result"><div class="fim-time" id="endTime">0:00</div></div>
     <p class="fim-sub" id="endSub"></p>
@@ -448,21 +460,16 @@
       <rect ${fill} x="${x}" y="${y}" width="${w}" height="${h}" rx="18"/>
       <rect class="p-st${stc}" x="${x + 10}" y="${y + 10}" width="${w - 20}" height="${h - 20}" rx="10"/></g>`;
   }
-  function glyph(f, x, y, big) {
-    const k = big ? 1.25 : 1, R = (w, h) => `<rect class="tag-g${f === "*" ? " any" : ""}" x="${x - w * k / 2}" y="${y - h * k / 2}" width="${w * k}" height="${h * k}" rx="${3.5 * k}"/>`;
-    if (f === "q") return R(18, 18);
-    if (f === "l") return R(26, 15);
-    if (f === "a") return R(15, 26);
-    return R(19, 19);
-  }
-  // etiqueta: formato em cima, número embaixo (sem número, só o formato, maior)
+  // tamanho do desenho da etiqueta, em unidades da casa (1 casa = 100)
+  const TAG = { q: [64, 64], l: [86, 50], a: [50, 86], "*": [66, 66] };
   function tagSVG(c, on) {
     const x = PAD + (c.i % N) * U + U / 2, y = PAD + ((c.i / N) | 0) * U + U / 2;
-    const tw = 62, th = c.n ? 78 : 56;
-    let s = `<rect class="tag${on ? " on" : ""}" x="${x - tw / 2}" y="${y - th / 2}" width="${tw}" height="${th}" rx="13"/>`;
-    if (c.n) s += glyph(c.f, x, y - 19) + `<text class="tag-n" x="${x}" y="${y + 15}">${c.n}</text>`;
-    else s += glyph(c.f, x, y, true);
-    return s;
+    const [w, h] = TAG[c.f], x0 = x - w / 2, y0 = y - h / 2;
+    let s = `<g class="tg${on ? " on" : ""}">`;
+    if (c.f === "*") s += `<rect class="tg-any" x="${x0}" y="${y0}" width="${w}" height="${h}" rx="13"/>`;
+    else s += `<rect class="tg-sh f${c.c}" x="${x0}" y="${y0}" width="${w}" height="${h}" rx="13"/><rect class="tg-st" x="${x0 + 6}" y="${y0 + 6}" width="${w - 12}" height="${h - 12}" rx="8"/>`;
+    if (c.n) s += `<text class="tg-n${c.f === "*" ? " any" : c.c === 2 ? " dk" : ""}" x="${x}" y="${y + 1}">${c.n}</text>`;
+    return s + "</g>";
   }
   function render() {
     const sts = patches.map(statusOf);
@@ -507,13 +514,25 @@
     const r1 = (a / N) | 0, c1 = a % N, r2 = (b / N) | 0, c2 = b % N;
     return { r0: Math.min(r1, r2), c0: Math.min(c1, c2), h: Math.abs(r1 - r2) + 1, w: Math.abs(c1 - c2) + 1 };
   };
+  const SHAPE_NAME = { q: "quadrado", l: "largo", a: "alto" };
+  // enquanto arrasta: o contorno e o selo dizem se o retalho bate com a etiqueta
   function preview(p) {
     if (!p) { gV.innerHTML = ""; return; }
     const x = PAD + p.c0 * U + 4, y = PAD + p.r0 * U + 4, w = p.w * U - 8, h = p.h * U - 8;
-    const label = `${p.w}×${p.h}`, bw = 22 * label.length + 20;
-    gV.innerHTML = `<rect class="prev" x="${x}" y="${y}" width="${w}" height="${h}" rx="18"/>
-      <rect class="prev-badge" x="${x + w - bw - 8}" y="${y + h - 52}" width="${bw}" height="44" rx="22"/>
-      <text class="prev-t" x="${x + w - bw / 2 - 8}" y="${y + h - 29}">${label}</text>`;
+    const inside = clues.filter(c => contains(p, c.i)), area = p.h * p.w;
+    let label = `${p.w}×${p.h}`, cls = "";
+    if (inside.length > 1) { cls = "bad"; label += ` · ${inside.length} etiquetas`; }
+    else if (inside.length === 1) {
+      const c = inside[0];
+      if (c.n && c.n !== area) { cls = "bad"; label += ` · ${area} de ${c.n}`; }
+      else if (c.f !== "*" && c.f !== shapeOf(p.h, p.w)) { cls = "bad"; label += ` · não é ${SHAPE_NAME[c.f]}`; }
+      else { cls = "ok"; label += ` · ${area} ✓`; }
+    }
+    const bw = 17 * label.length + 26;
+    const bx = Math.max(PAD, Math.min(x + w - bw - 8, W - PAD - bw)), by = y + h - 52;
+    gV.innerHTML = `<rect class="prev ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="18"/>
+      <rect class="prev-badge ${cls}" x="${bx}" y="${by}" width="${bw}" height="44" rx="22"/>
+      <text class="prev-t${cls ? " lt" : ""}" x="${bx + bw / 2}" y="${by + 23}">${label}</text>`;
   }
   let drag = null;
   $("board").addEventListener("pointerdown", e => {

@@ -27,7 +27,7 @@ const BASE_GAMES = [
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon.png", iconFull: true },
   { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=2", iconFull: true },
-  { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png?v=2", iconFull: true },
+  { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png?v=3", iconFull: true },
 ];
 
 /* ============================================================ */

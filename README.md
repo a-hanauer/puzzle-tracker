@@ -150,9 +150,9 @@ Desenha-se arrastando o dedo a partir do 1 (ou da ponta do fio). O fio segue o d
 O Patches (LinkedIn) em português, como uma **colcha de retalhos**.
 
 - Divida o tabuleiro em **retângulos**, sem sobrar casa e sem sobrepor.
-- Cada retalho tem **exatamente uma etiqueta**. A etiqueta mostra o **formato** (quadrado, mais largo que alto, mais alto que largo, ou qualquer — tracejado) e/ou o **número de casas**.
+- Cada retalho tem **exatamente uma etiqueta**. A etiqueta tem o próprio **formato** do retalho — larga, alta ou quadrada, na cor do tecido — com o **número de casas** dentro; tracejada quer dizer qualquer formato. Algumas etiquetas não têm número.
 
-Arraste de um canto ao outro para desenhar um retalho (aparece o tamanho, ex.: 3×2); desenhar por cima substitui os retalhos que ficam embaixo; tocar num retalho o desfaz, e tocar numa casa livre cria um 1×1. Retalhos certos ganham o tecido da cor da etiqueta (poá, listras ou xadrez, com pesponto); retalho sem etiqueta fica neutro e retalho que não bate fica com listras vermelhas. A barra de baixo conta os retalhos certos.
+Arraste de um canto ao outro para desenhar um retalho: o contorno e o selo mostram o tamanho e se ele bate com a etiqueta de dentro (verde "3×2 · 6 ✓"; vermelho "4 de 6", "não é alto" ou "2 etiquetas"); desenhar por cima substitui os retalhos que ficam embaixo; tocar num retalho o desfaz, e tocar numa casa livre cria um 1×1. Retalhos certos ganham o tecido da cor da etiqueta (poá, listras ou xadrez, com pesponto); retalho sem etiqueta fica neutro e retalho que não bate fica com listras vermelhas. A barra de baixo conta os retalhos certos.
 
 **Desafios.** Um por dia a partir de 28/09/2026 (#1), em `retalhos/desafios.json`, conferidos pelo `retalhos/gerador.mjs` (com `retalhos/motor.mjs`): **solução única** e **só dedução**. O gerador sorteia uma colcha equilibrada (formatos variados, poucos 1×1), põe uma etiqueta em cada retalho e esconde informações (número ou formato) enquanto a solução continuar única e dentro do nível do dia. As cores são escolhidas para retalhos vizinhos nunca ficarem iguais.
 
