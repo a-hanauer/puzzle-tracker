@@ -111,3 +111,41 @@ header.gh {
   padding: calc(var(--mpad, 20px) - 6px) var(--mpad, 20px) 8px !important;
   margin-top: calc(-1 * var(--mpad, 20px) + 6px) !important;
 }
+
+/* =========================================================================
+   Próximo jogo (comum/proximo.js): aparece depois que o jogo do dia termina.
+   No cabeçalho, um botão discreto com o ícone do próximo jogo; na janela de
+   resultado, uma linha com o nome dele.
+   ========================================================================= */
+.gh .gh-next {
+  display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0;
+  height: 36px; padding: 0 6px 0 7px; border-radius: 99px; text-decoration: none;
+  background: var(--gh-surface); color: var(--gh-muted);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 4px 12px rgba(0, 0, 0, .06);
+  animation: gh-next-in .35s ease both;
+}
+.gh .gh-next:active { transform: scale(.94); }
+@keyframes gh-next-in { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: none; } }
+.px-ic {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 22px; height: 22px; border-radius: 6px; overflow: hidden;
+  font-size: 14px; line-height: 1; background: rgba(127, 127, 127, .14);
+}
+.px-ic img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
+.px-ic img.full { object-fit: cover; padding: 0; }
+.px-ic b { font-size: 12px; font-weight: 800; color: var(--gh-ink); }
+.px-chev { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
+
+[data-proximo] { margin-top: 14px; }
+[data-proximo][hidden] { display: none !important; }
+.px-row {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  padding: 10px 12px; border-radius: 14px; text-decoration: none;
+  background: rgba(127, 127, 127, .1); color: inherit;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  text-align: left;
+}
+.px-row:active { background: rgba(127, 127, 127, .18); }
+.px-row .px-l { font-size: .78rem; font-weight: 600; opacity: .65; margin-right: auto; }
+.px-row .px-n { font-size: .92rem; font-weight: 700; }
+.px-row .px-ic { width: 24px; height: 24px; }

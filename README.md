@@ -67,7 +67,7 @@ O painel guarda até 2 anos de histórico no navegador. Partidas antigas do Sand
 - **Excluir:** os jogos adicionados podem ser excluídos pela lixeira (com um segundo toque para confirmar).
 - Jogos ocultos saem do painel, da contagem do dia e da sequência. A lista fica salva no navegador de cada aparelho.
 
-**Para mudar os jogos que vêm no painel para todo mundo,** edite o array `BASE_GAMES` no início do `<script>` em `index.html`:
+**Para mudar os jogos que vêm no painel para todo mundo,** edite o array `BASE_GAMES` em `comum/catalogo.js` (compartilhado pelo painel e pelos jogos):
 
 ```js
 { id: "novojogo", name: "Novo Jogo", emoji: "🎯", desc: "Descrição curta", url: "https://exemplo.com/" },
@@ -96,7 +96,9 @@ As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o
 
 Para atualizar um desses jogos, substitua o `index.html` da pasta dele.
 
-Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempre o da partida do dia, e "Desmarcar jogos externos de hoje" não mexe neles. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` no `index.html` do painel.
+Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempre o da partida do dia, e "Desmarcar jogos externos de hoje" não mexe neles. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` em `comum/catalogo.js`.
+
+**Próximo jogo:** quando o jogo do dia termina, cada jogo da casa mostra no cabeçalho um botão discreto com o ícone do próximo jogo pendente (na ordem do painel: jogos da casa, depois os outros), e a janela de resultado ganha a linha "Próximo jogo". Abrir um jogo externo por ali já o marca como feito. Se tudo estiver feito, a linha leva de volta ao painel. O componente fica em `comum/proximo.js`.
 
 ## Eclipse
 

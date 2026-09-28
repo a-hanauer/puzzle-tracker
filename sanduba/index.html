@@ -515,6 +515,7 @@
         <button id="end-share">Compartilhar</button>
         <button id="end-next" class="primary">Jogar de novo</button>
       </div>
+      <div data-proximo hidden></div>
     </div>
   </div>
 </div>
@@ -1138,5 +1139,7 @@
   ghInfo(document.getElementById("ghInfo"), () => document.getElementById("practice-toggle").checked,
     fn => document.getElementById("practice-toggle").addEventListener("change", () => setTimeout(fn)));
 </script>
+<script src="../comum/catalogo.js"></script>
+<script src="../comum/proximo.js" data-jogo="sanduba"></script>
 </body>
 </html>

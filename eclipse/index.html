@@ -398,6 +398,7 @@
     <button class="btn" id="shareBtn">Compartilhar</button>
     <button class="btn" id="againBtn" hidden>Jogar outro</button>
     <div class="next" id="nextBox">Próximo Eclipse em <b id="countdown">--:--:--</b></div>
+    <div data-proximo hidden></div>
     <button class="close" data-close aria-label="Fechar" style="margin-top:14px;width:auto;padding:0 14px;border-radius:99px">Ver tabuleiro</button>
   </div>
 </div>
@@ -878,5 +879,7 @@
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 })();
 </script>
+<script src="../comum/catalogo.js"></script>
+<script src="../comum/proximo.js" data-jogo="eclipse"></script>
 </body>
 </html>

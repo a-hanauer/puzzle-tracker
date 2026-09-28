@@ -465,6 +465,7 @@ header{
       <div class="l">PRÓXIMO QUINHENTOS EM</div>
       <div class="t" id="countdown-time2">--:--:--</div>
     </div>
+    <div data-proximo hidden></div>
   </div>
 </div>
 
@@ -1231,5 +1232,7 @@ header{
   ghInfo(document.getElementById("ghInfo"), () => document.getElementById("mode-switch").classList.contains("on"),
     fn => new MutationObserver(fn).observe(document.getElementById("mode-switch"), { attributes: true, attributeFilter: ["class"] }));
 </script>
+<script src="../comum/catalogo.js"></script>
+<script src="../comum/proximo.js" data-jogo="quinhentos"></script>
 </body>
 </html>
