@@ -22,24 +22,47 @@
     set: function (t) { try { localStorage.setItem(KEY, t); } catch (e) {} apply(t); },
   };
   apply(get());
-  // App instalado na tela inicial do iPhone: a área "visível" da página
-  // termina antes da borda de baixo da tela (sobra a altura da barra de
-  // status), então o que é preso embaixo fica com um vão. Medimos a sobra
-  // (altura da tela − altura da janela) e as bandejas descem essa medida
-  // (--vfix). Se o iPhone um dia corrigir isso, a sobra vira 0 sozinha.
+  // App instalado na tela inicial do iPhone: o iPhone recorta tudo o que é
+  // "fixo na tela" antes da borda de baixo (sobra a altura da barra de
+  // status), então as bandejas ficavam com um vão. Nesse modo, ao abrir uma
+  // bandeja (.overlay aberta ou .sheet-bg visível), ela deixa de ser fixa e
+  // vira parte da página, posicionada onde a tela está e com a altura da
+  // tela inteira; a rolagem da página trava enquanto ela está aberta.
   try {
     if (navigator.standalone === true) {          // só o iPhone/iPad tem essa propriedade
-      document.documentElement.classList.add("standalone");
-      var fix = function () {
+      var root = document.documentElement;
+      root.classList.add("standalone");
+      var alturaTela = function () {
         var portrait = matchMedia("(orientation: portrait)").matches;
-        var tela = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
-        var sobra = Math.max(0, Math.min(80, Math.round(tela - window.innerHeight)));
-        document.documentElement.style.setProperty("--vfix", sobra + "px");
+        var t = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+        return Math.max(t, window.innerHeight);
       };
-      fix();
-      window.addEventListener("resize", fix);
-      window.addEventListener("orientationchange", function () { setTimeout(fix, 300); });
-      window.addEventListener("pageshow", fix);
+      var aberta = function (el) {
+        return el.classList.contains("overlay") ? el.classList.contains("open") : !el.hidden;
+      };
+      var ajustar = function () {
+        var algum = false;
+        document.querySelectorAll(".overlay, .sheet-bg").forEach(function (el) {
+          if (aberta(el)) {
+            algum = true;
+            if (!el.dataset.solta) {
+              el.dataset.solta = "1";
+              el.style.setProperty("position", "absolute", "important");
+              el.style.setProperty("top", window.scrollY + "px", "important");
+              el.style.setProperty("bottom", "auto", "important");
+              el.style.setProperty("left", "0", "important");
+              el.style.setProperty("right", "0", "important");
+            }
+            el.style.setProperty("height", alturaTela() + "px", "important");
+          } else if (el.dataset.solta) {
+            delete el.dataset.solta;
+            ["position", "top", "bottom", "left", "right", "height"].forEach(function (k) { el.style.removeProperty(k); });
+          }
+        });
+        root.classList.toggle("bandeja-aberta", algum);
+      };
+      new MutationObserver(ajustar).observe(root, { subtree: true, attributes: true, attributeFilter: ["class", "hidden"] });
+      window.addEventListener("orientationchange", function () { setTimeout(ajustar, 300); });
     }
   } catch (e) {}
   document.addEventListener("DOMContentLoaded", function () { apply(get()); });   // metas que vêm depois do script

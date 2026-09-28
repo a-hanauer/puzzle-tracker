@@ -250,7 +250,7 @@
   /* painel de configurações (sobe de baixo) */
   .sheet-bg { position: fixed; inset: 0; z-index: 20; display: flex; align-items: flex-end; justify-content: center; background: rgba(8, 9, 12, .5); backdrop-filter: blur(3px); }
   .sheet-bg[hidden] { display: none; }
-  html.standalone .sheet-bg { bottom: calc(-1 * var(--vfix, 0px)); }   /* app instalado no iPhone: vai até a borda de baixo */
+  html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden; overscroll-behavior: none; }   /* app instalado no iPhone: ver comum/tema.js */
   .sheet {
     width: 100%; max-width: 560px; background: var(--surface); color: var(--text);
     border-radius: 22px 22px 0 0; padding: 16px 18px calc(20px + env(safe-area-inset-bottom, 0px));
