@@ -28,6 +28,31 @@
       document.addEventListener(ev, function (e) { e.preventDefault(); }, { passive: false });
     });
   } catch (e) {}
+  // Vibração leve ao tocar nas teclas dos jogos (.key, .kb-key).
+  // Android: navigator.vibrate. iPhone (iOS 18+): o Safari não tem API de
+  // vibração, mas alternar um <input type="checkbox" switch> dá um toque
+  // háptico — usamos um escondido. Em aparelhos sem suporte, nada acontece.
+  try {
+    var hapLabel = null;
+    var haptico = function () {
+      if (navigator.vibrate) { navigator.vibrate(8); return; }
+      if (!hapLabel) {
+        hapLabel = document.createElement("label");
+        hapLabel.setAttribute("aria-hidden", "true");
+        hapLabel.style.cssText = "position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none";
+        var inp = document.createElement("input");
+        inp.type = "checkbox"; inp.setAttribute("switch", ""); inp.tabIndex = -1;
+        hapLabel.appendChild(inp);
+        document.body.appendChild(hapLabel);
+      }
+      hapLabel.click();
+    };
+    window.jogosHaptico = haptico;
+    document.addEventListener("pointerdown", function (e) {
+      var k = e.target.closest && e.target.closest(".key, .kb-key");
+      if (k && !k.disabled) haptico();
+    }, true);
+  } catch (e) {}
   window.jogosTema = {
     get: get,
     set: function (t) { try { localStorage.setItem(KEY, t); } catch (e) {} apply(t); },
