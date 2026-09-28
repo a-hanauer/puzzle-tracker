@@ -143,10 +143,18 @@
     a.href = new URL(g.url, CATALOGO_RAIZ).href;
     a.setAttribute("aria-label", `Próximo jogo: ${g.name}`);
     if (cls !== "nx") a.append(icone(g));
-    if (cls === "nx") {                                // compacto, ao lado da faixa: só o ícone e "Próximo jogo"
+    if (cls === "nx") {                                // ao lado da faixa: ícone com "Próximo" embaixo e a seta
       a.title = `Próximo jogo: ${g.name}`;
-      a.append(icone(g));
-      a.insertAdjacentHTML("beforeend", `<small>Próximo jogo</small>`);
+      if (g.cor) {                                     // jogo da casa: o botão inteiro tem a cor do cartão dele no painel
+        a.classList.add("tinta");
+        ["--nx-cb", "--nx-ci", "--nx-eb", "--nx-ei"].forEach((v, k) => a.style.setProperty(v, g.cor[k]));
+      }
+      const col = document.createElement("span");
+      col.className = "nx-col";
+      col.append(icone(g));
+      col.insertAdjacentHTML("beforeend", `<small>Próximo</small>`);
+      a.append(col);
+      a.insertAdjacentHTML("beforeend", CHEV);
       a.onclick = e => abrir(e, g, s);
       return a;
     }

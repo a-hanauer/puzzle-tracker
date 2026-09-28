@@ -15,20 +15,22 @@ const CATALOGO_RAIZ = new URL("../", document.currentScript.src).href;
    icon:  (opcional) URL de um ícone específico, ignora a busca automática
    app:   (opcional) true = link que abre o app do celular
    iconFull: (opcional) true = o ícone ocupa o quadrado inteiro (para ícones com fundo próprio)
+   cor:   (jogos da casa) cor do cartão no painel — [fundo claro, texto claro, fundo escuro, texto escuro];
+          a mesma de index.html, usada no botão "Próximo" dos jogos
    ============================================================ */
 const BASE_GAMES = [
   { id: "termo",      name: "Termo",      emoji: "🟩", desc: "Wordle em português",           url: "https://term.ooo/" },
   { id: "spotle",     name: "Spotle",     emoji: "🎵", desc: "Adivinhe o artista",            url: "https://spotle.io/" },
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
-  { id: "sanduba",    name: "Misto",      emoji: "🥪", desc: "Betweenle em português",        url: "misto/", icon: "misto/icon-claro.png?v=11", iconDark: "misto/icon-escuro.png?v=11", iconFull: true },
+  { id: "sanduba",    name: "Misto",      emoji: "🥪", desc: "Betweenle em português",        url: "misto/", icon: "misto/icon-claro.png?v=11", iconDark: "misto/icon-escuro.png?v=11", iconFull: true, cor: ["#f1e7c6", "#3b3316", "#3c3520", "#f4f2eb"] },
   { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/" },
-  { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon-claro.png?v=10", iconDark: "quinhentos/icon-escuro.png?v=10", iconFull: true },
+  { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon-claro.png?v=10", iconDark: "quinhentos/icon-escuro.png?v=10", iconFull: true, cor: ["#c6f1da", "#163b28", "#203c2d", "#ebf4ef"] },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
-  { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon-claro.png?v=10", iconDark: "eclipse/icon-escuro.png?v=10", iconFull: true },
-  { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=10", iconDark: "novelo/icon-escuro.png?v=10", iconFull: true },
-  { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png?v=10", iconDark: "retalhos/icon-escuro.png?v=10", iconFull: true },
-  { id: "pingado",    name: "Pingado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "pingado/", icon: "pingado/icon.png?v=10", iconDark: "pingado/icon-escuro.png?v=10", iconFull: true },
+  { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon-claro.png?v=10", iconDark: "eclipse/icon-escuro.png?v=10", iconFull: true, cor: ["#c6ccf1", "#161b3b", "#20243c", "#ebecf4"] },
+  { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=10", iconDark: "novelo/icon-escuro.png?v=10", iconFull: true, cor: ["#f1c6c9", "#3b1619", "#3c2022", "#f4ebec"] },
+  { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png?v=10", iconDark: "retalhos/icon-escuro.png?v=10", iconFull: true, cor: ["#c6e5f1", "#16313b", "#20343c", "#ebf2f4"] },
+  { id: "pingado",    name: "Pingado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "pingado/", icon: "pingado/icon.png?v=10", iconDark: "pingado/icon-escuro.png?v=10", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
 ];
 
 /* ============================================================ */

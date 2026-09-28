@@ -309,18 +309,27 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
 .fim-row > .controls { flex: 1; min-width: 0; padding-top: 0 !important; margin-top: 0 !important; }
 .fim-row > .gh-fim-bar { flex: 1; min-width: 0; }
 .fim-nx:empty { display: none; }
-/* próximo jogo: compacto, à direita da faixa de resultado e da mesma altura; só o ícone e "Próximo jogo" */
+/* próximo jogo: à direita da faixa de resultado e da mesma altura — ícone com "Próximo"
+   embaixo e uma seta. Jogo da casa: o botão inteiro tem a cor do cartão dele no painel
+   (o ícone tem esse mesmo fundo, então não aparece o quadrado). Jogo externo: painel
+   neutro, com o ícone num quadradinho próprio. */
 .fim-nx { display: flex; flex: 0 0 auto; }
 a.nx {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  width: 64px; height: 56px; padding: 0; border-radius: 16px; text-decoration: none;
-  background: var(--gh-surface); color: var(--gh-muted);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 96px; height: 56px; padding: 0 8px 0 10px; border-radius: 16px; text-decoration: none;
+  background: var(--gh-surface); color: var(--gh-ink);
   box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 6px 18px rgba(0, 0, 0, .08);
   font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
-a.nx:active { transform: scale(.95); }
-a.nx .px-ic { width: 28px; height: 28px; border-radius: 7px; font-size: 17px; }
-a.nx small { font-size: .58rem; font-weight: 700; line-height: 1; white-space: nowrap; letter-spacing: -.01em; }
+a.nx:active { transform: scale(.96); }
+a.nx .nx-col { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+a.nx .px-ic { width: 34px; height: 34px; border-radius: 8px; font-size: 20px; }
+a.nx small { font-size: .6rem; font-weight: 700; line-height: 1; opacity: .7; white-space: nowrap; }
+a.nx > svg { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
+a.nx.tinta { background: var(--nx-cb); color: var(--nx-ci); }
+a.nx.tinta .px-ic { background: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) a.nx.tinta { background: var(--nx-eb); color: var(--nx-ei); } }
+:root[data-theme="dark"] a.nx.tinta { background: var(--nx-eb); color: var(--nx-ei); }
 .fim-nxbtn .t { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; text-align: left; }
 .fim-nxbtn > svg, .fx > svg, .gh-dia > svg { width: 15px; height: 15px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .fim-subrow {
