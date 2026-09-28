@@ -101,6 +101,7 @@ header.gh {
 .overlay {
   align-items: flex-end !important; justify-content: center !important;
   padding: 0 !important;
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
 }
 .overlay > .modal {
   width: 100% !important; max-width: 520px !important; margin: 0 !important;
@@ -111,7 +112,8 @@ header.gh {
   overscroll-behavior: contain;
   box-shadow: 0 -10px 40px rgba(0, 0, 0, .22) !important;
 }
-.modal > h2:first-child, .modal > .close-row:first-child {
+html.standalone .overlay { bottom: auto !important; height: 100vh !important; }
+.modal > h2:first-child, .modal > .close-row:first-child, .modal > .fim-top:first-child {
   position: sticky; top: calc(-1 * var(--mpad, 20px)); z-index: 3;
   background: inherit;
   margin-left: calc(-1 * var(--mpad, 20px)) !important; margin-right: calc(-1 * var(--mpad, 20px)) !important;
@@ -156,3 +158,41 @@ header.gh {
 .px-row .px-l { font-size: .78rem; font-weight: 600; opacity: .65; margin-right: auto; }
 .px-row .px-n { font-size: .92rem; font-weight: 700; }
 .px-row .px-ic { width: 24px; height: 24px; }
+
+/* =========================================================================
+   Bandeja de fim de jogo — mesma estrutura nos três jogos:
+     ✕ (fixo no topo) · arte do jogo · título · resultado · linha de detalhe
+     · Compartilhar (desafio do dia) ou Jogar outro (jogo livre)
+     · contagem para o próximo desafio (desafio do dia) · Próximo jogo
+   Cada jogo mantém sua arte, suas cores e sua forma de mostrar o resultado.
+   O botão principal usa --fim-btn-bg, --fim-btn-ink e --fim-btn-border.
+   ========================================================================= */
+.modal.fim { text-align: center; }
+.modal > .fim-top { display: flex; justify-content: flex-end; }
+.fim-close {
+  width: 34px; height: 34px; padding: 0; margin: 0; border: 0; border-radius: 50%; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(127, 127, 127, .15); color: var(--gh-muted);
+}
+.fim-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.fim-art { display: flex; justify-content: center; margin: 4px 0 14px; }
+.fim-art > svg, .fim-art > img { display: block; width: auto; height: 84px; }
+.modal .fim-title {
+  display: block; margin: 0 0 14px; padding: 0; text-align: center;
+  font-size: 1.35rem; font-weight: 800; line-height: 1.2; letter-spacing: -.01em;
+}
+.fim-result { display: flex; justify-content: center; }
+.fim-time { font-size: 2.6rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.modal .fim-sub { margin: 10px 0 18px; font-size: .88rem; line-height: 1.4; color: var(--gh-muted); }
+.fim-btn {
+  display: block; width: 100%; padding: 14px; border-radius: 14px; cursor: pointer;
+  border: var(--fim-btn-border, 0); background: var(--fim-btn-bg, var(--gh-accent)); color: var(--fim-btn-ink, #fff);
+  font: inherit; font-weight: 800; font-size: .98rem;
+}
+.fim-btn:active { transform: scale(.98); }
+.fim-btn[hidden], .fim-count[hidden] { display: none !important; }
+.fim-count {
+  margin-top: 18px; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--gh-muted);
+}
+.modal .fim-count b { display: block; font-weight: 800; margin-top: 3px; font-size: 1.25rem; letter-spacing: 0; color: var(--gh-ink); font-variant-numeric: tabular-nums; }

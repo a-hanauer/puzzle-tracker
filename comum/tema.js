@@ -22,6 +22,13 @@
     set: function (t) { try { localStorage.setItem(KEY, t); } catch (e) {} apply(t); },
   };
   apply(get());
+  // App instalado na tela inicial do iPhone: lá, o que é "fixo embaixo" termina
+  // antes da borda da tela (falta a altura da barra de status). A classe
+  // permite às bandejas usar a altura real da tela.
+  try {
+    if (navigator.standalone || matchMedia("(display-mode: standalone)").matches)
+      document.documentElement.classList.add("standalone");
+  } catch (e) {}
   document.addEventListener("DOMContentLoaded", function () { apply(get()); });   // metas que vêm depois do script
   // se o tema mudar em outra aba (ou ao voltar do painel), acompanha
   window.addEventListener("storage", function (e) { if (e.key === KEY) apply(get()); });

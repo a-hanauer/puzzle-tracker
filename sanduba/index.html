@@ -336,6 +336,7 @@
     position:relative;z-index:2;
   }
 
+  .fim-result .end-word-slab{width:100%;max-width:280px;margin:0;animation:stackIn .45s cubic-bezier(.2,.9,.3,1.3) both;}
   .end-word-slab.missed{
     background:var(--accent);
   }
@@ -358,7 +359,7 @@
 <link rel="stylesheet" href="../comum/cabecalho.css">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
-  :root { --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
+  :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--ink); --fim-btn-border: var(--stroke) solid var(--ink); --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
 </style>
 </head>
 <body>
@@ -500,23 +501,16 @@
 
 <!-- END GAME MODAL -->
 <div class="overlay" id="end-overlay">
-  <div class="modal">
-    <div class="close-row"><button data-close="end-overlay"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></g></svg></button></div>
-    <div class="end-box">
-      <div class="big" id="end-title"><span id="end-icon"></span><span id="end-text">Sanduba completo!</span></div>
-
-      <div class="end-stack">
-        <svg class="end-sandwich" role="img" aria-label="Sanduíche"><use href="#art-sandwich"/></svg>
-        <div class="end-word-slab" id="end-word">-----</div>
-      </div>
-
-      <p id="end-sub">em X tentativas</p>
-      <div class="end-actions">
-        <button id="end-share">Compartilhar</button>
-        <button id="end-next" class="primary">Jogar de novo</button>
-      </div>
-      <div data-proximo hidden></div>
-    </div>
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close="end-overlay" aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><svg viewBox="0 0 72 72" role="img" aria-label="Sanduíche"><use href="#art-sandwich"/></svg></div>
+    <h2 class="fim-title" id="end-text">Sanduba completo!</h2>
+    <div class="fim-result"><div class="end-word-slab" id="end-word">-----</div></div>
+    <p class="fim-sub" id="end-sub"></p>
+    <button class="fim-btn" id="end-share">Compartilhar</button>
+    <button class="fim-btn" id="end-next" hidden>Jogar outro</button>
+    <div class="fim-count" id="end-count">Próximo Sanduba em <b data-contagem>--:--:--</b></div>
+    <div data-proximo hidden></div>
   </div>
 </div>
 
@@ -1000,14 +994,17 @@
   function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
   function openEnd(){
-    document.getElementById('end-icon').innerHTML = state.won ? WIN_ICON : LOSE_ICON;
-    document.getElementById('end-text').textContent = state.won ? 'Sanduba completo!' : 'Não dessa vez';
-    document.getElementById('end-sub').textContent = state.won
-      ? ('em ' + state.guesses.length + ' de ' + MAX_GUESSES + ' tentativas')
-      : ('você usou as ' + MAX_GUESSES + ' tentativas');
+    var daily = state.mode !== 'practice';
+    var d = new Date(), MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    document.getElementById('end-text').textContent = state.won ? 'Sanduba completo!' : 'Não foi dessa vez';
+    var detalhe = state.won ? ('em ' + state.guesses.length + ' de ' + MAX_GUESSES + ' tentativas') : ('você usou as ' + MAX_GUESSES + ' tentativas');
+    document.getElementById('end-sub').textContent = (daily ? d.getDate() + ' ' + MESES[d.getMonth()] : 'Jogo livre') + ' · ' + detalhe;
     var slab = document.getElementById('end-word');
     slab.textContent = state.secret;
     slab.className = 'end-word-slab' + (state.won ? '' : ' missed');
+    document.getElementById('end-share').hidden = !daily;
+    document.getElementById('end-next').hidden = daily;
+    document.getElementById('end-count').hidden = !daily;
     openModal('end-overlay');
   }
 

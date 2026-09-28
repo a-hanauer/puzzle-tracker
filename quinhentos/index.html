@@ -333,13 +333,16 @@ header{
 
 /* simplificado: estatísticas ficam no painel Jogos do Dia */
 #btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
-#overlay-end .stat-grid, #overlay-end #e-dist{display:none !important;}
 </style>
 
 <link rel="stylesheet" href="../comum/cabecalho.css">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
-  :root { --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+  :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--accent-ink); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+  /* resultado na bandeja: a palavra do dia nas fichas do jogo */
+  .fim-word { gap: 6px; }
+  .fim-word .tile { width: 46px; height: 46px; font-size: 22px; border-radius: 10px; }
+  .fim-art img { border-radius: 20px; }
 </style>
 </head>
 <body>
@@ -448,23 +451,15 @@ header{
 
 <!-- Fim de jogo -->
 <div class="overlay" id="overlay-end">
-  <div class="modal">
-    <h2 id="end-title">Boa!<button class="close" data-close="overlay-end">✕</button></h2>
-    <p id="end-sub"></p>
-    <div class="stat-grid">
-      <div class="stat"><div class="n" id="e-played">0</div><div class="l">JOGADAS</div></div>
-      <div class="stat"><div class="n" id="e-winpct">0%</div><div class="l">VITÓRIAS</div></div>
-      <div class="stat"><div class="n" id="e-streak">0</div><div class="l">SEQUÊNCIA</div></div>
-      <div class="stat"><div class="n" id="e-maxstreak">0</div><div class="l">MELHOR SEQ.</div></div>
-    </div>
-    <div id="e-dist"></div>
-    <div class="share-row">
-      <button class="btn" id="btn-share2">Compartilhar resultado</button>
-    </div>
-    <div class="countdown" id="e-countdown" style="display:none;">
-      <div class="l">PRÓXIMO QUINHENTOS EM</div>
-      <div class="t" id="countdown-time2">--:--:--</div>
-    </div>
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close="overlay-end" aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><img src="icon.png" alt=""></div>
+    <h2 class="fim-title" id="end-title">Quinhentos completo!</h2>
+    <div class="fim-result fim-word" id="end-word"></div>
+    <p class="fim-sub" id="end-sub"></p>
+    <button class="fim-btn" id="btn-share2">Compartilhar</button>
+    <button class="fim-btn" id="btn-again" hidden>Jogar outro</button>
+    <div class="fim-count" id="e-countdown">Próximo Quinhentos em <b data-contagem>--:--:--</b></div>
     <div data-proximo hidden></div>
   </div>
 </div>
@@ -1172,16 +1167,26 @@ header{
   });
 
   function openEndModal(){
-    fillStats('e');
-    document.getElementById('end-title').textContent = state.won ? winTitle(state.guesses.length) : 'Não foi dessa vez';
-    document.getElementById('end-sub').textContent = state.won
-      ? 'Você acertou em '+state.guesses.length+' tentativa'+(state.guesses.length>1?'s':'')+'.'
-      : 'A palavra era "'+state.secret.toUpperCase()+'".';
-    var cd = document.getElementById('e-countdown');
-    if(!practiceMode){ cd.style.display='block'; startCountdown(document.getElementById('countdown-time2')); }
-    else { cd.style.display='none'; }
+    document.getElementById('end-title').textContent = state.won ? 'Quinhentos completo!' : 'Não foi dessa vez';
+    var w = document.getElementById('end-word');
+    w.innerHTML = '';
+    state.secret.split('').forEach(function(ch){
+      var t = document.createElement('span');
+      t.className = 'tile ' + (state.won ? 'correct' : 'absent');
+      t.textContent = ch;
+      w.appendChild(t);
+    });
+    var n = state.guesses.length;
+    var detalhe = state.won ? ('em ' + n + ' de ' + MAX_TRIES + ' tentativas') : ('você usou as ' + MAX_TRIES + ' tentativas');
+    document.getElementById('end-sub').textContent = (practiceMode ? 'Jogo livre' : '#' + state.dayNum) + ' · ' + detalhe;
+    document.getElementById('btn-share2').hidden = practiceMode;
+    document.getElementById('btn-again').hidden = !practiceMode;
+    document.getElementById('e-countdown').hidden = practiceMode;
     openModal('overlay-end');
   }
+  document.getElementById('btn-again').addEventListener('click', function(){
+    closeModal('overlay-end'); clearCurrent(); newGame(true);
+  });
   function winTitle(n){
     var titles = ['Mandou muito bem!','Excelente!','Ótimo!','Muito bom!','Bom trabalho!','Foi por pouco!','Ufa, quase!','Raspou!'];
     return titles[Math.min(n-1, titles.length-1)];

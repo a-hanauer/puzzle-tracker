@@ -124,6 +124,16 @@
     });
   }
 
+  // contagem para o próximo desafio (meia-noite), em qualquer [data-contagem]
+  function contagem() {
+    const now = new Date(), next = new Date(now); next.setHours(24, 0, 0, 0);
+    const t = Math.max(0, Math.floor((next - now) / 1000));
+    const txt = [Math.floor(t / 3600), Math.floor(t / 60) % 60, t % 60].map(n => String(n).padStart(2, "0")).join(":");
+    document.querySelectorAll("[data-contagem]").forEach(el => { el.textContent = txt; });
+  }
+  setInterval(contagem, 1000); contagem();
+  document.addEventListener("DOMContentLoaded", contagem);
+
   // os jogos gravam o progresso no navegador; basta conferir de tempos em tempos
   const tick = () => atualizar(false);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tick); else tick();

@@ -267,17 +267,11 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 
-  .end { text-align: center; }
-  .end .art svg { width: 84px; height: 84px; }
-  .end .big { font-size: 2.6rem; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; margin: 4px 0 0; }
-  .end .sub { color: var(--muted); font-size: .88rem; margin-bottom: 18px; }
-  .end .next { margin-top: 16px; color: var(--muted); font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
-  .end .next b { display: block; color: var(--ink); font-size: 1.2rem; letter-spacing: 0; margin-top: 2px; font-variant-numeric: tabular-nums; }
 </style>
 <link rel="stylesheet" href="../comum/cabecalho.css">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
-  :root { --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+  :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
 </head>
 <body>
@@ -390,16 +384,16 @@
 
 <!-- Fim de jogo -->
 <div class="overlay" id="endOverlay">
-  <div class="modal end">
-    <div class="art"><svg aria-hidden="true"><use href="#i-eclipse"/></svg></div>
-    <h2 style="justify-content:center" id="endTitle">Eclipse completo!</h2>
-    <div class="big" id="endTime">0:00</div>
-    <div class="sub" id="endSub"></div>
-    <button class="btn" id="shareBtn">Compartilhar</button>
-    <button class="btn" id="againBtn" hidden>Jogar outro</button>
-    <div class="next" id="nextBox">Próximo Eclipse em <b id="countdown">--:--:--</b></div>
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><svg viewBox="0 0 44 44" aria-hidden="true"><use href="#i-eclipse"/></svg></div>
+    <h2 class="fim-title" id="endTitle">Eclipse completo!</h2>
+    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div></div>
+    <p class="fim-sub" id="endSub"></p>
+    <button class="fim-btn" id="shareBtn">Compartilhar</button>
+    <button class="fim-btn" id="againBtn" hidden>Jogar outro</button>
+    <div class="fim-count" id="nextBox">Próximo Eclipse em <b id="countdown" data-contagem>--:--:--</b></div>
     <div data-proximo hidden></div>
-    <button class="close" data-close aria-label="Fechar" style="margin-top:14px;width:auto;padding:0 14px;border-radius:99px">Ver tabuleiro</button>
   </div>
 </div>
 
@@ -832,8 +826,8 @@
   function showEnd(fresh) {
     $("endTime").textContent = fmt(elapsed);
     const daily = kind === "dia";
-    $("endTitle").textContent = daily ? "Eclipse completo!" : "Resolvido!";
-    $("endSub").textContent = daily ? `#${dayNum} · nível ${P.l}/7${fresh ? "" : " · já resolvido hoje"}` : `Jogo livre · nível ${P.l}/7`;
+    $("endTitle").textContent = "Eclipse completo!";
+    $("endSub").textContent = daily ? `#${dayNum} · nível ${P.l}/7` : `Jogo livre · nível ${P.l}/7`;
     $("shareBtn").hidden = !daily;
     $("againBtn").hidden = daily;
     $("nextBox").hidden = !daily;
