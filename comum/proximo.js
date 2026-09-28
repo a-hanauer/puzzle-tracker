@@ -133,6 +133,7 @@
     document.querySelectorAll("[data-contagem]").forEach(el => { el.textContent = txt; });
   }
   setInterval(contagem, 1000); contagem();
+  document.addEventListener("gh-contagem", contagem);        // faixa de fim recém-criada (comum/cabecalho.js)
   document.addEventListener("DOMContentLoaded", contagem);
 
   // os jogos gravam o progresso no navegador; basta conferir de tempos em tempos

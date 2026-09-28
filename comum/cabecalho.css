@@ -268,3 +268,33 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
 .fim-share.copiado { color: var(--gh-accent); }
 .fim-share.copiado .sh { display: none; }
 .fim-share.copiado .ok { display: block; }
+
+/* =========================================================================
+   Fim do jogo nos jogos de palavras (Sanduba, Quinhentos): o teclado dá lugar
+   a uma faixa com o ícone, o resultado e "ver resultado" (ou "jogar outro"),
+   e embaixo a contagem para o próximo desafio — como nos jogos de lógica.
+   Cores: --gh-fim-bg / --gh-fim-ink / --gh-fim-border (padrão: a cor de destaque).
+   ========================================================================= */
+.gh-fim { display: none; flex-direction: column; padding: 14px 0 4px; }
+.gh-fim.on { display: flex; }
+.gh-fim-bar {
+  display: flex; align-items: center; gap: 12px; width: 100%; height: 56px; padding: 0 18px; margin: 0;
+  border: var(--gh-fim-border, 0); border-radius: 16px; cursor: pointer; text-align: left;
+  background: var(--gh-fim-bg, var(--gh-accent)); color: var(--gh-fim-ink, #fff);
+  font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .12), 0 8px 22px rgba(0, 0, 0, .12);
+}
+.gh-fim-bar:active { transform: scale(.98); }
+.gh-fim-bar.perdeu { background: var(--gh-surface); color: var(--gh-ink); border: var(--gh-fim-border-lose, 0); }
+.gh-fim-bar img { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; object-fit: cover; }
+.gh-fim.on .gh-fim-bar img { animation: gh-fim-in .7s cubic-bezier(.3, 1.4, .4, 1) .1s both; }
+@keyframes gh-fim-in { from { transform: scale(.3) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.gh-fim-bar .t { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.gh-fim-bar .t b { font-size: 1.02rem; font-weight: 800; }
+.gh-fim-bar .t span { font-size: .8rem; font-weight: 600; opacity: .8; font-variant-numeric: tabular-nums; }
+.gh-fim-bar svg { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: .75; }
+.gh-fim-tip {
+  margin-top: 12px; text-align: center; font-size: .78rem; line-height: 1.45; color: var(--gh-muted);
+  font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.gh-fim-tip b { color: var(--gh-ink); font-variant-numeric: tabular-nums; }

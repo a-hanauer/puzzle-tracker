@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<script src="../comum/tema.js?v=74"></script>
+<script src="../comum/tema.js?v=75"></script>
+<script src="../comum/cabecalho.js?v=75"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -399,10 +400,10 @@
   #help-btn svg{display:block;margin:auto;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=74">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=75">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
-  :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--ink); --fim-btn-border: var(--stroke) solid var(--ink); --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
+  :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--ink); --fim-btn-border: var(--stroke) solid var(--ink); --gh-fim-ink: var(--ink); --gh-fim-border: var(--stroke) solid var(--ink); --gh-fim-border-lose: var(--stroke) solid var(--ink); --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
 </style>
 </head>
 <body>
@@ -492,6 +493,7 @@
     <div class="kb-row" id="kb-row-2"></div>
     <div class="kb-row" id="kb-row-3"></div>
   </div>
+  <div class="gh-fim" id="fim"></div>
 
 </div>
 
@@ -975,6 +977,21 @@
     renderKeyboard();
     renderStats();
     document.getElementById('practice-toggle').checked = (state.mode === 'practice');
+    renderFim();
+  }
+
+  // partida encerrada: teclado e letras possíveis dão lugar à faixa de resultado
+  function renderFim(){
+    var acabou = !!state.over, daily = state.mode !== 'practice';
+    document.getElementById('keyboard').style.display = acabou ? 'none' : '';
+    document.querySelector('.letters-panel').style.display = acabou ? 'none' : '';
+    ghFim(document.getElementById('fim'), !acabou ? null : {
+      img: 'icon-claro.png?v=1', imgEscuro: 'icon-escuro.png?v=1', nome: 'Sanduba',
+      titulo: state.won ? 'Sanduba completo' : 'Não foi dessa vez',
+      sub: state.won ? state.guesses.length + '/' + MAX_GUESSES + ' tentativas' : 'o recheio era ' + state.secret.toUpperCase(),
+      perdeu: !state.won, diario: daily,
+      aoTocar: function(){ if(daily) openEnd(); else newGame('practice'); }
+    });
   }
 
   var QWERTY_ROW1 = 'qwertyuiop'.split('');
@@ -1180,13 +1197,12 @@
 
 })();
 </script>
-<script src="../comum/cabecalho.js?v=74"></script>
 <script>
   ghInfo(document.getElementById("ghInfo"), () => document.getElementById("practice-toggle").checked,
     fn => { document.getElementById("practice-toggle").addEventListener("change", () => setTimeout(fn)); window.addEventListener("sanduba-livre", fn); },
     window.sandubaLivre);
 </script>
-<script src="../comum/catalogo.js?v=74"></script>
-<script src="../comum/proximo.js?v=74" data-jogo="sanduba"></script>
+<script src="../comum/catalogo.js?v=75"></script>
+<script src="../comum/proximo.js?v=75" data-jogo="sanduba"></script>
 </body>
 </html>

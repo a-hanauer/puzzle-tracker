@@ -64,3 +64,21 @@ window.ghCompartilhar = function (btn, text) {
   if (navigator.clipboard) navigator.clipboard.writeText(text).then(ok).catch(() => prompt("Copie o resultado:", text));
   else prompt("Copie o resultado:", text);
 };
+
+// Faixa de fim de jogo (jogos de palavras): ghFim(el, opções) mostra; ghFim(el, null) esconde.
+//   { img, imgEscuro, titulo, sub, perdeu, diario, nome, aoTocar }
+window.ghFim = function (el, o) {
+  if (!o) { el.classList.remove("on"); el.innerHTML = ""; return; }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const escuro = window.jogosTema && jogosTema.escuro();
+  el.innerHTML = `<button type="button" class="gh-fim-bar${o.perdeu ? " perdeu" : ""}" aria-label="${esc(o.titulo)}: ${o.diario ? "ver resultado" : "jogar outro"}">` +
+    `<img src="${esc(escuro && o.imgEscuro ? o.imgEscuro : o.img)}"${o.imgEscuro ? ` data-claro="${esc(o.img)}" data-escuro="${esc(o.imgEscuro)}"` : ""} alt="">` +
+    `<span class="t"><b>${esc(o.titulo)}</b><span>${esc(o.sub)} · ${o.diario ? "ver resultado" : "jogar outro"}</span></span>` +
+    `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>` +
+    `<div class="gh-fim-tip">${o.diario ? `Próximo ${esc(o.nome)} em <b data-contagem>--:--:--</b>` : "Desafio extra · não conta nas estatísticas"}</div>`;
+  el.querySelector("button").addEventListener("click", o.aoTocar);
+  const was = el.classList.contains("on");
+  el.classList.add("on");
+  if (was) el.querySelector("img").style.animation = "none";      // só anima na primeira vez
+  document.dispatchEvent(new Event("gh-contagem"));
+};
