@@ -28,6 +28,7 @@ const BASE_GAMES = [
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon-claro.png?v=2", iconDark: "eclipse/icon-escuro.png?v=2", iconFull: true },
   { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=2", iconDark: "novelo/icon-escuro.png?v=1", iconFull: true },
   { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png?v=3", iconDark: "retalhos/icon-escuro.png?v=1", iconFull: true },
+  { id: "pingado",    name: "Pingado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "pingado/", icon: "pingado/icon.png?v=1", iconDark: "pingado/icon-escuro.png?v=1", iconFull: true },
 ];
 
 /* ============================================================ */
@@ -66,9 +67,10 @@ const LOCAL_PROGRESS = {
     const max = 2 * Math.round(Math.sqrt(p.cells.length));   // o tabuleiro vai de 8×8 a 10×10
     return { tries: placed, max, won: !!p.done, finished: !!p.done, time: p.done ? p.time : null };
   },
-  // Novelo e Retalhos: desafio #1 = 28/09/2026; prog = [feito, total]
+  // Novelo, Retalhos e Pingado: desafio #1 = 28/09/2026; prog = [feito, total]
   novelo() { return progressoPorTempo("novelo"); },
   retalhos() { return progressoPorTempo("retalhos"); },
+  pingado() { return progressoPorTempo("pingado"); },
 };
 function progressoPorTempo(jogo) {
   const today0 = new Date(); today0.setHours(0, 0, 0, 0);

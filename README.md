@@ -18,6 +18,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | `eclipse/` | O jogo Eclipse: `index.html`, `icon.png`, `desafios.json` (2 anos de desafios), `livre.json` (jogo livre) e `gerador.mjs` |
 | `novelo/` | O jogo Novelo: `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
 | `retalhos/` | O jogo Retalhos: `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
+| `pingado/` | O jogo Pingado: `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
 | `comum/` | Partes comuns: cabeçalho e janelas dos jogos (`cabecalho.css`, `cabecalho.js`) e tema geral (`tema.js`) |
 
 ## Jogos incluídos
@@ -35,15 +36,16 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | 🌗 Eclipse | [`eclipse/`](eclipse/) (jogo próprio, neste repositório) |
 | 🧶 Novelo | [`novelo/`](novelo/) (Zip em português, neste repositório) |
 | 🧵 Retalhos | [`retalhos/`](retalhos/) (Patches em português, neste repositório) |
+| ☕ Pingado | [`pingado/`](pingado/) (Tango em português, neste repositório) |
 
 ## Como funciona
 
 - **Destaque para o que falta:** jogos pendentes aparecem em cartões cheios; os concluídos ficam esmaecidos (sem cartão, ícone acinzentado, check neutro). Na lista dos outros jogos, os pendentes ficam sempre no topo.
 - O **topo** mostra o nome do produto ("Jogos do Dia") em destaque, os botões de **estatísticas** e **configurações** e, logo abaixo, a **barra de progresso do dia**: um trecho por jogo, que fica verde conforme os jogos são feitos, com o contador ("3/9") à direita, no mesmo estilo dos contadores das seções. Quando todos estão feitos, os trechos se fundem numa barra verde contínua, um brilho passa por ela uma vez e o contador vira o selo "✓ Tudo feito" (não há mais mensagem no pé da página). A sequência de dias fica na página de estatísticas.
-- **Jogos da casa** (Sanduba, Quinhentos, Eclipse, Novelo e Retalhos) aparecem numa grade de cartões pintados com a cor de fundo do próprio ícone (o ícone se funde ao cartão). Todos os ícones têm fundo liso, sem degradê. Cada jogo tem ícone claro e escuro (`icon-claro.png` / `icon-escuro.png`, campo `iconDark` no catálogo), para os cartões ficarem todos claros no tema claro e todos escuros no tema escuro, sem contraste gritante; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um check. A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
+- **Jogos da casa** (Sanduba, Quinhentos, Eclipse, Novelo, Retalhos e Pingado) aparecem numa grade de cartões pintados com a cor de fundo do próprio ícone (o ícone se funde ao cartão). Todos os ícones têm fundo liso, sem degradê. Cada jogo tem ícone claro e escuro (`icon-claro.png` / `icon-escuro.png`, campo `iconDark` no catálogo), para os cartões ficarem todos claros no tema claro e todos escuros no tema escuro, sem contraste gritante; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um check. A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
 - **Status de cada jogo:**
   - **Outros jogos:** o check à direita marca ou desmarca; abrir o jogo pelo painel já marca como feito.
-  - **Jogos da casa:** um anel no canto enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado (✓ 5/8, ✕ 8/8, ou o tempo com cronômetro no Eclipse, no Novelo e no Retalhos).
+  - **Jogos da casa:** um anel no canto enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado (✓ 5/8, ✕ 8/8, ou o tempo com cronômetro no Eclipse, no Novelo, no Retalhos e no Pingado).
 - Jogos feitos ficam com fundo verde claro.
 - A lista **zera sozinha à meia-noite**, no horário do aparelho.
 - As **Configurações** são uma página própria (`#configuracoes`), com título e voltar: **tema** (Automático, Claro ou Escuro; vale também para os jogos da casa), como abrir os jogos externos, gerenciar jogos e desmarcar os externos do dia.
@@ -93,7 +95,7 @@ O Sanduba e o Quinhentos rodam direto daqui, cada um na sua pasta:
 
 Cada jogo tem um botão **‹** à esquerda do logotipo que volta para o painel. Ele é essencial no app instalado no iPhone, que não mostra o botão "voltar" do navegador.
 
-A interface dos jogos nativos (Sanduba, Quinhentos, Eclipse, Novelo e Retalhos) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema é o escolhido no painel. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: sobem de baixo como uma bandeja presa à borda da tela (inclusive no app instalado no iPhone), com o ✕ sempre visível no topo, e fecham ao tocar no fundo. A bandeja de fim de jogo tem a mesma estrutura em todos: ✕, arte do jogo, título ("… completo!" ou "Não foi dessa vez"), resultado, linha de detalhe, **Compartilhar** (desafio do dia) ou **Jogar outro** (jogo livre), contagem para o próximo desafio e **Próximo jogo**. As estatísticas continuam sendo gravadas pelos jogos e aparecem nas **Estatísticas** do painel.
+A interface dos jogos nativos (Sanduba, Quinhentos, Eclipse, Novelo, Retalhos e Pingado) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema é o escolhido no painel. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: sobem de baixo como uma bandeja presa à borda da tela (inclusive no app instalado no iPhone), com o ✕ sempre visível no topo, e fecham ao tocar no fundo. A bandeja de fim de jogo tem a mesma estrutura em todos: ✕, arte do jogo, título ("… completo!" ou "Não foi dessa vez"), resultado, linha de detalhe, **Compartilhar** (desafio do dia) ou **Jogar outro** (jogo livre), contagem para o próximo desafio e **Próximo jogo**. As estatísticas continuam sendo gravadas pelos jogos e aparecem nas **Estatísticas** do painel.
 
 As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o progresso por domínio, e todos os endereços ficam em `a-hanauer.github.io`.
 
@@ -103,7 +105,7 @@ Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempr
 
 **Teclado padrão:** os jogos com teclado usam as mesmas medidas (altura, espaçamentos, raio, tamanho da letra e do ENTER), definidas como variáveis `--kb-*` em `comum/cabecalho.css`; cada jogo mantém suas cores, bordas e sombras.
 
-**Dificuldade no jogo livre (todos os jogos):** no jogo livre, a linha de cima mostra "Extra · [dificuldade ▾] [↻]" (componente `ghNivel` em `comum/cabecalho.js`). Nos jogos de lógica (Eclipse, Novelo, Retalhos) a dificuldade é o nível de 1 a 7; nos de palavras, o número de tentativas — Sanduba: Fácil 20, Normal 14, Difícil 10; Quinhentos: Fácil 10, Normal 8, Difícil 6 (o desafio do dia continua com 14 e 8). A escolha fica guardada no aparelho; ↻ sorteia outro.
+**Dificuldade no jogo livre (todos os jogos):** no jogo livre, a linha de cima mostra "Extra · [dificuldade ▾] [↻]" (componente `ghNivel` em `comum/cabecalho.js`). Nos jogos de lógica (Eclipse, Novelo, Retalhos, Pingado) a dificuldade é o nível de 1 a 7; nos de palavras, o número de tentativas — Sanduba: Fácil 20, Normal 14, Difícil 10; Quinhentos: Fácil 10, Normal 8, Difícil 6 (o desafio do dia continua com 14 e 8). A escolha fica guardada no aparelho; ↻ sorteia outro.
 
 **Próximo jogo:** quando o jogo do dia termina, cada jogo da casa mostra no cabeçalho um botão discreto com o ícone do próximo jogo pendente (na ordem do painel: jogos da casa, depois os outros), e a janela de resultado ganha a linha "Próximo jogo". Abrir um jogo externo por ali já o marca como feito. Se tudo estiver feito, a linha leva de volta ao painel. O componente fica em `comum/proximo.js`.
 
@@ -160,7 +162,21 @@ Arraste de um canto ao outro para desenhar um retalho: o contorno e o selo mostr
 
 **Semana.** Segunda 6×6 com etiquetas completas, terça 6×6, quarta e quinta 7×7, sexta e sábado 8×8, domingo 9×9, escondendo cada vez mais informação. Estilos: **colcha**, **formas** (quase só formatos), **números** (quase só números), **grandes** e **miúdos**.
 
-**Nos dois:** ícone com versão escura (`icon-escuro.png`), que o painel, o cabeçalho, a tela de fim e o "Próximo jogo" usam no tema escuro — no catálogo é o campo `iconDark`, e o `comum/tema.js` troca a imagem sozinho quando o tema muda; jogo livre (`livre.json`, 20 por dia da semana), cronômetro que pausa, partida salva, estatísticas por tempo no painel. Para gerar de novo: `node novelo/gerador.mjs [dias]` e `node retalhos/gerador.mjs [dias]` (padrão: 364 dias a partir de 28/09/2026).
+## Pingado
+
+O Tango (LinkedIn) em português, com **café e leite**: gotas de café (marrom) e de leite (creme) no lugar de sol e lua.
+
+- Cada **linha** e cada **coluna** tem o mesmo número de café e de leite.
+- Nunca **três iguais seguidos**, na horizontal ou na vertical.
+- **=** entre duas casas: iguais; **×**: diferentes.
+
+Toque numa casa para trocar: vazia → café → leite → vazia. Arrastar o dedo aplica a mesma troca em cada casa por onde ele passa. As casas que já vêm preenchidas têm fundo mais escuro e não mudam. O que quebra uma regra fica com listras vermelhas (e o sinal desrespeitado fica vermelho), e a linha de baixo diz qual regra. Controles embaixo: desfazer, barra de progresso (casas preenchidas) e recomeçar. Ao completar, as gotas dão um pulinho e a barra vira "Pingado pronto" com o tempo.
+
+**Desafios.** Um por dia a partir de 28/09/2026 (#1), em `pingado/desafios.json`, conferidos pelo `pingado/gerador.mjs` (com `pingado/motor.mjs`): **solução única** e **só dedução**. O gerador sorteia um tabuleiro completo, começa com todas as casas e parte dos sinais como pistas e vai tirando pistas enquanto o resolvedor "humano" continuar chegando ao fim no nível do dia. Técnicas do resolvedor: (1) pares e buracos (XX_, X_X), sinais e linha que já tem metade de um tipo; (2) olhar a linha inteira: das combinações válidas que sobram, as casas iguais em todas são certas; (3) testar um valor e ver que ele leva a contradição.
+
+**Semana.** Segunda e terça 6×6, quarta a sexta 8×8, sábado e domingo 10×10, com a técnica exigida e o esforço subindo dia a dia (segunda só técnica 1 e umas pistas a mais). Três estilos se alternam: **misto**, **sinais** (poucas casas, muitos sinais) e **casas** (muitas casas, poucos sinais).
+
+**Nos três (Novelo, Retalhos e Pingado):** ícone com versão escura (`icon-escuro.png`), que o painel, o cabeçalho, a tela de fim e o "Próximo jogo" usam no tema escuro — no catálogo é o campo `iconDark`, e o `comum/tema.js` troca a imagem sozinho quando o tema muda; jogo livre (`livre.json`, 20 por dia da semana), cronômetro que pausa, partida salva, estatísticas por tempo no painel. Para gerar de novo: `node novelo/gerador.mjs [dias]`, `node retalhos/gerador.mjs [dias]` e `node pingado/gerador.mjs [dias]` (padrão: 364 dias a partir de 28/09/2026).
 
 ## Ícone e pendências fora do painel
 

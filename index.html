@@ -12,8 +12,8 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=71"></script>
-<script src="comum/catalogo.js?v=71"></script>
+<script src="comum/tema.js?v=72"></script>
+<script src="comum/catalogo.js?v=72"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -210,18 +210,21 @@
   .app[data-g="eclipse"]    { --tile-bg: #181b2b; --tile-ink: #fff; --tile-muted: rgba(255,255,255,.62); --tile-track: rgba(255,255,255,.2); }
   .app[data-g="sanduba"]    { --tile-bg: #30291f; --tile-ink: #fbeedd; --tile-muted: rgba(251,238,221,.62); --tile-track: rgba(255,255,255,.2); }
   .app[data-g="novelo"]     { --tile-bg: #2a242c; --tile-ink: #f6eee6; --tile-muted: rgba(246,238,230,.6); --tile-track: rgba(255,255,255,.18); }
+  .app[data-g="pingado"]    { --tile-bg: #261d17; --tile-ink: #f5ebdf; --tile-muted: rgba(245,235,223,.6); --tile-track: rgba(255,255,255,.18); }
   .app[data-g="retalhos"]   { --tile-bg: #2b2925; --tile-ink: #f4eee3; --tile-muted: rgba(244,238,227,.6); --tile-track: rgba(255,255,255,.18); }
   @media (prefers-color-scheme: light) {
     :root:not([data-theme="dark"]) .app[data-g="quinhentos"] { --tile-bg: #eef0f4; --tile-border: rgba(20,24,33,.06); --tile-ink: #1d2027; --tile-muted: rgba(29,32,39,.58); --tile-track: rgba(29,32,39,.14); }
     :root:not([data-theme="dark"]) .app[data-g="eclipse"] { --tile-bg: #e8ecf8; --tile-border: rgba(30,40,90,.06); --tile-ink: #1c2150; --tile-muted: rgba(28,33,80,.58); --tile-track: rgba(28,33,80,.14); }
     :root:not([data-theme="dark"]) .app[data-g="sanduba"]  { --tile-bg: #f6ebd6; --tile-border: rgba(60,40,20,.06); --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
     :root:not([data-theme="dark"]) .app[data-g="novelo"]   { --tile-bg: #f7f0e5; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2430; --tile-muted: rgba(43,36,48,.58); --tile-track: rgba(43,36,48,.14); }
+    :root:not([data-theme="dark"]) .app[data-g="pingado"]  { --tile-bg: #f6ede2; --tile-border: rgba(60,40,20,.08); --tile-ink: #2e231b; --tile-muted: rgba(46,35,27,.58); --tile-track: rgba(46,35,27,.14); }
     :root:not([data-theme="dark"]) .app[data-g="retalhos"] { --tile-bg: #f6efe0; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2823; --tile-muted: rgba(43,40,35,.58); --tile-track: rgba(43,40,35,.14); }
   }
   :root[data-theme="light"] .app[data-g="quinhentos"] { --tile-bg: #eef0f4; --tile-border: rgba(20,24,33,.06); --tile-ink: #1d2027; --tile-muted: rgba(29,32,39,.58); --tile-track: rgba(29,32,39,.14); }
   :root[data-theme="light"] .app[data-g="eclipse"] { --tile-bg: #e8ecf8; --tile-border: rgba(30,40,90,.06); --tile-ink: #1c2150; --tile-muted: rgba(28,33,80,.58); --tile-track: rgba(28,33,80,.14); }
   :root[data-theme="light"] .app[data-g="sanduba"]  { --tile-bg: #f6ebd6; --tile-border: rgba(60,40,20,.06); --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
   :root[data-theme="light"] .app[data-g="novelo"]   { --tile-bg: #f7f0e5; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2430; --tile-muted: rgba(43,36,48,.58); --tile-track: rgba(43,36,48,.14); }
+  :root[data-theme="light"] .app[data-g="pingado"]  { --tile-bg: #f6ede2; --tile-border: rgba(60,40,20,.08); --tile-ink: #2e231b; --tile-muted: rgba(46,35,27,.58); --tile-track: rgba(46,35,27,.14); }
   :root[data-theme="light"] .app[data-g="retalhos"] { --tile-bg: #f6efe0; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2823; --tile-muted: rgba(43,40,35,.58); --tile-track: rgba(43,40,35,.14); }
 
   a.game {
@@ -1185,8 +1188,8 @@ function renderNative(t0) {
         : `<div class="empty">Os resultados começam a aparecer aqui a partir das próximas partidas.</div>`}
       ${dist}`;
   }
-  // Eclipse, Novelo e Retalhos: o desempenho é o tempo
-  const TIMED = [{ id: "eclipse", epoch: [2026, 8, 27] }, { id: "novelo", epoch: [2026, 8, 28] }, { id: "retalhos", epoch: [2026, 8, 28] }];
+  // Eclipse, Novelo, Retalhos e Pingado: o desempenho é o tempo
+  const TIMED = [{ id: "eclipse", epoch: [2026, 8, 27] }, { id: "novelo", epoch: [2026, 8, 28] }, { id: "retalhos", epoch: [2026, 8, 28] }, { id: "pingado", epoch: [2026, 8, 28] }];
   for (const tg of TIMED) {
     const ge = GAMES.find(x => x.id === tg.id);
     if (!ge) continue;
