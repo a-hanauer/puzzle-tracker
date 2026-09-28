@@ -44,7 +44,7 @@
     --radius:14px;
     --stroke:2px;
     padding-top:env(safe-area-inset-top,0px);
-    padding-bottom:env(safe-area-inset-bottom,0px);
+    /* o espaço de baixo fica no #app, junto ao teclado */
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -115,7 +115,12 @@
   button, .kb-key, .icon-btn, .mode-switch, .tile-row, .end-actions button, .settings-row{
     touch-action:manipulation;
   }
-  #app{width:100%;max-width:460px;padding:14px clamp(12px,4vw,18px) 22px;min-height:100%;display:flex;flex-direction:column;gap:0;}
+  /* página na altura da tela, com o teclado preso embaixo (mesmo padrão do Quinhentos):
+     as fatias ficam centralizadas no espaço livre acima do painel de letras */
+  #app{width:100%;max-width:460px;padding:14px clamp(12px,4vw,18px) max(4px, calc(env(safe-area-inset-bottom,0px) - 16px));
+    min-height:calc(100dvh - env(safe-area-inset-top,0px) + var(--sobra,0px));display:flex;flex-direction:column;gap:0;}
+  #hint{margin-top:auto;}
+  .letters-panel{margin-top:auto;}
 
   .top-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
   .top-bar .brand-row{flex:1;margin-bottom:0;}
@@ -315,9 +320,8 @@
   }
   .kb-key.kb-enter:disabled{background:var(--accent);opacity:.4;color:#fff;}
 
-  .footer-note{text-align:center;color:var(--text-dim);font-size:.66rem;margin-top:16px;opacity:.75;line-height:1.7;}
-  .footer-note a{color:var(--accent);text-decoration:none;}
-  .footer-note a:hover{text-decoration:underline;}
+  .modal .credit{text-align:center;font-size:.72rem;opacity:.75;margin-top:14px;}
+  .modal .credit a{color:var(--accent);text-decoration:none;}
 
   /* modal */
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;
@@ -485,7 +489,6 @@
     <div class="kb-row" id="kb-row-3"></div>
   </div>
 
-  <p class="footer-note">Inspirado em <a href="https://betweenle.com/" target="_blank" rel="noopener">betweenle.com</a><br>Ilustração: <a href="https://openmoji.org" target="_blank" rel="noopener">OpenMoji</a> — <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></p>
 </div>
 
 <!-- SETTINGS MODAL -->
@@ -515,6 +518,7 @@
     <p>Digite usando o teclado abaixo — o mesmo alfabeto de A a Z sempre disponível, igual ao Betweenle original. Não se preocupe com acentos: digitar "c" também aceita palavras com "ç", "a" aceita "á"/"ã", e assim por diante. Ao confirmar, se a combinação não existir no dicionário ou já tiver sido eliminada pelo intervalo atual, o jogo avisa e não gasta uma tentativa — descobrir quais letras ainda fazem sentido é parte do desafio.</p>
     <p>No painel "letras possíveis", as letras já descartadas pelo intervalo atual para o próximo espaço aparecem apagadas e riscadas; as que ainda podem entrar ficam em destaque. É só uma dica visual — não trava nada no teclado.</p>
     <p>Depois de confirmar, a palavra vira uma nova fatia em cima ou embaixo, junto com uma <b>pontuação fixa</b> — quanto menor o número, mais perto do recheio ela está. Essa escala não muda ao longo da partida, então dá pra comparar a distância de qualquer palpite com qualquer outro. O recheio está sempre escondido entre as duas fatias. Você tem <b>14 tentativas</b>.</p>
+    <p class="credit">Inspirado em <a href="https://betweenle.com/" target="_blank" rel="noopener">betweenle.com</a><br>Ilustração: <a href="https://openmoji.org" target="_blank" rel="noopener">OpenMoji</a> — <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></p>
   </div>
 </div>
 

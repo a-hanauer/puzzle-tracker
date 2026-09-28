@@ -103,7 +103,11 @@
     margin: 0 auto; max-width: 520px;
     background: var(--bg); color: var(--ink);
     font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    padding: calc(12px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+    padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
+    /* página na altura da tela, com os controles presos embaixo (mesmo padrão do
+       teclado do Quinhentos) e o tabuleiro centralizado no espaço acima */
+    min-height: calc(100dvh + var(--sobra, 0px));
+    display: flex; flex-direction: column;
     -webkit-font-smoothing: antialiased;
     -webkit-user-select: none; user-select: none;
   }
@@ -167,7 +171,8 @@
   .seg button svg.moon { filter: drop-shadow(0 0 3px var(--moon-glow)); }
   #modeSun[aria-pressed="true"] { background: color-mix(in srgb, var(--sun) 26%, var(--surface)); color: var(--ink); }
   #modeMoon[aria-pressed="true"] { background: color-mix(in srgb, var(--moon) 22%, var(--surface)); color: var(--ink); }
-  .controls { display: flex; gap: 10px; margin-top: 14px; }
+  .controls { display: flex; gap: 10px; margin-top: auto; padding-top: 14px; }
+  #board { margin-top: auto; }
   .controls button {
     flex: 1; padding: 12px 0; border-radius: 14px; border: none; cursor: pointer;
     background: var(--surface); color: var(--ink); box-shadow: var(--shadow);
