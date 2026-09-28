@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#f4f2ee" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#11131c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eef1f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Eclipse">
@@ -17,75 +17,84 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f4f2ee;
+    --bg: #eef1f8;
     --surface: #ffffff;
-    --surface-2: #ece9e3;
-    --ink: #1c1d24;
-    --muted: #6d6e78;
-    --faint: #a4a5ad;
-    --line: #dedad2;
-    --wall: #2a2b33;          /* borda grossa entre regiões */
-    --grid: rgba(42, 43, 51, .16);
+    --surface-2: #e4e8f3;
+    --ink: #1a1d2e;
+    --muted: #6b7089;
+    --faint: #a3a8bd;
+    --line: #d9deec;
+    --board: #d8deee;         /* fundo do tabuleiro, visto entre as regiões */
+    --seam: rgba(255, 255, 255, .6);   /* divisão entre casas da mesma região */
     --sun: #f59e0b;
     --sun-edge: #b45309;
-    --moon: #3730a3;
-    --moon-edge: #1e1b6b;
-    --x: rgba(28, 29, 36, .42);
+    --sun-glow: rgba(245, 158, 11, .55);
+    --moon: #3b3bb5;
+    --moon-edge: #23237a;
+    --moon-glow: rgba(35, 35, 122, .35);
+    --dot: rgba(26, 29, 46, .42);
+    --ring: rgba(26, 29, 46, .38);
     --bad: #e5484d;
-    --accent: #5b4fd6;
+    --accent: #4f4fd0;
     --good: #3fa24c;
-    --r0: #f6bdb4; --r1: #fbe19a; --r2: #cde7ab; --r3: #afd2f4; --r4: #d6c6f6;
-    --r5: #f5c3de; --r6: #a9e6c8; --r7: #f4ceA4; --r8: #d9dce2;
-    --shadow: 0 1px 2px rgba(20,24,33,.06), 0 6px 18px rgba(20,24,33,.07);
+    --r0: #f6c1b9; --r1: #f9dd8f; --r2: #c6e5aa; --r3: #b2d2f5; --r4: #d4c5f6;
+    --r5: #f4c2de; --r6: #a9e4cd; --r7: #f7cca2; --r8: #dce0ea;
+    --shadow: 0 1px 2px rgba(20,24,40,.06), 0 6px 18px rgba(20,24,40,.07);
     --on-accent: #fff;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #11131c;
-      --surface: #1a1d29;
-      --surface-2: #242838;
-      --ink: #eceef6;
-      --muted: #9a9fb2;
-      --faint: #5f6478;
-      --line: #2a2f40;
-      --wall: #0a0b10;
-      --grid: rgba(255,255,255,.10);
+      --bg: #0b1020;
+      --surface: #161c33;
+      --surface-2: #222a47;
+      --ink: #e8ecfb;
+      --muted: #8d95b5;
+      --faint: #535b7c;
+      --line: #252d4a;
+      --board: #05080f;
+      --seam: rgba(0, 0, 0, .3);
       --sun: #fbbf24;
       --sun-edge: #f59e0b;
-      --moon: #c7d2fe;
-      --moon-edge: #a5b4fc;
-      --x: rgba(236, 238, 246, .45);
+      --sun-glow: rgba(255, 184, 40, .85);
+      --moon: #eef1ff;
+      --moon-edge: #aab6ff;
+      --moon-glow: rgba(160, 182, 255, .85);
+      --dot: rgba(232, 236, 251, .5);
+      --ring: rgba(232, 236, 251, .5);
       --bad: #ff6b6f;
       --accent: #a5b4fc;
       --good: #5fbf6a;
-      --r0: #613a35; --r1: #5c4f26; --r2: #3d5530; --r3: #2d4868; --r4: #46386a;
-      --r5: #5e3453; --r6: #265847; --r7: #5d4428; --r8: #3b414c;
+      --r0: #652838; --r1: #634a14; --r2: #235232; --r3: #1a4577; --r4: #432f80;
+      --r5: #662358; --r6: #115851; --r7: #633819; --r8: #2e3650;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.2);
-      --on-accent: #11131c;
+      --on-accent: #0b1020;
     }
   }
   :root[data-theme="dark"] {
-      --bg: #11131c;
-      --surface: #1a1d29;
-      --surface-2: #242838;
-      --ink: #eceef6;
-      --muted: #9a9fb2;
-      --faint: #5f6478;
-      --line: #2a2f40;
-      --wall: #0a0b10;
-      --grid: rgba(255,255,255,.10);
+      --bg: #0b1020;
+      --surface: #161c33;
+      --surface-2: #222a47;
+      --ink: #e8ecfb;
+      --muted: #8d95b5;
+      --faint: #535b7c;
+      --line: #252d4a;
+      --board: #05080f;
+      --seam: rgba(0, 0, 0, .3);
       --sun: #fbbf24;
       --sun-edge: #f59e0b;
-      --moon: #c7d2fe;
-      --moon-edge: #a5b4fc;
-      --x: rgba(236, 238, 246, .45);
+      --sun-glow: rgba(255, 184, 40, .85);
+      --moon: #eef1ff;
+      --moon-edge: #aab6ff;
+      --moon-glow: rgba(160, 182, 255, .85);
+      --dot: rgba(232, 236, 251, .5);
+      --ring: rgba(232, 236, 251, .5);
       --bad: #ff6b6f;
       --accent: #a5b4fc;
       --good: #5fbf6a;
-      --r0: #613a35; --r1: #5c4f26; --r2: #3d5530; --r3: #2d4868; --r4: #46386a;
-      --r5: #5e3453; --r6: #265847; --r7: #5d4428; --r8: #3b414c;
+      --r0: #652838; --r1: #634a14; --r2: #235232; --r3: #1a4577; --r4: #432f80;
+      --r5: #662358; --r6: #115851; --r7: #633819; --r8: #2e3650;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.2);
-    --on-accent: #11131c;
+      --on-accent: #0b1020;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body, a, button { touch-action: manipulation; }
@@ -103,43 +112,47 @@
   #cSun.full, #cMoon.full { color: var(--good); }
   .linkbtn { border: none; background: none; padding: 0 0 0 2px; font: inherit; font-weight: 700; color: var(--accent); cursor: pointer; }
 
-  /* ---------- tabuleiro ---------- */
+  /* ---------- tabuleiro ----------
+     As regiões são desenhadas num SVG por baixo das casas (formas com cantos
+     arredondados, separadas por um vão). As casas são botões transparentes
+     de tamanho idêntico, então peças e pontos ficam sempre no centro exato
+     de cada casa, alinhados em linhas e colunas. */
   .board {
-    display: grid; grid-template-columns: repeat(var(--n), 1fr);
-    border: 3px solid var(--wall); border-radius: 10px; overflow: hidden;
-    touch-action: none;                  /* permite arrastar para marcar ✕ */
+    position: relative; background: var(--board);
+    padding: var(--pad, 1.2%); border-radius: var(--rad, 18px);
+    touch-action: none;                  /* permite arrastar para marcar */
     box-shadow: var(--shadow);
   }
+  .board .grid { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); }
+  .board .regions { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .board .regions .seams { fill: none; stroke: var(--seam); stroke-width: 2.4; }
   .cell {
-    position: relative; aspect-ratio: 1; padding: 0; margin: 0;
-    border: 0 solid var(--grid); border-width: 0 1px 1px 0;
+    position: relative; aspect-ratio: 1; padding: 0; margin: 0; border: 0; background: none;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; font: inherit; color: inherit;
   }
-  .cell.wr { border-right: 2.5px solid var(--wall); }
-  .cell.wb { border-bottom: 2.5px solid var(--wall); }
-  .cell.lastc { border-right: none; }
-  .cell.lastr { border-bottom: none; }
-  .cell svg { width: 72%; height: 72%; pointer-events: none; }
-  .cell .x { width: 34%; height: 34%; }
-  .cell .x { stroke: var(--x); stroke-width: 3.2; stroke-linecap: round; fill: none; }
-  .cell .x.auto { stroke-width: 2.4; opacity: .5; }   /* ✕ colocado automaticamente */
-  .cell.given::after {
-    content: ""; position: absolute; inset: 14%; border-radius: 50%;
-    box-shadow: inset 0 0 0 2px rgba(0,0,0,.18);
+  .cell > svg { position: relative; z-index: 1; width: 76%; height: 76%; pointer-events: none; overflow: visible; }
+  .cell > svg.dot { fill: var(--dot); }
+  .cell > svg.dot.auto { transform: scale(.64); opacity: .6; }   /* ponto colocado automaticamente */
+  .cell > svg.sun { filter: drop-shadow(0 0 3px var(--sun-glow)); }
+  .cell > svg.moon { filter: drop-shadow(0 0 3px var(--moon-glow)); }
+  .cell.given::after {                                    /* peça revelada: anel fino em volta */
+    content: ""; position: absolute; inset: 9%; border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--ring); pointer-events: none;
+  }
+  .cell.bad::before {                                     /* conflito */
+    content: ""; position: absolute; inset: 7%; border-radius: 26%;
+    background: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--bad) 55%, transparent) 4px 7px);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--bad) 70%, transparent);
     pointer-events: none;
   }
-  .cell.bad {
-    background-image: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--bad) 38%, transparent) 5px 8px) !important;
-  }
-  .cell.pop svg { animation: pop .18s ease; }
+  .cell.pop > svg { animation: pop .18s ease; }
   @keyframes pop { from { transform: scale(.6); } to { transform: scale(1); } }
   .sun-fill { fill: var(--sun); stroke: var(--sun-edge); }
   .moon-fill { fill: var(--moon); stroke: var(--moon-edge); }
-  .board.won .cell { transition: filter .4s; }
-  .board.won .cell:not(.sym) { filter: saturate(.6); }
-
-  .cell svg.dim { opacity: .3; }                     /* peça do outro modo, só de referência */
+  .board .regions path.reg { transition: filter .4s; }
+  .board.won .regions path.reg { filter: saturate(.7); }
+  .cell > svg.dim { opacity: .28; filter: none; }         /* peça do outro modo, só de referência */
   .seg {
     flex: 1; min-height: 62px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px;
     background: var(--surface); border-radius: 14px; box-shadow: var(--shadow);
@@ -187,11 +200,32 @@
   .modal .sym { display: inline-block; width: 16px; height: 16px; vertical-align: -3px; }
   .rules-demo { display: flex; justify-content: center; gap: 18px; margin: 14px 0 6px; }
   .rules-demo figure { margin: 0; text-align: center; font-size: .72rem; color: var(--muted); font-weight: 600; }
-  .rules-demo .mini { display: grid; width: max-content; margin: 0 auto 4px; grid-template-columns: repeat(3, 26px); border: 2px solid var(--wall); border-radius: 6px; overflow: hidden; }
-  .rules-demo .mini span { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; background: var(--r3); border: 0 solid var(--grid); border-width: 0 1px 1px 0; }
-  .rules-demo .mini span svg { width: 70%; height: 70%; }
-  .rules-demo .mini span svg.xm { width: 34%; height: 34%; stroke: var(--x); stroke-width: 3.2; stroke-linecap: round; }
-  .rules-demo .mini span.b { background-image: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--bad) 38%, transparent) 4px 6px); }
+  .rules-demo .mini {
+    display: grid; width: max-content; margin: 0 auto 6px; grid-template-columns: repeat(3, 28px);
+    padding: 3px; background: var(--board); border-radius: 12px;
+  }
+  .rules-demo .mini > div { display: contents; }
+  .rules-demo .mini span {
+    position: relative; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+    background: var(--r3); box-shadow: inset -1px -1px 0 var(--seam);
+  }
+  .rules-demo .mini span:nth-child(3n) { box-shadow: inset 0 -1px 0 var(--seam); }
+  .rules-demo .mini span:nth-last-child(-n+3) { box-shadow: inset -1px 0 0 var(--seam); }
+  .rules-demo .mini span:last-child { box-shadow: none; }
+  .rules-demo .mini span:first-child { border-top-left-radius: 9px; }
+  .rules-demo .mini span:nth-child(3) { border-top-right-radius: 9px; }
+  .rules-demo .mini span:nth-child(7) { border-bottom-left-radius: 9px; }
+  .rules-demo .mini span:last-child { border-bottom-right-radius: 9px; }
+  .rules-demo .mini span > svg { position: relative; z-index: 1; width: 76%; height: 76%; overflow: visible; }
+  .rules-demo .mini span > svg.sun { filter: drop-shadow(0 0 2px var(--sun-glow)); }
+  .rules-demo .mini span > svg.moon { filter: drop-shadow(0 0 2px var(--moon-glow)); }
+  .rules-demo .mini span > i { width: 5px; height: 5px; border-radius: 50%; background: var(--dot); }
+  .rules-demo .mini span.b::before {
+    content: ""; position: absolute; inset: 2px; border-radius: 7px;
+    background: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--bad) 55%, transparent) 3px 5px);
+  }
+  .tip .dt { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--dot); vertical-align: 1px; margin: 0 2px; }
+  .tip .dt.a { width: 4px; height: 4px; opacity: .55; vertical-align: 2px; }
   .btn {
     width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer;
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
@@ -224,10 +258,22 @@
       </g>
     </symbol>
     <symbol id="i-moon" viewBox="0 0 40 40">
-      <path class="moon-fill" stroke-width="2" stroke-linejoin="round"
-        d="M26.5 6.5a14 14 0 1 0 7.2 20.6A11.3 11.3 0 0 1 26.5 6.5z"/>
+      <path class="moon-fill" stroke-width="1.6" stroke-linejoin="round"
+        d="M20.61 6.01A13.2 13.2 0 1 0 34.01 22.39A10.6 10.6 0 0 1 20.61 6.01Z"/>
     </symbol>
-    <symbol id="i-x" viewBox="0 0 20 20"><path d="M4 4l12 12M16 4L4 16" fill="none"/></symbol>
+    <!-- peças do tabuleiro: sol como esfera dourada, lua crescente (centralizada pela caixa da forma) -->
+    <radialGradient id="g-sun" cx="42%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#fff7d1"/>
+      <stop offset=".42" stop-color="#ffd23f"/>
+      <stop offset="1" stop-color="#f08c00"/>
+    </radialGradient>
+    <symbol id="i-orb" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="12.6" fill="url(#g-sun)"/>
+    </symbol>
+    <symbol id="i-dot" viewBox="0 0 40 40"><circle cx="20" cy="20" r="3.4"/></symbol>
+    <symbol id="i-luna" viewBox="0 0 40 40">
+      <path transform="translate(20 20) scale(1.05) translate(-20 -20)" d="M20.61 6.01A13.2 13.2 0 1 0 34.01 22.39A10.6 10.6 0 0 1 20.61 6.01Z" style="fill: var(--moon)"/>
+    </symbol>
     <symbol id="i-logo" viewBox="0 0 40 40">
       <circle cx="20" cy="20" r="12" fill="var(--sun)"/>
       <circle cx="25" cy="16" r="11" fill="var(--bg)"/>
@@ -265,7 +311,7 @@
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
   </button>
 </div>
-<div class="tip" id="tip"><b id="tipMode">Modo sol</b>: toque = <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg> → <svg><use id="tipSym" href="#i-sun"/></svg> → vazio · arraste desenha <svg><use href="#i-x" style="stroke:var(--muted);stroke-width:3.2;stroke-linecap:round"/></svg><br><svg><use href="#i-x" style="stroke:var(--muted);stroke-width:2.4;stroke-linecap:round;opacity:.55"/></svg> claros são automáticos</div>
+<div class="tip" id="tip"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-sun"/></svg>&nbsp;→&nbsp;vazio<br>Pontos pequenos <i class="dt a"></i> são automáticos · arraste marca vários</div>
 
 <!-- Como jogar -->
 <div class="overlay" id="helpOverlay">
@@ -275,27 +321,19 @@
     <ul>
       <li>Cada <b>linha</b>, cada <b>coluna</b> e cada <b>região colorida</b> tem exatamente <b>um sol e uma lua</b>.</li>
       <li>Nenhuma peça pode <b>encostar</b> em outra, nem na diagonal.</li>
-      <li>As peças com contorno já vêm reveladas e não mudam.</li>
+      <li>As peças com um anel em volta já vêm reveladas e não mudam.</li>
     </ul>
     <div class="rules-demo">
-      <figure><div class="mini">
-        <span><svg class="xm"><use href="#i-x"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span>
-        <span><svg class="xm"><use href="#i-x"/></svg></span><span><svg><use href="#i-sun"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span>
-        <span><svg class="xm"><use href="#i-x"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span><span><svg class="xm"><use href="#i-x"/></svg></span>
-      </div>vizinhas ficam vazias</figure>
-      <figure><div class="mini">
-        <span class="b"><svg><use href="#i-sun"/></svg></span><span class="b"><svg><use href="#i-moon"/></svg></span><span></span>
-        <span></span><span></span><span></span>
-        <span></span><span></span><span></span>
-      </div>encostadas: erro</figure>
+      <figure><div class="mini"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><svg class="sun"><use href="#i-orb"/></svg></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>vizinhas ficam vazias</figure>
+      <figure><div class="mini"><span class="b"><svg class="sun"><use href="#i-orb"/></svg></span><span class="b"><svg class="moon"><use href="#i-luna"/></svg></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>encostadas: erro</figure>
     </div>
     <p>Jogue <b>um símbolo de cada vez</b>, como dois Queens sobrepostos. Use a chave <b>Sol / Lua</b> embaixo do tabuleiro:</p>
     <ul>
-      <li>No <b>modo sol</b>, toque numa casa para marcar <b>✕</b> ("sol não cabe aqui"), toque de novo para pôr o <b>sol</b> e mais uma vez para limpar. Arraste o dedo para desenhar vários ✕.</li>
+      <li>No <b>modo sol</b>, toque numa casa para marcar um <b>ponto</b> ("sol não cabe aqui"), toque de novo para pôr o <b>sol</b> e mais uma vez para limpar. Arraste o dedo para marcar várias casas.</li>
       <li>As luas aparecem apagadas, só de referência. No <b>modo lua</b> é o mesmo, para as luas.</li>
-      <li>Os ✕ claros são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
+      <li>Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
     </ul>
-    <p>Conflitos aparecem listrados em vermelho.</p>
+    <p>Conflitos aparecem destacados com listras vermelhas.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia, e a dificuldade sobe ao longo da semana: <b>segunda é nível 1</b>, o mais fácil, e <b>domingo é nível 7</b>, o mais difícil.</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, de níveis variados, que não contam nas estatísticas.</p>
     <button class="btn" data-close>Jogar</button>
@@ -422,23 +460,90 @@
   // ---------- tabuleiro ----------
   const rowOf = i => (i / N) | 0, colOf = i => i % N;
   let cellEls = [];
+  // Contorno de cada região, recuado para abrir o vão entre regiões e com
+  // cantos arredondados (externos maiores, internos menores). Unidade: 1 casa = 100.
+  const U = 100, GAP = 5.5, R_OUT = 15, R_IN = R_OUT - 2 * GAP;   // interno concêntrico ao externo do outro lado do vão
+  function regionPath(k) {
+    const inReg = (r, c) => r >= 0 && c >= 0 && r < N && c < N && regions[r * N + c] === k;
+    const edges = [], from = new Map(), key = (x, y) => x + "," + y;
+    const add = (x1, y1, x2, y2) => {                  // a região fica sempre à esquerda do sentido
+      const e = { x1, y1, x2, y2, dx: Math.sign(x2 - x1), dy: Math.sign(y2 - y1), used: false };
+      edges.push(e);
+      const kk = key(x1, y1); if (!from.has(kk)) from.set(kk, []); from.get(kk).push(e);
+    };
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      if (!inReg(r, c)) continue;
+      if (!inReg(r - 1, c)) add(c + 1, r, c, r);
+      if (!inReg(r + 1, c)) add(c, r + 1, c + 1, r + 1);
+      if (!inReg(r, c - 1)) add(c, r, c, r + 1);
+      if (!inReg(r, c + 1)) add(c + 1, r + 1, c + 1, r);
+    }
+    let d = "";
+    for (const e0 of edges) {
+      if (e0.used) continue;
+      const loop = [];
+      let e = e0;
+      while (e && !e.used) {
+        e.used = true; loop.push(e);
+        const next = (from.get(key(e.x2, e.y2)) || []).filter(n => !n.used);
+        // num cruzamento em diagonal, vira para dentro da região (mantém as casas separadas)
+        e = next.find(n => n.dx === e.dy && n.dy === -e.dx) || next[0];
+      }
+      // só os cantos (onde a direção muda)
+      const pts = [];
+      for (let j = 0; j < loop.length; j++) {
+        const a = loop[(j - 1 + loop.length) % loop.length], b = loop[j];
+        if (a.dx !== b.dx || a.dy !== b.dy) pts.push({ x: b.x1, y: b.y1, a, b });
+      }
+      const seg = pts.map(({ x, y, a, b }) => {
+        // recuo para dentro: soma das normais internas das duas arestas
+        const px = x * U + GAP * (a.dy + b.dy), py = y * U + GAP * (-a.dx - b.dx);
+        const convex = a.dx * b.dy - a.dy * b.dx < 0;
+        const rad = convex ? R_OUT : R_IN;
+        return { p1: [px - a.dx * rad, py - a.dy * rad], p2: [px + b.dx * rad, py + b.dy * rad], rad, sweep: convex ? 0 : 1 };
+      });
+      const f = v => +v.toFixed(2);
+      d += `M${f(seg.at(-1).p2[0])} ${f(seg.at(-1).p2[1])}`;
+      for (const q of seg) d += `L${f(q.p1[0])} ${f(q.p1[1])}A${q.rad} ${q.rad} 0 0 ${q.sweep} ${f(q.p2[0])} ${f(q.p2[1])}`;
+      d += "Z";
+    }
+    return d;
+  }
+  // linhas finas entre casas vizinhas da mesma região
+  function seamPath(k) {
+    let d = "";
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      const i = r * N + c;
+      if (regions[i] !== k) continue;
+      if (c < N - 1 && regions[i + 1] === k) d += `M${(c + 1) * U} ${r * U}V${(r + 1) * U}`;
+      if (r < N - 1 && regions[i + N] === k) d += `M${c * U} ${(r + 1) * U}H${(c + 1) * U}`;
+    }
+    return d;
+  }
   function build() {
-    const b = $("board");
+    const b = $("board"), W = N * U;
     b.style.setProperty("--n", N);
-    b.innerHTML = "";
+    // o vão na borda do tabuleiro fica igual ao vão entre regiões
+    b.style.setProperty("--pad", (GAP / (W + 2 * GAP) * 100) + "%");
+    b.style.setProperty("--rad", `${((R_OUT + 2 * GAP) / (W + 2 * GAP) * 100)}% / ${((R_OUT + 2 * GAP) / (W + 2 * GAP) * 100)}%`);
+    let svg = `<svg class="regions" viewBox="0 0 ${W} ${W}" preserveAspectRatio="none" aria-hidden="true"><defs>`;
+    let body = "";
+    for (let k = 0; k < N; k++) {
+      const d = regionPath(k), id = "rg" + k;
+      svg += `<clipPath id="${id}"><path d="${d}"/></clipPath>`;
+      body += `<path class="reg" d="${d}" style="fill:var(--r${k})"/><path class="seams" d="${seamPath(k)}" clip-path="url(#${id})"/>`;
+    }
+    svg += "</defs>" + body + "</svg>";
+    b.innerHTML = '<div class="grid">' + svg + "</div>";
+    const g = b.querySelector(".grid");
     cellEls = [];
     for (let i = 0; i < N * N; i++) {
-      const r = rowOf(i), c = colOf(i), el = document.createElement("button");
+      const el = document.createElement("button");
       el.className = "cell";
-      el.style.background = `var(--r${regions[i]})`;
-      if (c < N - 1 && regions[i + 1] !== regions[i]) el.classList.add("wr");
-      if (r < N - 1 && regions[i + N] !== regions[i]) el.classList.add("wb");
-      if (c === N - 1) el.classList.add("lastc");
-      if (r === N - 1) el.classList.add("lastr");
       if (givens.has(i)) el.classList.add("given");
       el.dataset.i = i;
       el.setAttribute("role", "gridcell");
-      b.appendChild(el);
+      g.appendChild(el);
       cellEls.push(el);
     }
   }
@@ -447,9 +552,9 @@
   // "." nada anotado (0) · "m" sol não cabe (1) · "s" lua não cabe (2) · "x" nenhum cabe (3)
   const BITS = { ".": 0, m: 1, s: 2, x: 3 }, CHAR = [".", "m", "s", "x"];
   const ICON = {
-    S: '<svg><use href="#i-sun"/></svg>', M: '<svg><use href="#i-moon"/></svg>',
-    Sd: '<svg class="dim"><use href="#i-sun"/></svg>', Md: '<svg class="dim"><use href="#i-moon"/></svg>',
-    X: '<svg class="x"><use href="#i-x"/></svg>', Xa: '<svg class="x auto"><use href="#i-x"/></svg>',
+    S: '<svg class="sun"><use href="#i-orb"/></svg>', M: '<svg class="moon"><use href="#i-luna"/></svg>',
+    Sd: '<svg class="sun dim"><use href="#i-orb"/></svg>', Md: '<svg class="moon dim"><use href="#i-luna"/></svg>',
+    X: '<svg class="dot"><use href="#i-dot"/></svg>', Xa: '<svg class="dot auto"><use href="#i-dot"/></svg>',
     "": "",
   };
   let mode = "S";                              // "S" = modo sol · "M" = modo lua
@@ -487,6 +592,7 @@
   let AUTO = [];
   function shown(i) {                         // o que aparece na casa, no modo atual
     const v = cells[i];
+    if (finished) return v === "S" || v === "M" ? v : "";   // tabuleiro resolvido: só as peças, todas acesas
     if (v === mode) return v;
     if (v === other()) return v + "d";
     const man = BITS[v] || 0, b = modeBit();
@@ -561,7 +667,7 @@
   }
   $("modeSun").addEventListener("click", () => setMode("S"));
   $("modeMoon").addEventListener("click", () => setMode("M"));
-  // toque: ✕ (não cabe) → peça do modo → vazio. Se a casa já está bloqueada, vai direto para a peça.
+  // toque: ponto (não cabe) → peça do modo → vazio. Se a casa já está bloqueada, vai direto para a peça.
   function tapValue(i) {
     const v = cells[i];
     if (v === mode) return ".";
@@ -586,9 +692,9 @@
     const i = cellAt(e.clientX, e.clientY);
     if (i < 0 || drag.touched.has(i)) return;
     if (!drag.moved) {
-      // o arrasto marca ✕ se começou numa casa vazia, e apaga ✕ se começou num ✕
+      // o arrasto marca pontos se começou numa casa vazia, e apaga se começou num ponto
       drag.moved = true;
-      drag.mode = (BITS[cells[drag.start]] || 0) & modeBit() ? "erase" : "paint";   // começa num ✕ → apaga
+      drag.mode = (BITS[cells[drag.start]] || 0) & modeBit() ? "erase" : "paint";   // começa num ponto → apaga
       paint(drag.start);
     }
     drag.touched.add(i);
