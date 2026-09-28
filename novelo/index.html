@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Novelo">
 <title>NOVELO — um fio por todas as casas</title>
 <link rel="icon" type="image/png" href="icon.png">
-<script src="../comum/tema.js?v=59"></script>
+<script src="../comum/tema.js?v=61"></script>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,8 +28,8 @@
     --weave: rgba(150, 110, 70, .07);
     --mark: rgba(110, 80, 50, .30);
     --hem: rgba(110, 80, 50, .30);
-    --thread: #e0475a;
-    --thread-dk: #b2303f;
+    --thread: #cf4a45;
+    --thread-dk: #9d2f2b;
     --twist: rgba(110, 15, 35, .20);
     --sheen: rgba(255, 255, 255, .30);
     --wall: #3a2f3d;
@@ -37,7 +37,7 @@
     --btn: #2b2430;
     --btn-ink: #fff;
     --btn-rim: rgba(255, 255, 255, .42);
-    --accent: #e0475a;
+    --accent: #c9453f;
     --on-accent: #fff;
     --bad: #d64545;
     --shadow: 0 1px 2px rgba(60, 40, 20, .07), 0 6px 18px rgba(60, 40, 20, .08);
@@ -55,8 +55,8 @@
       --weave: rgba(255, 255, 255, .025);
       --mark: rgba(255, 255, 255, .22);
       --hem: rgba(255, 255, 255, .16);
-      --thread: #ff6b7a;
-      --thread-dk: #c8414f;
+      --thread: #e8665c;
+      --thread-dk: #b04038;
       --twist: rgba(90, 0, 25, .26);
       --sheen: rgba(255, 255, 255, .22);
       --wall: #f2eae1;
@@ -64,7 +64,7 @@
       --btn: #f2eae1;
       --btn-ink: #221e26;
       --btn-rim: rgba(0, 0, 0, .3);
-      --accent: #ff6b7a;
+      --accent: #e8665c;
       --on-accent: #1d1519;
       --bad: #ff6b6b;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
@@ -82,8 +82,8 @@
       --weave: rgba(255, 255, 255, .025);
       --mark: rgba(255, 255, 255, .22);
       --hem: rgba(255, 255, 255, .16);
-      --thread: #ff6b7a;
-      --thread-dk: #c8414f;
+      --thread: #e8665c;
+      --thread-dk: #b04038;
       --twist: rgba(90, 0, 25, .26);
       --sheen: rgba(255, 255, 255, .22);
       --wall: #f2eae1;
@@ -91,7 +91,7 @@
       --btn: #f2eae1;
       --btn-ink: #221e26;
       --btn-rim: rgba(0, 0, 0, .3);
-      --accent: #ff6b7a;
+      --accent: #e8665c;
       --on-accent: #1d1519;
       --bad: #ff6b6b;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
@@ -171,7 +171,7 @@
   .controls.done > button { flex-basis: 0; opacity: 0; pointer-events: none; }
   .controls.done #undoBtn { margin-right: -10px; }
   .controls.done #clearBtn { margin-left: -10px; }
-  .controls.done .prog { background: linear-gradient(120deg, #b2303f 0%, #d9435a 55%, #e8716a 100%); box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(178, 48, 63, .3); }
+  .controls.done .prog { background: linear-gradient(120deg, #9d2f2b 0%, #c9453f 55%, #df6c5f 100%); box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(178, 48, 63, .3); }
   .controls.done .prog > .bar, .controls.done .prog > .n { opacity: 0; }
   .done-bar {
     position: absolute; inset: 0; display: flex; align-items: center; gap: 12px;
@@ -179,12 +179,12 @@
     opacity: 0; pointer-events: none; transition: opacity .3s ease .15s;
   }
   .controls.done .done-bar { opacity: 1; pointer-events: auto; }
-  .done-bar svg.ball { width: 40px; height: 40px; flex-shrink: 0; }
+  .done-bar .ball { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }
   .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
   .done-bar .txt b { font-size: 1.02rem; font-weight: 800; }
   .done-bar .txt span { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.78); font-variant-numeric: tabular-nums; }
   .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,255,255,.75); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-  .controls.play .done-bar svg.ball { animation: roll .8s cubic-bezier(.3,.7,.2,1) .15s both; }
+  .controls.play .done-bar .ball { animation: roll .8s cubic-bezier(.3,.7,.2,1) .15s both; }
   @keyframes roll { from { transform: translateX(-30px) rotate(-200deg); opacity: 0; } to { transform: none; opacity: 1; } }
   .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; min-height: 2.3em; }
   .tip b { color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -216,30 +216,16 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=59">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=61">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
 </head>
 <body>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <!-- novelo: usado na barra de fim e na janela de resultado -->
-    <symbol id="i-ball" viewBox="0 0 64 64">
-      <path d="M45 44c7 4 10 9 6 15" fill="none" stroke="#f36b79" stroke-width="3.2" stroke-linecap="round"/>
-      <circle cx="30" cy="30" r="21" fill="#e0475a"/>
-      <g fill="none" stroke="#a82b3a" stroke-width="2.4" stroke-linecap="round" opacity=".85">
-        <path d="M12 23c9 4 25 4 35-5"/><path d="M10 32c12 5 29 3 39-8"/><path d="M14 43c10 2 24-2 33-14"/><path d="M22 11c-4 10-4 27 4 40"/><path d="M33 9c-3 9-2 25 8 38"/>
-      </g>
-      <circle cx="23" cy="21" r="5" fill="#fff" opacity=".18"/>
-    </symbol>
-  </defs>
-</svg>
-
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Novelo — recarregar"><img src="icon.png" alt=""><b>NOVELO</b></a>
+  <a class="gh-brand" href="./" aria-label="Novelo — recarregar"><img src="icon.png?v=2" alt=""><b>NOVELO</b></a>
   <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
@@ -261,7 +247,7 @@
   <div class="prog" aria-live="polite">
     <span class="bar"><i id="progBar"></i></span><span class="n" id="progN"><b>0</b>/0</span>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
-      <svg class="ball" aria-hidden="true"><use href="#i-ball"/></svg>
+      <img class="ball" src="icon.png?v=2" alt="">
       <span class="txt"><b id="doneTitle">Novelo completo</b><span id="doneSub"></span></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
@@ -307,7 +293,7 @@
 <div class="overlay" id="endOverlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><svg viewBox="0 0 64 64" aria-hidden="true" style="height:92px"><use href="#i-ball"/></svg></div>
+    <div class="fim-art"><img src="icon.png?v=2" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,30,20,.15)"></div>
     <h2 class="fim-title" id="endTitle">Novelo completo!</h2>
     <div class="fim-result"><div class="fim-time" id="endTime">0:00</div></div>
     <p class="fim-sub" id="endSub"></p>
@@ -507,27 +493,52 @@
     if (numAt[b] && numAt[b] !== nextNum()) return false;          // números em ordem
     return true;
   }
-  // anda da ponta do fio em direção à casa alvo (o dedo pode pular casas num arrasto rápido)
-  function extendTo(t) {
-    let moved = false;
-    for (let guard = 0; guard < 2 * N; guard++) {
-      const h = path.at(-1);
-      if (h === t) break;
-      const [hr, hc] = rc(h), [tr, tc] = rc(t);
-      const dr = Math.sign(tr - hr), dc = Math.sign(tc - hc);
-      const v = dr ? h + dr * N : -1, hz = dc ? h + dc : -1;
-      const opts = Math.abs(tr - hr) >= Math.abs(tc - hc) ? [v, hz] : [hz, v];
-      const nx = opts.find(x => x >= 0 && canStep(h, x));
-      if (nx === undefined) break;
-      path.push(nx); moved = true;
-    }
-    return moved;
+  // posição do dedo em unidades do tabuleiro (0 … N·U)
+  function boardPos(e) {
+    const r = $("board").getBoundingClientRect();
+    return [(e.clientX - r.left) / r.width * W - PAD, (e.clientY - r.top) / r.height * W - PAD];
   }
   function cellAt(e) {
-    const r = $("board").getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width * W - PAD, y = (e.clientY - r.top) / r.height * W - PAD;
+    const [x, y] = boardPos(e);
     if (x < 0 || y < 0 || x >= N * U || y >= N * U) return -1;
     return ((y / U) | 0) * N + ((x / U) | 0);
+  }
+  // O fio segue o dedo a partir da ponta, uma casa por vez, sempre na direção
+  // em que o dedo mais se afastou do centro da ponta. Só avança quando o dedo
+  // entra bem na casa vizinha (histerese), então tremidas na borda entre duas
+  // casas não desviam o caminho. Voltar pelo fio só recolhe a última casa, nunca
+  // corta no meio (cortar é com um toque).
+  const STEP = 0.62 * U;
+  const centerOf = i => [(i % N) * U + U / 2, ((i / N) | 0) * U + U / 2];
+  function neighbor(h, dx, dy) {                     // dx, dy ∈ {-1, 0, 1}, um deles 0
+    const r = ((h / N) | 0) + dy, c = (h % N) + dx;
+    return r < 0 || c < 0 || r >= N || c >= N ? -1 : r * N + c;
+  }
+  function follow(px, py) {
+    let changed = false;
+    for (let guard = 0; guard < 4 * N; guard++) {
+      const h = path.at(-1), [hx, hy] = centerOf(h);
+      const dx = px - hx, dy = py - hy;
+      // 1. voltando: o dedo entrou na casa anterior do fio
+      if (path.length > 1) {
+        const [bx, by] = centerOf(path.at(-2));
+        const along = (dx * (bx - hx) + dy * (by - hy)) / U;
+        if (along >= STEP) { path.pop(); changed = true; continue; }
+      }
+      // 2. avançando: primeiro no eixo em que o dedo mais andou; o outro eixo só
+      //    vale se o dedo também passou do limite nele
+      const ax = Math.abs(dx), ay = Math.abs(dy);
+      if (ax < STEP && ay < STEP) break;
+      const tries = ax >= ay ? [[Math.sign(dx), 0, ax], [0, Math.sign(dy), ay]] : [[0, Math.sign(dy), ay], [Math.sign(dx), 0, ax]];
+      let moved = false;
+      for (const [sx, sy, dist] of tries) {
+        if (dist < STEP) continue;
+        const n = neighbor(h, sx, sy);
+        if (n >= 0 && canStep(h, n)) { path.push(n); moved = changed = true; break; }
+      }
+      if (!moved) break;
+    }
+    return changed;
   }
   let drag = null;
   $("board").addEventListener("pointerdown", e => {
@@ -537,22 +548,24 @@
     e.preventDefault();
     const before = path.join(",");
     const at = path.indexOf(i);
-    if (at >= 0) path.length = at + 1;                            // toca no fio: corta ali
-    else if (!extendTo(i)) { nudge(i); return; }
-    drag = { before };
+    if (at >= 0) path.length = at + 1;                            // toca no fio: corta ali e continua dali
+    else if (adjacent(path.at(-1), i) && canStep(path.at(-1), i)) path.push(i);   // casa ao lado da ponta
+    else { nudge(i); return; }
+    drag = { before, id: e.pointerId };
+    try { $("board").setPointerCapture(e.pointerId); } catch {}
     startTimer();
     render();
   });
   $("board").addEventListener("pointermove", e => {
-    if (!drag) return;
-    const i = cellAt(e);
-    if (i < 0 || i === path.at(-1)) return;
-    const at = path.indexOf(i);
-    if (at >= 0) { path.length = at + 1; render(); return; }      // voltando pelo fio
-    if (extendTo(i)) render();
+    if (!drag || e.pointerId !== drag.id) return;
+    // num arrasto rápido o navegador junta vários pontos num evento: usa todos
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+    let changed = false;
+    for (const ev of evs.length ? evs : [e]) { const [x, y] = boardPos(ev); if (follow(x, y)) changed = true; }
+    if (changed) render();
   });
-  const endDrag = () => {
-    if (!drag) return;
+  const endDrag = e => {
+    if (!drag || (e && e.pointerId !== undefined && e.pointerId !== drag.id)) return;
     const d = drag; drag = null;
     if (path.join(",") !== d.before) { history.push(d.before); if (history.length > 300) history.shift(); }
     checkWin();
@@ -678,7 +691,7 @@
   demo("demoB", [0, 3, 6, 7, 4, 1, 2, 5, 8], [[0, 1], [8, 2]], "M115 27L115 203");
 })();
 </script>
-<script src="../comum/catalogo.js?v=59"></script>
-<script src="../comum/proximo.js?v=59" data-jogo="novelo"></script>
+<script src="../comum/catalogo.js?v=61"></script>
+<script src="../comum/proximo.js?v=61" data-jogo="novelo"></script>
 </body>
 </html>

@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Retalhos">
 <title>RETALHOS — uma colcha de retângulos</title>
 <link rel="icon" type="image/png" href="icon.png">
-<script src="../comum/tema.js?v=59"></script>
+<script src="../comum/tema.js?v=61"></script>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -170,12 +170,12 @@
     opacity: 0; pointer-events: none; transition: opacity .3s ease .15s;
   }
   .controls.done .done-bar { opacity: 1; pointer-events: auto; }
-  .done-bar svg.quilt { width: 38px; height: 38px; flex-shrink: 0; border-radius: 9px; }
+  .done-bar .quilt { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }
   .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
   .done-bar .txt b { font-size: 1.02rem; font-weight: 800; }
   .done-bar .txt span { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.8); font-variant-numeric: tabular-nums; }
   .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,255,255,.75); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-  .controls.play .done-bar svg.quilt { animation: fold .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
+  .controls.play .done-bar .quilt { animation: fold .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
   @keyframes fold { from { transform: scale(.3) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
   .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; min-height: 2.3em; }
   .tip b { color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -208,35 +208,16 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=59">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=61">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
 </head>
 <body>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <!-- colcha pequena: barra de fim e janela de resultado -->
-    <symbol id="i-quilt" viewBox="0 0 64 64">
-      <rect width="64" height="64" rx="14" fill="#efe6d6"/>
-      <rect x="7" y="7" width="30" height="19" rx="4.5" fill="#e8835f"/>
-      <rect x="40" y="7" width="17" height="30" rx="4.5" fill="#6fa3d8"/>
-      <rect x="7" y="29" width="13" height="28" rx="4.5" fill="#86bb6d"/>
-      <rect x="23" y="29" width="14" height="14" rx="4.5" fill="#efc14a"/>
-      <rect x="23" y="46" width="34" height="11" rx="4.5" fill="#d97aa0"/>
-      <g fill="none" stroke="#fff" stroke-width="1.1" stroke-dasharray="2.2 1.8" stroke-linecap="round" opacity=".9">
-        <rect x="9.3" y="9.3" width="25.4" height="14.4" rx="2.6"/><rect x="42.3" y="9.3" width="12.4" height="25.4" rx="2.6"/>
-        <rect x="9.3" y="31.3" width="8.4" height="23.4" rx="2.6"/><rect x="25.3" y="31.3" width="9.4" height="9.4" rx="2.6"/>
-        <rect x="25.3" y="48.3" width="29.4" height="6.4" rx="2.6"/>
-      </g>
-    </symbol>
-  </defs>
-</svg>
-
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Retalhos — recarregar"><img src="icon.png" alt=""><b>RETALHOS</b></a>
+  <a class="gh-brand" href="./" aria-label="Retalhos — recarregar"><img src="icon.png?v=2" alt=""><b>RETALHOS</b></a>
   <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
@@ -258,7 +239,7 @@
   <div class="prog" aria-live="polite">
     <span class="bar"><i id="progBar"></i></span><span class="n" id="progN"><b>0</b>/0</span>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
-      <svg class="quilt" aria-hidden="true"><use href="#i-quilt"/></svg>
+      <img class="quilt" src="icon.png?v=2" alt="">
       <span class="txt"><b id="doneTitle">Colcha completa</b><span id="doneSub"></span></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
@@ -308,7 +289,7 @@
 <div class="overlay" id="endOverlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><svg viewBox="0 0 64 64" aria-hidden="true" style="height:88px"><use href="#i-quilt"/></svg></div>
+    <div class="fim-art"><img src="icon.png?v=2" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,45,20,.15)"></div>
     <h2 class="fim-title" id="endTitle">Colcha completa!</h2>
     <div class="fim-result"><div class="fim-time" id="endTime">0:00</div></div>
     <p class="fim-sub" id="endSub"></p>
@@ -687,7 +668,7 @@
   demo("demoB", true);
 })();
 </script>
-<script src="../comum/catalogo.js?v=59"></script>
-<script src="../comum/proximo.js?v=59" data-jogo="retalhos"></script>
+<script src="../comum/catalogo.js?v=61"></script>
+<script src="../comum/proximo.js?v=61" data-jogo="retalhos"></script>
 </body>
 </html>
