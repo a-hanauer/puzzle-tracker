@@ -27,7 +27,7 @@
     --board: #e7dfcf;
     --cell: #f5f0e6;
     --cell-line: rgba(120, 100, 70, .10);
-    --stitch: rgba(255, 255, 255, .85);
+    --stitch: rgba(255, 255, 255, .5);
     --tag: #fffdf8;
     --tag-line: #d8ccb6;
     --tag-on: rgba(255, 253, 248, .94);
@@ -37,8 +37,9 @@
     --empty-st: rgba(80, 70, 55, .35);
     --bad: #d64545;
     --bad-soft: #f4d9d4;
-    --fab-o: rgba(255, 255, 255, .26);
+    --fab-o: rgba(255, 255, 255, .16);
     --f0: #e5675f; --f1: #33427f; --f2: #dca444; --f3: #5f8a4f; --f4: #c9678a; --f5: #3d8c8c;
+    --fab-mix: 42%;
     --ok: #4f8a3f;
     --accent: #d9694a;
     --on-accent: #fff;
@@ -55,7 +56,7 @@
       --board: #1f1d1a;
       --cell: #2a2824;
       --cell-line: rgba(255, 255, 255, .04);
-      --stitch: rgba(255, 255, 255, .5);
+      --stitch: rgba(255, 255, 255, .16);
       --tag: #36332d;
       --tag-line: #4a463e;
       --tag-on: rgba(22, 20, 18, .78);
@@ -65,8 +66,9 @@
       --empty-st: rgba(255, 255, 255, .25);
       --bad: #ff6b6b;
       --bad-soft: #4a2826;
-      --fab-o: rgba(255, 255, 255, .13);
+      --fab-o: rgba(255, 255, 255, .05);
       --f0: #b8503f; --f1: #3a4a8c; --f2: #a8792a; --f3: #4b7040; --f4: #9c4d6a; --f5: #2f6e6e;
+      --fab-mix: 55%;
       --ok: #6fb05d;
       --accent: #f09a74;
       --on-accent: #1d1712;
@@ -83,7 +85,7 @@
       --board: #1f1d1a;
       --cell: #2a2824;
       --cell-line: rgba(255, 255, 255, .04);
-      --stitch: rgba(255, 255, 255, .5);
+      --stitch: rgba(255, 255, 255, .16);
       --tag: #36332d;
       --tag-line: #4a463e;
       --tag-on: rgba(22, 20, 18, .78);
@@ -93,8 +95,9 @@
       --empty-st: rgba(255, 255, 255, .25);
       --bad: #ff6b6b;
       --bad-soft: #4a2826;
-      --fab-o: rgba(255, 255, 255, .13);
+      --fab-o: rgba(255, 255, 255, .05);
       --f0: #b8503f; --f1: #3a4a8c; --f2: #a8792a; --f3: #4b7040; --f4: #9c4d6a; --f5: #2f6e6e;
+      --fab-mix: 55%;
       --ok: #6fb05d;
       --accent: #f09a74;
       --on-accent: #1d1712;
@@ -122,14 +125,18 @@
   #board { display: block; touch-action: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(40, 25, 10, .08)) drop-shadow(0 8px 20px rgba(40, 25, 10, .08)); }
   .b-bg { fill: var(--board); }
   .b-cell { fill: var(--cell); stroke: var(--cell-line); stroke-width: 1.5; }
-  .p-shadow { fill: rgba(30, 20, 10, .16); }
-  .p-st { fill: none; stroke: var(--stitch); stroke-width: 3; stroke-dasharray: 9 7; stroke-linecap: round; }
+  .p-shadow { fill: rgba(30, 20, 10, .08); }
+  .p-st { fill: none; stroke: var(--stitch); stroke-width: 2; stroke-dasharray: 6 7; stroke-linecap: round; }
   .p-empty { fill: var(--empty); }
   .p-empty + .p-st, .p-st.e { stroke: var(--empty-st); }
   .p-bad { fill: url(#hatch); }
   .p-st.b { stroke: var(--bad); }
   .hb { fill: var(--bad-soft); } .hl { fill: var(--bad); opacity: .45; }
-  .f0 { fill: var(--f0); } .f1 { fill: var(--f1); } .f2 { fill: var(--f2); } .f3 { fill: var(--f3); } .f4 { fill: var(--f4); } .f5 { fill: var(--f5); }
+  /* tecidos em tons suaves (a cor misturada com a da casa): o retalho é secundário,
+     a etiqueta (formato e número) é o que precisa saltar aos olhos */
+  .f0 { fill: color-mix(in srgb, var(--f0) var(--fab-mix), var(--cell)); } .f1 { fill: color-mix(in srgb, var(--f1) var(--fab-mix), var(--cell)); }
+  .f2 { fill: color-mix(in srgb, var(--f2) var(--fab-mix), var(--cell)); } .f3 { fill: color-mix(in srgb, var(--f3) var(--fab-mix), var(--cell)); }
+  .f4 { fill: color-mix(in srgb, var(--f4) var(--fab-mix), var(--cell)); } .f5 { fill: color-mix(in srgb, var(--f5) var(--fab-mix), var(--cell)); }
   .fo { fill: var(--fab-o); }
   .prev { fill: rgba(127, 110, 80, .08); stroke: var(--ink); stroke-width: 4; stroke-dasharray: 14 10; stroke-linecap: round; }
   .prev-badge { fill: var(--ink); }
@@ -139,9 +146,7 @@
      Sem cor de tecido: a cor só aparece depois do retalho desenhado. */
   .tg-sh { fill: var(--tag-ink); }
   .tg-n { fill: var(--tag-fg); font: 800 34px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
-  /* etiqueta já dentro do retalho certo: fica escura e translúcida sobre o tecido */
-  .tg.on .tg-sh { fill: rgba(20, 18, 16, .58); }
-  .tg.on .tg-n { fill: #fff; }
+  /* etiqueta já dentro do retalho certo: continua sólida, com o mesmo contraste de antes */
   .prev.ok { stroke: var(--ok); fill: color-mix(in srgb, var(--ok) 12%, transparent); }
   .prev.bad { stroke: var(--bad); fill: color-mix(in srgb, var(--bad) 8%, transparent); }
   .prev-badge.ok { fill: var(--ok); } .prev-badge.bad { fill: var(--bad); }
