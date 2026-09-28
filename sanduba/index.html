@@ -184,7 +184,7 @@
   .settings-row .tag{margin-left:auto;font-size:.72rem;color:var(--text-dim);font-weight:500;}
 
 
-  .timeline-title{font-size:.6rem;font-weight:500;letter-spacing:1.6px;color:var(--text-dim);
+  .timeline-title{font-size:.9rem;font-stretch:62.5%;font-weight:500;letter-spacing:.1em;color:var(--text-dim);
     text-align:left;text-transform:uppercase;margin-bottom:8px;opacity:.9;}
   .timeline-row{display:flex;align-items:center;gap:14px;}
   .tries-count{font-size:1.05rem;font-weight:800;color:var(--accent);line-height:1;
@@ -287,7 +287,7 @@
   /* ---- painel informativo de letras (não interativo) ---- */
   .letters-panel{background:var(--card);border:var(--stroke) solid var(--border);border-radius:16px;
     padding:10px 15px 12px;margin-bottom:12px;}
-  .letters-panel-title{font-size:.6rem;font-weight:500;letter-spacing:1.6px;color:var(--text-dim);
+  .letters-panel-title{font-size:.9rem;font-stretch:62.5%;font-weight:500;letter-spacing:.1em;color:var(--text-dim);
     text-align:left;text-transform:uppercase;margin-bottom:8px;opacity:.9;}
   .letters-panel-row{display:flex;flex-wrap:nowrap;gap:0;}
   .lp-letter{flex:1 1 0;min-width:0;text-align:center;color:var(--text);font-weight:700;
@@ -472,17 +472,17 @@
 
   <div id="msg"></div>
 
-  <div class="letters-panel">
-    <div class="letters-panel-title">LETRAS POSSÍVEIS</div>
-    <div class="letters-panel-row" id="excluded-row"></div>
-  </div>
-
   <div class="timeline-block">
     <div class="timeline-title">TENTATIVAS</div>
     <div class="timeline-row">
       <span class="tries-count"><span id="tries-label">1</span>/14</span>
       <div class="dots-row" id="dots-row"></div>
     </div>
+  </div>
+
+  <div class="letters-panel">
+    <div class="letters-panel-title">LETRAS POSSÍVEIS</div>
+    <div class="letters-panel-row" id="excluded-row"></div>
   </div>
 
   <div id="keyboard">
