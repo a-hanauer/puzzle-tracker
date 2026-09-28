@@ -549,42 +549,72 @@
     if (x < 0 || y < 0 || x >= N * U || y >= N * U) return -1;
     return ((y / U) | 0) * N + ((x / U) | 0);
   }
-  // O fio segue o dedo a partir da ponta, uma casa por vez, sempre na direção
-  // em que o dedo mais se afastou do centro da ponta. Só avança quando o dedo
-  // entra bem na casa vizinha (histerese), então tremidas na borda entre duas
-  // casas não desviam o caminho. Voltar pelo fio só recolhe a última casa, nunca
-  // corta no meio (cortar é com um toque).
-  const STEP = 0.62 * U;
+  // O fio segue a casa que está debaixo do dedo, como no Zip:
+  //   · o dedo entra numa casa vizinha da ponta → o fio avança para ela;
+  //   · o dedo passa por uma casa que já é do fio → o fio recolhe até ela;
+  //   · num arrasto rápido (ou cortando um canto), o dedo pode cair numa casa a
+  //     duas ou mais casas da ponta: o fio preenche o caminho mais curto até lá,
+  //     escolhendo o que passa mais perto do trajeto do dedo.
+  // Uma margem pequena na borda de cada casa evita que tremidas entre duas casas
+  // façam o fio ir e voltar. Entre dois pontos do dedo, o trajeto é amostrado a
+  // cada quarto de casa, para nenhum passo rápido pular casas.
+  const STEP = 0.62 * U;                             // (só para o desenho da ponta esticando)
+  const EDGE = 0.1 * U;                              // margem na borda da casa
+  const MAXJUMP = 4;                                 // maior salto preenchido de uma vez
   const centerOf = i => [(i % N) * U + U / 2, ((i / N) | 0) * U + U / 2];
   function neighbor(h, dx, dy) {                     // dx, dy ∈ {-1, 0, 1}, um deles 0
     const r = ((h / N) | 0) + dy, c = (h % N) + dx;
     return r < 0 || c < 0 || r >= N || c >= N ? -1 : r * N + c;
   }
-  function follow(px, py) {
-    let changed = false;
-    for (let guard = 0; guard < 4 * N; guard++) {
-      const h = path.at(-1), [hx, hy] = centerOf(h);
-      const dx = px - hx, dy = py - hy;
-      // 1. voltando: o dedo entrou na casa anterior do fio
-      if (path.length > 1) {
-        const [bx, by] = centerOf(path.at(-2));
-        const along = (dx * (bx - hx) + dy * (by - hy)) / U;
-        if (along >= STEP) { path.pop(); changed = true; continue; }
-      }
-      // 2. avançando: primeiro no eixo em que o dedo mais andou; o outro eixo só
-      //    vale se o dedo também passou do limite nele
-      const ax = Math.abs(dx), ay = Math.abs(dy);
-      if (ax < STEP && ay < STEP) break;
-      const tries = ax >= ay ? [[Math.sign(dx), 0, ax], [0, Math.sign(dy), ay]] : [[0, Math.sign(dy), ay], [Math.sign(dx), 0, ax]];
-      let moved = false;
-      for (const [sx, sy, dist] of tries) {
-        if (dist < STEP) continue;
+  // casa sob o dedo, só se o dedo estiver bem dentro dela (fora da margem)
+  function cellUnder(px, py) {
+    if (px < 0 || py < 0 || px >= N * U || py >= N * U) return -1;
+    const c = (px / U) | 0, r = (py / U) | 0, fx = px - c * U, fy = py - r * U;
+    if (fx < EDGE || fy < EDGE || fx > U - EDGE || fy > U - EDGE) return -1;
+    return r * N + c;
+  }
+  const manh = (a, b) => Math.abs(((a / N) | 0) - ((b / N) | 0)) + Math.abs((a % N) - (b % N));
+  // distância de um ponto ao segmento (x0,y0)-(x1,y1)
+  function segDist(x, y, x0, y0, x1, y1) {
+    const vx = x1 - x0, vy = y1 - y0, L = vx * vx + vy * vy;
+    const t = L ? Math.max(0, Math.min(1, ((x - x0) * vx + (y - y0) * vy) / L)) : 0;
+    return Math.hypot(x - (x0 + t * vx), y - (y0 + t * vy));
+  }
+  // caminho mais curto da ponta até a casa alvo (só passos que aproximam do alvo),
+  // respeitando as regras; entre os possíveis, o mais perto do trajeto do dedo
+  function route(target, from) {
+    const d = manh(path.at(-1), target);
+    if (d < 1 || d > MAXJUMP) return null;
+    const [tx, ty] = centerOf(target);
+    // desempate: quem corta um canto vinha andando numa direção e virou depois,
+    // então, a igual distância do trajeto, vale seguir primeiro na direção em que o fio vinha
+    const len = path.length, dirIn = len > 1 ? path[len - 1] - path[len - 2] : 0;
+    let best = null, bestCost = Infinity;
+    (function dfs(steps, cost) {
+      const h = path.at(-1);
+      if (h === target) { if (cost < bestCost) { bestCost = cost; best = steps.slice(); } return; }
+      for (const [sx, sy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
         const n = neighbor(h, sx, sy);
-        if (n >= 0 && canStep(h, n)) { path.push(n); moved = changed = true; break; }
+        if (n < 0 || manh(n, target) !== manh(h, target) - 1 || !canStep(h, n)) continue;
+        const [nx, ny] = centerOf(n);
+        const turn = !steps.length && dirIn && n - h !== dirIn ? 1 : 0;
+        path.push(n); steps.push(n);
+        dfs(steps, cost + segDist(nx, ny, from[0], from[1], tx, ty) + turn);
+        path.pop(); steps.pop();
       }
-      if (!moved) break;
-    }
-    return changed;
+    })([], 0);
+    return best;
+  }
+  function follow(px, py, from) {
+    const c = cellUnder(px, py), h = path.at(-1);
+    if (c < 0 || c === h) return false;
+    const at = path.indexOf(c);
+    if (at >= 0) { path.length = at + 1; return true; }           // voltou por cima do fio: recolhe até ali
+    if (manh(h, c) === 1) { if (!canStep(h, c)) return false; path.push(c); return true; }
+    const r = route(c, from);                                       // salto: preenche o caminho
+    if (!r) return false;
+    path.push(...r);
+    return true;
   }
   let drag = null;
   $("board").addEventListener("pointerdown", e => {
@@ -597,17 +627,26 @@
     if (at >= 0) path.length = at + 1;                            // toca no fio: corta ali e continua dali
     else if (adjacent(path.at(-1), i) && canStep(path.at(-1), i)) path.push(i);   // casa ao lado da ponta
     else { nudge(i); return; }
-    drag = { before, id: e.pointerId, pos: null };
+    drag = { before, id: e.pointerId, pos: boardPos(e) };
     try { $("board").setPointerCapture(e.pointerId); } catch {}
     startTimer();
     render();
   });
   $("board").addEventListener("pointermove", e => {
     if (!drag || e.pointerId !== drag.id) return;
-    // num arrasto rápido o navegador junta vários pontos num evento: usa todos
+    // num arrasto rápido o navegador junta vários pontos num evento: usa todos,
+    // e amostra o trajeto entre eles a cada quarto de casa
     const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
     let changed = false;
-    for (const ev of evs.length ? evs : [e]) { const [x, y] = boardPos(ev); drag.pos = [x, y]; if (follow(x, y)) changed = true; }
+    for (const ev of evs.length ? evs : [e]) {
+      const [x, y] = boardPos(ev), [x0, y0] = drag.pos || [x, y];
+      const n = Math.max(1, Math.ceil(Math.hypot(x - x0, y - y0) / (U / 4)));
+      for (let k = 1; k <= n; k++) {
+        const px = x0 + (x - x0) * k / n, py = y0 + (y - y0) * k / n;
+        if (follow(px, py, drag.pos || [px, py])) changed = true;
+      }
+      drag.pos = [x, y];
+    }
     if (changed) render(); else drawThread();
   });
   const endDrag = e => {
