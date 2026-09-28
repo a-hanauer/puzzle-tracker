@@ -226,6 +226,7 @@
     margin:4px 0;flex:none;box-shadow:0 0 0 4px var(--accent-soft);
   }
   .connector-dot.ghost{background:var(--tile-ghost);box-shadow:none;}
+  .connector-dot.blind{visibility:hidden;}
 
   #rows{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:7px;}
   /* cada palavra é uma fatia: letras juntas dentro de uma casca */
@@ -847,16 +848,16 @@
   /* ---------- render ---------- */
   function letterTile(ch, cls){ return '<div class="tile ' + cls + '">' + (ch || '') + '</div>'; }
 
-  // Escala FIXA (calculada uma única vez a partir do tamanho do dicionário) —
-  // ao contrário de uma % relativa ao intervalo atual, essa régua não muda
-  // durante a partida: a mesma distância sempre vale o mesmo número de pontos,
-  // do primeiro palpite ao último. De uma ponta a outra do dicionário dá
-  // aproximadamente 150 pontos; entre duas palavras vizinhas, uma fração disso.
-  var SCORE_SCALE = DICT.length / 150;
+  // Distância no indicador = quantas palavras do dicionário separam a fatia
+  // da palavra secreta, em centenas: 0.01 é a palavra imediatamente vizinha
+  // na ordem alfabética, 1.00 são 100 palavras, e assim por diante. A régua é
+  // fixa (não muda durante a partida) e só chega no mínimo quando não há
+  // mais nenhuma palavra no meio.
   function scoreFor(boundIdx){
-    var dist = Math.abs(boundIdx - state.secretIdx);
-    var score = dist / SCORE_SCALE;
-    return Math.max(0.1, Math.round(score * 10) / 10);
+    return Math.abs(boundIdx - state.secretIdx) / 100;
+  }
+  function fmtScore(v){
+    return v < 10 ? v.toFixed(2) : (v < 100 ? v.toFixed(1) : String(Math.round(v)));
   }
 
   function renderBoundRow(containerId, bubbleId, boundWord, score, otherIsCloser, isTop){
@@ -877,7 +878,7 @@
       bubble.innerHTML = '<svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M7.6 10.4V7.6a4.4 4.4 0 0 1 8.8 0v2.8"/><rect x="4.4" y="10.2" width="15.2" height="11.4" rx="3.2" fill="var(--cheese)"/><path d="M12 14.4v2.9"/></g></svg>';
       bubble.className = 'bubble lock' + pos;
     } else if(isReal){
-      bubble.textContent = score.toFixed(1);
+      bubble.textContent = fmtScore(score);
       bubble.className = 'bubble' + pos + (otherIsCloser ? '' : ' closer');
     } else {
       bubble.textContent = '?';
@@ -914,8 +915,10 @@
     var dot = document.getElementById('connector-dot');
     lineTop.className = 'connector-line' + ((state.low || state.won) ? '' : ' ghost');
     lineBottom.className = 'connector-line' + ((state.high || state.won) ? '' : ' ghost');
-    dot.className = 'connector-dot' + (state.won ? ' ghost' : '');
-    if(state.won){
+    // antes do primeiro palpite, às cegas: nada revela onde está a palavra
+    var blind = !state.low && !state.high && !state.won;
+    dot.className = 'connector-dot' + (state.won ? ' ghost' : '') + (blind ? ' blind' : '');
+    if(state.won || blind){
       lineTop.style.flexGrow = 1;
       lineBottom.style.flexGrow = 1;
     } else {
