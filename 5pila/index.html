@@ -158,7 +158,7 @@ header{
 /* a largura máxima é calculada em JS (ajustarTabuleiro) para as 8 linhas caberem na altura livre */
 .board{display:flex;flex-direction:column;gap:6px;width:100%;max-width:460px;}
 /* linha: a palavra (5 letras largas) e, à direita, o placar numa cápsula estreita */
-.row{display:grid;grid-template-columns:repeat(5,1fr) 82px;gap:5px;}
+.row{display:grid;grid-template-columns:repeat(5,1fr) 86px;gap:5px;}
 .row .cnt{margin-left:5px;}
 .tile{
   aspect-ratio:var(--casa-ar,1/1);min-width:0;min-height:0;overflow:hidden;border-radius:11px;border:2px solid var(--line);
@@ -204,6 +204,7 @@ header{
 /* divisórias finas entre os números, como num odômetro */
 .cnt .count-cell + .count-cell{box-shadow:inset 1px 0 0 color-mix(in srgb,var(--line) 85%,transparent);margin:7px 0;}
 .cnt .count-cell:first-child,.cnt .count-cell:last-child{margin:7px 0;}
+.cnt .count-cell{padding:0 1px;}
 .cnt.empty .count-cell + .count-cell{box-shadow:none;}
 .count-cell.cy{color:var(--present);}
 .count-cell.cr{color:var(--danger);}
@@ -701,7 +702,7 @@ header{
   // Tabuleiro na largura toda da tela. Se a altura livre (entre o cabeçalho
   // e o teclado) não comportar 8 linhas de casas quadradas, as casas ficam
   // um pouco mais baixas que largas, para o teclado nunca sair da tela.
-  // Linha = 5 casas + 5 vãos de 5px (entre as 6 colunas) + coluna do placar (82px).
+  // Linha = 5 casas + 5 vãos de 5px (entre as 6 colunas) + coluna do placar (86px).
   function ajustarTabuleiro(){
     var wrap = document.querySelector('.board-wrap');
     if(!wrap) return;
@@ -710,7 +711,7 @@ header{
     boardEl.style.display = '';
     boardEl.style.maxWidth = '';
     var largura = boardEl.clientWidth;
-    var casaL = (largura - 5 * 5 - 82) / 5;
+    var casaL = (largura - 5 * 5 - 86) / 5;
     var casaA = (livre - (MAX_TRIES - 1) * 6) / MAX_TRIES;
     if(livre < 200 || casaL <= 0 || casaA >= casaL){ boardEl.style.removeProperty('--casa-ar'); return; }
     boardEl.style.setProperty('--casa-ar', casaL.toFixed(2) + ' / ' + Math.max(casaA, casaL * 0.55).toFixed(2));
