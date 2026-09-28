@@ -12,7 +12,7 @@
 //   "sinais" — poucas casas preenchidas, muitos sinais
 //   "casas"  — muitas casas preenchidas, poucos sinais
 //
-// Uso:  node pingado/gerador.mjs [dias] [semente]
+// Uso:  node cortado/gerador.mjs [dias] [semente]
 
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
