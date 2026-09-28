@@ -812,7 +812,8 @@ function render() {
     if (btn) btn.setAttribute("aria-checked", isDone);
 
     const a = li.querySelector("a");
-    if (state.newTab && !g.app) { a.target = "_blank"; a.rel = "noopener"; }
+    // "nova aba" vale só para os jogos externos: os da casa sempre abrem na aba atual
+    if (state.newTab && !g.app && !LOCAL_PROGRESS[g.id]) { a.target = "_blank"; a.rel = "noopener"; }
     else { a.removeAttribute("target"); a.removeAttribute("rel"); }
   }
 
