@@ -102,10 +102,10 @@
     --rail:#bca88f;
     --tag:#f6dfb8; --tag-ink:#221c14;
   }
-  html{scroll-padding-top:env(safe-area-inset-top,0px);touch-action:manipulation;}
+  html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);touch-action:manipulation;}
   *{box-sizing:border-box;}
   body{
-    margin:0;min-height:100%;background:var(--bg);color:var(--text);
+    margin:0;min-height:calc(100% + var(--sobra,0px));background:var(--bg);color:var(--text);
     font-family:"Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     display:flex;justify-content:center;
     background-image:radial-gradient(circle at 1px 1px, rgba(34,28,20,.06) 1px, transparent 0);
@@ -118,9 +118,11 @@
   /* página na altura da tela, com o teclado preso embaixo (mesmo padrão do Quinhentos):
      as fatias ficam centralizadas no espaço livre acima do painel de letras */
   #app{width:100%;max-width:460px;padding:14px clamp(12px,4vw,18px) max(4px, calc(env(safe-area-inset-bottom,0px) - 16px));
-    min-height:calc(100dvh - env(safe-area-inset-top,0px) + var(--sobra,0px));display:flex;flex-direction:column;gap:0;}
-  #hint{margin-top:auto;}
-  .letters-panel{margin-top:auto;}
+    display:flex;flex-direction:column;gap:0;}   /* estica na altura do body (flex) */
+  /* espaço livre dividido acima e abaixo das fatias (#app aumenta a especificidade:
+     as regras de #hint e #msg mais abaixo definem margin) */
+  #app #hint{margin-top:auto;}
+  #app #msg{margin-bottom:auto;}
 
   .top-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
   .top-bar .brand-row{flex:1;margin-bottom:0;}
@@ -305,7 +307,7 @@
     height:var(--kb-h);
     border-radius:var(--kb-r);border:var(--stroke) solid var(--ink);cursor:pointer;
     display:flex;align-items:center;justify-content:center;
-    font-weight:800;font-size:var(--kb-fs);text-transform:uppercase;
+    font-family:var(--kb-font);font-stretch:var(--kb-stretch);font-weight:var(--kb-weight);font-size:var(--kb-fs);text-transform:uppercase;
     background:var(--key);color:var(--key-text);
     padding:0;
     box-shadow:0 3px 0 var(--ink);

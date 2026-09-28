@@ -206,9 +206,12 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
   --kb-gap: 5px;         /* entre teclas */
   --kb-row-gap: 6px;     /* entre fileiras */
   --kb-r: 9px;           /* raio */
-  --kb-fs: 13px;         /* letra */
+  --kb-fs: 19px;         /* letra (Noto Sans extracondensada) */
+  --kb-font: "Noto Sans", system-ui, sans-serif;
+  --kb-stretch: 62.5%;   /* extracondensada */
+  --kb-weight: 400;      /* fina */
   --kb-max: 40px;        /* largura máxima da tecla de letra */
   --kb-enter: 1.7;       /* ENTER ocupa 1,7 tecla */
   --kb-enter-max: 72px;
-  --kb-enter-fs: 11px;
+  --kb-enter-fs: 15px;
 }

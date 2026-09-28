@@ -229,14 +229,14 @@ header{
 .krow{display:flex;gap:var(--kb-gap);justify-content:center;}
 .key{
   flex:1;max-width:var(--kb-max);height:var(--kb-h);border-radius:var(--kb-r);border:1px solid transparent;
-  background:var(--key-bg);color:var(--key-ink);font-family:var(--font-body);
-  font-weight:600;font-size:var(--kb-fs);display:flex;align-items:center;justify-content:center;
+  background:var(--key-bg);color:var(--key-ink);font-family:var(--kb-font);font-stretch:var(--kb-stretch);
+  font-weight:var(--kb-weight);font-size:var(--kb-fs);display:flex;align-items:center;justify-content:center;
   cursor:pointer;text-transform:uppercase;
   transition:transform .08s ease,background .12s ease;
 }
 .key:active{transform:translateY(1px);}
 .key.del{color:var(--ink-dim);}
-.key.enter{flex:var(--kb-enter);max-width:var(--kb-enter-max);background:var(--ink);color:var(--bg);font-size:var(--kb-enter-fs);letter-spacing:0.8px;font-weight:700;}
+.key.enter{flex:var(--kb-enter);max-width:var(--kb-enter-max);background:var(--ink);color:var(--bg);font-size:var(--kb-enter-fs);letter-spacing:0.8px;font-weight:var(--kb-weight);}
 .key.used{background:transparent;border-color:var(--line);color:var(--ink-dim);}
 .key.correct{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
 .key.present{background:var(--present);color:var(--present-ink);border-color:var(--present);}

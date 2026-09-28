@@ -98,7 +98,7 @@
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body, a, button { touch-action: manipulation; }
-  html { background: var(--bg); -webkit-text-size-adjust: 100%; }
+  html { height: 100%; background: var(--bg); -webkit-text-size-adjust: 100%; }
   body {
     margin: 0 auto; max-width: 520px;
     background: var(--bg); color: var(--ink);
@@ -106,7 +106,7 @@
     padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
     /* página na altura da tela, com os controles presos embaixo (mesmo padrão do
        teclado do Quinhentos) e o tabuleiro centralizado no espaço acima */
-    min-height: calc(100dvh + var(--sobra, 0px));
+    min-height: calc(100% + var(--sobra, 0px));
     display: flex; flex-direction: column;
     -webkit-font-smoothing: antialiased;
     -webkit-user-select: none; user-select: none;
