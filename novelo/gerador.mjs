@@ -13,6 +13,7 @@
 
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { mantidos, escolher } from "../comum/selecao.mjs";
 import { dirname, join } from "node:path";
 import { makeBoard, edgeOf, countSolutions, logicSolve, pathFromEdges } from "./motor.mjs";
 

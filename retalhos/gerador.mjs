@@ -17,6 +17,7 @@
 
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { mantidos, escolher } from "../comum/selecao.mjs";
 import { dirname, join } from "node:path";
 import { shapeOf, countSolutions, logicSolve } from "./motor.mjs";
 

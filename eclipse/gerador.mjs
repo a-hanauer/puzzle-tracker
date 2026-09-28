@@ -141,16 +141,15 @@ export function solve(reg, givens, limit = 2) {
 
 // ---------- 3b. resolvedor "humano": só deduções, sem chute ----------
 // Cada célula guarda candidatos: bit 1 = pode ser sol, bit 2 = pode ser lua.
-// Só técnicas que uma pessoa faz de olho, como no Queens (nada de simular o
-// tabuleiro até o fim para ver se dá errado — isso, para gente, é chute):
+// Só deduções diretas, que uma pessoa confere olhando o tabuleiro, sem nunca
+// supor uma peça para ver o que acontece (nem por um passo): a dificuldade vem
+// da quantidade de verificações, nunca de tentativa e erro.
 //   nível 1: vizinhas de uma peça ficam vazias; a unidade (linha, coluna, região)
 //            que já tem um sol não tem outro; se só sobra um lugar para o sol
 //            numa unidade, ele vai ali; e confinamento de 1 (os sóis de uma
 //            região só cabem numa linha → nenhum outro sol nessa linha).
 //   nível 2: confinamento com 2 unidades (os sóis de 2 regiões só cabem em
-//            2 linhas → nenhum outro sol nessas linhas); e o teste curto: pôr
-//            uma peça numa casa e, só com o que ela elimina na hora (vizinhas,
-//            linha, coluna e região), ver que alguma unidade fica sem lugar.
+//            2 linhas → nenhum outro sol nessas linhas).
 //   nível 3: confinamento com 3 unidades.
 export function logicSolve(reg, givens, maxLevel = 3) {
   const C = N * N;
@@ -191,7 +190,7 @@ export function logicSolve(reg, givens, maxLevel = 3) {
 
   for (const [i, v] of givens) if (!place(cand, val, i, v)) return null;
   let level = 1;
-  const uses = { c1: 0, c2: 0, c3: 0, probe: 0 }, elim = { c1: 0, c2: 0, c3: 0, probe: 0 };
+  const uses = { c1: 0, c2: 0, c3: 0, probe: 0 }, elim = { c1: 0, c2: 0, c3: 0, probe: 0 };   // probe fica sempre 0 (não há mais teste)
   const combos = k => { const out = [], rec = (s, a) => { if (a.length === k) { out.push([...a]); return; } for (let i = s; i < N; i++) { a.push(i); rec(i + 1, a); a.pop(); } }; rec(0, []); return out; };
   const C1 = combos(1), C2 = combos(2), C3 = combos(3);
 
@@ -213,27 +212,12 @@ export function logicSolve(reg, givens, maxLevel = 3) {
     }
     return any;
   }
-  // teste curto: só as eliminações imediatas da peça (sem seguir a cadeia de consequências)
-  function probe() {
-    let any = 0;
-    for (let i = 0; i < C; i++) if (!val[i]) for (const x of [1, 2]) if (cand[i] & x) {
-      const cd = [...cand], vl = [...val];
-      let bad = !place(cd, vl, i, x);
-      for (const u of units) { if (bad) break; for (const y of [1, 2]) if (!u.some(j => vl[j] === y || (cd[j] & y))) { bad = true; break; } }
-      if (bad) { cand[i] &= ~x; any++; }
-    }
-    return any;
-  }
-
   for (let guard = 0; guard < 500; guard++) {
     if (!basic(cand, val)) return null;
     // esforço: rodadas de cada técnica (peso maior) + eliminações feitas por elas (dá uma escala mais fina)
     if (done()) return { level, uses, score: 3 * uses.c1 + 10 * uses.c2 + 8 * uses.probe + 25 * uses.c3 + elim.c1 + elim.c2 + elim.probe + 2 * elim.c3 };
     { const e = confinement(1); if (e) { uses.c1++; elim.c1 += e; continue; } }
-    if (maxLevel >= 2) {
-      { const e = confinement(2); if (e) { level = Math.max(level, 2); uses.c2++; elim.c2 += e; continue; } }
-      { const e = probe(); if (e) { level = Math.max(level, 2); uses.probe++; elim.probe += e; continue; } }
-    }
+    if (maxLevel >= 2) { const e = confinement(2); if (e) { level = Math.max(level, 2); uses.c2++; elim.c2 += e; continue; } }
     if (maxLevel >= 3) { const e = confinement(3); if (e) { level = 3; uses.c3++; elim.c3 += e; continue; } }
     return { stuck: true, cand, val };
   }
@@ -299,7 +283,7 @@ const WEEK = [                                 // segunda … domingo
   { n: 9, maxLevel: 2, min: 2, band: [0.5, 1] },
   { n: 9, maxLevel: 3, min: 2, band: [0.5, 1] },
   { n: 10, maxLevel: 3, min: 2, band: [0.4, 0.9] },
-  { n: 10, maxLevel: 3, min: 3, band: [0.6, 1] },
+  { n: 10, maxLevel: 3, min: 2, band: [0.75, 1] },       // domingo: o quarto mais trabalhoso (inclui os de confinamento de 3)
 ];
 const levelOfDay = date => (date.getDay() + 6) % 7;   // segunda → 0 … domingo → 6
 const FREE_PER_LEVEL = 200;                            // jogo livre: desafios por nível
@@ -310,7 +294,8 @@ const FREE_PER_LEVEL = 200;                            // jogo livre: desafios p
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const DAYS = COUNT, t0 = Date.now();
   const dir = dirname(fileURLToPath(import.meta.url));
-  const old = mantidos(dir, EPOCH).map(p => ({ n: 9, ...p }));
+  // o de hoje (#2, 28/09) também é refeito: saiu com a regra antiga, que às vezes exigia tentativa e erro
+  const old = mantidos(dir, EPOCH, process.argv.includes("--refaz-hoje")).map(p => ({ n: 9, ...p }));
   const need = new Array(7).fill(0);
   for (let k = old.length; k < DAYS; k++) need[levelOfDay(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
   const bins = [], free = [];

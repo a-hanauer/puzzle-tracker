@@ -11,12 +11,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// desafios já publicados: do #1 até o de hoje (pelo relógio de quem gera)
-export function mantidos(dir, epoch) {
+// desafios já publicados: do #1 até o de hoje (pelo relógio de quem gera);
+// com ateOntem, o de hoje também é trocado (quando o de hoje precisa ser refeito)
+export function mantidos(dir, epoch, ateOntem = false) {
   let old = [];
   try { old = JSON.parse(readFileSync(join(dir, "desafios.json"), "utf8")).puzzles; } catch { return []; }
   const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
-  const k = Math.round((hoje - new Date(epoch[0], epoch[1], epoch[2])) / 86400000) + 1;
+  const k = Math.round((hoje - new Date(epoch[0], epoch[1], epoch[2])) / 86400000) + (ateOntem ? 0 : 1);
   return old.slice(0, Math.max(0, Math.min(k, old.length)));
 }
 
