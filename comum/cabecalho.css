@@ -59,7 +59,7 @@ header.gh {
   margin: 2px 2px 12px; min-height: 24px;
   font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   /* dia · nível · Jogo livre: Noto Sans extracondensada e fina, como os títulos */
-  font-size: 1.02rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .02em; color: var(--gh-muted);
+  font-size: .98rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--gh-muted);
 }
 .gh-meta .gh-info { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gh-free {

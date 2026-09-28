@@ -185,18 +185,20 @@
 
 
   .timeline-title{font-size:.9rem;font-stretch:62.5%;font-weight:500;letter-spacing:.1em;color:var(--text-dim);
-    text-align:left;text-transform:uppercase;margin-bottom:8px;opacity:.9;}
-  .timeline-row{display:flex;align-items:center;gap:14px;}
-  .tries-count{font-size:1.05rem;font-weight:800;color:var(--accent);line-height:1;
-    font-variant-numeric:tabular-nums;flex:none;white-space:nowrap;}
+    text-align:left;text-transform:uppercase;margin-bottom:8px;opacity:.9;
+    display:flex;justify-content:space-between;align-items:baseline;}
+  .timeline-row{display:flex;align-items:center;}
+  /* contagem no mesmo estilo do título, alinhada à direita */
+  .tries-count{color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap;}
 
-  .dots-row{display:flex;align-items:center;position:relative;padding:0 2px;flex:1;min-width:0;height:22px;}
+  .dots-row{display:flex;align-items:center;justify-content:space-between;position:relative;padding:0;flex:1;min-width:0;height:22px;}
   .dots-row::before{
     content:'';position:absolute;left:6px;right:6px;top:50%;height:2px;margin-top:-1px;
     background:var(--text-dim);border-radius:2px;opacity:.5;
   }
+  /* bolinhas distribuídas de ponta a ponta do bloco */
   .dot-pip{
-    position:relative;flex:1;display:flex;align-items:center;justify-content:center;height:100%;z-index:1;
+    position:relative;flex:none;width:13px;display:flex;align-items:center;justify-content:center;height:100%;z-index:1;
   }
   .dot-pip::after{
     content:'';width:9px;height:9px;border-radius:50%;
@@ -290,8 +292,9 @@
   .letters-panel-title{font-size:.9rem;font-stretch:62.5%;font-weight:500;letter-spacing:.1em;color:var(--text-dim);
     text-align:left;text-transform:uppercase;margin-bottom:8px;opacity:.9;}
   .letters-panel-row{display:flex;flex-wrap:nowrap;gap:0;}
-  .lp-letter{flex:1 1 0;min-width:0;text-align:center;color:var(--text);font-weight:700;
-    text-transform:uppercase;font-size:clamp(.5rem,3vw,.78rem);}
+  /* letras possíveis: Noto extracondensada, maior e mais legível no mesmo espaço */
+  .lp-letter{flex:1 1 0;min-width:0;text-align:center;color:var(--text);font-weight:600;font-stretch:62.5%;
+    text-transform:uppercase;font-size:clamp(.8rem,4.4vw,1.1rem);line-height:1.2;}
   .lp-letter.excluded{color:var(--text-dim);font-weight:400;text-decoration:line-through;opacity:.45;}
 
   /* ---- teclado QWERTY em tela (substitui o teclado nativo) ---- */
@@ -473,9 +476,8 @@
   <div id="msg"></div>
 
   <div class="timeline-block">
-    <div class="timeline-title">TENTATIVAS</div>
+    <div class="timeline-title"><span>TENTATIVAS</span><span class="tries-count"><span id="tries-label">1</span>/14</span></div>
     <div class="timeline-row">
-      <span class="tries-count"><span id="tries-label">1</span>/14</span>
       <div class="dots-row" id="dots-row"></div>
     </div>
   </div>
