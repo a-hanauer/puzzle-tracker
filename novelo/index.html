@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Novelo">
 <title>NOVELO — um fio por todas as casas</title>
 <link rel="icon" type="image/png" href="icon.png">
-<script src="../comum/tema.js?v=72"></script>
-<script src="../comum/cabecalho.js?v=72"></script>
+<script src="../comum/tema.js?v=73"></script>
+<script src="../comum/cabecalho.js?v=73"></script>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -217,7 +217,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=72">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=73">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -296,9 +296,8 @@
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="fim-art"><img src="icon.png?v=2" data-escuro="icon-escuro.png?v=1" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,30,20,.15)"></div>
     <h2 class="fim-title" id="endTitle">Novelo completo!</h2>
-    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div></div>
+    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="endSub"></p>
-    <button class="fim-btn" id="shareBtn">Compartilhar</button>
     <button class="fim-btn" id="againBtn" hidden>Jogar outro</button>
     <div class="fim-count" id="nextBox">Próximo Novelo em <b id="countdown" data-contagem>--:--:--</b></div>
     <div data-proximo hidden></div>
@@ -703,10 +702,7 @@
 
   $("shareBtn").addEventListener("click", () => {
     const text = `NOVELO #${dayNum} · nível ${P.l}/7\n🧶 ${fmt(elapsed)}\nhttps://a-hanauer.github.io/puzzle-tracker/novelo/`;
-    const done = () => { $("shareBtn").textContent = "Copiado!"; setTimeout(() => $("shareBtn").textContent = "Compartilhar", 1500); };
-    if (navigator.share) navigator.share({ text }).catch(() => {});
-    else if (navigator.clipboard) navigator.clipboard.writeText(text).then(done).catch(() => prompt("Copie o resultado:", text));
-    else prompt("Copie o resultado:", text);
+    ghCompartilhar($("shareBtn"), text);
   });
   $("againBtn").addEventListener("click", () => newFree());
   $("doneBar").addEventListener("click", () => { if (finished) (kind === "dia" ? showEnd() : newFree()); });
@@ -738,7 +734,7 @@
   demo("demoB", [0, 3, 6, 7, 4, 1, 2, 5, 8], [[0, 1], [8, 2]], "M115 27L115 203");
 })();
 </script>
-<script src="../comum/catalogo.js?v=72"></script>
-<script src="../comum/proximo.js?v=72" data-jogo="novelo"></script>
+<script src="../comum/catalogo.js?v=73"></script>
+<script src="../comum/proximo.js?v=73" data-jogo="novelo"></script>
 </body>
 </html>

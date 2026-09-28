@@ -55,3 +55,12 @@ window.ghNivel = function (el, { niveis, atual, aoMudar, aoSortear }) {
   }
   fechar();
 };
+
+// Compartilhar (ícone .fim-share na janela de fim): usa a folha do sistema quando
+// existe; senão copia o texto e o ícone vira um ✓ por um instante.
+window.ghCompartilhar = function (btn, text) {
+  if (navigator.share) { navigator.share({ text }).catch(() => {}); return; }
+  const ok = () => { btn.classList.add("copiado"); setTimeout(() => btn.classList.remove("copiado"), 1500); };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(ok).catch(() => prompt("Copie o resultado:", text));
+  else prompt("Copie o resultado:", text);
+};

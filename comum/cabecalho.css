@@ -248,3 +248,23 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
   --kb-enter-max: 72px;
   --kb-enter-fs: 15px;
 }
+
+/* Compartilhar: um ícone discreto ao lado do resultado do dia (no lugar do botão grande).
+   O resultado continua centralizado: um espaço invisível do mesmo tamanho fica do outro lado.
+   Ao copiar (sem a folha de compartilhar do sistema), o ícone vira um ✓ por um instante. */
+.fim-result { align-items: center; gap: 12px; }
+.fim-result::before { content: ""; flex: 0 1 40px; min-width: 0; }
+.fim-result:not(:has(> .fim-share:not([hidden])))::before { display: none; }
+.fim-share {
+  flex: none; width: 40px; height: 40px; padding: 0; margin: 0; border: 0; border-radius: 50%; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(127, 127, 127, .13); color: var(--gh-muted);
+  transition: background .2s, color .2s;
+}
+.fim-share:active { transform: scale(.92); }
+.fim-share[hidden] { display: none !important; }
+.fim-share svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.fim-share .ok { display: none; }
+.fim-share.copiado { color: var(--gh-accent); }
+.fim-share.copiado .sh { display: none; }
+.fim-share.copiado .ok { display: block; }

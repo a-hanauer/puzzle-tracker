@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Quinhentos">
-<script src="../comum/tema.js?v=72"></script>
+<script src="../comum/tema.js?v=73"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -350,12 +350,12 @@ header{
 #btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=72">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=73">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--accent-ink); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
   /* resultado na bandeja: a palavra do dia nas fichas do jogo */
-  .fim-word { gap: 6px; }
+  .fim-word { display: flex; gap: 6px; }
   .fim-word .tile { width: 46px; height: 46px; font-size: 22px; border-radius: 10px; }
   .fim-art img { border-radius: 20px; }
   /* família Noto em todo o jogo, inclusive no cabeçalho e nas janelas comuns */
@@ -475,9 +475,8 @@ header{
     <div class="fim-top"><button class="fim-close" data-close="overlay-end" aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="fim-art"><img src="icon.png?v=2" alt=""></div>
     <h2 class="fim-title" id="end-title">Quinhentos completo!</h2>
-    <div class="fim-result fim-word" id="end-word"></div>
+    <div class="fim-result"><div class="fim-word" id="end-word"></div><button class="fim-share" id="btn-share2" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="end-sub"></p>
-    <button class="fim-btn" id="btn-share2">Compartilhar</button>
     <button class="fim-btn" id="btn-again" hidden>Jogar outro</button>
     <div class="fim-count" id="e-countdown">Próximo Quinhentos em <b data-contagem>--:--:--</b></div>
     <div data-proximo hidden></div>
@@ -1229,7 +1228,7 @@ header{
     openModal('overlay-stats');
   });
   document.getElementById('btn-share').addEventListener('click', doShare);
-  document.getElementById('btn-share2').addEventListener('click', doShare);
+  document.getElementById('btn-share2').addEventListener('click', function(){ ghCompartilhar(this, shareText()); });
   onTap(document.getElementById('btn-settings'), function(){ openModal('overlay-settings'); });
   document.getElementById('btn-help').addEventListener('click', function(){ closeModal('overlay-settings'); openModal('overlay-help'); });
   document.getElementById('btn-help-top').addEventListener('click', function(){ openModal('overlay-help'); });
@@ -1307,13 +1306,13 @@ header{
 
 })();
 </script>
-<script src="../comum/cabecalho.js?v=72"></script>
+<script src="../comum/cabecalho.js?v=73"></script>
 <script>
   ghInfo(document.getElementById("ghInfo"), () => document.getElementById("mode-switch").classList.contains("on"),
     fn => { new MutationObserver(fn).observe(document.getElementById("mode-switch"), { attributes: true, attributeFilter: ["class"] }); window.addEventListener("quinhentos-livre", fn); },
     window.quinhentosLivre);
 </script>
-<script src="../comum/catalogo.js?v=72"></script>
-<script src="../comum/proximo.js?v=72" data-jogo="quinhentos"></script>
+<script src="../comum/catalogo.js?v=73"></script>
+<script src="../comum/proximo.js?v=73" data-jogo="quinhentos"></script>
 </body>
 </html>
