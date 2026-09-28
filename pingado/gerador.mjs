@@ -63,11 +63,13 @@ export const WEEK = [
   { n: 6, maxLevel: 1, extra: 3, styles: ["misto", "casas"] },                     // segunda (nível 1)
   { n: 6, maxLevel: 2, extra: 0, styles: ["misto", "sinais", "casas"] },           // terça (nível 2)
   { n: 6, maxLevel: 2, extra: 0, lean: 1, styles: ["misto", "sinais"] },           // quarta (nível 3)
-  { n: 6, maxLevel: 3, extra: 0, lean: 2, styles: ["misto", "sinais"] },           // quinta (nível 4)
-  { n: 8, maxLevel: 3, extra: 0, styles: ["misto", "sinais"] },                    // sexta (nível 5)
-  { n: 8, maxLevel: 3, extra: 0, lean: 1, styles: ["misto", "sinais"] },           // sábado (nível 6)
-  { n: 8, maxLevel: 3, extra: 0, lean: 2, styles: ["sinais", "misto"] },           // domingo (nível 7)
+  { n: 6, maxLevel: 2, extra: 0, lean: 2, styles: ["misto", "sinais"] },           // quinta (nível 4)
+  { n: 8, maxLevel: 2, extra: 0, styles: ["misto", "sinais"] },                    // sexta (nível 5)
+  { n: 8, maxLevel: 2, extra: 0, lean: 1, styles: ["misto", "sinais"] },           // sábado (nível 6)
+  { n: 8, maxLevel: 2, extra: 0, lean: 2, styles: ["sinais", "misto"] },           // domingo (nível 7)
 ];
+// Nenhum dia passa do nível 2 do resolvedor: o nível 3 (testar um valor e seguir a
+// propagação até ver contradição) é chute para uma pessoa.
 // 6×6 nos níveis 1 a 4 e 8×8 nos níveis 5 a 7 (10×10 ficava cansativo).
 // Dentro de cada tamanho, a dificuldade vem de outro jeito: "lean" deixa o
 // gerador tirar mais pistas (quase nenhuma casa preenchida, menos sinais), e

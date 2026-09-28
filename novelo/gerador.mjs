@@ -57,10 +57,13 @@ export const WEEK = [
   { n: 6, maxLevel: 1, styles: ["fio", "fio", "paredes"], extra: 2 },           // segunda
   { n: 6, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // terça
   { n: 7, maxLevel: 2, styles: ["fio", "paredes", "paredes"], extra: 1 },       // quarta
-  { n: 7, maxLevel: 3, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // quinta
-  { n: 8, maxLevel: 3, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // sexta
-  { n: 8, maxLevel: 3, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // sábado
-  { n: 9, maxLevel: 3, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // domingo
+  // da quinta em diante, no máximo o nível 2: o nível 3 (testar uma ligação e seguir
+  // a propagação até ver contradição) é chute para uma pessoa. A dificuldade vem de
+  // tabuleiros maiores, menos números e deduções mais longas.
+  { n: 7, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // quinta
+  { n: 8, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // sexta
+  { n: 8, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // sábado
+  { n: 9, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // domingo
 ];
 
 function wallsFor(style, N, pathEdges, B0) {

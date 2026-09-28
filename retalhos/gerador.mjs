@@ -93,10 +93,13 @@ export const WEEK = [
   { n: 6, maxLevel: 1, hide: [0, 0.15], styles: ["colcha", "grandes"] },                 // segunda
   { n: 6, maxLevel: 2, hide: [0.3, 0.5], styles: ["colcha", "numeros", "miudos"] },      // terça
   { n: 7, maxLevel: 2, hide: [0.4, 0.6], styles: ["colcha", "formas", "numeros", "grandes"] }, // quarta
-  { n: 7, maxLevel: 3, hide: [0.5, 0.8], styles: ["colcha", "formas", "miudos"] },       // quinta
-  { n: 8, maxLevel: 3, hide: [0.5, 0.8], styles: ["colcha", "formas", "grandes"] },      // sexta
-  { n: 8, maxLevel: 3, hide: [0.7, 1], styles: ["colcha", "formas", "miudos"] },         // sábado
-  { n: 9, maxLevel: 3, hide: [0.8, 1], styles: ["colcha", "formas", "grandes"] },        // domingo
+  // da quinta em diante, no máximo o nível 2: o nível 3 (testar uma opção e seguir a
+  // propagação até ver contradição) é chute para uma pessoa. A dificuldade vem de
+  // tabuleiros maiores, etiquetas com menos informação e deduções mais longas.
+  { n: 7, maxLevel: 2, hide: [0.5, 0.8], styles: ["colcha", "formas", "miudos"] },       // quinta
+  { n: 8, maxLevel: 2, hide: [0.5, 0.8], styles: ["colcha", "formas", "grandes"] },      // sexta
+  { n: 8, maxLevel: 2, hide: [0.7, 1], styles: ["colcha", "formas", "miudos"] },         // sábado
+  { n: 9, maxLevel: 2, hide: [0.8, 1], styles: ["colcha", "formas", "grandes"] },        // domingo
 ];
 
 export function makePuzzle(cfg, style) {
