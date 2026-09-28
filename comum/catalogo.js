@@ -20,7 +20,7 @@ const BASE_GAMES = [
   { id: "termo",      name: "Termo",      emoji: "🟩", desc: "Wordle em português",           url: "https://term.ooo/" },
   { id: "spotle",     name: "Spotle",     emoji: "🎵", desc: "Adivinhe o artista",            url: "https://spotle.io/" },
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
-  { id: "sanduba",    name: "Misto",      emoji: "🥪", desc: "Betweenle em português",        url: "misto/", icon: "misto/icon-claro.png?v=10", iconDark: "misto/icon-escuro.png?v=10", iconFull: true },
+  { id: "sanduba",    name: "Misto",      emoji: "🥪", desc: "Betweenle em português",        url: "misto/", icon: "misto/icon-claro.png?v=11", iconDark: "misto/icon-escuro.png?v=11", iconFull: true },
   { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/" },
   { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon-claro.png?v=10", iconDark: "quinhentos/icon-escuro.png?v=10", iconFull: true },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
