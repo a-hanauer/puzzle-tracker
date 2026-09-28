@@ -81,7 +81,12 @@
   /* títulos em Noto Sans extracondensada e fina (mesmo estilo do teclado dos jogos) */
   .app-mark { display: inline-flex; align-items: center; gap: 8px; font-size: .98rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
   .app-mark img { width: 24px; height: 24px; border-radius: 7px; }
-  .greet { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+  /* progresso do dia: barra segmentada + contador (mesmo estilo dos contadores das seções) */
+  .prog { display: flex; align-items: center; gap: 12px; margin: 18px 4px 0; }
+  .prog-bar { flex: 1; display: grid; grid-template-columns: repeat(var(--t, 1), 1fr); gap: 3px; height: 8px; }
+  .prog-bar i { border-radius: 3px; background: var(--surface-2); transition: background .25s; }
+  .prog-bar i.on { background: var(--green); }
+  .prog-n { font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .02em; color: var(--muted); font-variant-numeric: tabular-nums; }
   .greet-text { min-width: 0; flex: 1; }
   h1 { font-size: 1.85rem; font-weight: 800; margin: 0; letter-spacing: -.03em; line-height: 1.1; }
   #summary { margin: 6px 0 0; color: var(--muted); font-size: .92rem; line-height: 1.35; }
@@ -324,7 +329,10 @@
 
   /* ---------- Histórico (aberto pelo botão do cabeçalho) ---------- */
   /* página de estatísticas: ocupa a tela toda, com voltar e título próprios */
-  body.pagina-stats header.top { display: none; }
+  body.pagina header.top { display: none; }
+  .set-page { margin-top: 14px; }
+  .seg3 { grid-template-columns: 1fr 1fr 1fr; }
+  .seg3 button { font-size: .84rem; gap: 5px; }
   .page-head { display: flex; align-items: center; gap: 6px; padding: 0 2px; min-height: 36px; }
   .page-head h1 { margin: 0; font-size: 1.35rem; font-weight: 800; letter-spacing: -.01em; }
   .page-back { width: 36px; height: 36px; margin-left: -8px; border: none; border-radius: 50%; background: none; color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; opacity: .8; }
@@ -420,28 +428,43 @@
     <div class="app-mark"><img src="icon-192.png?v=6" alt=""><span>Jogos do Dia</span></div>
   <div class="head-actions">
     <button class="round" id="histBtn" aria-label="Estatísticas"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V13M10 20V6M15 20v-9M20 20V9"/></svg></button>
-    <button class="round" id="themeBtn" aria-label="Tema"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
     <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
   </div>
   </div>
-  <div class="greet">
-    <div class="greet-text">
-      <h1 id="greet">Olá!</h1>
-      <p id="summary"></p>
-    </div>
-    <div class="ring" aria-hidden="true">
-      <svg viewBox="0 0 80 80">
-        <circle class="track" cx="40" cy="40" r="34"/>
-        <circle class="arc" id="arc" cx="40" cy="40" r="34"/>
-      </svg>
-      <div class="num" id="count"></div>
-    </div>
+  <!-- progresso do dia: um trecho por jogo, contador no padrão das seções -->
+  <div class="prog">
+    <div class="prog-bar" id="progBar" aria-hidden="true"></div>
+    <span class="prog-n" id="count"></span>
   </div>
 </header>
 
+<section id="viewSettings" hidden>
+  <header class="page-head">
+    <button class="page-back" data-voltar aria-label="Voltar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h1>Configurações</h1>
+  </header>
+  <div class="set-page">
+    <div class="set-label">Tema</div>
+    <div class="seg2 seg3" id="themeSeg" role="radiogroup" aria-label="Tema">
+      <button data-theme="auto" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>Automático</button>
+      <button data-theme="light" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>Claro</button>
+      <button data-theme="dark" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="currentColor"/></svg>Escuro</button>
+    </div>
+    <div class="set-label">Abrir jogos externos</div>
+    <div class="seg2" role="radiogroup" aria-label="Abrir jogos externos">
+      <button data-tab="same" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Mesma aba</button>
+      <button data-tab="new" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Nova aba</button>
+    </div>
+    <button class="set-btn" id="badgeBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg><span>Mostrar pendentes no ícone do app</span></button>
+    <button class="set-btn" id="manageBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Gerenciar jogos</span></button>
+    <button class="set-btn danger" id="reset"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Desmarcar jogos externos de hoje</span></button>
+    <div class="set-note">Sanduba, Quinhentos e Eclipse seguem o que você jogou e não são desmarcados.</div>
+  </div>
+</section>
+
 <section id="viewHistory" hidden>
   <header class="page-head">
-    <button class="page-back" id="histBack" aria-label="Voltar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="page-back" data-voltar aria-label="Voltar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
     <h1>Estatísticas</h1>
   </header>
 
@@ -477,20 +500,6 @@
 </div>
 
 <!-- Configurações (engrenagem no topo) -->
-<div class="sheet-bg" id="settings" hidden>
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
-    <div class="sheet-head"><b id="setTitle">Configurações</b><button class="round" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="set-label">Abrir jogos externos</div>
-    <div class="seg2" role="radiogroup" aria-label="Abrir jogos externos">
-      <button data-tab="same" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Mesma aba</button>
-      <button data-tab="new" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Nova aba</button>
-    </div>
-    <button class="set-btn" id="badgeBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg><span>Mostrar pendentes no ícone do app</span></button>
-    <button class="set-btn" id="manageBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Gerenciar jogos</span></button>
-    <button class="set-btn danger" id="reset"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Desmarcar jogos externos de hoje</span></button>
-    <div class="set-note">Sanduba, Quinhentos e Eclipse seguem o que você jogou e não são desmarcados.</div>
-  </div>
-</div>
 <!-- Gerenciar jogos: adicionar pelo link, ocultar os que vêm no painel, excluir os adicionados -->
 <div class="sheet-bg" id="manage" hidden>
   <div class="sheet tall" role="dialog" aria-modal="true" aria-labelledby="manTitle">
@@ -692,9 +701,7 @@ function buildRow(g, li) {
 
 /* ---------- Render ---------- */
 const $ = id => document.getElementById(id);
-const CIRC = 2 * Math.PI * 34;
 const MINI_CIRC = 2 * Math.PI * 14;
-$("arc").style.strokeDasharray = CIRC;
 
 // ícones pequenos do marcador (cronômetro, vitória, derrota)
 const ST_ICON = {
@@ -757,18 +764,15 @@ function render() {
   $("catNativeN").textContent = `${dNat}/${nNat}`;
   $("catExternalN").textContent = `${dExt}/${nExt}`;
   const n = GAMES.filter(g => done.has(g.id)).length, total = GAMES.length;
-  $("count").innerHTML = `${n}<small>/${total}</small>`;
-  $("arc").style.strokeDashoffset = CIRC * (1 - n / total);
+  $("count").textContent = `${n}/${total}`;
+  const pb = $("progBar");
+  pb.style.setProperty("--t", total);
+  if (pb.children.length !== total) pb.innerHTML = "<i></i>".repeat(total);
+  [...pb.children].forEach((seg, i) => seg.classList.toggle("on", i < n));
 
   $("allDone").classList.toggle("show", n === total);
 
-  const s = streak(), left = total - n;
-  const fire = s > 0 ? ` · <span class="fl"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>${s} dia${s > 1 ? "s" : ""} seguido${s > 1 ? "s" : ""}</span>` : "";
-  $("summary").innerHTML = left === 0
-    ? `<b>Tudo feito por hoje</b>${fire}`
-    : `Falta${left > 1 ? "m" : ""} <b>${left} jogo${left > 1 ? "s" : ""}</b> hoje${fire}`;
-
-  document.querySelectorAll(".seg2 button").forEach(b => b.setAttribute("aria-checked", (b.dataset.tab === "new") === state.newTab));
+  document.querySelectorAll(".seg2 button[data-tab]").forEach(b => b.setAttribute("aria-checked", (b.dataset.tab === "new") === state.newTab));
 
   if (location.hash === "#historico" && typeof renderHistory === "function") renderHistory();
   updateBadge(total - n);
@@ -824,7 +828,7 @@ if ("serviceWorker" in navigator) {
 // saudação conforme a hora do dia
 function renderDate() {
   const hr = new Date().getHours();
-  $("greet").textContent = hr >= 5 && hr < 12 ? "Bom dia!" : hr >= 12 && hr < 18 ? "Boa tarde!" : "Boa noite!";
+  // (a saudação saiu do topo; a função segue sendo chamada ao virar o dia)
 }
 
 // tema geral: um botão alterna Automático → Claro → Escuro (vale também para os jogos nativos)
@@ -838,22 +842,17 @@ function toast(html) {
 }
 function renderTheme() {
   const t = window.jogosTema ? jogosTema.get() : "auto";
-  $("themeBtn").innerHTML = THEME_ICON[t];
-  $("themeBtn").setAttribute("aria-label", `Tema: ${THEME_NAME[t]}. Toque para trocar.`);
+  document.querySelectorAll("#themeSeg button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.theme === t)));
 }
-$("themeBtn").addEventListener("click", () => {
-  const t = THEME_NEXT[jogosTema.get()] || "auto";
-  jogosTema.set(t); renderTheme();
-  toast(`${THEME_ICON[t]}Tema: ${THEME_NAME[t]}`);
-});
+document.querySelectorAll("#themeSeg button").forEach(b => b.addEventListener("click", () => {
+  jogosTema.set(b.dataset.theme); renderTheme();
+}));
 renderTheme();
 
 // configurações: abrir jogos externos, pendentes no ícone e desmarcar
-function openSettings() { $("settings").hidden = false; resetArm(false); }
-function closeSettings() { $("settings").hidden = true; }
-$("settingsBtn").addEventListener("click", openSettings);
-$("settings").addEventListener("click", e => { if (e.target === $("settings") || e.target.closest("[data-close]")) closeSettings(); });
-document.querySelectorAll(".seg2 button").forEach(b => b.addEventListener("click", () => {
+// a página de configurações abre pelo botão do cabeçalho (ver "Páginas" no fim)
+function closeSettings() {}
+document.querySelectorAll(".seg2 button[data-tab]").forEach(b => b.addEventListener("click", () => {
   state.newTab = b.dataset.tab === "new"; save(); render();
 }));
 // ---------- gerenciar jogos ----------
@@ -1172,23 +1171,26 @@ document.querySelectorAll("#perSeg button").forEach(b => b.addEventListener("cli
   histPeriod = +b.dataset.p; renderHistory();
 }));
 
-/* ---------- Estatísticas: página própria (#estatisticas), com voltar ---------- */
-const ehStats = () => location.hash === "#estatisticas" || location.hash === "#historico";
+/* ---------- Páginas: Estatísticas (#estatisticas) e Configurações (#configuracoes) ----------
+   Ocupam a tela toda, com título e voltar; o voltar do sistema também funciona. */
+const PAGINAS = { "#estatisticas": "viewHistory", "#historico": "viewHistory", "#configuracoes": "viewSettings" };
 function route() {
-  const st = ehStats();
-  $("viewHistory").hidden = !st;
-  $("viewToday").hidden = st;
-  document.body.classList.toggle("pagina-stats", st);
-  if (st) { renderHistory(); window.scrollTo(0, 0); }
+  const alvo = PAGINAS[location.hash] || null;
+  $("viewHistory").hidden = alvo !== "viewHistory";
+  $("viewSettings").hidden = alvo !== "viewSettings";
+  $("viewToday").hidden = !!alvo;
+  document.body.classList.toggle("pagina", !!alvo);
+  if (alvo === "viewHistory") renderHistory();
+  if (alvo === "viewSettings") { resetArm(false); renderTheme(); }
+  if (alvo) window.scrollTo(0, 0);
 }
-$("histBtn").addEventListener("click", () => {
-  history.pushState({ stats: true }, "", "#estatisticas");          // o voltar do sistema também funciona
-  route();
-});
-$("histBack").addEventListener("click", () => {
-  if (history.state && history.state.stats) history.back();
+const abrirPagina = hash => { history.pushState({ pagina: true }, "", hash); route(); };
+$("histBtn").addEventListener("click", () => abrirPagina("#estatisticas"));
+$("settingsBtn").addEventListener("click", () => abrirPagina("#configuracoes"));
+document.querySelectorAll("[data-voltar]").forEach(b => b.addEventListener("click", () => {
+  if (history.state && history.state.pagina) history.back();
   else { history.replaceState(null, "", location.pathname); route(); }
-});
+}));
 window.addEventListener("popstate", route);
 window.addEventListener("hashchange", route);
 

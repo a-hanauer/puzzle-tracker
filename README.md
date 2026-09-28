@@ -34,14 +34,14 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 
 ## Como funciona
 
-- O **topo** mostra uma saudação conforme a hora (bom dia, boa tarde, boa noite), quantos jogos faltam hoje, a **sequência** de dias seguidos com tudo feito e um anel pequeno com o progresso do dia.
+- O **topo** mostra o nome do painel, os botões de **estatísticas** e **configurações** e, logo abaixo, a **barra de progresso do dia**: um trecho por jogo, que fica verde conforme os jogos são feitos, com o contador ("3/9") à direita, no mesmo estilo dos contadores das seções. A sequência de dias fica na página de estatísticas.
 - **Jogos da casa** (Sanduba, Quinhentos e Eclipse) aparecem numa grade de ícones; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um check. A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
 - **Status de cada jogo:**
   - **Outros jogos:** o check à direita marca ou desmarca; abrir o jogo pelo painel já marca como feito.
-  - **Jogos da casa:** um anel no canto enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado ("Acertou 5/8", ou o tempo no Eclipse).
+  - **Jogos da casa:** um anel no canto enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado (✓ 5/8, ✕ 8/8, ou o tempo com cronômetro no Eclipse).
 - Jogos feitos ficam com fundo verde claro.
 - A lista **zera sozinha à meia-noite**, no horário do aparelho.
-- No canto superior direito há dois botões: **tema** (cada toque alterna Automático → Claro → Escuro; vale também para os jogos da casa) e **configurações**.
+- As **Configurações** são uma página própria (`#configuracoes`), com título e voltar: **tema** (Automático, Claro ou Escuro; vale também para os jogos da casa), como abrir os jogos externos, gerenciar jogos e desmarcar os externos do dia.
 - O link do LinkedIn sempre abre na mesma aba, o que faz o celular abrir o app do LinkedIn quando ele está instalado.
 - Em **configurações**: abrir jogos externos na mesma aba (padrão) ou em nova aba, desmarcar os jogos externos do dia (pede um segundo toque para confirmar) e, no app do iPhone, ativar o número de pendentes no ícone.
 
@@ -49,7 +49,7 @@ O progresso fica salvo no `localStorage` do navegador, então é separado em cad
 
 ## Estatísticas
 
-O botão de gráfico no cabeçalho (ao lado do tema e das configurações) abre a página **Estatísticas** (`#estatisticas`), que ocupa a tela toda e tem seu próprio título e botão de voltar (o voltar do sistema também funciona). Ela mostra:
+O botão de gráfico no cabeçalho (ao lado das configurações) abre a página **Estatísticas** (`#estatisticas`), que ocupa a tela toda e tem seu próprio título e botão de voltar (o voltar do sistema também funciona). Ela mostra:
 
 - **Resumo:** sequência atual, melhor sequência, dias completos e quanto foi feito no período escolhido.
 - **Atividade:** um só quadro com o período escolhido no controle (**7 dias**, **30 dias** ou **12 semanas**). Em 7 e 30 dias, barras por dia; em 12 semanas, o calendário que fica mais verde conforme os jogos feitos. Tocar num dia mostra quais jogos você fez e os resultados. Embaixo, **Por jogo**: em quantos dias do período você fez cada jogo.
