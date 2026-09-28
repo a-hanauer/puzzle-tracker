@@ -1,13 +1,19 @@
 /* =========================================================================
-   "Próximo jogo" — navegação entre os jogos do dia, sem voltar ao painel.
+   Fim de jogo e navegação entre os jogos do dia (todos os jogos da casa).
 
-   Depois que o jogo do dia termina, aparece:
-     · no cabeçalho, um botão discreto com o ícone do próximo jogo pendente;
-     · na janela de resultado (onde houver um elemento [data-proximo]),
-       uma linha "Próximo jogo · Nome ›".
+   Quando a partida termina (desafio do dia ou jogo livre):
+     · na parte de baixo da tela, a faixa de resultado do jogo fica à esquerda
+       e, à direita, o botão do próximo jogo pendente; embaixo, à esquerda, o
+       atalho discreto "Jogar um extra · nível N" (ou "Jogar outro", no jogo
+       livre) e, à direita, a contagem para o próximo desafio;
+     · na bandeja de resultado, o mesmo atalho junto do resultado e, no pé,
+       a contagem (esquerda) e o próximo jogo (direita).
+   Sem jogo pendente, o botão do próximo jogo não aparece.
+   A chave "Jogo livre" de cada jogo continua na página, escondida: é ela que
+   este arquivo aciona. No jogo livre, o botão "‹ Desafio do dia" volta.
    O próximo é o primeiro jogo ainda não feito hoje, na ordem do painel
-   (jogos da casa, depois os outros).
-   Abrir um jogo externo por aqui já o marca como feito, como no painel.
+   (jogos da casa, depois os outros). Abrir um jogo externo por aqui já o
+   marca como feito, como no painel.
 
    Uso:  <script src="../comum/catalogo.js"></script>
          <script src="../comum/proximo.js" data-jogo="eclipse"></script>
@@ -74,55 +80,126 @@
     }
   }
 
-  const CHEV = '<svg class="px-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
-  let ultimo = "";
+  const CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+  const REFRESH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>';
+  const VOLTA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+  const NOME = (BASE_GAMES.find(g => g.id === ATUAL) || {}).name || "";
 
-  function atualizar(forcar) {
-    const atual = BASE_GAMES.find(g => g.id === ATUAL);
-    const acabou = atual ? terminado(atual) : false;
-    const { g, s } = acabou ? proximo() : { g: null, s: null };
-    const chave = acabou ? (g ? g.id : "fim") : "";
-    if (chave === ultimo && !forcar) return;
-    ultimo = chave;
+  // a chave "Jogo livre" do jogo (checkbox nos jogos de lógica e no Sanduba; botão no Quinhentos)
+  const chave = (() => {
+    const cb = document.querySelector(".gh-free input");
+    if (cb) return { on: () => cb.checked, set: v => { if (cb.checked !== v) { cb.checked = v; cb.dispatchEvent(new Event("change", { bubbles: true })); } } };
+    const sw = document.getElementById("mode-switch");
+    if (sw) return { on: () => sw.classList.contains("on"), set: v => { if (sw.classList.contains("on") !== v) sw.click(); } };
+    return { on: () => false, set: () => {} };
+  })();
+  const fechaJanelas = () => document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open"));
+  function jogarExtra() {
+    if (chave.on()) { const b = document.querySelector("#againBtn, #end-next, #btn-again"); if (b) b.click(); return; }
+    fechaJanelas(); chave.set(true);
+  }
+  // dificuldade do jogo livre, como cada jogo guarda
+  function nivel() {
+    const ler = k => { const v = localStorage.getItem(k); if (v == null) return null; try { return JSON.parse(v); } catch { return v; } };
+    let v = null;
+    try { v = ler(`${ATUAL}:nivel-livre`) ?? ler(`${ATUAL}-nivel-livre`) ?? (ATUAL === "quinhentos" ? ler("quinhentao:nivel-livre") : null); } catch {}
+    if (typeof v === "number") return `nível ${v}`;
+    const NOMES = { facil: "fácil", normal: "normal", dificil: "difícil" };
+    if (NOMES[v]) return NOMES[v];
+    return ATUAL === "sanduba" || ATUAL === "quinhentos" ? "normal" : "nível 4";
+  }
 
-    // cabeçalho
-    const head = document.querySelector("header.gh");
-    let pill = head && head.querySelector(".gh-next");
-    if (head && g) {
-      if (!pill) {
-        pill = document.createElement("a");
-        pill.className = "gh-next";
-        const ajuda = head.querySelector('[aria-label="Como jogar"]');
-        head.insertBefore(pill, ajuda || null);
-      }
-      pill.href = new URL(g.url, CATALOGO_RAIZ).href;
-      pill.title = `Próximo jogo: ${g.name}`;
-      pill.setAttribute("aria-label", `Próximo jogo: ${g.name}`);
-      pill.innerHTML = "";
-      pill.append(icone(g));
-      pill.insertAdjacentHTML("beforeend", CHEV);
-      pill.onclick = e => abrir(e, g, s);
-    } else if (pill) pill.remove();
-
-    // janela de resultado
-    document.querySelectorAll("[data-proximo]").forEach(el => {
-      el.innerHTML = "";
-      el.hidden = !acabou;
-      if (!acabou) return;
-      const a = document.createElement("a");
-      a.className = "px-row";
-      if (g) {
-        a.href = new URL(g.url, CATALOGO_RAIZ).href;
-        a.innerHTML = `<span class="px-l">Próximo jogo</span>`;
-        a.append(icone(g));
-        a.insertAdjacentHTML("beforeend", `<span class="px-n">${esc(g.name)}</span>${CHEV}`);
-        a.onclick = e => abrir(e, g, s);
-      } else {
-        a.href = CATALOGO_RAIZ;
-        a.innerHTML = `<span class="px-l">Tudo feito por hoje</span><span class="px-n">Ver painel</span>${CHEV}`;
-      }
-      el.append(a);
+  // estrutura fixa, montada uma vez: a chave some; "‹ Desafio do dia" no jogo livre;
+  // a faixa de fim (jogos de lógica) ganha a vaga do próximo jogo e a linha de baixo
+  function montar() {
+    document.querySelectorAll(".gh-free").forEach(el => (el.style.display = "none"));
+    document.querySelectorAll(".gh .gh-next").forEach(el => el.remove());
+    const meta = document.querySelector(".gh-meta");
+    if (meta && !meta.querySelector(".gh-dia")) {
+      meta.insertAdjacentHTML("beforeend", `<button type="button" class="gh-dia" hidden>${VOLTA}Desafio do dia</button>`);
+      meta.querySelector(".gh-dia").addEventListener("click", () => { fechaJanelas(); chave.set(false); });
+    }
+    const c = document.getElementById("controls");
+    if (c && !c.parentNode.classList.contains("fim-row")) {
+      const row = document.createElement("div");
+      row.className = "fim-row";
+      c.before(row); row.append(c);
+      row.insertAdjacentHTML("afterend", '<div class="fim-subrow" hidden></div><div class="fim-nx"></div>');
+    }
+    // bandeja de resultado: o atalho do jogo livre junto do resultado; o pé no lugar da antiga linha
+    document.querySelectorAll(".modal.fim").forEach(m => {
+      if (m.querySelector(".fim-free")) return;
+      const sub = m.querySelector(".fim-sub");
+      if (sub) sub.insertAdjacentHTML("afterend", '<div class="fim-free"></div>');
+      const pe = m.querySelector("[data-proximo]");
+      if (pe) { pe.className = "fim-foot"; pe.removeAttribute("data-proximo"); pe.hidden = false; }
     });
+  }
+
+  function botaoProximo(g, s, cls) {
+    const a = document.createElement("a");
+    a.className = cls;
+    a.href = new URL(g.url, CATALOGO_RAIZ).href;
+    a.setAttribute("aria-label", `Próximo jogo: ${g.name}`);
+    if (cls !== "nx") a.append(icone(g));
+    if (cls === "nx") {                                // faixa inteira: "Próximo jogo" à esquerda, o jogo à direita
+      a.innerHTML = `<span class="l">Próximo jogo</span><span class="r"></span>`;
+      const r = a.querySelector(".r");
+      r.append(icone(g));
+      r.insertAdjacentHTML("beforeend", `<b>${esc(g.name)}</b>${CHEV}`);
+      a.onclick = e => abrir(e, g, s);
+      return a;
+    }
+    a.insertAdjacentHTML("beforeend", `<span class="t"><small>Próximo jogo</small><b>${esc(g.name)}</b></span>${CHEV}`);
+    a.onclick = e => abrir(e, g, s);
+    return a;
+  }
+  function atalhoExtra() {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "fx";
+    b.innerHTML = `${REFRESH}<span><u>${chave.on() ? "Jogar outro" : "Jogar um extra"}</u> · ${esc(nivel())}</span>`;
+    b.addEventListener("click", jogarExtra);
+    return b;
+  }
+
+  let ultimo = "";
+  function atualizar(forcar) {
+    montar();
+    // partida na tela terminou? (faixa de fim à mostra)
+    const acabou = !!document.querySelector("#controls.done, .gh-fim.on");
+    const livre = chave.on();
+    const { g, s } = proximo();
+    const k = [acabou, livre, g ? g.id : "", nivel()].join("|");
+    if (k === ultimo && !forcar) return;
+    ultimo = k;
+
+    const dia = document.querySelector(".gh-dia");
+    if (dia) dia.hidden = !livre;
+
+    const contagem = `<span class="cd">Próximo ${esc(NOME)} em <b data-contagem>--:--:--</b></span>`;
+    // faixa de fim: próximo jogo à direita (se houver) e a linha de baixo
+    document.querySelectorAll(".fim-nx").forEach(el => {
+      el.innerHTML = "";
+      if (acabou && g) el.append(botaoProximo(g, s, "nx"));
+    });
+    document.querySelectorAll(".fim-subrow").forEach(el => {
+      el.hidden = !acabou;
+      el.innerHTML = "";
+      if (!acabou) return;
+      el.append(atalhoExtra());
+      if (!livre) el.insertAdjacentHTML("beforeend", `<span class="cd">Próximo em <b data-contagem>--:--:--</b></span>`);
+    });
+    const tip = document.getElementById("tip");
+    if (tip && document.getElementById("controls")) tip.hidden = acabou;
+    // bandeja de resultado
+    document.querySelectorAll(".modal.fim .fim-free").forEach(el => { el.innerHTML = ""; el.append(atalhoExtra()); });
+    document.querySelectorAll(".modal.fim .fim-foot").forEach(el => {
+      el.innerHTML = "";
+      if (!livre) el.insertAdjacentHTML("beforeend", contagem.replace('class="cd"', 'class="cd grande"'));
+      if (g) el.append(botaoProximo(g, s, "fim-btn fim-nxbtn"));
+      el.hidden = !el.childNodes.length;
+    });
+    document.dispatchEvent(new Event("gh-contagem"));
   }
 
   // contagem para o próximo desafio (meia-noite), em qualquer [data-contagem]
@@ -133,7 +210,8 @@
     document.querySelectorAll("[data-contagem]").forEach(el => { el.textContent = txt; });
   }
   setInterval(contagem, 1000); contagem();
-  document.addEventListener("gh-contagem", contagem);        // faixa de fim recém-criada (comum/cabecalho.js)
+  document.addEventListener("gh-contagem", contagem);        // peças recém-criadas
+  document.addEventListener("gh-fim", () => atualizar(true));  // faixa de fim dos jogos de palavras (comum/cabecalho.js)
   document.addEventListener("DOMContentLoaded", contagem);
 
   // os jogos gravam o progresso no navegador; basta conferir de tempos em tempos

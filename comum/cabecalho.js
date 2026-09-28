@@ -66,19 +66,20 @@ window.ghCompartilhar = function (btn, text) {
 };
 
 // Faixa de fim de jogo (jogos de palavras): ghFim(el, opções) mostra; ghFim(el, null) esconde.
-//   { img, imgEscuro, titulo, sub, perdeu, diario, nome, aoTocar }
+//   { img, imgEscuro, titulo, sub, perdeu, diario, aoTocar }
+// A linha de baixo (jogo livre + contagem) e o próximo jogo são preenchidos por comum/proximo.js.
 window.ghFim = function (el, o) {
-  if (!o) { el.classList.remove("on"); el.innerHTML = ""; return; }
+  if (!o) { el.classList.remove("on"); el.innerHTML = ""; document.dispatchEvent(new Event("gh-fim")); return; }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const escuro = window.jogosTema && jogosTema.escuro();
-  el.innerHTML = `<button type="button" class="gh-fim-bar${o.perdeu ? " perdeu" : ""}" aria-label="${esc(o.titulo)}: ${o.diario ? "ver resultado" : "jogar outro"}">` +
+  const was = el.classList.contains("on");
+  el.innerHTML = `<div class="fim-row"><button type="button" class="gh-fim-bar${o.perdeu ? " perdeu" : ""}" aria-label="${esc(o.titulo)}: ${o.diario ? "ver resultado" : "jogar outro"}">` +
     `<img src="${esc(escuro && o.imgEscuro ? o.imgEscuro : o.img)}"${o.imgEscuro ? ` data-claro="${esc(o.img)}" data-escuro="${esc(o.imgEscuro)}"` : ""} alt="">` +
     `<span class="t"><b>${esc(o.titulo)}</b><span>${esc(o.sub)} · ${o.diario ? "ver resultado" : "jogar outro"}</span></span>` +
-    `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>` +
-    `<div class="gh-fim-tip">${o.diario ? `Próximo ${esc(o.nome)} em <b data-contagem>--:--:--</b>` : "Desafio extra · não conta nas estatísticas"}</div>`;
+    `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></div>` +
+    `<div class="fim-subrow" hidden></div><div class="fim-nx"></div>`;
   el.querySelector("button").addEventListener("click", o.aoTocar);
-  const was = el.classList.contains("on");
   el.classList.add("on");
   if (was) el.querySelector("img").style.animation = "none";      // só anima na primeira vez
-  document.dispatchEvent(new Event("gh-contagem"));
+  document.dispatchEvent(new Event("gh-fim"));
 };

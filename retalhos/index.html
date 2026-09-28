@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Retalhos">
 <title>RETALHOS — uma colcha de retângulos</title>
 <link rel="icon" type="image/png" href="icon.png">
-<script src="../comum/tema.js?v=76"></script>
-<script src="../comum/cabecalho.js?v=76"></script>
+<script src="../comum/tema.js?v=78"></script>
+<script src="../comum/cabecalho.js?v=78"></script>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -226,7 +226,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=76">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=78">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -422,7 +422,7 @@
     dayNum = dayNumber(data.epoch);
     DAILY = { data };
     loadDaily();
-    if (finished) showEnd();
+    if (finished) { /* já terminado: a faixa de fim fica à mostra; a bandeja só abre pelo toque nela */ }
     else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
     else startTimer();
   }).catch(() => { $("stage").innerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
@@ -727,7 +727,7 @@
   demo("demoB", true);
 })();
 </script>
-<script src="../comum/catalogo.js?v=76"></script>
-<script src="../comum/proximo.js?v=76" data-jogo="retalhos"></script>
+<script src="../comum/catalogo.js?v=78"></script>
+<script src="../comum/proximo.js?v=78" data-jogo="retalhos"></script>
 </body>
 </html>

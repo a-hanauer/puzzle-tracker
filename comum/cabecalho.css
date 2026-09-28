@@ -275,10 +275,10 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
    e embaixo a contagem para o próximo desafio — como nos jogos de lógica.
    Cores: --gh-fim-bg / --gh-fim-ink / --gh-fim-border (padrão: a cor de destaque).
    ========================================================================= */
-.gh-fim { display: none; flex-direction: column; padding: 14px 0 4px; }
+.gh-fim { display: none; flex-direction: column; padding: 0 0 4px; }
 .gh-fim.on { display: flex; }
 .gh-fim-bar {
-  display: flex; align-items: center; gap: 12px; width: 100%; height: 56px; padding: 0 18px; margin: 0;
+  display: flex; align-items: center; gap: 12px; width: 100%; height: 56px; padding: 0 18px; margin: 0; overflow: hidden;
   border: var(--gh-fim-border, 0); border-radius: 16px; cursor: pointer; text-align: left;
   background: var(--gh-fim-bg, var(--gh-accent)); color: var(--gh-fim-ink, #fff);
   font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -298,3 +298,70 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
   font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 .gh-fim-tip b { color: var(--gh-ink); font-variant-numeric: tabular-nums; }
+
+/* =========================================================================
+   Fim de jogo: faixa de resultado (esquerda) + próximo jogo (direita), e
+   embaixo o atalho discreto do jogo livre (esquerda) e a contagem (direita).
+   Montado por comum/proximo.js. A chave "Jogo livre" fica escondida; no jogo
+   livre aparece "‹ Desafio do dia" na linha de informação.
+   ========================================================================= */
+.fim-row { display: flex; gap: 10px; align-items: stretch; padding-top: 14px; margin-top: auto; }
+.fim-row > .controls { flex: 1; min-width: 0; padding-top: 0 !important; margin-top: 0 !important; }
+.fim-row > .gh-fim-bar { flex: 1; min-width: 0; }
+.fim-nx:empty { display: none; }
+/* próximo jogo: faixa inteira, embaixo do atalho do jogo livre; o jogo fica à direita */
+.fim-nx { margin-top: 10px; }
+a.nx {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 52px; padding: 0 12px 0 16px;
+  border-radius: 16px; background: var(--gh-surface); color: var(--gh-ink); text-decoration: none; white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 6px 18px rgba(0, 0, 0, .08);
+  font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+a.nx:active { transform: scale(.98); }
+a.nx .l { font-size: .8rem; font-weight: 600; color: var(--gh-muted); }
+a.nx .r { display: flex; align-items: center; gap: 9px; min-width: 0; }
+a.nx .r b { font-size: .95rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; }
+a.nx .px-ic { width: 32px; height: 32px; border-radius: 8px; font-size: 19px; }
+.fim-nxbtn .t { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; text-align: left; }
+a.nx svg, .fim-nxbtn > svg, .fx > svg, .gh-dia > svg { width: 15px; height: 15px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+a.nx svg { color: var(--gh-muted); }
+.fim-subrow {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; padding: 0 4px;
+  font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: .78rem; color: var(--gh-muted);
+}
+.fim-subrow[hidden], .fim-foot[hidden] { display: none !important; }
+.fim-subrow .fx, .fim-subrow .cd, .fim-foot .cd, .fim-foot .fim-nxbtn, .fim-free .fx { white-space: nowrap; }
+.fim-subrow .cd { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.fim-subrow .cd b { color: var(--gh-ink); font-variant-numeric: tabular-nums; }
+.fx {
+  display: inline-flex; align-items: center; gap: 5px; margin: 0; padding: 4px 0; border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: .78rem; font-weight: 600; color: var(--gh-muted); text-transform: none; letter-spacing: 0;
+  width: auto; height: auto; min-width: 0; box-shadow: none; flex-shrink: 0;
+}
+.fx u { text-decoration: none; border-bottom: 1px dotted currentColor; }
+.fx > svg { width: 13px; height: 13px; }
+/* bandeja de resultado */
+.modal.fim > .fim-btn, .modal.fim > .fim-count { display: none !important; }
+.fim-free { display: flex; justify-content: center; margin: -8px 0 20px; }
+.fim-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding-top: 16px; border-top: 1px solid rgba(127, 127, 127, .18); text-align: left;
+}
+.fim-foot .cd { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gh-muted); line-height: 1.3; }
+.fim-foot .cd b { display: block; font-size: 1.1rem; letter-spacing: 0; color: var(--gh-ink); font-variant-numeric: tabular-nums; }
+.fim-foot .fim-nxbtn {
+  display: inline-flex !important; align-items: center; gap: 9px; width: auto; margin-left: auto; padding: 10px 12px 10px 10px; text-decoration: none;
+}
+.fim-foot .fim-nxbtn .px-ic { width: 30px; height: 30px; border-radius: 8px; font-size: 18px; background: rgba(255, 255, 255, .2); }
+.fim-foot .fim-nxbtn .t small { font-size: .68rem; font-weight: 600; opacity: .75; }
+.fim-foot .fim-nxbtn .t b { font-weight: 800; }
+/* "‹ Desafio do dia" (no jogo livre, no lugar da chave) */
+.gh-dia {
+  display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; height: 28px; margin: -3px 0; padding: 0 11px 0 7px;
+  border: 0; border-radius: 99px; cursor: pointer; white-space: nowrap;
+  font: inherit; letter-spacing: inherit; text-transform: inherit; font-weight: 600; color: var(--gh-ink);
+  background: var(--gh-surface); box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 3px 10px rgba(0, 0, 0, .06);
+}
+.gh-dia[hidden] { display: none; }
+.gh-dia > svg { width: 14px; height: 14px; opacity: .6; }
