@@ -88,6 +88,26 @@
   .prog-bar { flex: 1; display: grid; grid-template-columns: repeat(var(--t, 1), 1fr); gap: 3px; height: 8px; }
   .prog-bar i { border-radius: 3px; background: var(--surface-2); transition: background .25s; }
   .prog-bar i.on { background: var(--green); }
+  /* tudo feito: os trechos se fundem numa barra só, com um brilho que passa uma vez,
+     e o contador vira um selo verde */
+  .prog-bar { position: relative; border-radius: 99px; transition: gap .45s ease; }
+  .prog-bar i { transition: background .25s, border-radius .45s ease; }
+  .prog.complete .prog-bar { gap: 0; overflow: hidden; }
+  .prog.complete .prog-bar i { border-radius: 0; }
+  .prog.complete .prog-bar::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, .75) 50%, transparent 80%);
+    transform: translateX(-110%);
+  }
+  .prog.complete.celebrate .prog-bar::after { animation: prog-shine 1.1s ease .35s both; }
+  @keyframes prog-shine { to { transform: translateX(110%); } }
+  .prog-n .done-seal { display: none; }
+  .prog.complete .prog-n { color: var(--green); font-weight: 700; }
+  .prog.complete .prog-n .cnt { display: none; }
+  .prog.complete .prog-n .done-seal { display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase; letter-spacing: .06em; }
+  .prog-n .done-seal svg { width: 15px; height: 15px; flex: none; }
+  .prog.complete.celebrate .prog-n .done-seal { animation: pop .35s ease .3s both; }
+  @media (prefers-reduced-motion: reduce) { .prog.complete.celebrate .prog-bar::after, .prog.complete.celebrate .prog-n .done-seal { animation: none; } }
   .prog-n { font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .02em; color: var(--muted); font-variant-numeric: tabular-nums; }
   .greet-text { min-width: 0; flex: 1; }
   h1 { font-size: 1.85rem; font-weight: 800; margin: 0; letter-spacing: -.03em; line-height: 1.1; }
@@ -109,7 +129,6 @@
     font-weight: 800; font-size: .92rem; font-variant-numeric: tabular-nums;
   }
   .ring .num small { color: var(--muted); font-weight: 600; font-size: .68rem; }
-  .all-done svg { width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; }
 
   /* lista dos outros jogos (sites externos) */
   .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
@@ -246,15 +265,6 @@
   .badge.finished { opacity: .6; }
   .badge.finished .mr-check { stroke-dashoffset: 0; }
 
-  /* ---------- Tudo feito ---------- */
-  .all-done {
-    display: none;
-    margin-top: 18px; padding: 16px;
-    text-align: center; border-radius: 16px;
-    background: var(--green-soft); color: var(--green);
-    font-weight: 700;
-  }
-  .all-done.show { display: block; animation: pop .35s ease; }
 
   /* ações no topo: tema (alterna) e configurações */
   .head-actions { display: flex; gap: 6px; }
@@ -448,7 +458,7 @@
   <!-- progresso do dia: um trecho por jogo, contador no padrão das seções -->
   <div class="prog">
     <div class="prog-bar" id="progBar" aria-hidden="true"></div>
-    <span class="prog-n" id="count"></span>
+    <span class="prog-n"><span class="cnt" id="count"></span><span class="done-seal"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7.5 12.4l3 3 6-6.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Tudo feito</span></span>
   </div>
 </header>
 
@@ -510,7 +520,6 @@
 <div class="cat" id="catExternal"><span>Outros jogos</span><span class="cat-n" id="catExternalN"></span></div>
 <ul class="list" id="gridExternal"></ul>
 <button class="add-row" id="addRow"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Adicionar jogo</button>
-<div class="all-done" id="allDone"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Tudo feito por hoje!</div>
 </div>
 
 <!-- Configurações (engrenagem no topo) -->
@@ -787,7 +796,12 @@ function render() {
   if (pb.children.length !== total) pb.innerHTML = "<i></i>".repeat(total);
   [...pb.children].forEach((seg, i) => seg.classList.toggle("on", i < n));
 
-  $("allDone").classList.toggle("show", n === total);
+  const prog = document.querySelector(".prog"), complete = n === total && total > 0;
+  if (complete && prog.dataset.complete !== "1") prog.classList.add("celebrate");   // ao completar (ou abrir já completo): brilho uma vez
+  if (!complete) prog.classList.remove("celebrate");
+  prog.classList.toggle("complete", complete);
+  prog.dataset.complete = complete ? "1" : "0";
+  prog.setAttribute("aria-label", complete ? "Tudo feito por hoje" : `${n} de ${total} jogos feitos`);
 
   document.querySelectorAll(".seg2 button[data-tab]").forEach(b => b.setAttribute("aria-checked", (b.dataset.tab === "new") === state.newTab));
 

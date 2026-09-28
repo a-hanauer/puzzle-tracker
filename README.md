@@ -39,7 +39,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 ## Como funciona
 
 - **Destaque para o que falta:** jogos pendentes aparecem em cartões cheios; os concluídos ficam esmaecidos (sem cartão, ícone acinzentado, check neutro). Na lista dos outros jogos, os pendentes ficam sempre no topo.
-- O **topo** mostra o nome do produto ("Jogos do Dia") em destaque, os botões de **estatísticas** e **configurações** e, logo abaixo, a **barra de progresso do dia**: um trecho por jogo, que fica verde conforme os jogos são feitos, com o contador ("3/9") à direita, no mesmo estilo dos contadores das seções. A sequência de dias fica na página de estatísticas.
+- O **topo** mostra o nome do produto ("Jogos do Dia") em destaque, os botões de **estatísticas** e **configurações** e, logo abaixo, a **barra de progresso do dia**: um trecho por jogo, que fica verde conforme os jogos são feitos, com o contador ("3/9") à direita, no mesmo estilo dos contadores das seções. Quando todos estão feitos, os trechos se fundem numa barra verde contínua, um brilho passa por ela uma vez e o contador vira o selo "✓ Tudo feito" (não há mais mensagem no pé da página). A sequência de dias fica na página de estatísticas.
 - **Jogos da casa** (Sanduba, Quinhentos, Eclipse, Novelo e Retalhos) aparecem numa grade de ícones; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um check. A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
 - **Status de cada jogo:**
   - **Outros jogos:** o check à direita marca ou desmarca; abrir o jogo pelo painel já marca como feito.
