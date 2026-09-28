@@ -9,11 +9,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Quinhentos">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="../comum/tema.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#f7f5f0;
@@ -33,8 +32,9 @@
   --key-bg:#e6e2d8;
   --key-ink:#1a1a17;
   --radius:12px;
-  --font-display:'Bricolage Grotesque',Georgia,serif;
-  --font-body:'Outfit',system-ui,sans-serif;
+  --font-display:'Noto Sans',system-ui,sans-serif;
+  --font-body:'Noto Sans',system-ui,sans-serif;
+  --font-num:'Noto Sans',system-ui,sans-serif;   /* números do placar: versão condensada (font-stretch) */
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -152,11 +152,13 @@ header{
 /* ===== board ===== */
 .board-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 0;min-height:0;}
 .board{display:flex;flex-direction:column;gap:6px;width:100%;max-width:460px;}
-.row{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;}
+/* linha: a palavra (5 letras largas) e, à direita, o placar numa cápsula estreita */
+.row{display:grid;grid-template-columns:repeat(5,1fr) 70px;gap:5px;}
+.row .cnt{margin-left:5px;}
 .tile{
   aspect-ratio:1/1;border-radius:11px;border:2px solid var(--line);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-weight:800;font-size:clamp(16px,5vw,24px);
+  font-family:var(--font-display);font-weight:800;font-size:clamp(18px,6.4vw,29px);
   letter-spacing:-0.5px;
   text-transform:uppercase;background:var(--panel);color:var(--ink);
   transition:transform .1s ease, background .12s ease, border-color .12s ease;
@@ -182,16 +184,23 @@ header{
   background:repeating-linear-gradient(135deg, var(--accent) 0 7px, var(--present) 7px 14px);
   border-color:transparent;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45);
 }
-.count-cell{
-  aspect-ratio:1/1;border-radius:11px;border:2px solid transparent;
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-weight:800;font-size:clamp(16px,5vw,24px);
-  letter-spacing:-0.5px;
+.cnt{
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  border-radius:13px;background:var(--panel);border:1.5px solid var(--line);
+  transition:background .2s ease,border-color .2s ease;
 }
-.count-cell.cg{background:var(--accent);color:var(--accent-ink);}
-.count-cell.cy{background:var(--present);color:var(--present-ink);}
-.count-cell.cr{background:var(--danger);color:var(--danger-ink);}
-.row.pop .tile.filled,.row.pop .count-cell{animation:pop .28s ease;}
+.cnt.empty{background:transparent;border-style:dashed;}
+.count-cell{
+  display:flex;align-items:center;justify-content:center;min-width:.62em;
+  font-family:var(--font-num);font-stretch:75%;font-weight:800;font-size:clamp(22px,7vw,30px);
+  line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums;
+}
+.count-cell.cg{color:var(--accent);}
+.count-cell.cy{color:var(--present);}
+.count-cell.cr{color:var(--danger);}
+/* legenda do Como jogar: o mesmo número, numa cápsula pequena */
+.legend .count-cell{border-radius:9px;background:var(--panel);border:1.5px solid var(--line);font-size:18px !important;}
+.row.pop .tile.filled,.row.pop .cnt{animation:pop .28s ease;}
 @keyframes pop{
   0%{transform:scale(0.85);opacity:0.4;}
   100%{transform:scale(1);opacity:1;}
@@ -343,6 +352,8 @@ header{
   .fim-word { gap: 6px; }
   .fim-word .tile { width: 46px; height: 46px; font-size: 22px; border-radius: 10px; }
   .fim-art img { border-radius: 20px; }
+  /* família Noto em todo o jogo, inclusive no cabeçalho e nas janelas comuns */
+  header.gh, .gh-meta, .px-row, .fim-count, .fim-btn { font-family: var(--font-body) !important; }
 </style>
 </head>
 <body>
@@ -350,7 +361,7 @@ header{
 
   <header class="gh">
     <a class="gh-back back-home" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <a class="gh-brand" href="./" aria-label="Quinhentos — recarregar"><img src="icon.png" alt=""><b>QUINHENTOS</b></a>
+    <a class="gh-brand" href="./" aria-label="Quinhentos — recarregar"><img src="icon.png?v=2" alt=""><b>QUINHENTOS</b></a>
     <!-- estatísticas e configurações ficam no painel Jogos do Dia; os botões originais seguem ocultos -->
     <button class="iconbtn" id="btn-stats" hidden aria-hidden="true" tabindex="-1">📊</button>
     <button class="iconbtn" id="btn-settings" hidden aria-hidden="true" tabindex="-1">⚙️</button>
@@ -453,7 +464,7 @@ header{
 <div class="overlay" id="overlay-end">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close="overlay-end" aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon.png" alt=""></div>
+    <div class="fim-art"><img src="icon.png?v=2" alt=""></div>
     <h2 class="fim-title" id="end-title">Quinhentos completo!</h2>
     <div class="fim-result fim-word" id="end-word"></div>
     <p class="fim-sub" id="end-sub"></p>
@@ -652,12 +663,15 @@ header{
         });
         row.appendChild(t);
       }
+      var cnt = document.createElement('div');
+      cnt.className = 'cnt empty'; cnt.id = 'cnt-'+r;
       ['g','y','r'].forEach(function(type){
         var cell = document.createElement('div');
         cell.className = 'count-cell c'+type;
         cell.id = 'count-'+r+'-'+type;
-        row.appendChild(cell);
+        cnt.appendChild(cell);
       });
+      row.appendChild(cnt);
       boardEl.appendChild(row);
     }
   }
@@ -839,6 +853,7 @@ header{
       document.getElementById('count-'+r+'-g').textContent = tally ? tally.g : '';
       document.getElementById('count-'+r+'-y').textContent = tally ? tally.y : '';
       document.getElementById('count-'+r+'-r').textContent = tally ? tally.r : '';
+      document.getElementById('cnt-'+r).classList.toggle('empty', !tally);
     }
     renderKeyboard();
     updateSwitch();

@@ -22,7 +22,7 @@ const BASE_GAMES = [
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
   { id: "sanduba",    name: "Sanduba",    emoji: "🥪", desc: "Betweenle em português",        url: "sanduba/", icon: "sanduba/icon.png" },
   { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/" },
-  { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon.png", iconFull: true },
+  { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon.png?v=2", iconFull: true },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon.png", iconFull: true },
