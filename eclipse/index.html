@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png">
-<script src="../comum/tema.js?v=80"></script>
-<script src="../comum/cabecalho.js?v=80"></script>
+<script src="../comum/tema.js?v=81"></script>
+<script src="../comum/cabecalho.js?v=81"></script>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,8 +38,9 @@
     --bad: #e5484d;
     --accent: #4f4fd0;
     --good: #3fa24c;
-    --r0: #f6c1b9; --r1: #f9dd8f; --r2: #c6e5aa; --r3: #b2d2f5; --r4: #d4c5f6;
-    --r5: #f4c2de; --r6: #a9e4cd; --r7: #f7cca2; --r8: #dce0ea; --r9: #e8d7ae;
+    /* regiões (claro): matizes bem separados e luminosidades alternadas, para vizinhas nunca se confundirem */
+    --r0: #f3a097; --r1: #f7dc74; --r2: #b0da83; --r3: #8fc1f0; --r4: #c4aef6;
+    --r5: #f5b4d8; --r6: #7fd4c1; --r7: #f8b37a; --r8: #cfd3de; --r9: #cbc27e;
     --shadow: 0 1px 2px rgba(20,24,40,.06), 0 6px 18px rgba(20,24,40,.07);
     --on-accent: #fff;
   }
@@ -275,7 +276,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=80">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=81">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -314,7 +315,7 @@
 
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Eclipse — recarregar"><img src="icon-claro.png?v=10" data-escuro="icon-escuro.png?v=10" alt=""><b>ECLIPSE</b></a>
+  <a class="gh-brand" href="./" aria-label="Eclipse — recarregar"><img src="icon-claro.png?v=11" data-escuro="icon-escuro.png?v=10" alt=""><b>ECLIPSE</b></a>
   <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
@@ -879,7 +880,7 @@
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 })();
 </script>
-<script src="../comum/catalogo.js?v=80"></script>
-<script src="../comum/proximo.js?v=80" data-jogo="eclipse"></script>
+<script src="../comum/catalogo.js?v=81"></script>
+<script src="../comum/proximo.js?v=81" data-jogo="eclipse"></script>
 </body>
 </html>
