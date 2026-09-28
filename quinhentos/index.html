@@ -400,7 +400,7 @@ header{
     <p>O teclado se pinta sozinho seguindo suas marcações. Vermelho é definitivo — a letra some do jogo, então marcar uma ocorrência como vermelha já pinta todas as outras aparições dela e a tecla correspondente. Verde e amarelo dependem da posição, então se a mesma letra já foi marcada das duas formas em palpites diferentes, a tecla aparece pintada meio a meio — e, nesse caso, ela nunca vira vermelha, já que você já sabe que ela existe na palavra.</p>
     <p>A marcação também é esperta com a posição: pintar uma letra de <b>amarelo</b> pinta de amarelo a mesma letra na mesma posição em todos os palpites. Pintar de <b>verde</b> pinta de verde a mesma letra na mesma posição, e de amarelo as aparições dela em outras posições. Enquanto uma letra só tiver amarelo, as aparições dela em outras posições ficam <b>listradas de verde e amarelo</b>: ela existe, mas ainda não se sabe se aquela é a posição. Desfazer a marca original desfaz também o que ela pintou.</p>
     <p>Se um palpite não tiver nenhuma letra certa (nem verde, nem amarela), o jogo já pinta a linha inteira de vermelho pra você — não tem o que deduzir ali.</p>
-    <p>Errou uma pintura? Toque de novo na ficha até voltar ao neutro, ou use o botão <b>Limpar cores</b> acima do teclado pra apagar todas de uma vez — sem perder seus palpites.</p>
+    <p>Errou uma pintura? Toque de novo na ficha até voltar ao neutro, ou use o botão <b>Limpar cores</b> acima do teclado pra apagar todas de uma vez — sem perder seus palpites. Os palpites com as 5 letras erradas continuam vermelhos, porque isso não é dedução.</p>
     <p>Na linha que você está digitando dá pra escrever fora de ordem: toque numa ficha pra levar o cursor até ela e digite. Também dá pra navegar com <b>Tab</b> / <b>Shift+Tab</b> ou com as setas.</p>
     <p>A palavra secreta nunca repete letras (e não usa K, W ou Y — as menos comuns no português), mas seu palpite pode ser qualquer palavra válida de 5 letras.</p>
   </div>
@@ -759,6 +759,10 @@ header{
   function clearAllPaint(){
     state.paint = makeEmptyPaint();
     state.auto = makeEmptyPaint();
+    // palpites com as 5 letras erradas são fato, não dedução: continuam vermelhos
+    for(var r=0; r<state.guesses.length; r++){
+      if(state.tallies[r] && state.tallies[r].r === WORD_LEN) state.paint[r].fill(1);
+    }
     if(!practiceMode) save('game:'+diff, state);
     render();
   }
