@@ -105,14 +105,14 @@ header.gh {
 }
 .overlay > .modal {
   width: 100% !important; max-width: 520px !important; margin: 0 !important;
-  max-height: min(82dvh, calc(100dvh - env(safe-area-inset-top, 0px) - 24px)) !important;
+  max-height: calc(100dvh + var(--vfix, 0px) - env(safe-area-inset-top, 0px) - 24px) !important;
   border-radius: 22px 22px 0 0 !important;
   border-bottom: 0 !important;
   padding-bottom: calc(var(--mpad, 20px) + env(safe-area-inset-bottom, 0px)) !important;
   overscroll-behavior: contain;
   box-shadow: 0 -10px 40px rgba(0, 0, 0, .22) !important;
 }
-html.standalone .overlay { bottom: auto !important; height: 100vh !important; }
+html.standalone .overlay { bottom: calc(-1 * var(--vfix, 0px)) !important; }
 .modal > h2:first-child, .modal > .close-row:first-child, .modal > .fim-top:first-child {
   position: sticky; top: calc(-1 * var(--mpad, 20px)); z-index: 3;
   background: inherit;

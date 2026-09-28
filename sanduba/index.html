@@ -1117,6 +1117,8 @@
 
   /* ---------- inicialização ---------- */
   loadModeState('daily');
+  // desafio do dia já terminado: ao abrir o jogo, mostra a bandeja de fim (como nos outros jogos)
+  if(state.over){ setTimeout(function(){ openEnd(); }, 350); }
 
   // Nunca lembrar o switch de "jogo livre" entre visitas — sempre começa
   // desligado (palavra do dia). Cobre também o caso raro de o navegador

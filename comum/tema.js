@@ -22,12 +22,25 @@
     set: function (t) { try { localStorage.setItem(KEY, t); } catch (e) {} apply(t); },
   };
   apply(get());
-  // App instalado na tela inicial do iPhone: lá, o que é "fixo embaixo" termina
-  // antes da borda da tela (falta a altura da barra de status). A classe
-  // permite às bandejas usar a altura real da tela.
+  // App instalado na tela inicial do iPhone: a área "visível" da página
+  // termina antes da borda de baixo da tela (sobra a altura da barra de
+  // status), então o que é preso embaixo fica com um vão. Medimos a sobra
+  // (altura da tela − altura da janela) e as bandejas descem essa medida
+  // (--vfix). Se o iPhone um dia corrigir isso, a sobra vira 0 sozinha.
   try {
-    if (navigator.standalone || matchMedia("(display-mode: standalone)").matches)
+    if (navigator.standalone === true) {          // só o iPhone/iPad tem essa propriedade
       document.documentElement.classList.add("standalone");
+      var fix = function () {
+        var portrait = matchMedia("(orientation: portrait)").matches;
+        var tela = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+        var sobra = Math.max(0, Math.min(80, Math.round(tela - window.innerHeight)));
+        document.documentElement.style.setProperty("--vfix", sobra + "px");
+      };
+      fix();
+      window.addEventListener("resize", fix);
+      window.addEventListener("orientationchange", function () { setTimeout(fix, 300); });
+      window.addEventListener("pageshow", fix);
+    }
   } catch (e) {}
   document.addEventListener("DOMContentLoaded", function () { apply(get()); });   // metas que vêm depois do script
   // se o tema mudar em outra aba (ou ao voltar do painel), acompanha
