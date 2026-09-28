@@ -177,6 +177,11 @@ header{
 .tile.correct{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
 .tile.present{background:var(--present);border-color:var(--present);color:var(--present-ink);}
 .tile.absent{background:var(--danger);border-color:var(--danger);color:var(--danger-ink);}
+/* dúvida: a letra existe, mas não se sabe se esta é a posição dela */
+.tile.maybe{
+  background:repeating-linear-gradient(135deg, var(--accent) 0 7px, var(--present) 7px 14px);
+  border-color:transparent;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45);
+}
 .count-cell{
   aspect-ratio:1/1;border-radius:11px;border:2px solid transparent;
   display:flex;align-items:center;justify-content:center;
@@ -393,7 +398,7 @@ header{
       <div class="row2"><div class="tile correct" style="width:32px;height:32px;font-size:14px;flex-shrink:0;">A</div><span>3 toques — marca como certa, posição certa</span></div>
     </div>
     <p>O teclado se pinta sozinho seguindo suas marcações. Vermelho é definitivo — a letra some do jogo, então marcar uma ocorrência como vermelha já pinta todas as outras aparições dela e a tecla correspondente. Verde e amarelo dependem da posição, então se a mesma letra já foi marcada das duas formas em palpites diferentes, a tecla aparece pintada meio a meio — e, nesse caso, ela nunca vira vermelha, já que você já sabe que ela existe na palavra.</p>
-    <p>A marcação também é esperta com a posição: pintar uma letra de <b>amarelo</b> pinta de amarelo a mesma letra na mesma posição em todos os palpites. Pintar de <b>verde</b> pinta de verde a mesma letra na mesma posição, e de amarelo as aparições dela em outras posições. Desfazer a marca original desfaz também o que ela pintou.</p>
+    <p>A marcação também é esperta com a posição: pintar uma letra de <b>amarelo</b> pinta de amarelo a mesma letra na mesma posição em todos os palpites. Pintar de <b>verde</b> pinta de verde a mesma letra na mesma posição, e de amarelo as aparições dela em outras posições. Enquanto uma letra só tiver amarelo, as aparições dela em outras posições ficam <b>listradas de verde e amarelo</b>: ela existe, mas ainda não se sabe se aquela é a posição. Desfazer a marca original desfaz também o que ela pintou.</p>
     <p>Se um palpite não tiver nenhuma letra certa (nem verde, nem amarela), o jogo já pinta a linha inteira de vermelho pra você — não tem o que deduzir ali.</p>
     <p>Errou uma pintura? Toque de novo na ficha até voltar ao neutro, ou use o botão <b>Limpar cores</b> acima do teclado pra apagar todas de uma vez — sem perder seus palpites.</p>
     <p>Na linha que você está digitando dá pra escrever fora de ordem: toque numa ficha pra levar o cursor até ela e digite. Também dá pra navegar com <b>Tab</b> / <b>Shift+Tab</b> ou com as setas.</p>
@@ -674,7 +679,7 @@ header{
       // amarelo são contextuais (dependem da posição), então essa ficha
       // cicla só entre amarelo → verde → neutro (nunca vermelho), pra
       // ainda dar pra limpar essa marcação específica tocando de novo
-      newVal = (cur === 0) ? 2 : (cur === 2 ? 3 : 0);
+      newVal = (cur === 0 || cur === 4) ? 2 : (cur === 2 ? 3 : 0);
     } else {
       newVal = (cur + 1) % 4; // 0 nada → 1 vermelho → 2 amarelo → 3 verde
     }
@@ -698,44 +703,57 @@ header{
         }
       }
     }
-    propagateLetter(letter);
+    propagateAll();
     if(!practiceMode) save('game:'+diff, state);
     render();
   }
 
   // marcação inteligente: a partir das fichas que você pintou à mão,
-  // pinta sozinha as outras aparições da mesma letra.
+  // pinta sozinha as outras aparições das letras.
   //  · amarelo na posição X → a letra também é amarela na posição X
   //    em todos os outros palpites;
   //  · verde na posição X → verde na posição X em todos os palpites, e
   //    amarelo nas aparições dela em qualquer outra posição (a palavra
-  //    secreta não repete letras).
+  //    secreta não repete letras);
+  //  · só amarelo (nenhum verde ainda) → nas outras posições a letra fica
+  //    listrada verde/amarela: ela existe, mas pode ou não ser ali. Se a
+  //    posição já é o verde de outra letra, ali ela só pode ser amarela.
   // As pinturas automáticas são refeitas do zero a cada toque, então
   // desfazer a marca original também desfaz o que ela gerou.
-  function propagateLetter(letter){
+  function propagateAll(){
     var R = state.guesses.length;
+    if(!state.paint) state.paint = makeEmptyPaint();
     if(!state.auto) state.auto = makeEmptyPaint();
-    var g = {}, y = {}, cells = [];
-    for(var r=0;r<R;r++){
+    var r, c;
+    for(r=0;r<R;r++){
       if(!state.paint[r]) state.paint[r] = new Array(WORD_LEN).fill(0);
       if(!state.auto[r]) state.auto[r] = new Array(WORD_LEN).fill(0);
-      for(var c=0;c<WORD_LEN;c++){
-        if(state.guesses[r][c] !== letter) continue;
+      for(c=0;c<WORD_LEN;c++){
         if(state.auto[r][c] === 1){ state.paint[r][c] = 0; state.auto[r][c] = 0; }
-        cells.push([r,c]);
+        if(state.paint[r][c] === 4) state.paint[r][c] = 0;
       }
     }
-    cells.forEach(function(rc){
-      var v = state.paint[rc[0]][rc[1]];
-      if(v === 3) g[rc[1]] = true; else if(v === 2) y[rc[1]] = true;
-    });
-    var hasG = Object.keys(g).length > 0;
-    cells.forEach(function(rc){
-      var r = rc[0], c = rc[1];
-      if(state.paint[r][c] !== 0 || state.auto[r][c] === 2) return;
-      var v = g[c] ? 3 : ((y[c] || hasG) ? 2 : 0);
-      if(v){ state.paint[r][c] = v; state.auto[r][c] = 1; }
-    });
+    var info = {}, greenCol = {};
+    for(r=0;r<R;r++){
+      for(c=0;c<WORD_LEN;c++){
+        var L = state.guesses[r][c], v = state.paint[r][c];
+        var I = info[L] || (info[L] = {g:{}, y:{}, hasG:false, hasY:false});
+        if(v === 3){ I.g[c] = true; I.hasG = true; greenCol[c] = L; }
+        else if(v === 2){ I.y[c] = true; I.hasY = true; }
+      }
+    }
+    for(r=0;r<R;r++){
+      for(c=0;c<WORD_LEN;c++){
+        if(state.paint[r][c] !== 0 || state.auto[r][c] === 2) continue;
+        var L2 = state.guesses[r][c], I2 = info[L2];
+        if(!I2 || !(I2.hasG || I2.hasY)) continue;
+        var nv;
+        if(I2.g[c]) nv = 3;
+        else if(I2.y[c] || I2.hasG || (greenCol[c] && greenCol[c] !== L2)) nv = 2;
+        else nv = 4;
+        state.paint[r][c] = nv; state.auto[r][c] = 1;
+      }
+    }
   }
 
   function clearAllPaint(){
@@ -776,14 +794,14 @@ header{
     var letter = state.guesses[r][c];
     if(letterHasGY(letter)){
       var v = (state.paint[r] && state.paint[r][c]) || 0;
-      return (v===2 || v===3) ? v : 0;
+      return (v===2 || v===3 || v===4) ? v : 0;
     }
     if(letterIsRed(letter)) return 1;
     return (state.paint[r] && state.paint[r][c]) || 0;
   }
 
   function paintClass(p){
-    return p===1?'absent':(p===2?'present':(p===3?'correct':''));
+    return p===1?'absent':(p===2?'present':(p===3?'correct':(p===4?'maybe':'')));
   }
 
   function statusToPaint(s){
@@ -990,11 +1008,7 @@ header{
       }
     }
     // o palpite novo herda as marcações de posição já feitas
-    var seenL = {};
-    for(var pi=0; pi<WORD_LEN; pi++){
-      var pl = state.guesses[rowIdx][pi];
-      if(!seenL[pl] && letterHasGY(pl)){ seenL[pl] = true; propagateLetter(pl); }
-    }
+    propagateAll();
 
     var justFinished = false;
     if(won){ state.won = true; state.finished = true; justFinished = true; revealAllPaint(); }
