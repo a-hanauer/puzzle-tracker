@@ -150,9 +150,9 @@ header{
 .switch.on{background:var(--accent);}
 .switch.on .knob{transform:translateX(16px);background:var(--accent-ink);}
 /* ===== board ===== */
-.board-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 0;min-height:0;container-type:size;}
-/* o tabuleiro cabe na altura disponível: 8 linhas quadradas de letras + placar de 87px */
-.board{display:flex;flex-direction:column;gap:6px;width:100%;max-width:min(460px, calc((100cqh - 20px - 42px) / 8 * 5 + 20px + 87px));}
+.board-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 0;min-height:0;}
+/* a largura máxima é calculada em JS (ajustarTabuleiro) para as 8 linhas caberem na altura livre */
+.board{display:flex;flex-direction:column;gap:6px;width:100%;max-width:460px;}
 /* linha: a palavra (5 letras largas) e, à direita, o placar numa cápsula estreita */
 .row{display:grid;grid-template-columns:repeat(5,1fr) 82px;gap:5px;}
 .row .cnt{margin-left:5px;}
@@ -677,6 +677,26 @@ header{
     }
   }
   buildBoard();
+
+  // Tabuleiro do tamanho da tela: mede a altura livre entre o cabeçalho e o
+  // teclado e escolhe o maior tamanho de casa que faz as 8 linhas caberem.
+  // Linha = 5 casas + 5 vãos de 5px (entre as 6 colunas) + coluna do placar (82px).
+  function ajustarTabuleiro(){
+    var wrap = document.querySelector('.board-wrap');
+    if(!wrap) return;
+    boardEl.style.display = 'none';                  // tira o tabuleiro da conta
+    var livre = wrap.clientHeight - 20;              // padding vertical do .board-wrap
+    boardEl.style.display = '';
+    if(livre < 200) return;                          // medida estranha: fica o padrão
+    var casa = (livre - 7 * 6) / 8;
+    var larg = Math.floor(5 * casa + 5 * 5 + 82);   // 5 casas + 5 vãos da grade + coluna do placar
+    boardEl.style.maxWidth = Math.min(460, larg) + 'px';
+  }
+  ajustarTabuleiro();
+  window.addEventListener('resize', ajustarTabuleiro);
+  window.addEventListener('orientationchange', function(){ setTimeout(ajustarTabuleiro, 300); });
+  window.addEventListener('pageshow', ajustarTabuleiro);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(ajustarTabuleiro);
 
   function paintTile(r,c){
     if(r >= state.guesses.length) return; // só palpites já enviados podem ser pintados
