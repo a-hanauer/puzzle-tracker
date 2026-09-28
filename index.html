@@ -322,17 +322,15 @@
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
   .toast svg { width: 16px; height: 16px; }
 
-  /* ---------- Abas Hoje / Histórico ---------- */
-  .tabs {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
-    margin-top: 14px; padding: 4px;
-    background: var(--surface-2); border-radius: 14px;
-  }
-  .tabs a {
-    text-align: center; padding: 9px 0; border-radius: 10px;
-    color: var(--muted); text-decoration: none; font-weight: 700; font-size: .9rem;
-  }
-  .tabs a[aria-current="page"] { background: var(--surface); color: var(--green); box-shadow: var(--shadow), inset 0 0 0 1.5px var(--green); }
+  /* ---------- Histórico (aberto pelo botão do cabeçalho) ---------- */
+  .round[aria-pressed="true"] { background: var(--green); color: #fff; }
+  .hist-head { display: flex; align-items: center; justify-content: space-between; margin: 16px 2px 2px; }
+  .hist-head h2 { margin: 0; font-size: 1.25rem; font-weight: 800; letter-spacing: -.01em; }
+  .segx { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface-2); margin-bottom: 14px; }
+  .segx button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; border: none; border-radius: 9px; background: none; color: var(--muted); font: inherit; font-weight: 700; font-size: .84rem; cursor: pointer; min-width: 0; }
+  .segx button[aria-checked="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+  .segx button img, .segx button .em { width: 18px; height: 18px; border-radius: 5px; object-fit: contain; font-size: .95rem; line-height: 18px; flex: none; }
+  .segx button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   [hidden] { display: none !important; }
 
   /* ---------- Histórico ---------- */
@@ -341,13 +339,16 @@
     border-radius: 18px; padding: 16px; box-shadow: var(--shadow);
   }
   .card + .card, .tiles + .card { margin-top: 12px; }
+  .card .mini-title:first-child { margin-top: 0; }
+  .vbars.week .vbar { gap: 0; }
+  .axis.week span { flex: 1; text-align: center; }
   .card h2 { margin: 0 0 2px; font-size: 1rem; font-weight: 800; letter-spacing: -.01em; }
   .card .sub { color: var(--muted); font-size: .8rem; margin-bottom: 12px; }
-  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
-  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px; box-shadow: var(--shadow); }
-  .tile .v { font-size: 1.7rem; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-  .tile .v small { font-size: .9rem; color: var(--muted); font-weight: 700; margin-left: 2px; }
-  .tile .l { color: var(--muted); font-size: .78rem; font-weight: 600; margin-top: 2px; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px 8px; box-shadow: var(--shadow); text-align: center; }
+  .tile .v { font-size: 1.3rem; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .tile .v small { font-size: .75rem; color: var(--muted); font-weight: 700; margin-left: 1px; }
+  .tile .l { color: var(--muted); font-size: .64rem; font-weight: 600; margin-top: 2px; line-height: 1.2; }
 
   /* calendário */
   .cal { display: grid; grid-template-columns: 18px 1fr; gap: 6px; }
@@ -414,6 +415,7 @@
   <div class="top-row">
     <div class="app-mark"><img src="icon-192.png?v=6" alt=""><span>Jogos do Dia</span></div>
   <div class="head-actions">
+    <button class="round" id="histBtn" aria-label="Histórico" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V13M10 20V6M15 20v-9M20 20V9"/></svg></button>
     <button class="round" id="themeBtn" aria-label="Tema"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
     <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
   </div>
@@ -433,41 +435,32 @@
   </div>
 </header>
 
-<nav class="tabs" aria-label="Seções">
-  <a href="#" id="tabToday" aria-current="page">Hoje</a>
-  <a href="#historico" id="tabHistory">Histórico</a>
-</nav>
-
 <section id="viewHistory" hidden>
+  <div class="hist-head">
+    <h2>Histórico</h2>
+    <button class="round" id="histClose" aria-label="Fechar histórico"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+
   <div class="tiles" id="hTiles"></div>
 
+  <!-- atividade: um só quadro, com o período escolhido no controle -->
   <div class="card">
-    <h2>Últimas 12 semanas</h2>
-    <div class="sub">Quanto mais verde, mais jogos feitos no dia. Toque num dia para ver.</div>
-    <div class="cal-months" id="calMonths"></div>
-    <div class="cal">
-      <div class="cal-days"><span>S</span><span></span><span>Q</span><span></span><span>S</span><span></span><span>D</span></div>
-      <div class="cal-grid" id="calGrid"></div>
+    <div class="segx" id="perSeg" role="radiogroup" aria-label="Período">
+      <button data-p="7" role="radio">7 dias</button>
+      <button data-p="30" role="radio">30 dias</button>
+      <button data-p="84" role="radio">12 semanas</button>
     </div>
-    <div class="legend">menos <span class="cell"></span><span class="cell l1"></span><span class="cell l2"></span><span class="cell l3"></span><span class="cell l4"></span> tudo</div>
-    <div class="detail" id="calDetail"></div>
-  </div>
-
-  <div class="card">
-    <h2>Jogos por dia</h2>
-    <div class="sub">Últimos 30 dias · verde forte = dia completo</div>
-    <div class="vbars" id="dayBars"></div>
-    <div class="axis" id="dayAxis"></div>
-    <div class="readout" id="dayReadout"></div>
-  </div>
-
-  <div class="card">
-    <h2>Por jogo</h2>
-    <div class="sub" id="perGameSub"></div>
+    <div id="actChart"></div>
+    <div class="detail" id="actDetail"></div>
+    <div class="mini-title">Por jogo</div>
     <div id="perGame"></div>
   </div>
 
-  <div id="nativeCards"></div>
+  <!-- jogos da casa: um só quadro, com o jogo escolhido no controle -->
+  <div class="card" id="gameCard">
+    <div class="segx" id="gameSeg" role="radiogroup" aria-label="Jogo"></div>
+    <div id="gameBody"></div>
+  </div>
 </section>
 
 <div id="viewToday">
@@ -988,27 +981,30 @@ function bestStreak() {
   return best;
 }
 
+let histPeriod = 30, histGame = null, histSel = null;
+
 function renderHistory() {
   const total = GAMES.length, t0 = startOfToday(), first = firstDay();
-  // janela de 30 dias (ou desde o primeiro uso, se for mais recente)
-  const winStart = new Date(Math.max(addDays(t0, -29), first));
+  // janela do período (ou desde o primeiro uso, se for mais recente)
+  const winStart = new Date(Math.max(addDays(t0, -(histPeriod - 1)), first));
   const winDays = Math.round((t0 - winStart) / 86400000) + 1;
   let winDone = 0, fullDays = 0;
   for (let i = 0; i < winDays; i++) winDone += countOn(dayKey(addDays(winStart, i)));
   for (const k of Object.keys(state.history)) if (countOn(k) >= total) fullDays++;
+  const perLabel = histPeriod === 7 ? "7 dias" : histPeriod === 30 ? "30 dias" : "12 semanas";
 
   $("hTiles").innerHTML = [
-    [streak(), "dias", "Sequência atual"],
-    [bestStreak(), "dias", "Melhor sequência"],
-    [fullDays, "", "Dias com tudo feito"],
-    [Math.round(100 * winDone / (winDays * total)), "%", `Aproveitamento · ${winDays} dia${winDays > 1 ? "s" : ""}`],
+    [streak(), "d", "Sequência"],
+    [bestStreak(), "d", "Melhor sequência"],
+    [fullDays, "", "Dias completos"],
+    [Math.round(100 * winDone / (winDays * total)), "%", `Feito · ${perLabel}`],
   ].map(([v, u, l]) => `<div class="tile"><div class="v">${v}<small>${u}</small></div><div class="l">${l}</div></div>`).join("");
 
-  renderCalendar(t0, first, total);
-  renderDayBars(t0, first, total);
+  document.querySelectorAll("#perSeg button").forEach(b => b.setAttribute("aria-checked", String(+b.dataset.p === histPeriod)));
+  if (histPeriod === 84) renderCalendar(t0, first, total); else renderDayBars(t0, first, total, histPeriod);
+  showDay(histSel || dayKey(t0), total);
 
-  // por jogo
-  $("perGameSub").textContent = `Dias em que você fez cada jogo · ${winDays === 30 ? "últimos 30 dias" : `desde ${fmtDay(winStart)}`}`;
+  // por jogo, no mesmo período
   $("perGame").innerHTML = GAMES.map(g => {
     let n = 0;
     for (let i = 0; i < winDays; i++) if ((state.history[dayKey(addDays(winStart, i))] || []).includes(g.id)) n++;
@@ -1019,62 +1015,68 @@ function renderHistory() {
   renderNative(t0);
 }
 
-let calSel = null;
+// calendário das últimas 12 semanas (colunas = semanas, começando na segunda)
 function renderCalendar(t0, first, total) {
-  // 12 colunas (semanas), começando na segunda-feira
   const mondayThisWeek = addDays(t0, -((t0.getDay() + 6) % 7));
   const start = addDays(mondayThisWeek, -7 * 11);
-  const grid = $("calGrid"); grid.innerHTML = "";
   const months = [];
+  let cells = "";
   for (let w = 0; w < 12; w++) {
     const wk = addDays(start, 7 * w);
     months.push(wk.getDate() <= 7 || w === 0 ? MONTHS[wk.getMonth()] : "");
     for (let d = 0; d < 7; d++) {
       const day = addDays(wk, d), k = dayKey(day), n = countOn(k);
-      const b = document.createElement("button");
-      b.className = "cell";
-      if (day > t0) b.classList.add("future");
-      else if (day < first) b.classList.add("before");
-      else if (n) b.classList.add("l" + Math.max(1, Math.min(4, Math.ceil(4 * n / total))));
-      b.dataset.day = k;
-      b.setAttribute("aria-label", `${fmtDay(day)}: ${n} de ${total}`);
-      if (day <= t0 && day >= first) b.addEventListener("click", () => { calSel = k; showDay(k, total); });
-      grid.appendChild(b);
+      let cls = "cell";
+      if (day > t0) cls += " future";
+      else if (day < first) cls += " before";
+      else if (n) cls += " l" + Math.max(1, Math.min(4, Math.ceil(4 * n / total)));
+      const pick = day <= t0 && day >= first;
+      cells += `<button class="${cls}" ${pick ? `data-day="${k}"` : "disabled"} aria-label="${esc(fmtDay(day))}: ${n} de ${total}"></button>`;
     }
   }
-  $("calMonths").style.gridTemplateColumns = "repeat(12, 1fr)";
-  $("calMonths").innerHTML = months.map(m => `<span>${m}</span>`).join("");
-  showDay(calSel || dayKey(t0), total);
+  $("actChart").innerHTML = `
+    <div class="cal-months" style="grid-template-columns:repeat(12,1fr)">${months.map(m => `<span>${m}</span>`).join("")}</div>
+    <div class="cal">
+      <div class="cal-days"><span>S</span><span></span><span>Q</span><span></span><span>S</span><span></span><span>D</span></div>
+      <div class="cal-grid">${cells}</div>
+    </div>
+    <div class="legend">menos <span class="cell"></span><span class="cell l1"></span><span class="cell l2"></span><span class="cell l3"></span><span class="cell l4"></span> tudo</div>`;
+  $("actChart").querySelectorAll("[data-day]").forEach(b => b.addEventListener("click", () => { histSel = b.dataset.day; showDay(histSel, total); }));
 }
+
+// barras por dia (7 ou 30 dias)
+function renderDayBars(t0, first, total, n) {
+  const days = [...Array(n)].map((_, i) => addDays(t0, i - (n - 1)));
+  const bars = days.map(d => {
+    const k = dayKey(d), c = countOn(k);
+    const cls = "vbar" + (c >= total ? " full" : "") + (c === 0 ? " none" : "");
+    return `<button class="${cls}" data-day="${k}" aria-label="${esc(fmtDay(d))}: ${c} de ${total}"><i style="height:${100 * c / total}%"></i></button>`;
+  }).join("");
+  const axis = n === 7
+    ? `<div class="axis week">${days.map((d, i) => `<span>${i === n - 1 ? "hoje" : WEEK[d.getDay()]}</span>`).join("")}</div>`
+    : `<div class="axis"><span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>${days[15].getDate()} ${MONTHS[days[15].getMonth()]}</span><span>hoje</span></div>`;
+  $("actChart").innerHTML = `<div class="vbars${n === 7 ? " week" : ""}" style="gap:${n === 7 ? 8 : 2}px"><div class="guide"><span>${total}</span></div>${bars}</div>${axis}`;
+  $("actChart").querySelectorAll("[data-day]").forEach(b => b.addEventListener("click", () => { histSel = b.dataset.day; showDay(histSel, total); }));
+}
+
+// detalhe do dia escolhido (vale para barras e calendário)
 function showDay(k, total) {
-  document.querySelectorAll("#calGrid .cell.sel").forEach(c => c.classList.remove("sel"));
-  document.querySelector(`#calGrid .cell[data-day="${k}"]`)?.classList.add("sel");
+  const el = document.querySelector(`#actChart [data-day="${k}"]`);
+  if (!el) { k = dayKey(startOfToday()); }
+  document.querySelectorAll("#actChart .sel").forEach(c => c.classList.remove("sel"));
+  document.querySelector(`#actChart [data-day="${k}"]`)?.classList.add("sel");
   const d = new Date(k + "T00:00:00"), ids = state.history[k] || [], n = countOn(k), res = state.results[k] || {};
-  $("calDetail").innerHTML = `<b>${fmtDay(d)}</b> · ${n} de ${total} jogo${total > 1 ? "s" : ""}${n >= total ? " · tudo feito" : ""}
+  $("actDetail").innerHTML = `<b>${fmtDay(d)}</b> · ${n} de ${total} jogo${total > 1 ? "s" : ""}${n >= total ? " · tudo feito" : ""}
     <div class="chips">${GAMES.map(g => {
       const r = res[g.id], extra = !r ? "" : r.time != null ? ` ${fmtTime(r.time)}` : r.won ? ` ${r.tries}/${r.max}` : " ✗";
       return `<span class="chip${ids.includes(g.id) ? " on" : ""}">${esc(g.name)}${extra}</span>`;
     }).join("")}</div>`;
 }
 
-function renderDayBars(t0, first, total) {
-  const box = $("dayBars"); box.innerHTML = `<div class="guide"><span>${total}</span></div>`;
-  const days = [...Array(30)].map((_, i) => addDays(t0, i - 29));
-  const read = (d, n) => { $("dayReadout").innerHTML = `<b>${fmtDay(d)}</b> · ${d < first ? "antes do primeiro uso" : `${n} de ${total} jogos`}`; };
-  days.forEach(d => {
-    const n = countOn(dayKey(d)), b = document.createElement("button");
-    b.className = "vbar" + (n >= total ? " full" : "") + (n === 0 ? " none" : "");
-    b.innerHTML = `<i style="height:${100 * n / total}%"></i>`;
-    b.setAttribute("aria-label", `${fmtDay(d)}: ${n} de ${total}`);
-    b.addEventListener("click", () => { box.querySelectorAll(".sel").forEach(x => x.classList.remove("sel")); b.classList.add("sel"); read(d, n); });
-    box.appendChild(b);
-  });
-  $("dayAxis").innerHTML = `<span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>${days[15].getDate()} ${MONTHS[days[15].getMonth()]}</span><span>hoje</span>`;
-  read(t0, countOn(dayKey(t0)));
-}
-
+// jogos da casa: estatísticas de um jogo por vez, trocando pelo controle
 function renderNative(t0) {
-  const blocks = [];
+  const blocks = {};
+  const days = [...Array(30)].map((_, i) => addDays(t0, i - 29));
   const specs = [
     { id: "sanduba", stats: () => { const s = readJSON("sanduba-stats") || {}; return { played: s.played || 0, wins: s.wins || 0, streak: s.streak || 0, best: s.best || 0 }; } },
     { id: "quinhentos", stats: () => { const s = readJSON("quinhentao:stats:padrao") || {}; return { played: s.played || 0, wins: s.wins || 0, streak: s.streak || 0, best: s.maxStreak || 0, dist: s.dist }; } },
@@ -1084,8 +1086,6 @@ function renderNative(t0) {
     if (!g) continue;
     const s = sp.stats();
     const pct = s.played ? Math.round(100 * s.wins / s.played) : 0;
-    // tentativas por dia (últimos 30)
-    const days = [...Array(30)].map((_, i) => addDays(t0, i - 29));
     const rs = days.map(d => state.results[dayKey(d)]?.[g.id]);
     const withData = rs.filter(Boolean);
     const avg = withData.filter(r => r.won).map(r => r.tries);
@@ -1094,7 +1094,7 @@ function renderNative(t0) {
       const r = rs[i];
       const cls = !r ? "none" : r.won ? "full" : "lost";
       const h = !r ? 0 : r.won ? 100 * r.tries / max : 100;
-      const lab = !r ? "sem partida" : r.won ? `acertou em ${r.tries}/${r.max}` : "não acertou";
+      const lab = !r ? "sem partida" : r.won ? `${r.tries} de ${r.max} tentativas` : "não acertou";
       return `<button class="vbar ${cls}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${h}%"></i></button>`;
     }).join("");
     let dist = "";
@@ -1103,8 +1103,7 @@ function renderNative(t0) {
       dist = `<div class="mini-title">Vitórias por nº de tentativas</div><div class="dist">${s.dist.map((v, i) =>
         `<div class="hrow"><span class="n">${i + 1}</span><span class="track"><i style="width:${top ? 100 * v / top : 0}%"></i></span><span class="val">${v}</span></div>`).join("")}</div>`;
     }
-    blocks.push(`<div class="card">
-      <div class="game-head">${iconHTML(g).replace('class="em"', 'class="em" style="font-size:1.6rem"')}<div><h2>${esc(g.name)}</h2><div class="sub" style="margin:0">Estatísticas do próprio jogo</div></div></div>
+    blocks[g.id] = `
       <div class="minis">
         <div><div class="v">${s.played}</div><div class="l">jogadas</div></div>
         <div><div class="v">${pct}%</div><div class="l">vitórias</div></div>
@@ -1116,8 +1115,7 @@ function renderNative(t0) {
         <div class="axis"><span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>hoje</span></div>
         <div class="readout">Barra mais baixa = menos tentativas. Cinza = não acertou.</div>`
         : `<div class="empty">Os resultados começam a aparecer aqui a partir das próximas partidas.</div>`}
-      ${dist}
-    </div>`);
+      ${dist}`;
   }
   // Eclipse: o desempenho é o tempo
   const ge = GAMES.find(x => x.id === "eclipse");
@@ -1126,7 +1124,6 @@ function renderNative(t0) {
     const times = st.times || {};                            // { número do dia: segundos }
     const e0 = new Date(2026, 8, 27);
     const dnum = d => Math.round((d - e0) / 86400000) + 1;
-    const days = [...Array(30)].map((_, i) => addDays(t0, i - 29));
     const vals = days.map(d => times[dnum(d)] ?? state.results[dayKey(d)]?.eclipse?.time ?? null);
     const all = Object.values(times);
     const best = all.length ? Math.min(...all) : null;
@@ -1137,8 +1134,7 @@ function renderNative(t0) {
       const lab = v == null ? "sem partida" : `resolvido em ${fmtTime(v)}`;
       return `<button class="vbar ${v == null ? "none" : "full"}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${v == null ? 0 : Math.max(6, 100 * v / top)}%"></i></button>`;
     }).join("");
-    blocks.push(`<div class="card">
-      <div class="game-head">${iconHTML(ge)}<div><h2>Eclipse</h2><div class="sub" style="margin:0">Tempo para resolver</div></div></div>
+    blocks.eclipse = `
       <div class="minis">
         <div><div class="v">${st.played || 0}</div><div class="l">resolvidos</div></div>
         <div><div class="v">${st.streak || 0}</div><div class="l">sequência</div></div>
@@ -1149,29 +1145,40 @@ function renderNative(t0) {
       ${vals.some(v => v != null) ? `<div class="vbars" style="height:80px">${bars}</div>
         <div class="axis"><span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>hoje</span></div>
         <div class="readout">Barra mais baixa = mais rápido. Toque numa barra para ver o tempo.</div>`
-        : `<div class="empty">Seus tempos aparecem aqui depois do primeiro desafio resolvido.</div>`}
-    </div>`);
+        : `<div class="empty">Seus tempos aparecem aqui depois do primeiro desafio resolvido.</div>`}`;
   }
-  $("nativeCards").innerHTML = blocks.join("");
-  $("nativeCards").querySelectorAll(".vbar").forEach(b => b.addEventListener("click", () => {
-    const card = b.closest(".card");
-    card.querySelectorAll(".vbar.sel").forEach(x => x.classList.remove("sel"));
+  const ids = Object.keys(blocks);
+  $("gameCard").hidden = !ids.length;
+  if (!ids.length) return;
+  if (!ids.includes(histGame)) histGame = ids[0];
+  $("gameSeg").innerHTML = ids.map(id => {
+    const g = GAMES.find(x => x.id === id);
+    return `<button data-g="${id}" role="radio" aria-checked="${id === histGame}">${iconHTML(g)}<span>${esc(g.name)}</span></button>`;
+  }).join("");
+  $("gameSeg").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { histGame = b.dataset.g; renderNative(startOfToday()); }));
+  $("gameBody").innerHTML = blocks[histGame];
+  $("gameBody").querySelectorAll(".vbar").forEach(b => b.addEventListener("click", () => {
+    $("gameBody").querySelectorAll(".vbar.sel").forEach(x => x.classList.remove("sel"));
     b.classList.add("sel");
-    card.querySelector(".readout").innerHTML = esc(b.dataset.lab);
+    const r = $("gameBody").querySelector(".readout"); if (r) r.innerHTML = esc(b.dataset.lab);
   }));
 }
 
-/* ---------- Abas ---------- */
+document.querySelectorAll("#perSeg button").forEach(b => b.addEventListener("click", () => {
+  histPeriod = +b.dataset.p; renderHistory();
+}));
+
+/* ---------- Histórico: abre e fecha pelo botão do cabeçalho ---------- */
 function route() {
   const hist = location.hash === "#historico";
   $("viewHistory").hidden = !hist;
   $("viewToday").hidden = hist;
-  $("tabToday").setAttribute("aria-current", hist ? "false" : "page");
-  $("tabHistory").setAttribute("aria-current", hist ? "page" : "false");
-  if (hist) renderHistory();
+  $("histBtn").setAttribute("aria-pressed", String(hist));
+  if (hist) { renderHistory(); window.scrollTo(0, 0); }
 }
-$("tabToday").addEventListener("click", e => { e.preventDefault(); history.replaceState(null, "", location.pathname); route(); });
-$("tabHistory").addEventListener("click", e => { e.preventDefault(); history.replaceState(null, "", "#historico"); route(); });
+const abrirHist = abrir => { history.replaceState(null, "", abrir ? "#historico" : location.pathname); route(); };
+$("histBtn").addEventListener("click", () => abrirHist(location.hash !== "#historico"));
+$("histClose").addEventListener("click", () => abrirHist(false));
 window.addEventListener("hashchange", route);
 
 renderDate();
