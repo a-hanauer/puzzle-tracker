@@ -28,7 +28,7 @@ const BASE_GAMES = [
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon-claro.png?v=2", iconDark: "eclipse/icon-escuro.png?v=2", iconFull: true },
   { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=2", iconDark: "novelo/icon-escuro.png?v=1", iconFull: true },
   { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png?v=3", iconDark: "retalhos/icon-escuro.png?v=1", iconFull: true },
-  { id: "pingado",    name: "Pingado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "pingado/", icon: "pingado/icon.png?v=2", iconDark: "pingado/icon-escuro.png?v=2", iconFull: true },
+  { id: "pingado",    name: "Pingado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "pingado/", icon: "pingado/icon.png?v=3", iconDark: "pingado/icon-escuro.png?v=3", iconFull: true },
 ];
 
 /* ============================================================ */
