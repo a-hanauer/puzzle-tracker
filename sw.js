@@ -1,6 +1,6 @@
 // Service worker do Jogos do Dia.
 // Deixa o painel instalável e funcionando offline (sempre tenta a versão mais nova primeiro).
-const CACHE = "jogos-do-dia-v30";
+const CACHE = "jogos-do-dia-v31";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
