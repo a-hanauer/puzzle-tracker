@@ -165,9 +165,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // o dia recebe um desafio da faixa certa, e os estilos se alternam.
   const need = new Array(7).fill(0);
   for (let k = 0; k < DAYS; k++) need[dayIdx(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
-  // Segunda, quinta e sexta ficam com a metade mais fácil dos candidatos do
-  // seu tamanho/nível; os outros dias, com a mais difícil. Assim o esforço
-  // sobe dia a dia: seg < ter < qua < qui < sex < sáb < dom.
+  // A segunda fica com a metade mais fácil dos candidatos; os outros dias, com a
+  // mais difícil do seu tamanho. Como todos vão no máximo até o nível 2, o
+  // esforço sobe com o tabuleiro: seg < ter < qua < qui < sex < sáb < dom.
   const pools = [];
   for (let w = 0; w < 7; w++) {
     const cfg = WEEK[w], cand = [];
@@ -175,7 +175,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     for (let k = 0; k < total; k++) cand.push(makePuzzle(cfg, cfg.styles[k % cfg.styles.length]));
     cand.forEach(p => (p.q = rand()));
     // metade mais fácil (ou mais difícil) dentro de cada estilo, para os estilos variarem
-    const easy = w === 0 || w === 3 || w === 4;
+    const easy = w === 0;
     let chosen = [], rest = [];
     for (const style of new Set(cfg.styles)) {
       const g = cand.filter(p => p.s === style).sort((a, b) => a.d - b.d || a.q - b.q);
