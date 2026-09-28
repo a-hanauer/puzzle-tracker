@@ -36,6 +36,11 @@
     --ink:#221c14;
     --cheese:#fbe08a;
     --bread-2:#f3b264;
+    --crust:#d98f3f;        /* casca da fatia */
+    --crust-win:#5e9e38;
+    --crust-lose:#c9533b;
+    --rail:#221c14;         /* trilho do indicador */
+    --tag:#221c14; --tag-ink:#fff8ea;
     --radius:14px;
     --stroke:2px;
     padding-top:env(safe-area-inset-top,0px);
@@ -63,6 +68,11 @@
       --ink:#221c14;
       --cheese:#fbe08a;
       --bread-2:#dfa059;
+    --crust:#b8793a;
+    --crust-win:#5e9e38;
+    --crust-lose:#c9533b;
+    --rail:#bca88f;
+    --tag:#f6dfb8; --tag-ink:#221c14;
     }
   }
   :root[data-theme="dark"]{
@@ -86,6 +96,11 @@
     --ink:#221c14;
     --cheese:#fbe08a;
     --bread-2:#dfa059;
+    --crust:#b8793a;
+    --crust-win:#5e9e38;
+    --crust-lose:#c9533b;
+    --rail:#bca88f;
+    --tag:#f6dfb8; --tag-ink:#221c14;
   }
   html{scroll-padding-top:env(safe-area-inset-top,0px);touch-action:manipulation;}
   *{box-sizing:border-box;}
@@ -188,33 +203,48 @@
   /* ---- board ---- */
   #board-wrap{display:flex;align-items:stretch;gap:12px;margin:2px 0 10px;}
   #connectors{display:flex;flex-direction:column;justify-content:space-between;align-items:center;width:clamp(38px,12vw,52px);flex:none;}
-  .bubble-col{display:flex;flex-direction:column;align-items:center;gap:2px;}
-  .bubble{background:var(--tile);color:var(--ink);font-weight:900;font-size:.62rem;
-    min-width:38px;height:32px;padding:0 5px;border:var(--stroke) solid var(--ink);
-    border-radius:11px 11px 11px 3px;display:flex;align-items:center;justify-content:center;white-space:nowrap;
-    transition:background .2s ease;}
-  .bubble.ghost{background:var(--tile-ghost);color:var(--text-dim);font-size:.8rem;}
+  /* indicador: etiquetas com bico apontando para o meio, trilho fino e ponto */
+  .bubble-col{display:flex;flex-direction:column;align-items:center;}
+  .bubble{position:relative;display:flex;align-items:center;justify-content:center;
+    min-width:44px;height:28px;padding:0 6px;border-radius:8px;
+    background:var(--tag);color:var(--tag-ink);font-weight:800;font-size:.78rem;font-variant-numeric:tabular-nums;
+    white-space:nowrap;transition:background .2s ease,color .2s ease;}
+  .bubble::after{content:"";position:absolute;left:50%;width:10px;height:10px;border-radius:2px;
+    background:inherit;transform:translateX(-50%) rotate(45deg);transition:background .2s ease;}
+  .bubble.top{margin-bottom:9px;}
+  .bubble.top::after{bottom:-4px;}
+  .bubble.bot{margin-top:9px;}
+  .bubble.bot::after{top:-4px;}
+  .bubble.ghost{background:var(--tile-ghost);color:var(--text-dim);font-size:.85rem;}
   .bubble.closer{background:var(--accent);color:var(--ink);}
-  .connector-line{flex:1;width:3px;background:var(--ink);margin:2px clamp(8px,5vw,25px);border-radius:3px;min-height:8px;
+  .bubble.lock{background:var(--cheese);}
+  .connector-line{flex:1;width:2px;background:var(--rail);border-radius:2px;min-height:8px;
     transition: flex-grow .35s ease;}
-  .connector-line.ghost{background:var(--ink);opacity:.3;}
+  .connector-line.ghost{opacity:.3;}
   .connector-dot{
-    width:11px;height:11px;border-radius:50%;background:var(--accent);
-    margin:0 clamp(6px,4vw,20px);flex:none;box-shadow:0 0 0 4px var(--accent-soft);
+    width:12px;height:12px;border-radius:50%;background:var(--accent);
+    margin:4px 0;flex:none;box-shadow:0 0 0 4px var(--accent-soft);
   }
   .connector-dot.ghost{background:var(--tile-ghost);box-shadow:none;}
 
   #rows{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:7px;}
-  .tile-row{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
-  .tile{aspect-ratio:1;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  /* cada palavra é uma fatia: letras juntas dentro de uma casca */
+  .tile-row{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:4px;border-radius:16px;}
+  .tile{aspect-ratio:1;border-radius:9px;display:flex;align-items:center;justify-content:center;
     font-weight:900;font-size:1.4rem;text-transform:uppercase;user-select:none;
-    border:var(--stroke) solid var(--ink);color:var(--ink);
-    transition:background .2s ease;}
-  .tile.bound{background:var(--tile);}
-  .tile.ghost{background:var(--tile-ghost);color:var(--text-dim);opacity:.65;}
-  .tile.win{background:var(--good);}
-  .tile.input{background:var(--tile-ghost);border-style:dashed;color:var(--text);}
-  .tile.input.filled{border-style:solid;background:var(--accent-soft);color:var(--ink);}
+    color:var(--ink);transition:background .2s ease,box-shadow .2s ease;}
+  .tile-row.bound{background:var(--crust);box-shadow:inset 0 0 0 var(--stroke) var(--ink);}
+  .tile-row.bound .tile{background:var(--tile);}
+  .tile-row.ghost{background:var(--tile-ghost);opacity:.6;}
+  .tile-row.ghost .tile{background:transparent;color:var(--text-dim);}
+  .tile-row.win{background:var(--crust-win);box-shadow:inset 0 0 0 var(--stroke) var(--ink);}
+  .tile-row.win .tile{background:var(--good);}
+  .tile-row.lose{background:var(--crust-lose);box-shadow:inset 0 0 0 var(--stroke) var(--ink);}
+  .tile-row.lose .tile{background:var(--accent);}
+  .tile-row.input{padding:3px;border:var(--stroke) dashed color-mix(in srgb,var(--text-dim) 70%,transparent);}
+  .tile-row.input .tile{background:var(--tile-ghost);color:var(--text);}
+  .tile-row.input .tile.filled{background:var(--accent-soft);color:var(--text);}
+  .tile-row.input .tile.cur{box-shadow:inset 0 0 0 var(--stroke) var(--accent);}
 
   #row-input{ transition: none; }
   #row-input.fly-up{ animation: flyUp .5s ease forwards; }
@@ -336,7 +366,8 @@
     position:relative;z-index:2;
   }
 
-  .fim-result .end-word-slab{width:100%;max-width:280px;margin:0;animation:stackIn .45s cubic-bezier(.2,.9,.3,1.3) both;}
+  .end-slice{width:100%;max-width:290px;animation:stackIn .45s cubic-bezier(.2,.9,.3,1.3) both;}
+  .end-slice .tile{font-size:1.5rem;}
   .end-word-slab.missed{
     background:var(--accent);
   }
@@ -422,13 +453,13 @@
   <div id="board-wrap">
     <div id="connectors">
       <div class="bubble-col">
-        <div class="bubble" id="bubble-top">?</div>
+        <div class="bubble top ghost" id="bubble-top">?</div>
       </div>
       <div class="connector-line" id="line-top"></div>
       <div class="connector-dot" id="connector-dot"></div>
       <div class="connector-line" id="line-bottom"></div>
       <div class="bubble-col">
-        <div class="bubble" id="bubble-bottom">?</div>
+        <div class="bubble bot ghost" id="bubble-bottom">?</div>
       </div>
     </div>
     <div id="rows">
@@ -505,7 +536,7 @@
     <div class="fim-top"><button class="fim-close" data-close="end-overlay" aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="fim-art"><svg viewBox="0 0 72 72" role="img" aria-label="Sanduíche"><use href="#art-sandwich"/></svg></div>
     <h2 class="fim-title" id="end-text">Sanduba completo!</h2>
-    <div class="fim-result"><div class="end-word-slab" id="end-word">-----</div></div>
+    <div class="fim-result"><div class="tile-row end-slice win" id="end-word"></div></div>
     <p class="fim-sub" id="end-sub"></p>
     <button class="fim-btn" id="end-share">Compartilhar</button>
     <button class="fim-btn" id="end-next" hidden>Jogar outro</button>
@@ -840,15 +871,17 @@
       html += letterTile(ch, cls);
     }
     container.innerHTML = html;
+    container.className = 'tile-row ' + (isReal ? 'bound' : 'ghost');
+    var pos = isTop ? ' top' : ' bot';
     if(state.won){
       bubble.innerHTML = '<svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M7.6 10.4V7.6a4.4 4.4 0 0 1 8.8 0v2.8"/><rect x="4.4" y="10.2" width="15.2" height="11.4" rx="3.2" fill="var(--cheese)"/><path d="M12 14.4v2.9"/></g></svg>';
-      bubble.className = 'bubble';
+      bubble.className = 'bubble lock' + pos;
     } else if(isReal){
       bubble.textContent = score.toFixed(1);
-      bubble.className = 'bubble' + (otherIsCloser ? '' : ' closer');
+      bubble.className = 'bubble' + pos + (otherIsCloser ? '' : ' closer');
     } else {
       bubble.textContent = '?';
-      bubble.className = 'bubble ghost';
+      bubble.className = 'bubble ghost' + pos;
     }
   }
 
@@ -892,16 +925,17 @@
     }
 
     var inputRow = document.getElementById('row-input');
-    inputRow.className = 'tile-row';
+    inputRow.className = 'tile-row ' + (state.won ? 'win' : 'input');
     var html = '';
     if(state.won){
       for(var i=0;i<5;i++){
-        html += letterTile(state.secret[i], 'win');
+        html += letterTile(state.secret[i], '');
       }
     } else {
+      var cur = state.over ? -1 : currentInput.findIndex(function(c){ return !c; });
       for(var i=0;i<5;i++){
         var ch = currentInput[i] || '';
-        html += '<div class="tile input' + (ch?' filled':'') + '">' + ch + '</div>';
+        html += '<div class="tile' + (ch?' filled':'') + (i === cur ? ' cur' : '') + '">' + ch + '</div>';
       }
     }
     inputRow.innerHTML = html;
@@ -999,9 +1033,9 @@
     document.getElementById('end-text').textContent = state.won ? 'Sanduba completo!' : 'Não foi dessa vez';
     var detalhe = state.won ? ('em ' + state.guesses.length + ' de ' + MAX_GUESSES + ' tentativas') : ('você usou as ' + MAX_GUESSES + ' tentativas');
     document.getElementById('end-sub').textContent = (daily ? d.getDate() + ' ' + MESES[d.getMonth()] : 'Jogo livre') + ' · ' + detalhe;
-    var slab = document.getElementById('end-word');
-    slab.textContent = state.secret;
-    slab.className = 'end-word-slab' + (state.won ? '' : ' missed');
+    var fatia = document.getElementById('end-word');
+    fatia.innerHTML = state.secret.split('').map(function(ch){ return letterTile(ch, ''); }).join('');
+    fatia.className = 'tile-row end-slice ' + (state.won ? 'win' : 'lose');
     document.getElementById('end-share').hidden = !daily;
     document.getElementById('end-next').hidden = daily;
     document.getElementById('end-count').hidden = !daily;
