@@ -63,11 +63,15 @@ export const WEEK = [
   { n: 6, maxLevel: 1, extra: 3, styles: ["misto", "casas"] },            // segunda
   { n: 6, maxLevel: 2, extra: 0, styles: ["misto", "sinais", "casas"] },  // terça
   { n: 8, maxLevel: 2, extra: 2, styles: ["misto", "sinais", "casas"] },  // quarta
-  { n: 8, maxLevel: 3, extra: 0, styles: ["misto", "sinais"] },           // quinta
-  { n: 8, maxLevel: 3, extra: 0, styles: ["misto", "sinais", "casas"] },  // sexta
-  { n: 10, maxLevel: 3, extra: 2, styles: ["misto", "sinais", "casas"] }, // sábado
-  { n: 10, maxLevel: 3, extra: 0, styles: ["misto", "sinais"] },          // domingo
+  { n: 8, maxLevel: 3, extra: 0, styles: ["misto", "sinais"] },                    // quinta
+  { n: 8, maxLevel: 3, extra: 0, lean: 1, styles: ["misto", "sinais"] },           // sexta
+  { n: 8, maxLevel: 3, extra: 0, lean: 2, styles: ["misto", "sinais"] },           // sábado
+  { n: 8, maxLevel: 3, extra: 0, lean: 2, styles: ["sinais", "misto"] },           // domingo
 ];
+// O tabuleiro para em 8×8 (10×10 ficava cansativo). No fim da semana a
+// dificuldade vem de outro jeito: "lean" deixa o gerador tirar mais pistas
+// (quase nenhuma casa preenchida, menos sinais), e o dia fica com os
+// candidatos de maior esforço entre muitos sorteados.
 
 export function makePuzzle(cfg, style) {
   const N = cfg.n, C = N * N;
@@ -95,8 +99,9 @@ export function makePuzzle(cfg, style) {
     const order = style === "sinais" ? [...cs, ...es] : style === "casas" ? [...es, ...cs] : shuffle(pool.slice());
     const removed = [];
     // sempre ficam alguns sinais e algumas casas (é o que dá a cara do jogo)
-    const minSigns = { misto: N / 2, sinais: N, casas: N / 2 - 1 }[style];
-    const minCells = { misto: N / 2, sinais: N / 2 - 1, casas: N }[style];
+    const lean = cfg.lean || 0;
+    const minSigns = [{ misto: N / 2, sinais: N, casas: N / 2 - 1 }, { misto: 3, sinais: N - 2, casas: 2 }, { misto: 2, sinais: N / 2, casas: 2 }][lean][style];
+    const minCells = [{ misto: N / 2, sinais: N / 2 - 1, casas: N }, { misto: 2, sinais: 1, casas: N - 2 }, { misto: 1, sinais: 0, casas: N / 2 }][lean][style];
     let nSigns = es.length, nCells = cs.length;
     for (const x of order) {
       if (x.k === "s" && nSigns <= minSigns) continue;
@@ -137,11 +142,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   for (let k = 0; k < DAYS; k++) need[dayIdx(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
   // Cada dia gera mais candidatos do que precisa e fica com uma faixa de
   // esforço, para a dificuldade subir de segunda a domingo.
-  const BAND = [[0, 0.4], [0.5, 1], [0.3, 0.8], [0.4, 0.9], [0.6, 1], [0.4, 0.9], [0.6, 1]];
+  const BAND = [[0, 0.4], [0.5, 1], [0.3, 0.8], [0.3, 0.7], [0.5, 0.85], [0.7, 0.95], [0.85, 1]];
+  const MULT = [3, 3, 3, 3, 4, 6, 10];                      // candidatos por desafio
   const pools = [];
   for (let w = 0; w < 7; w++) {
     const cfg = WEEK[w], cand = [];
-    const total = 3 * need[w] + FREE_PER_DAY;
+    const total = MULT[w] * need[w] + FREE_PER_DAY;
     for (let k = 0; k < total; k++) cand.push(makePuzzle(cfg, cfg.styles[k % cfg.styles.length]));
     cand.forEach(p => (p.q = rand()));
     const [b0, b1] = BAND[w];
