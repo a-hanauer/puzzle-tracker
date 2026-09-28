@@ -13,7 +13,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | `sw.js` | Deixa o painel instalável e funcionando offline |
 | `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` | Ícones do app (Android e computador) |
 | `apple-touch-icon.png` | Ícone da tela inicial do iPhone |
-| `misto/` | O jogo Misto, antigo Misto (`index.html`, `icon-claro.png` e `icon-escuro.png`); `sanduba/` só redireciona para lá |
+| `sando/` | O jogo Sando — antes Sanduba e depois Misto (`index.html`, `icon-claro.png` e `icon-escuro.png`); `sanduba/` e `misto/` só redirecionam para lá. Visual igual ao dos outros jogos da casa: superfícies lisas com sombra suave, sem contornos escuros, e o teclado do Quinhentos |
 | `quinhentos/` | O jogo Quinhentos (`index.html` + `icon.png`) |
 | `eclipse/` | O jogo Eclipse: `index.html`, `icon.png`, `desafios.json` (2 anos de desafios), `livre.json` (jogo livre) e `gerador.mjs` |
 | `novelo/` | O jogo Novelo: `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
@@ -28,7 +28,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | 🟩 Termo | https://term.ooo/ |
 | 🎵 Spotle | https://spotle.io/ |
 | ↕️ Betweenle | https://betweenle.com/ |
-| 🥪 Misto | [`misto/`](misto/) (neste repositório) |
+| 🥪 Sando | [`sando/`](sando/) (neste repositório) |
 | 🔢 Word500 | https://word500.com/ |
 | 5️⃣ Quinhentos | [`quinhentos/`](quinhentos/) (neste repositório) |
 | 🦊 Foximax | https://foximax.com/ |
@@ -42,7 +42,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 
 - **Destaque para o que falta:** jogos pendentes aparecem em cartões cheios; os concluídos ficam esmaecidos (sem cartão, ícone acinzentado, check neutro). Na lista dos outros jogos, os pendentes ficam sempre no topo.
 - O **topo** mostra o nome do produto ("Jogos do Dia") em destaque, os botões de **estatísticas** e **configurações** e, logo abaixo, a **barra de progresso do dia**: um trecho por jogo, que fica verde conforme os jogos são feitos, com o contador ("3/9") à direita, no mesmo estilo dos contadores das seções. Quando todos estão feitos, os trechos se fundem numa barra verde contínua, um brilho passa por ela uma vez e o contador vira o selo "✓ Tudo feito" (não há mais mensagem no pé da página). A sequência de dias fica na página de estatísticas.
-- **Jogos da casa** (Misto, Quinhentos, Eclipse, Novelo, Azulejo e Pingado) aparecem numa grade de cartões pintados com a cor de fundo do próprio ícone (o ícone se funde ao cartão). Todos os ícones têm fundo liso, sem degradê. Cada jogo tem o seu matiz (Misto amarelo-manteiga, Quinhentos verde, Eclipse índigo, Novelo rosado, Retalhos azul-claro, Pingado pêssego), todos com a mesma saturação e luminosidade — no claro, 60% e 86% (o Pingado um pouco mais fundo, para a xícara branca aparecer); no escuro, 30% e 18%. Cada jogo tem ícone claro e escuro (`icon-claro.png` / `icon-escuro.png`, campo `iconDark` no catálogo), para os cartões ficarem todos claros no tema claro e todos escuros no tema escuro, sem contraste gritante; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um check. A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
+- **Jogos da casa** (Sando, Quinhentos, Eclipse, Novelo, Azulejo e Pingado) aparecem numa grade de cartões pintados com a cor de fundo do próprio ícone (o ícone se funde ao cartão). Todos os ícones têm fundo liso, sem degradê. Cada jogo tem o seu matiz (Sando amarelo-manteiga, Quinhentos verde, Eclipse índigo, Novelo rosado, Retalhos azul-claro, Pingado pêssego), todos com a mesma saturação e luminosidade — no claro, 60% e 86% (o Pingado um pouco mais fundo, para a xícara branca aparecer); no escuro, 30% e 18%. Cada jogo tem ícone claro e escuro (`icon-claro.png` / `icon-escuro.png`, campo `iconDark` no catálogo), para os cartões ficarem todos claros no tema claro e todos escuros no tema escuro, sem contraste gritante; **outros jogos** (sites externos) aparecem numa lista com ícone, nome, descrição e um check. A ordem é sempre a mesma, e cada seção mostra quantos já foram feitos hoje.
 - **Status de cada jogo:**
   - **Outros jogos:** o check à direita marca ou desmarca; abrir o jogo pelo painel já marca como feito.
   - **Jogos da casa:** um anel no canto enche a cada tentativa e vira um ✔ verde quando a partida termina, com vitória ou derrota. Embaixo do nome aparece o andamento ("3/14") ou o resultado (✓ 5/8, ✕ 8/8, ou o tempo com cronômetro no Eclipse, no Novelo, no Retalhos e no Pingado).
@@ -62,7 +62,7 @@ O botão de gráfico no cabeçalho (ao lado das configurações) abre a página 
 - **Atividade:** um só quadro com o período escolhido no controle (**7 dias**, **30 dias** ou **12 semanas**). Em 7 e 30 dias, barras por dia; em 12 semanas, o calendário que fica mais verde conforme os jogos feitos. Tocar num dia mostra quais jogos você fez e os resultados. Embaixo, **Por jogo**: em quantos dias do período você fez cada jogo.
 - **Jogos da casa:** um só quadro, com um controle para trocar entre os jogos da casa (só o selecionado mostra o nome; os outros, só o ícone): estatísticas do próprio jogo, tentativas (ou tempo) por dia e, no Quinhentos, vitórias por número de tentativas.
 
-O painel guarda até 2 anos de histórico no navegador. Partidas antigas do Misto são recuperadas automaticamente; os resultados diários do Quinhentos passam a ser registrados a partir desta versão.
+O painel guarda até 2 anos de histórico no navegador. Partidas antigas do Sando são recuperadas automaticamente; os resultados diários do Quinhentos passam a ser registrados a partir desta versão.
 
 ## Adicionar ou remover jogos
 
@@ -88,24 +88,24 @@ O painel guarda até 2 anos de histórico no navegador. Partidas antigas do Mist
 
 ## Jogos dentro do repositório
 
-O Misto e o Quinhentos rodam direto daqui, cada um na sua pasta:
+O Sando e o Quinhentos rodam direto daqui, cada um na sua pasta:
 
 - https://a-hanauer.github.io/puzzle-tracker/misto/
 - https://a-hanauer.github.io/puzzle-tracker/quinhentos/
 
 Cada jogo tem um botão **‹** à esquerda do logotipo que volta para o painel. Ele é essencial no app instalado no iPhone, que não mostra o botão "voltar" do navegador.
 
-A interface dos jogos nativos (Misto, Quinhentos, Eclipse, Novelo, Azulejo e Pingado) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia (e, no jogo livre, o nível e "‹ Desafio do dia"). Não há configurações nem telas de estatísticas dentro dos jogos; o tema é o escolhido no painel. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: sobem de baixo como uma bandeja presa à borda da tela (inclusive no app instalado no iPhone), com o ✕ sempre visível no topo, e fecham ao tocar no fundo. A bandeja de fim de jogo tem a mesma estrutura em todos: ✕, arte do jogo, título ("… completo!" ou "Não foi dessa vez"), resultado (no desafio do dia, com um ícone discreto de compartilhar ao lado), linha de detalhe, **Jogar outro** (jogo livre), contagem para o próximo desafio e **Próximo jogo**. Quando a partida termina, o que era de jogar sai da parte de baixo e fica uma faixa com o ícone, o resultado e "ver resultado" (ou "jogar outro", no jogo livre), com a contagem para o próximo desafio embaixo: nos jogos de lógica, ela ocupa o lugar dos controles; no Misto e no Quinhentos, o lugar do teclado (componente `ghFim` em `comum/cabecalho.js`). As estatísticas continuam sendo gravadas pelos jogos e aparecem nas **Estatísticas** do painel.
+A interface dos jogos nativos (Sando, Quinhentos, Eclipse, Novelo, Azulejo e Pingado) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia (e, no jogo livre, o nível e "‹ Desafio do dia"). Não há configurações nem telas de estatísticas dentro dos jogos; o tema é o escolhido no painel. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: sobem de baixo como uma bandeja presa à borda da tela (inclusive no app instalado no iPhone), com o ✕ sempre visível no topo, e fecham ao tocar no fundo. A bandeja de fim de jogo tem a mesma estrutura em todos: ✕, arte do jogo, título ("… completo!" ou "Não foi dessa vez"), resultado (no desafio do dia, com um ícone discreto de compartilhar ao lado), linha de detalhe, **Jogar outro** (jogo livre), contagem para o próximo desafio e **Próximo jogo**. Quando a partida termina, o que era de jogar sai da parte de baixo e fica uma faixa com o ícone, o resultado e "ver resultado" (ou "jogar outro", no jogo livre), com a contagem para o próximo desafio embaixo: nos jogos de lógica, ela ocupa o lugar dos controles; no Sando e no Quinhentos, o lugar do teclado (componente `ghFim` em `comum/cabecalho.js`). As estatísticas continuam sendo gravadas pelos jogos e aparecem nas **Estatísticas** do painel.
 
 As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o progresso por domínio, e todos os endereços ficam em `a-hanauer.github.io`.
 
 Para atualizar um desses jogos, substitua o `index.html` da pasta dele.
 
-Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempre o da partida do dia, e "Desmarcar jogos externos de hoje" não mexe neles. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` — o Misto guarda com o nome antigo, id `sanduba` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` em `comum/catalogo.js`.
+Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempre o da partida do dia, e "Desmarcar jogos externos de hoje" não mexe neles. A leitura depende das chaves que cada jogo usa para salvar (`sanduba-daily-AAAA-M-D` — o Sando guarda com o nome antigo, id `sanduba` e `quinhentao:game:padrao`); se elas mudarem num jogo, ajuste `LOCAL_PROGRESS` em `comum/catalogo.js`.
 
 **Teclado padrão:** os jogos com teclado usam as mesmas medidas (altura, espaçamentos, raio, tamanho da letra e do ENTER), definidas como variáveis `--kb-*` em `comum/cabecalho.css`; cada jogo mantém suas cores, bordas e sombras.
 
-**Dificuldade no jogo livre (todos os jogos):** no jogo livre, a linha de cima mostra "Extra · [dificuldade ▾] [↻]" (componente `ghNivel` em `comum/cabecalho.js`). Nos jogos de lógica (Eclipse, Novelo, Retalhos, Pingado) a dificuldade é o nível de 1 a 7; nos de palavras, o número de tentativas — Misto: Fácil 20, Normal 14, Difícil 10; Quinhentos: Fácil 10, Normal 8, Difícil 6 (o desafio do dia continua com 14 e 8). A escolha fica guardada no aparelho; ↻ sorteia outro.
+**Dificuldade no jogo livre (todos os jogos):** no jogo livre, a linha de cima mostra "Extra · [dificuldade ▾] [↻]" (componente `ghNivel` em `comum/cabecalho.js`). Nos jogos de lógica (Eclipse, Novelo, Retalhos, Pingado) a dificuldade é o nível de 1 a 7; nos de palavras, o número de tentativas — Sando: Fácil 20, Normal 14, Difícil 10; Quinhentos: Fácil 10, Normal 8, Difícil 6 (o desafio do dia continua com 14 e 8). A escolha fica guardada no aparelho; ↻ sorteia outro.
 
 **Fim de jogo e próximo jogo** (`comum/proximo.js`): quando a partida termina, a parte de baixo mostra, um embaixo do outro, a faixa de resultado (tocar abre a bandeja), o atalho discreto "↻ Jogar um extra · nível N" ("Jogar outro", no jogo livre) com a contagem para o próximo desafio ao lado, e, à direita da faixa, o botão do próximo jogo pendente (ícone com "Próximo" embaixo e uma seta; nos jogos da casa, o botão inteiro tem a cor do cartão desse jogo no painel — campo `cor` em `comum/catalogo.js`; nos externos, painel neutro com o ícone num quadradinho) (na ordem do painel: jogos da casa, depois os outros; abrir um externo por ali já o marca como feito). Sem jogo pendente, essa faixa não aparece. A bandeja de resultado tem o mesmo atalho junto do resultado e, no pé, a contagem (esquerda) e o próximo jogo (direita). Ao abrir um jogo já terminado, a bandeja não abre sozinha: só pelo toque na faixa (ou ao terminar a partida). Não há mais chave "Jogo livre" nem botão de próximo jogo no cabeçalho: o jogo livre começa pelo atalho, e lá a linha de cima mostra "Extra · [nível ▾] [↻]" e "‹ Desafio do dia" para voltar.
 

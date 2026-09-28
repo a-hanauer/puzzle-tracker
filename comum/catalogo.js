@@ -9,7 +9,7 @@ const CATALOGO_RAIZ = new URL("../", document.currentScript.src).href;
 
 /* ============================================================
    LISTA DE JOGOS — para adicionar um jogo, copie uma linha.
-   url:   endereço completo, ou o nome da pasta para jogos dentro deste repositório (ex.: "misto/")
+   url:   endereço completo, ou o nome da pasta para jogos dentro deste repositório (ex.: "sando/")
    id:    identificador único (não mude depois, é usado no progresso)
    emoji: usado enquanto o ícone carrega ou se o site não tiver ícone
    icon:  (opcional) URL de um ícone específico, ignora a busca automática
@@ -22,7 +22,7 @@ const BASE_GAMES = [
   { id: "termo",      name: "Termo",      emoji: "🟩", desc: "Wordle em português",           url: "https://term.ooo/" },
   { id: "spotle",     name: "Spotle",     emoji: "🎵", desc: "Adivinhe o artista",            url: "https://spotle.io/" },
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
-  { id: "sanduba",    name: "Misto",      emoji: "🥪", desc: "Betweenle em português",        url: "misto/", icon: "misto/icon-claro.png?v=11", iconDark: "misto/icon-escuro.png?v=11", iconFull: true, cor: ["#f1e7c6", "#3b3316", "#3c3520", "#f4f2eb"] },
+  { id: "sanduba",    name: "Sando",      emoji: "🥪", desc: "Betweenle em português",        url: "sando/", icon: "sando/icon-claro.png?v=12", iconDark: "sando/icon-escuro.png?v=12", iconFull: true, cor: ["#f1e7c6", "#3b3316", "#3c3520", "#f4f2eb"] },
   { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/" },
   { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon-claro.png?v=10", iconDark: "quinhentos/icon-escuro.png?v=10", iconFull: true, cor: ["#c6f1da", "#163b28", "#203c2d", "#ebf4ef"] },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
@@ -36,7 +36,7 @@ const BASE_GAMES = [
 /* ============================================================ */
 
 /* ---------- Progresso dos jogos deste repositório ----------
-   Azulejo (id "retalhos", o nome antigo), Misto (id "sanduba", o nome antigo) e Quinhentos rodam no mesmo endereço do painel, então o painel
+   Azulejo (id "retalhos", o nome antigo), Sando (id "sanduba", o nome antigo) e Quinhentos rodam no mesmo endereço do painel, então o painel
    consegue ler a partida do dia que eles salvam no navegador.
    Cada função devolve null (não começou) ou { tries, max, finished, won }. */
 function readJSON(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
