@@ -125,9 +125,9 @@ Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, colu
 
 **Desafios.** Há um desafio por dia, o mesmo para todo mundo, a partir de 27/09/2026 (#1). Todos estão em `eclipse/desafios.json` e foram conferidos pelo `eclipse/gerador.mjs`:
 - cada um tem **uma única solução**;
-- cada um pode ser resolvido **só com dedução**, sem chute.
+- cada um pode ser resolvido **só com dedução humana**, sem chute: o gerador só aceita desafios que um resolvedor com as técnicas do Queens termina — nível 1: casas únicas e confinamento de 1 (os sóis de uma região só cabem numa linha → o resto da linha não tem sol); nível 2: confinamento de 2 e o teste curto (pôr uma peça e ver, só com o que ela elimina na hora, que alguma região/linha/coluna fica sem lugar); nível 3: confinamento de 3. Não vale simular o tabuleiro até o fim para ver se dá errado (para gente, isso é chute). Os desafios a partir de 29/09/2026 seguem essa regra; o #1 e o #2 ficaram como saíram.
 
-**Dificuldade.** Sobe ao longo da semana, em 7 níveis: **segunda é nível 1** (o mais fácil) e **domingo é nível 7** (o mais difícil), e o tabuleiro cresce junto: **8×8** na segunda e na terça, **9×9** de quarta a sexta e **10×10** no fim de semana (7×7 não tem solução com essas regras). Cada dia gera vários candidatos do seu tamanho e fica com uma faixa do esforço de dedução medido pelo gerador. Os desafios que já tinham saído (#1 e #2) continuam iguais.
+**Dificuldade.** Sobe ao longo da semana, em 7 níveis: **segunda é nível 1** (8×8, só casas únicas e confinamento de 1) e **domingo é nível 7** (10×10, exige confinamento de 3). O tabuleiro cresce junto: **8×8** na segunda e na terça, **9×9** de quarta a sexta e **10×10** no fim de semana (7×7 não tem solução com essas regras). Cada dia gera vários candidatos do seu tamanho e técnica e fica com uma faixa do esforço de dedução medido pelo gerador.
 
 **Jogo livre.** O atalho "Jogar um extra" (no fim da partida) abre desafios extras (`eclipse/livre.json`, 40 por nível, nos mesmos tamanhos), que não contam nas estatísticas. Na linha de cima aparece "Extra · [Nível 4 ▾] [↻]": o botão do nível abre a escolha de 1 a 7, e ↻ sorteia outro desafio do mesmo nível. A partida do dia fica guardada enquanto isso.
 

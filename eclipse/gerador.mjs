@@ -140,15 +140,18 @@ export function solve(reg, givens, limit = 2) {
 
 // ---------- 3b. resolvedor "humano": só deduções, sem chute ----------
 // Cada célula guarda candidatos: bit 1 = pode ser sol, bit 2 = pode ser lua.
-// Técnicas, da mais simples para a mais difícil:
+// Só técnicas que uma pessoa faz de olho, como no Queens (nada de simular o
+// tabuleiro até o fim para ver se dá errado — isso, para gente, é chute):
 //   nível 1: vizinhas de uma peça ficam vazias; a unidade (linha, coluna, região)
 //            que já tem um sol não tem outro; se só sobra um lugar para o sol
-//            numa unidade, ele vai ali.
-//   nível 2: confinamento com 2 unidades (ex.: os sóis de 2 regiões só cabem em
-//            2 linhas → nenhum outro sol nessas linhas).
-//   nível 3: confinamento com 3 unidades, ou testar uma casa e ver que ela
-//            deixaria alguma unidade sem lugar.
-export function logicSolve(reg, givens) {
+//            numa unidade, ele vai ali; e confinamento de 1 (os sóis de uma
+//            região só cabem numa linha → nenhum outro sol nessa linha).
+//   nível 2: confinamento com 2 unidades (os sóis de 2 regiões só cabem em
+//            2 linhas → nenhum outro sol nessas linhas); e o teste curto: pôr
+//            uma peça numa casa e, só com o que ela elimina na hora (vizinhas,
+//            linha, coluna e região), ver que alguma unidade fica sem lugar.
+//   nível 3: confinamento com 3 unidades.
+export function logicSolve(reg, givens, maxLevel = 3) {
   const C = N * N;
   const cand = new Array(C).fill(3), val = new Array(C).fill(0);
   const rowOf = i => (i / N) | 0, colOf = i => i % N;
@@ -187,12 +190,12 @@ export function logicSolve(reg, givens) {
 
   for (const [i, v] of givens) if (!place(cand, val, i, v)) return null;
   let level = 1;
-  const uses = { c2: 0, c3: 0, probe: 0 }, elim = { c2: 0, c3: 0, probe: 0 };
+  const uses = { c1: 0, c2: 0, c3: 0, probe: 0 }, elim = { c1: 0, c2: 0, c3: 0, probe: 0 };
   const combos = k => { const out = [], rec = (s, a) => { if (a.length === k) { out.push([...a]); return; } for (let i = s; i < N; i++) { a.push(i); rec(i + 1, a); a.pop(); } }; rec(0, []); return out; };
-  const C2 = combos(2), C3 = combos(3);
+  const C1 = combos(1), C2 = combos(2), C3 = combos(3);
 
   function confinement(k) {                 // devolve quantas eliminações fez
-    const sets = k === 2 ? C2 : C3;
+    const sets = k === 1 ? C1 : k === 2 ? C2 : C3;
     let any = 0;
     // pares de famílias: regiões×linhas, regiões×colunas, linhas×regiões, colunas×regiões
     const fam = [[2, 0], [2, 1], [0, 2], [1, 2]];
@@ -209,11 +212,14 @@ export function logicSolve(reg, givens) {
     }
     return any;
   }
-  function probe() {                        // testa cada candidato: se leva a contradição, elimina
+  // teste curto: só as eliminações imediatas da peça (sem seguir a cadeia de consequências)
+  function probe() {
     let any = 0;
     for (let i = 0; i < C; i++) if (!val[i]) for (const x of [1, 2]) if (cand[i] & x) {
       const cd = [...cand], vl = [...val];
-      if (!place(cd, vl, i, x) || !basic(cd, vl)) { cand[i] &= ~x; any++; }
+      let bad = !place(cd, vl, i, x);
+      for (const u of units) { if (bad) break; for (const y of [1, 2]) if (!u.some(j => vl[j] === y || (cd[j] & y))) { bad = true; break; } }
+      if (bad) { cand[i] &= ~x; any++; }
     }
     return any;
   }
@@ -221,17 +227,20 @@ export function logicSolve(reg, givens) {
   for (let guard = 0; guard < 500; guard++) {
     if (!basic(cand, val)) return null;
     // esforço: rodadas de cada técnica (peso maior) + eliminações feitas por elas (dá uma escala mais fina)
-    if (done()) return { level, uses, score: 10 * (uses.c2 + 2 * uses.c3 + 4 * uses.probe) + elim.c2 + 2 * elim.c3 + 3 * elim.probe };
-    { const e = confinement(2); if (e) { level = Math.max(level, 2); uses.c2++; elim.c2 += e; continue; } }
-    { const e = confinement(3); if (e) { level = Math.max(level, 3); uses.c3++; elim.c3 += e; continue; } }
-    { const e = probe(); if (e) { level = Math.max(level, 3); uses.probe++; elim.probe += e; continue; } }
+    if (done()) return { level, uses, score: 3 * uses.c1 + 10 * uses.c2 + 8 * uses.probe + 25 * uses.c3 + elim.c1 + elim.c2 + elim.probe + 2 * elim.c3 };
+    { const e = confinement(1); if (e) { uses.c1++; elim.c1 += e; continue; } }
+    if (maxLevel >= 2) {
+      { const e = confinement(2); if (e) { level = Math.max(level, 2); uses.c2++; elim.c2 += e; continue; } }
+      { const e = probe(); if (e) { level = Math.max(level, 2); uses.probe++; elim.probe += e; continue; } }
+    }
+    if (maxLevel >= 3) { const e = confinement(3); if (e) { level = 3; uses.c3++; elim.c3 += e; continue; } }
     return { stuck: true, cand, val };
   }
   return null;
 }
 
 // ---------- 4. monta um desafio com solução única ----------
-export function makePuzzle() {
+export function makePuzzle(maxLevel = 3, maxGivens = N <= 8 ? 7 : 6) {
   for (let attempt = 0; attempt < 200; attempt++) {
     const sol = randomSolution(); if (!sol) continue;
     const reg = makeRegions(sol); if (!reg) continue;
@@ -251,17 +260,18 @@ export function makePuzzle() {
     }
     if (res.sols.length !== 1) continue;
     // precisa ser resolvível só com dedução; se travar, revela mais uma peça (até 4)
-    let logic = logicSolve(reg, givens);
-    while (logic && logic.stuck && givens.size < (N <= 8 ? 7 : 4)) {
+    let logic = logicSolve(reg, givens, maxLevel);
+    while (logic && logic.stuck && givens.size < maxGivens) {
       const open = shuffle([...truth.keys()].filter(i => !logic.val[i]));
       givens.set(open[0], truth.get(open[0]));
-      logic = logicSolve(reg, givens);
+      logic = logicSolve(reg, givens, maxLevel);
     }
     if (!logic || logic.stuck) continue;
     return {
       r: reg.map(v => v.toString(36)).join(""),                              // regiões, uma letra por célula
       g: [...givens].map(([i, v]) => (v === 1 ? "S" : "M") + i).join(","),  // pistas: S40 = sol na célula 40
       d: logic.score,                                                        // esforço de dedução (maior = mais difícil)
+      lv: logic.level,                                                       // técnica mais difícil exigida (1 a 3)
       n: N,                                                                  // tamanho do tabuleiro
     };
   }
@@ -277,10 +287,15 @@ export function makePuzzle() {
 // Também gera eclipse/livre.json: desafios extras para o "jogo livre", fora da agenda.
 // (7×7 não tem solução com um sol e uma lua por linha sem encostar.)
 export const EPOCH = [2026, 8, 27];            // ano, mês (0 = jan), dia
+// maxLevel: técnica mais difícil permitida (veja logicSolve); min: técnica mínima exigida
 const WEEK = [                                 // segunda … domingo
-  { n: 8, band: [0, 0.5] }, { n: 8, band: [0.5, 1] },
-  { n: 9, band: [0, 0.35] }, { n: 9, band: [0.3, 0.6] }, { n: 9, band: [0.6, 0.95] },
-  { n: 10, band: [0.35, 0.75] }, { n: 10, band: [0.75, 1] },
+  { n: 8, maxLevel: 1, min: 1, band: [0, 0.6] },
+  { n: 8, maxLevel: 2, min: 1, band: [0.5, 1] },
+  { n: 9, maxLevel: 2, min: 2, band: [0, 0.6] },
+  { n: 9, maxLevel: 2, min: 2, band: [0.5, 1] },
+  { n: 9, maxLevel: 3, min: 2, band: [0.5, 1] },
+  { n: 10, maxLevel: 3, min: 2, band: [0.4, 0.9] },
+  { n: 10, maxLevel: 3, min: 3, band: [0.6, 1] },
 ];
 const levelOfDay = date => (date.getDay() + 6) % 7;   // segunda → 0 … domingo → 6
 const FREE_PER_LEVEL = 40;
@@ -295,17 +310,18 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   for (let k = old.length; k < DAYS; k++) need[levelOfDay(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
   const bins = [], free = [];
   for (let l = 0; l < 7; l++) {
-    const { n, band } = WEEK[l];
+    const { n, band, maxLevel, min } = WEEK[l];
     N = n;
     const per = Math.ceil((need[l] + FREE_PER_LEVEL) / (band[1] - band[0]) * 1.05);
     const pool = [];
-    for (let k = 0; k < per; k++) pool.push(makePuzzle());
+    while (pool.length < per) { const p = makePuzzle(maxLevel); if (p.lv >= min) pool.push(p); }
     pool.forEach(p => (p.k = rand()));
     pool.sort((a, b) => a.d - b.d || a.k - b.k);
     const slice = pool.slice(Math.floor(pool.length * band[0]), Math.floor(pool.length * band[1]));
     shuffle(slice);
     bins.push(slice.slice(0, need[l]));
     for (const { r, g, d, n } of slice.slice(need[l], need[l] + FREE_PER_LEVEL)) free.push({ r, g, d, n, l: l + 1 });
+    if (slice.length < need[l] + FREE_PER_LEVEL) throw new Error(`nível ${l + 1}: faltaram desafios`);
     console.log(`nível ${l + 1} (${n}×${n}): ${((Date.now() - t0) / 1000).toFixed(0)}s`);
   }
   const out = [...old];
