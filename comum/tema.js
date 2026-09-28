@@ -47,7 +47,11 @@
       var medirSobra = function () {
         var portrait = matchMedia("(orientation: portrait)").matches;
         var t = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
-        var sobra = Math.round(t - window.innerHeight);
+        // a menor das medidas da janela: no app instalado, a altura da página
+        // (clientHeight) pode ser menor que innerHeight
+        var janela = Math.min(window.innerHeight, root.clientHeight || window.innerHeight,
+          (window.visualViewport && window.visualViewport.height) || window.innerHeight);
+        var sobra = Math.round(t - janela);
         root.style.setProperty("--sobra", (sobra > 0 && sobra <= 80 ? sobra : 0) + "px");
       };
       medirSobra();

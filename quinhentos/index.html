@@ -36,7 +36,8 @@
   --font-body:'Noto Sans',system-ui,sans-serif;
   --font-num:'Noto Sans',system-ui,sans-serif;   /* números do placar: versão condensada (font-stretch) */
   padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
+  /* teclado perto da borda: só uma folga pequena acima da barra de gestos */
+  padding-bottom:max(4px, calc(env(safe-area-inset-bottom,0px) - 16px));
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -150,7 +151,7 @@ header{
 .switch.on{background:var(--accent);}
 .switch.on .knob{transform:translateX(16px);background:var(--accent-ink);}
 /* ===== board ===== */
-.board-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 0;min-height:0;}
+.board-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:6px 0;min-height:0;}
 /* a largura máxima é calculada em JS (ajustarTabuleiro) para as 8 linhas caberem na altura livre */
 .board{display:flex;flex-direction:column;gap:6px;width:100%;max-width:460px;}
 /* linha: a palavra (5 letras largas) e, à direita, o placar numa cápsula estreita */
@@ -224,7 +225,7 @@ header{
   50%{transform:translateY(0);}
 }
 /* ===== keyboard ===== */
-.keyboard{display:flex;flex-direction:column;gap:var(--kb-row-gap);padding:8px 0 6px;user-select:none;}
+.keyboard{display:flex;flex-direction:column;gap:var(--kb-row-gap);padding:8px 0 4px;user-select:none;}
 .krow{display:flex;gap:var(--kb-gap);justify-content:center;}
 .key{
   flex:1;max-width:var(--kb-max);height:var(--kb-h);border-radius:var(--kb-r);border:1px solid transparent;
@@ -361,7 +362,6 @@ header{
   header.gh, .gh-meta, .px-row, .fim-count, .fim-btn { font-family: var(--font-body) !important; }
   /* app instalado no iPhone: a página ocupa também a faixa de baixo que o
      iPhone deixa de fora da janela (--sobra, medida em comum/tema.js) */
-  html.standalone, html.standalone body { overflow: hidden; }
   html.standalone body { min-height: calc(100% + var(--sobra, 0px)); }
 </style>
 </head>
@@ -694,7 +694,7 @@ header{
     var wrap = document.querySelector('.board-wrap');
     if(!wrap) return;
     boardEl.style.display = 'none';                  // tira o tabuleiro da conta
-    var livre = wrap.clientHeight - 20;              // padding vertical do .board-wrap
+    var livre = wrap.clientHeight - 12;              // padding vertical do .board-wrap
     boardEl.style.display = '';
     boardEl.style.maxWidth = '';
     var largura = boardEl.clientWidth;
@@ -704,6 +704,23 @@ header{
     boardEl.style.setProperty('--casa-ar', casaL.toFixed(2) + ' / ' + Math.max(casaA, casaL * 0.55).toFixed(2));
   }
   ajustarTabuleiro();
+  if(document.documentElement.classList.contains('standalone')){
+    // TEMPORÁRIO: medidas da tela no fim do "Como jogar", para acertar o layout no iPhone
+    var diag = document.createElement('p');
+    diag.style.cssText = 'font-size:10px;opacity:.5;margin-top:14px;font-family:monospace';
+    var mostrar = function(){
+      var cs = getComputedStyle(document.documentElement);
+      diag.textContent = 'tela ' + screen.width + 'x' + screen.height + ' · inner ' + innerWidth + 'x' + innerHeight +
+        ' · client ' + document.documentElement.clientHeight + ' · vv ' + Math.round((window.visualViewport||{}).height||0) +
+        ' · sobra ' + cs.getPropertyValue('--sobra') + ' · body ' + Math.round(document.body.getBoundingClientRect().height) +
+        ' · teclado ' + Math.round(document.querySelector('.keyboard').getBoundingClientRect().bottom);
+    };
+    var helpModal = document.querySelector('#overlay-help .modal');
+    if(helpModal){ helpModal.appendChild(diag); mostrar(); document.getElementById('btn-help-top').addEventListener('click', mostrar); }
+    document.addEventListener('touchmove', function(e){
+      if(!e.target.closest('.modal')) e.preventDefault();
+    }, {passive:false});
+  }
   window.addEventListener('resize', ajustarTabuleiro);
   window.addEventListener('orientationchange', function(){ setTimeout(ajustarTabuleiro, 300); });
   window.addEventListener('pageshow', ajustarTabuleiro);
