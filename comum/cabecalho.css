@@ -309,22 +309,20 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
 .fim-row > .controls { flex: 1; min-width: 0; padding-top: 0 !important; margin-top: 0 !important; }
 .fim-row > .gh-fim-bar { flex: 1; min-width: 0; }
 .fim-nx:empty { display: none; }
-/* próximo jogo: faixa inteira, embaixo do atalho do jogo livre; o jogo fica à direita */
-.fim-nx { margin-top: 10px; }
+/* próximo jogo: compacto, à direita da faixa de resultado e da mesma altura; só o ícone e "Próximo jogo" */
+.fim-nx { display: flex; flex: 0 0 auto; }
 a.nx {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 52px; padding: 0 12px 0 16px;
-  border-radius: 16px; background: var(--gh-surface); color: var(--gh-ink); text-decoration: none; white-space: nowrap;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  width: 64px; height: 56px; padding: 0; border-radius: 16px; text-decoration: none;
+  background: var(--gh-surface); color: var(--gh-muted);
   box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 6px 18px rgba(0, 0, 0, .08);
   font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
-a.nx:active { transform: scale(.98); }
-a.nx .l { font-size: .8rem; font-weight: 600; color: var(--gh-muted); }
-a.nx .r { display: flex; align-items: center; gap: 9px; min-width: 0; }
-a.nx .r b { font-size: .95rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; }
-a.nx .px-ic { width: 32px; height: 32px; border-radius: 8px; font-size: 19px; }
+a.nx:active { transform: scale(.95); }
+a.nx .px-ic { width: 28px; height: 28px; border-radius: 7px; font-size: 17px; }
+a.nx small { font-size: .58rem; font-weight: 700; line-height: 1; white-space: nowrap; letter-spacing: -.01em; }
 .fim-nxbtn .t { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; text-align: left; }
-a.nx svg, .fim-nxbtn > svg, .fx > svg, .gh-dia > svg { width: 15px; height: 15px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-a.nx svg { color: var(--gh-muted); }
+.fim-nxbtn > svg, .fx > svg, .gh-dia > svg { width: 15px; height: 15px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .fim-subrow {
   display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; padding: 0 4px;
   font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -365,3 +363,7 @@ a.nx svg { color: var(--gh-muted); }
 }
 .gh-dia[hidden] { display: none; }
 .gh-dia > svg { width: 14px; height: 14px; opacity: .6; }
+/* faixa de resultado ao lado do próximo jogo: título e detalhe numa linha só */
+.fim-row .done-bar .txt, .fim-row .gh-fim-bar .t { min-width: 0; }
+.fim-row .done-bar .txt b, .fim-row .done-bar .txt span,
+.fim-row .gh-fim-bar .t b, .fim-row .gh-fim-bar .t span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

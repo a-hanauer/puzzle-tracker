@@ -9,7 +9,7 @@ const CATALOGO_RAIZ = new URL("../", document.currentScript.src).href;
 
 /* ============================================================
    LISTA DE JOGOS — para adicionar um jogo, copie uma linha.
-   url:   endereço completo, ou o nome da pasta para jogos dentro deste repositório (ex.: "sanduba/")
+   url:   endereço completo, ou o nome da pasta para jogos dentro deste repositório (ex.: "misto/")
    id:    identificador único (não mude depois, é usado no progresso)
    emoji: usado enquanto o ícone carrega ou se o site não tiver ícone
    icon:  (opcional) URL de um ícone específico, ignora a busca automática
@@ -20,7 +20,7 @@ const BASE_GAMES = [
   { id: "termo",      name: "Termo",      emoji: "🟩", desc: "Wordle em português",           url: "https://term.ooo/" },
   { id: "spotle",     name: "Spotle",     emoji: "🎵", desc: "Adivinhe o artista",            url: "https://spotle.io/" },
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
-  { id: "sanduba",    name: "Sanduba",    emoji: "🥪", desc: "Betweenle em português",        url: "sanduba/", icon: "sanduba/icon-claro.png?v=10", iconDark: "sanduba/icon-escuro.png?v=10", iconFull: true },
+  { id: "sanduba",    name: "Misto",      emoji: "🥪", desc: "Betweenle em português",        url: "misto/", icon: "misto/icon-claro.png?v=10", iconDark: "misto/icon-escuro.png?v=10", iconFull: true },
   { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/" },
   { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon-claro.png?v=10", iconDark: "quinhentos/icon-escuro.png?v=10", iconFull: true },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
@@ -34,14 +34,14 @@ const BASE_GAMES = [
 /* ============================================================ */
 
 /* ---------- Progresso dos jogos deste repositório ----------
-   Sanduba e Quinhentos rodam no mesmo endereço do painel, então o painel
+   Misto (id "sanduba", o nome antigo) e Quinhentos rodam no mesmo endereço do painel, então o painel
    consegue ler a partida do dia que eles salvam no navegador.
    Cada função devolve null (não começou) ou { tries, max, finished, won }. */
 function readJSON(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
 
 const LOCAL_PROGRESS = {
   sanduba() {
-    const d = new Date();                    // o Sanduba usa a data sem zeros: 2026-9-27
+    const d = new Date();                    // o Misto usa a data sem zeros: 2026-9-27
     const p = readJSON(`sanduba-daily-${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`);
     if (!p || !Array.isArray(p.guesses) || !p.guesses.length) return null;
     const max = 14, tries = p.guesses.length;

@@ -518,7 +518,7 @@
     <button class="set-btn" id="badgeBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg><span>Mostrar pendentes no ícone do app</span></button>
     <button class="set-btn" id="manageBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Gerenciar jogos</span></button>
     <button class="set-btn danger" id="reset"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Desmarcar jogos externos de hoje</span></button>
-    <div class="set-note">Sanduba, Quinhentos e Eclipse seguem o que você jogou e não são desmarcados.</div>
+    <div class="set-note">Misto, Quinhentos e Eclipse seguem o que você jogou e não são desmarcados.</div>
   </div>
 </section>
 
@@ -636,7 +636,7 @@ state.results ??= {};   // resultado dos jogos nativos por dia: { "2026-09-27": 
 Object.keys(state.history).sort().slice(0, -730).forEach(d => delete state.history[d]);
 Object.keys(state.results).sort().slice(0, -730).forEach(d => delete state.results[d]);
 
-// recupera partidas antigas do Sanduba, que ele guarda por data
+// recupera partidas antigas do Misto (id "sanduba"), que ele guarda por data
 function backfillSanduba() {
   let changed = false;
   for (let i = 0; i < localStorage.length; i++) {

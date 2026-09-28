@@ -76,8 +76,8 @@ window.ghFim = function (el, o) {
   el.innerHTML = `<div class="fim-row"><button type="button" class="gh-fim-bar${o.perdeu ? " perdeu" : ""}" aria-label="${esc(o.titulo)}: ${o.diario ? "ver resultado" : "jogar outro"}">` +
     `<img src="${esc(escuro && o.imgEscuro ? o.imgEscuro : o.img)}"${o.imgEscuro ? ` data-claro="${esc(o.img)}" data-escuro="${esc(o.imgEscuro)}"` : ""} alt="">` +
     `<span class="t"><b>${esc(o.titulo)}</b><span>${esc(o.sub)} · ${o.diario ? "ver resultado" : "jogar outro"}</span></span>` +
-    `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></div>` +
-    `<div class="fim-subrow" hidden></div><div class="fim-nx"></div>`;
+    `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button><span class="fim-nx"></span></div>` +
+    `<div class="fim-subrow" hidden></div>`;
   el.querySelector("button").addEventListener("click", o.aoTocar);
   el.classList.add("on");
   if (was) el.querySelector("img").style.animation = "none";      // só anima na primeira vez

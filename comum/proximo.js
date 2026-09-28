@@ -85,7 +85,7 @@
   const VOLTA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
   const NOME = (BASE_GAMES.find(g => g.id === ATUAL) || {}).name || "";
 
-  // a chave "Jogo livre" do jogo (checkbox nos jogos de lógica e no Sanduba; botão no Quinhentos)
+  // a chave "Jogo livre" do jogo (checkbox nos jogos de lógica e no Misto; botão no Quinhentos)
   const chave = (() => {
     const cb = document.querySelector(".gh-free input");
     if (cb) return { on: () => cb.checked, set: v => { if (cb.checked !== v) { cb.checked = v; cb.dispatchEvent(new Event("change", { bubbles: true })); } } };
@@ -124,7 +124,8 @@
       const row = document.createElement("div");
       row.className = "fim-row";
       c.before(row); row.append(c);
-      row.insertAdjacentHTML("afterend", '<div class="fim-subrow" hidden></div><div class="fim-nx"></div>');
+      row.insertAdjacentHTML("beforeend", '<span class="fim-nx"></span>');
+      row.insertAdjacentHTML("afterend", '<div class="fim-subrow" hidden></div>');
     }
     // bandeja de resultado: o atalho do jogo livre junto do resultado; o pé no lugar da antiga linha
     document.querySelectorAll(".modal.fim").forEach(m => {
@@ -142,11 +143,10 @@
     a.href = new URL(g.url, CATALOGO_RAIZ).href;
     a.setAttribute("aria-label", `Próximo jogo: ${g.name}`);
     if (cls !== "nx") a.append(icone(g));
-    if (cls === "nx") {                                // faixa inteira: "Próximo jogo" à esquerda, o jogo à direita
-      a.innerHTML = `<span class="l">Próximo jogo</span><span class="r"></span>`;
-      const r = a.querySelector(".r");
-      r.append(icone(g));
-      r.insertAdjacentHTML("beforeend", `<b>${esc(g.name)}</b>${CHEV}`);
+    if (cls === "nx") {                                // compacto, ao lado da faixa: só o ícone e "Próximo jogo"
+      a.title = `Próximo jogo: ${g.name}`;
+      a.append(icone(g));
+      a.insertAdjacentHTML("beforeend", `<small>Próximo jogo</small>`);
       a.onclick = e => abrir(e, g, s);
       return a;
     }
