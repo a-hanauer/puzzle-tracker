@@ -125,15 +125,15 @@ Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, colu
 
 **Desafios.** Há um desafio por dia, o mesmo para todo mundo, a partir de 27/09/2026 (#1). Todos estão em `eclipse/desafios.json` e foram conferidos pelo `eclipse/gerador.mjs`:
 - cada um tem **uma única solução**;
-- cada um pode ser resolvido **só com dedução humana**, sem chute: o gerador só aceita desafios que um resolvedor com as técnicas do Queens termina — nível 1: casas únicas e confinamento de 1 (os sóis de uma região só cabem numa linha → o resto da linha não tem sol); nível 2: confinamento de 2 e o teste curto (pôr uma peça e ver, só com o que ela elimina na hora, que alguma região/linha/coluna fica sem lugar); nível 3: confinamento de 3. Não vale simular o tabuleiro até o fim para ver se dá errado (para gente, isso é chute). Os desafios a partir de 29/09/2026 seguem essa regra; o #1 e o #2 ficaram como saíram.
+- cada um pode ser resolvido **só com dedução direta**, sem nunca supor uma peça para ver o que acontece: o gerador só aceita desafios que um resolvedor com as técnicas do Queens termina — nível 1: casas únicas e confinamento de 1 (os sóis de uma região só cabem numa linha → o resto da linha não tem sol); nível 2: confinamento de 2; nível 3: confinamento de 3. A dificuldade vem da quantidade de verificações, nunca de tentativa e erro. Os desafios a partir de 28/09/2026 (#2) seguem essa regra; o #1 ficou como saiu.
 
 **Dificuldade.** Sobe ao longo da semana, em 7 níveis: **segunda é nível 1** (8×8, só casas únicas e confinamento de 1) e **domingo é nível 7** (10×10, exige confinamento de 3). O tabuleiro cresce junto: **8×8** na segunda e na terça, **9×9** de quarta a sexta e **10×10** no fim de semana (7×7 não tem solução com essas regras). Cada dia gera vários candidatos do seu tamanho e técnica e fica com uma faixa do esforço de dedução medido pelo gerador.
 
-**Jogo livre.** O atalho "Jogar um extra" (no fim da partida) abre desafios extras (`eclipse/livre.json`, 40 por nível, nos mesmos tamanhos), que não contam nas estatísticas. Na linha de cima aparece "Extra · [Nível 4 ▾] [↻]": o botão do nível abre a escolha de 1 a 7, e ↻ sorteia outro desafio do mesmo nível. A partida do dia fica guardada enquanto isso.
+**Jogo livre.** O atalho "Jogar um extra" (no fim da partida) abre desafios extras (`eclipse/livre.json`, 200 por nível, nos mesmos tamanhos), que não contam nas estatísticas. Na linha de cima aparece "Extra · [Nível 4 ▾] [↻]": o botão do nível abre a escolha de 1 a 7, e ↻ sorteia outro desafio do mesmo nível. A partida do dia fica guardada enquanto isso.
 
 **Painel.** O painel acompanha o Eclipse sozinho: o selo mostra as peças colocadas e o tempo ao terminar. O Histórico mostra tempo por dia, melhor tempo e média.
 
-Para gerar os desafios de novo, rode `node eclipse/gerador.mjs [dias]` (padrão: 730 dias a partir de 27/09/2026); ele refaz `desafios.json` e `livre.json`.
+Para gerar os desafios de novo, rode `node eclipse/gerador.mjs [dias]` (padrão: 730 dias a partir de 27/09/2026); ele refaz `desafios.json` e `livre.json`, mantendo os desafios que já saíram.
 
 ## Novelo
 
@@ -176,7 +176,11 @@ Toque numa casa para trocar: vazia → café → leite → vazia. Arrastar o ded
 
 **Semana.** Níveis 1 a 4 (segunda a quinta) em 6×6 e níveis 5 a 7 (sexta a domingo) em 8×8 — 10×10 ficava cansativo. Dentro de cada tamanho, a dificuldade sobe tirando pistas (menos casas preenchidas, só sinais) e ficando com os candidatos de maior esforço entre muitos sorteados; a técnica exigida vai de 1 (segunda, com umas pistas a mais) a 2. Três estilos se alternam: **misto**, **sinais** (poucas casas, muitos sinais) e **casas** (muitas casas, poucos sinais; só segunda e terça).
 
-**Nos três (Novelo, Retalhos e Pingado):** ícone com versão escura (`icon-escuro.png`), que o painel, o cabeçalho, a tela de fim e o "Próximo jogo" usam no tema escuro — no catálogo é o campo `iconDark`, e o `comum/tema.js` troca a imagem sozinho quando o tema muda; jogo livre (`livre.json`, 20 por dia da semana), cronômetro que pausa, partida salva, estatísticas por tempo no painel. Para gerar de novo: `node novelo/gerador.mjs [dias]`, `node retalhos/gerador.mjs [dias]` e `node pingado/gerador.mjs [dias]` (padrão: 364 dias a partir de 28/09/2026).
+**Nos três (Novelo, Retalhos e Pingado):** ícone com versão escura (`icon-escuro.png`), que o painel, o cabeçalho, a tela de fim e o "Próximo jogo" usam no tema escuro — no catálogo é o campo `iconDark`, e o `comum/tema.js` troca a imagem sozinho quando o tema muda; jogo livre (`livre.json`, 200 por dia da semana), cronômetro que pausa, partida salva, estatísticas por tempo no painel. Para gerar de novo: `node novelo/gerador.mjs [dias]`, `node retalhos/gerador.mjs [dias]` e `node pingado/gerador.mjs [dias]` (padrão: 730 dias a partir de 28/09/2026).
+
+## Desafios do dia e jogo livre (jogos de lógica)
+
+Cada jogo de lógica tem 2 anos de desafios do dia e 200 desafios de jogo livre por nível. Os geradores produzem muitos candidatos por dia da semana, ficam com a faixa de esforço daquele dia e, dentro dela, mandam os mais interessantes para o desafio do dia (quem joga todo dia pega os melhores) e o resto para o jogo livre (`comum/selecao.mjs`). O "interesse" é de cada jogo: poucas peças reveladas e variedade de técnicas (Eclipse), menos pistas e os dois sinais (Pingado), etiquetas com informação escondida e formatos variados (Retalhos), fio com mais curvas e menos números (Novelo). Rodar um gerador de novo nunca muda os desafios que já saíram.
 
 ## Ícone e pendências fora do painel
 
