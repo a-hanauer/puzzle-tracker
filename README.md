@@ -150,7 +150,7 @@ Desenha-se arrastando o dedo a partir do 1 (ou da ponta do fio). O fio segue o d
 O Patches (LinkedIn) em português, como uma **colcha de retalhos**.
 
 - Divida o tabuleiro em **retângulos**, sem sobrar casa e sem sobrepor.
-- Cada retalho tem **exatamente uma etiqueta**. A etiqueta tem o próprio **formato** do retalho — larga, alta ou quadrada, na cor do tecido — com o **número de casas** dentro; tracejada quer dizer qualquer formato. Algumas etiquetas não têm número.
+- Cada retalho tem **exatamente uma etiqueta**. A etiqueta é o **formato** do retalho desenhado em traço — horizontal, vertical ou quadrado; só os quatro cantos = formato livre — com o **número de casas** dentro. Sem cores nem costura: a cor do tecido só aparece depois do retalho desenhado. Algumas etiquetas não têm número.
 
 Arraste de um canto ao outro para desenhar um retalho: o contorno e o selo mostram o tamanho e se ele bate com a etiqueta de dentro (verde "3×2 · 6 ✓"; vermelho "4 de 6", "não é alto" ou "2 etiquetas"); desenhar por cima substitui os retalhos que ficam embaixo; tocar num retalho o desfaz, e tocar numa casa livre cria um 1×1. Retalhos certos ganham o tecido da cor da etiqueta (poá, listras ou xadrez, com pesponto); retalho sem etiqueta fica neutro e retalho que não bate fica com listras vermelhas. A barra de baixo conta os retalhos certos.
 
