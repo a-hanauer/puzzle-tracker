@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script src="../comum/tema.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Sanduba">
@@ -230,8 +230,12 @@
 
   #rows{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:7px;}
   /* cada palavra é uma fatia: letras juntas dentro de uma casca */
-  .tile-row{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:4px;border-radius:16px;}
-  .tile{aspect-ratio:1;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  /* --r: raio da fatia · --p: distância da borda da fatia até as letras. As letras das pontas
+     usam raio (--r − --p) nos cantos de fora, então a curva delas acompanha a da fatia. */
+  .tile-row{--r:16px;--p:4px;display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:var(--p);border-radius:var(--r);}
+  .tile-row .tile:first-child{border-top-left-radius:calc(var(--r) - var(--p));border-bottom-left-radius:calc(var(--r) - var(--p));}
+  .tile-row .tile:last-child{border-top-right-radius:calc(var(--r) - var(--p));border-bottom-right-radius:calc(var(--r) - var(--p));}
+  .tile{aspect-ratio:1;border-radius:7px;display:flex;align-items:center;justify-content:center;
     font-weight:900;font-size:1.4rem;text-transform:uppercase;user-select:none;
     color:var(--ink);transition:background .2s ease,box-shadow .2s ease;}
   .tile-row.bound{background:var(--crust);box-shadow:inset 0 0 0 var(--stroke) var(--ink);}
@@ -242,7 +246,7 @@
   .tile-row.win .tile{background:var(--good);}
   .tile-row.lose{background:var(--crust-lose);box-shadow:inset 0 0 0 var(--stroke) var(--ink);}
   .tile-row.lose .tile{background:var(--accent);}
-  .tile-row.input{padding:3px;border:var(--stroke) dashed color-mix(in srgb,var(--text-dim) 70%,transparent);}
+  .tile-row.input{--p:5px;padding:3px;border:var(--stroke) dashed color-mix(in srgb,var(--text-dim) 70%,transparent);}   /* borda 2 + folga 3 */
   .tile-row.input .tile{background:var(--tile-ghost);color:var(--text);}
   .tile-row.input .tile.filled{background:var(--accent-soft);color:var(--text);}
   .tile-row.input .tile.cur{box-shadow:inset 0 0 0 var(--stroke) var(--accent);}

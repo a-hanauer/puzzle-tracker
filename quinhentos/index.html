@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>QUINHENTOS — o desafio de 5 letras</title>
 <meta name="description" content="Quinhentos: adivinhe a palavra de 5 letras. O jogo não diz quais letras você acertou — só quantas.">
 <meta name="theme-color" content="#14151a">
@@ -186,17 +186,21 @@ header{
   border-color:transparent;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45);
 }
 .cnt{
-  display:flex;align-items:center;justify-content:center;gap:4px;padding:0 9px;
+  display:flex;align-items:stretch;justify-content:center;padding:0 5px;
   border-radius:13px;background:var(--panel);border:1.5px solid var(--line);
   transition:background .2s ease,border-color .2s ease;
 }
 .cnt.empty{background:transparent;border-style:dashed;}
 .count-cell{
-  display:flex;align-items:center;justify-content:center;min-width:.62em;
+  flex:1;display:flex;align-items:center;justify-content:center;min-width:0;
   font-family:var(--font-num);font-stretch:75%;font-weight:600;font-size:clamp(20px,6.2vw,27px);
   line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums;
 }
 .count-cell.cg{color:var(--accent);}
+/* divisórias finas entre os números, como num odômetro */
+.cnt .count-cell + .count-cell{box-shadow:inset 1px 0 0 color-mix(in srgb,var(--line) 85%,transparent);margin:7px 0;}
+.cnt .count-cell:first-child,.cnt .count-cell:last-child{margin:7px 0;}
+.cnt.empty .count-cell + .count-cell{box-shadow:none;}
 .count-cell.cy{color:var(--present);}
 .count-cell.cr{color:var(--danger);}
 /* legenda do Como jogar: o mesmo número, numa cápsula pequena */
@@ -220,7 +224,7 @@ header{
   50%{transform:translateY(0);}
 }
 /* ===== keyboard ===== */
-.keyboard{display:flex;flex-direction:column;gap:6px;padding:8px 0 14px;user-select:none;}
+.keyboard{display:flex;flex-direction:column;gap:6px;padding:8px 0 6px;user-select:none;}
 .krow{display:flex;gap:5px;justify-content:center;}
 .key{
   flex:1;max-width:40px;height:48px;border-radius:9px;border:1px solid transparent;
@@ -355,6 +359,10 @@ header{
   .fim-art img { border-radius: 20px; }
   /* família Noto em todo o jogo, inclusive no cabeçalho e nas janelas comuns */
   header.gh, .gh-meta, .px-row, .fim-count, .fim-btn { font-family: var(--font-body) !important; }
+  /* app instalado no iPhone: a página ocupa também a faixa de baixo que o
+     iPhone deixa de fora da janela (--sobra, medida em comum/tema.js) */
+  html.standalone, html.standalone body { overflow: hidden; }
+  html.standalone body { min-height: calc(100% + var(--sobra, 0px)); }
 </style>
 </head>
 <body>

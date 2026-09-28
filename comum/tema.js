@@ -17,6 +17,17 @@
       else m.setAttribute("media", want.indexOf(t) >= 0 ? "all" : "not all");
     }
   }
+  // Sem zoom em nenhuma página: nem dois toques rápidos nem pinça.
+  // (touch-action: manipulation em tudo desliga o zoom por dois toques sem
+  // atrasar os toques; o gesto de pinça do Safari é cancelado aqui.)
+  try {
+    var st = document.createElement("style");
+    st.textContent = "html,body,*{touch-action:manipulation}";
+    document.head.appendChild(st);
+    ["gesturestart", "gesturechange", "gestureend"].forEach(function (ev) {
+      document.addEventListener(ev, function (e) { e.preventDefault(); }, { passive: false });
+    });
+  } catch (e) {}
   window.jogosTema = {
     get: get,
     set: function (t) { try { localStorage.setItem(KEY, t); } catch (e) {} apply(t); },
@@ -32,6 +43,16 @@
     if (navigator.standalone === true) {          // só o iPhone/iPad tem essa propriedade
       var root = document.documentElement;
       root.classList.add("standalone");
+      // sobra = altura da tela − altura da janela (a faixa que o iPhone deixa de fora)
+      var medirSobra = function () {
+        var portrait = matchMedia("(orientation: portrait)").matches;
+        var t = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+        var sobra = Math.round(t - window.innerHeight);
+        root.style.setProperty("--sobra", (sobra > 0 && sobra <= 80 ? sobra : 0) + "px");
+      };
+      medirSobra();
+      window.addEventListener("resize", medirSobra);
+      window.addEventListener("orientationchange", function () { setTimeout(medirSobra, 300); });
       var alturaTela = function () {
         var portrait = matchMedia("(orientation: portrait)").matches;
         var t = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
