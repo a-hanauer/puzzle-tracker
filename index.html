@@ -194,6 +194,32 @@
   .app.done a.game { opacity: .5; }
   .app.done .icon { filter: grayscale(.6); }
 
+
+  /* Jogos da casa: o cartão inteiro tem a cor de fundo do próprio ícone, para
+     o ícone não parecer um botão dentro do cartão. Nos ícones com degradê, o
+     degradê do cartão coincide com o do ícone (que vai de 16px a 80px do topo). */
+  .app[data-g] { background: var(--tile-bg, var(--surface)); border-color: var(--tile-border, transparent); color: var(--tile-ink, var(--text)); }
+  .app[data-g] .icon { background: transparent; box-shadow: none; }
+  .app[data-g] .status { color: var(--tile-muted, var(--muted)); }
+  .app[data-g] .mr-track { stroke: var(--tile-track, var(--border)); }
+  .app[data-g].done { background: var(--tile-bg, var(--surface)); border-color: transparent; box-shadow: none; filter: grayscale(.75); opacity: .5; }
+  .app[data-g].done a.game { opacity: 1; }
+  .app[data-g].done .icon { filter: none; }
+  .app[data-g].done .status { color: var(--tile-muted, var(--muted)); }
+  .app[data-g="quinhentos"] { --tile-bg: linear-gradient(180deg, #22252e 16px, #121318 80px); --tile-ink: #fff; --tile-muted: rgba(255,255,255,.62); --tile-track: rgba(255,255,255,.2); }
+  .app[data-g="eclipse"]    { --tile-bg: linear-gradient(180deg, #292e62 16px, #121532 80px); --tile-ink: #fff; --tile-muted: rgba(255,255,255,.62); --tile-track: rgba(255,255,255,.2); }
+  .app[data-g="sanduba"]    { --tile-bg: #3b2f22; --tile-ink: #fbeedd; --tile-muted: rgba(251,238,221,.62); --tile-track: rgba(255,255,255,.2); }
+  .app[data-g="novelo"]     { --tile-bg: #2a242c; --tile-ink: #f6eee6; --tile-muted: rgba(246,238,230,.6); --tile-track: rgba(255,255,255,.18); }
+  .app[data-g="retalhos"]   { --tile-bg: #2b2925; --tile-ink: #f4eee3; --tile-muted: rgba(244,238,227,.6); --tile-track: rgba(255,255,255,.18); }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .app[data-g="sanduba"]  { --tile-bg: #edcf9d; --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
+    :root:not([data-theme="dark"]) .app[data-g="novelo"]   { --tile-bg: #f7f0e5; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2430; --tile-muted: rgba(43,36,48,.58); --tile-track: rgba(43,36,48,.14); }
+    :root:not([data-theme="dark"]) .app[data-g="retalhos"] { --tile-bg: #f6efe0; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2823; --tile-muted: rgba(43,40,35,.58); --tile-track: rgba(43,40,35,.14); }
+  }
+  :root[data-theme="light"] .app[data-g="sanduba"]  { --tile-bg: #edcf9d; --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
+  :root[data-theme="light"] .app[data-g="novelo"]   { --tile-bg: #f7f0e5; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2430; --tile-muted: rgba(43,36,48,.58); --tile-track: rgba(43,36,48,.14); }
+  :root[data-theme="light"] .app[data-g="retalhos"] { --tile-bg: #f6efe0; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2823; --tile-muted: rgba(43,40,35,.58); --tile-track: rgba(43,40,35,.14); }
+
   a.game {
     display: flex; flex-direction: column; align-items: center; gap: 8px;
     padding: 16px 6px 10px;
@@ -672,6 +698,7 @@ function buildCard(g) {
   const li = document.createElement("li");
   if (!LOCAL_PROGRESS[g.id]) return buildRow(g, li);   // outros jogos: linha com check
   li.className = "app";
+  li.dataset.g = g.id;                                  // cor do cartão = fundo do ícone (CSS)
   li.innerHTML = `
     <a class="game" href="${g.url}" title="${g.desc || ""}">
       <span class="icon">${g.emoji}</span>

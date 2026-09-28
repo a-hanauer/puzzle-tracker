@@ -446,13 +446,10 @@
 
   const nextNum = () => { let m = 0; for (const c of path) if (numAt[c]) m = numAt[c]; return m + 1; };
   function render() {
-    // fio
-    let d = "";
-    if (path.length > 1) d = "M" + path.map(i => `${cx(i)} ${cy(i)}`).join("L");
-    gThread.innerHTML = d ? `<path class="th th-shadow" d="${d}"/><path class="th th-edge" d="${d}"/><path class="th th-main" d="${d}"/><path class="th th-twist" d="${d}"/><path class="th th-sheen" d="${d}"/>` : "";
+    // fio: os caminhos são criados aqui e atualizados por drawThread (também durante o arrasto)
+    gThread.innerHTML = `<path class="th th-shadow"/><path class="th th-edge"/><path class="th th-main"/><path class="th th-twist"/><path class="th th-sheen"/>`;
     const head = path.at(-1);
-    let top = "";
-    if (path.length > 1 && !numAt[head] && !finished) top += `<circle class="head" cx="${cx(head)}" cy="${cy(head)}" r="27"/>`;
+    let top = `<circle class="head" id="tipDot" r="27" style="display:none"/>`;
     // números: botões de roupa
     const nx = nextNum();
     for (let i = 0; i < C; i++) if (numAt[i]) {
@@ -462,6 +459,7 @@
       top += `<circle class="btn-shadow" cx="${x}" cy="${y + 3}" r="33"/><circle class="btn" cx="${x}" cy="${y}" r="33"/><circle class="btn-rim" cx="${x}" cy="${y}" r="26.5"/><text class="btn-n" x="${x}" y="${y + 1}">${numAt[i]}</text>`;
     }
     gTop.innerHTML = top;
+    drawThread();
     // progresso
     $("progBar").style.width = (100 * path.length / C) + "%";
     $("progN").innerHTML = `<b>${path.length}</b>/${C}`;
@@ -477,6 +475,48 @@
     }
     updateTip();
     $("board").setAttribute("aria-label", `Tabuleiro ${N} por ${N}: fio com ${path.length} de ${C} casas, próximo número ${Math.min(nx, K)}`);
+  }
+
+  // Desenha o fio. Durante o arrasto, a ponta acompanha o dedo mesmo antes de
+  // entrar na próxima casa: estica na direção do dedo (até o ponto em que a casa
+  // é tomada) ou recolhe em direção à casa anterior. Onde não dá para seguir
+  // (parede, número fora de ordem, borda), a ponta só dá um puxãozinho.
+  function drawThread() {
+    const pts = path.map(i => [cx(i), cy(i)]);
+    let tip = null;
+    if (drag && drag.pos && !finished) {
+      const h = path.at(-1), [hx, hy] = centerOf(h);
+      const dx = drag.pos[0] - hx, dy = drag.pos[1] - hy;
+      let done = false;
+      if (path.length > 1) {                               // recolhendo em direção à casa anterior
+        const [bx, by] = centerOf(path.at(-2));
+        const ux = (bx - hx) / U, uy = (by - hy) / U, along = dx * ux + dy * uy;
+        if (along > 0) {
+          const t = Math.min(along, STEP);
+          pts[pts.length - 1] = [PAD + hx + ux * t, PAD + hy + uy * t];
+          tip = pts[pts.length - 1]; done = true;
+        }
+      }
+      if (!done) {                                          // esticando para a frente
+        const ax = Math.abs(dx), ay = Math.abs(dy), horiz = ax >= ay;
+        const dist = horiz ? ax : ay, sx = horiz ? Math.sign(dx) : 0, sy = horiz ? 0 : Math.sign(dy);
+        if (dist > 3 && (sx || sy)) {
+          const n = neighbor(h, sx, sy), ok = n >= 0 && canStep(h, n);
+          const t = Math.min(dist, ok ? STEP : 0.14 * U);
+          const p = [PAD + hx + sx * t, PAD + hy + sy * t];
+          pts.push(p); tip = p;
+        }
+      }
+    }
+    const d = pts.length > 1 ? "M" + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join("L") : "";
+    for (const el of gThread.children) el.setAttribute("d", d);
+    const dot = $("tipDot");
+    if (!dot) return;
+    const head = path.at(-1);
+    // ponta visível: durante o arrasto, onde o fio termina; parado, na casa da ponta (se não for número)
+    const show = !finished && pts.length > 1 && (tip || !numAt[head]);
+    dot.style.display = show ? "" : "none";
+    if (show) { const [x, y] = tip || [cx(head), cy(head)]; dot.setAttribute("cx", x.toFixed(1)); dot.setAttribute("cy", y.toFixed(1)); }
   }
 
   function persist() {
@@ -551,7 +591,7 @@
     if (at >= 0) path.length = at + 1;                            // toca no fio: corta ali e continua dali
     else if (adjacent(path.at(-1), i) && canStep(path.at(-1), i)) path.push(i);   // casa ao lado da ponta
     else { nudge(i); return; }
-    drag = { before, id: e.pointerId };
+    drag = { before, id: e.pointerId, pos: null };
     try { $("board").setPointerCapture(e.pointerId); } catch {}
     startTimer();
     render();
@@ -561,8 +601,8 @@
     // num arrasto rápido o navegador junta vários pontos num evento: usa todos
     const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
     let changed = false;
-    for (const ev of evs.length ? evs : [e]) { const [x, y] = boardPos(ev); if (follow(x, y)) changed = true; }
-    if (changed) render();
+    for (const ev of evs.length ? evs : [e]) { const [x, y] = boardPos(ev); drag.pos = [x, y]; if (follow(x, y)) changed = true; }
+    if (changed) render(); else drawThread();
   });
   const endDrag = e => {
     if (!drag || (e && e.pointerId !== undefined && e.pointerId !== drag.id)) return;
