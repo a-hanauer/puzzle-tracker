@@ -103,6 +103,8 @@ Como o painel lê o que esses jogos salvam no navegador, o estado deles é sempr
 
 **Teclado padrão:** os jogos com teclado usam as mesmas medidas (altura, espaçamentos, raio, tamanho da letra e do ENTER), definidas como variáveis `--kb-*` em `comum/cabecalho.css`; cada jogo mantém suas cores, bordas e sombras.
 
+**Dificuldade no jogo livre (todos os jogos):** no jogo livre, a linha de cima mostra "Extra · [dificuldade ▾] [↻]" (componente `ghNivel` em `comum/cabecalho.js`). Nos jogos de lógica (Eclipse, Novelo, Retalhos) a dificuldade é o nível de 1 a 7; nos de palavras, o número de tentativas — Sanduba: Fácil 20, Normal 14, Difícil 10; Quinhentos: Fácil 10, Normal 8, Difícil 6 (o desafio do dia continua com 14 e 8). A escolha fica guardada no aparelho; ↻ sorteia outro.
+
 **Próximo jogo:** quando o jogo do dia termina, cada jogo da casa mostra no cabeçalho um botão discreto com o ícone do próximo jogo pendente (na ordem do painel: jogos da casa, depois os outros), e a janela de resultado ganha a linha "Próximo jogo". Abrir um jogo externo por ali já o marca como feito. Se tudo estiver feito, a linha leva de volta ao painel. O componente fica em `comum/proximo.js`.
 
 ## Eclipse
@@ -125,7 +127,7 @@ Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, colu
 
 **Dificuldade.** Sobe ao longo da semana, em 7 níveis: **segunda é nível 1** (o mais fácil) e **domingo é nível 7** (o mais difícil), e o tabuleiro cresce junto: **8×8** na segunda e na terça, **9×9** de quarta a sexta e **10×10** no fim de semana (7×7 não tem solução com essas regras). Cada dia gera vários candidatos do seu tamanho e fica com uma faixa do esforço de dedução medido pelo gerador. Os desafios que já tinham saído (#1 e #2) continuam iguais.
 
-**Jogo livre.** A chave "Jogo livre" abre desafios extras (`eclipse/livre.json`, 40 por nível, nos mesmos tamanhos), sorteados, que não contam nas estatísticas. O botão "outro" sorteia um novo. A partida do dia fica guardada enquanto isso.
+**Jogo livre.** A chave "Jogo livre" abre desafios extras (`eclipse/livre.json`, 40 por nível, nos mesmos tamanhos), que não contam nas estatísticas. Na linha de cima aparece "Extra · [Nível 4 ▾] [↻]": o botão do nível abre a escolha de 1 a 7, e ↻ sorteia outro desafio do mesmo nível. A partida do dia fica guardada enquanto isso.
 
 **Painel.** O painel acompanha o Eclipse sozinho: o selo mostra as peças colocadas e o tempo ao terminar. O Histórico mostra tempo por dia, melhor tempo e média.
 

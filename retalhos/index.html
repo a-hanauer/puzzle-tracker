@@ -10,7 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Retalhos">
 <title>RETALHOS — uma colcha de retângulos</title>
 <link rel="icon" type="image/png" href="icon.png">
-<script src="../comum/tema.js?v=70"></script>
+<script src="../comum/tema.js?v=71"></script>
+<script src="../comum/cabecalho.js?v=71"></script>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -220,7 +221,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=70">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=71">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -283,7 +284,7 @@
     </div>
     <p>Arraste o dedo de um canto ao outro para desenhar um retalho; ele não pode passar por cima de outro retalho. Para aumentar ou diminuir um retalho, arraste a partir dele: o canto oposto fica parado. Para desfazer um retalho, toque nele. Enquanto você arrasta, o contorno fica verde quando o retalho bate com a etiqueta e vermelho quando não bate (com o motivo). Retalhos errados ficam com listras vermelhas.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b> (9×9).</p>
-    <p>No <b>Jogo livre</b> você joga desafios extras, de níveis variados, que não contam nas estatísticas.</p>
+    <p>No <b>Jogo livre</b> você joga desafios extras, que não contam nas estatísticas: escolha o <b>nível</b> (1 a 7) no botão ao lado de "Extra" e toque em ↻ para sortear outro.</p>
     <button class="btn-main" data-close>Jogar</button>
   </div>
 </div>
@@ -356,8 +357,9 @@
     const now = new Date();
     $("dayInfo").innerHTML = kind === "dia"
       ? `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`
-      : `Extra · nível ${P.l}/7 · <button class="linkbtn" id="newFree">outro ↻</button>`;
-    if (kind === "livre") $("newFree").addEventListener("click", () => newFree());
+      : "";
+    if (kind === "livre") ghNivel($("dayInfo"), { niveis: NIVEIS, atual: P.l, aoMudar: l => newFree(l), aoSortear: () => newFree() });
+    else $("dayInfo").classList.remove("gh-nivel");
     build(); fit(); render(); showTime();
   }
   const packPatches = () => patches.map(p => `${p.r0}.${p.c0}.${p.h}.${p.w}`).join(",");
@@ -391,16 +393,21 @@
     setup(puzzle, load("dia:" + dayNum, null), "dia");
     persist();
   }
+  // jogo livre: desafios extras do nível escolhido (1 a 7, guardado no aparelho)
+  const NIVEIS = [1, 2, 3, 4, 5, 6, 7].map(l => ({ v: l, rotulo: `Nível ${l}`, curto: String(l) }));
   async function loadFree(forceNew) {
     if (!FREE) FREE = await fetch("livre.json").then(r => r.json());
+    const nivel = load("nivel-livre", 4);
     const saved = load("livre", null);
-    if (!forceNew && saved && !saved.done && FREE.puzzles[saved.idx]) freeIdx = saved.idx;
-    else { let k; do { k = Math.floor(Math.random() * FREE.puzzles.length); } while (FREE.puzzles.length > 1 && k === saved?.idx); freeIdx = k; }
+    const doNivel = [...FREE.puzzles.keys()].filter(k => FREE.puzzles[k].l === nivel);
+    const lista = doNivel.length ? doNivel : [...FREE.puzzles.keys()];
+    if (!forceNew && saved && !saved.done && FREE.puzzles[saved.idx] && lista.includes(saved.idx)) freeIdx = saved.idx;
+    else { let k; do { k = lista[Math.floor(Math.random() * lista.length)]; } while (lista.length > 1 && k === saved?.idx); freeIdx = k; }
     setup(FREE.puzzles[freeIdx], saved && saved.idx === freeIdx ? saved : null, "livre");
     persist();
     if (!finished) startTimer();
   }
-  function newFree() { closeAll(); loadFree(true); }
+  function newFree(nivel) { if (nivel) save("nivel-livre", nivel); closeAll(); loadFree(true); }
   $("freeToggle").addEventListener("change", async e => {
     persist();
     if (e.target.checked) await loadFree(false);
@@ -719,7 +726,7 @@
   demo("demoB", true);
 })();
 </script>
-<script src="../comum/catalogo.js?v=70"></script>
-<script src="../comum/proximo.js?v=70" data-jogo="retalhos"></script>
+<script src="../comum/catalogo.js?v=71"></script>
+<script src="../comum/proximo.js?v=71" data-jogo="retalhos"></script>
 </body>
 </html>

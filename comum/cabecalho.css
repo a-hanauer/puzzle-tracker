@@ -61,7 +61,39 @@ header.gh {
   /* dia · nível · Jogo livre: Noto Sans extracondensada e fina, como os títulos */
   font-size: .98rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--gh-muted);
 }
+.gh-meta { position: relative; }
 .gh-meta .gh-info { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* jogo livre: "Extra · [NÍVEL 4 ▾] [↻]" */
+.gh-meta .gh-info.gh-nivel { display: flex; align-items: center; gap: 8px; overflow: visible; }
+.gh-lv, .gh-re {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer;
+  margin: -3px 0; border: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--gh-ink);
+  background: var(--gh-surface); box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 3px 10px rgba(0, 0, 0, .06);
+}
+.gh-lv { gap: 3px; height: 28px; padding: 0 8px 0 11px; border-radius: 99px; font-weight: 600; }
+.gh-lv svg { width: 14px; height: 14px; opacity: .6; }
+.gh-re { width: 28px; height: 28px; padding: 0; border-radius: 50%; color: var(--gh-muted); }
+.gh-re svg { width: 16px; height: 16px; }
+.gh-lv:active, .gh-re:active { transform: scale(.94); }
+.gh-lv-pop {
+  position: absolute; left: 0; top: calc(100% + 6px); z-index: 30;
+  padding: 12px 12px 10px; border-radius: 18px; background: var(--gh-surface); color: var(--gh-ink);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .1), 0 14px 36px rgba(0, 0, 0, .2);
+  text-transform: none; letter-spacing: 0; font-stretch: 100%;
+  animation: gh-pop .16s ease;
+}
+.gh-lv-pop[hidden] { display: none; }
+@keyframes gh-pop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.gh-lv-ops + .gh-lv-sub { }
+.gh-lv-t { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gh-muted); margin: 0 2px 8px; }
+.gh-lv-ops { display: flex; gap: 6px; }
+.gh-lv-ops button {
+  height: 36px; padding: 0 14px; border-radius: 99px; border: 0; cursor: pointer;
+  background: rgba(127, 127, 127, .13); color: var(--gh-ink); font: inherit; font-weight: 700; font-size: .9rem;
+}
+.gh-lv-ops.num button { width: 36px; padding: 0; }
+.gh-lv-ops button[aria-pressed="true"] { background: var(--gh-accent); color: var(--fim-btn-ink, #fff); }
+.gh-lv-esc { display: flex; justify-content: space-between; margin: 7px 4px 0; font-size: .68rem; font-weight: 600; color: var(--gh-muted); }
 .gh-free {
   display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
   cursor: pointer; font-weight: 500; color: var(--gh-muted); position: relative;
