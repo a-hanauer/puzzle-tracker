@@ -47,9 +47,9 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 
 O progresso fica salvo no `localStorage` do navegador, então é separado em cada aparelho e navegador. Limpar os dados do site apaga o histórico.
 
-## Histórico
+## Estatísticas
 
-O **Histórico** abre pelo botão de gráfico no cabeçalho (ao lado do tema e das configurações) e fecha pelo ✕ ou pelo mesmo botão. Ele mostra:
+O botão de gráfico no cabeçalho (ao lado do tema e das configurações) abre a página **Estatísticas** (`#estatisticas`), que ocupa a tela toda e tem seu próprio título e botão de voltar (o voltar do sistema também funciona). Ela mostra:
 
 - **Resumo:** sequência atual, melhor sequência, dias completos e quanto foi feito no período escolhido.
 - **Atividade:** um só quadro com o período escolhido no controle (**7 dias**, **30 dias** ou **12 semanas**). Em 7 e 30 dias, barras por dia; em 12 semanas, o calendário que fica mais verde conforme os jogos feitos. Tocar num dia mostra quais jogos você fez e os resultados. Embaixo, **Por jogo**: em quantos dias do período você fez cada jogo.
@@ -88,7 +88,7 @@ O Sanduba e o Quinhentos rodam direto daqui, cada um na sua pasta:
 
 Cada jogo tem um botão **‹** à esquerda do logotipo que volta para o painel. Ele é essencial no app instalado no iPhone, que não mostra o botão "voltar" do navegador.
 
-A interface dos jogos nativos (Sanduba, Quinhentos e Eclipse) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema é o escolhido no painel. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: sobem de baixo como uma bandeja presa à borda da tela (inclusive no app instalado no iPhone), com o ✕ sempre visível no topo, e fecham ao tocar no fundo. A bandeja de fim de jogo tem a mesma estrutura nos três: ✕, arte do jogo, título ("… completo!" ou "Não foi dessa vez"), resultado, linha de detalhe, **Compartilhar** (desafio do dia) ou **Jogar outro** (jogo livre), contagem para o próximo desafio e **Próximo jogo**. As estatísticas continuam sendo gravadas pelos jogos e aparecem no **Histórico** do painel.
+A interface dos jogos nativos (Sanduba, Quinhentos e Eclipse) segue o mesmo padrão, definido em `comum/cabecalho.css`: ‹ voltar, ícone e nome do jogo e **?** com as regras; embaixo, a data do dia e a chave **Jogo livre**. Não há configurações nem telas de estatísticas dentro dos jogos; o tema é o escolhido no painel. As janelas (Como jogar, fim de jogo, confirmações) também seguem o mesmo padrão: sobem de baixo como uma bandeja presa à borda da tela (inclusive no app instalado no iPhone), com o ✕ sempre visível no topo, e fecham ao tocar no fundo. A bandeja de fim de jogo tem a mesma estrutura nos três: ✕, arte do jogo, título ("… completo!" ou "Não foi dessa vez"), resultado, linha de detalhe, **Compartilhar** (desafio do dia) ou **Jogar outro** (jogo livre), contagem para o próximo desafio e **Próximo jogo**. As estatísticas continuam sendo gravadas pelos jogos e aparecem nas **Estatísticas** do painel.
 
 As estatísticas e sequências dos jogos continuam valendo: o navegador guarda o progresso por domínio, e todos os endereços ficam em `a-hanauer.github.io`.
 

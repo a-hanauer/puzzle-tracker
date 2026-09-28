@@ -323,9 +323,13 @@
   .toast svg { width: 16px; height: 16px; }
 
   /* ---------- Histórico (aberto pelo botão do cabeçalho) ---------- */
-  .round[aria-pressed="true"] { background: var(--green); color: #fff; }
-  .hist-head { display: flex; align-items: center; justify-content: space-between; margin: 16px 2px 2px; }
-  .hist-head h2 { margin: 0; font-size: 1.25rem; font-weight: 800; letter-spacing: -.01em; }
+  /* página de estatísticas: ocupa a tela toda, com voltar e título próprios */
+  body.pagina-stats header.top { display: none; }
+  .page-head { display: flex; align-items: center; gap: 6px; padding: 0 2px; min-height: 36px; }
+  .page-head h1 { margin: 0; font-size: 1.35rem; font-weight: 800; letter-spacing: -.01em; }
+  .page-back { width: 36px; height: 36px; margin-left: -8px; border: none; border-radius: 50%; background: none; color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; opacity: .8; }
+  .page-back:active { background: var(--surface-2); opacity: 1; }
+  .page-back svg { width: 22px; height: 22px; }
   .segx { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface-2); margin-bottom: 14px; }
   .segx button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 0; border: none; border-radius: 9px; background: none; color: var(--muted); font: inherit; font-weight: 700; font-size: .84rem; cursor: pointer; min-width: 0; }
   .segx button[aria-checked="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
@@ -415,7 +419,7 @@
   <div class="top-row">
     <div class="app-mark"><img src="icon-192.png?v=6" alt=""><span>Jogos do Dia</span></div>
   <div class="head-actions">
-    <button class="round" id="histBtn" aria-label="Histórico" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V13M10 20V6M15 20v-9M20 20V9"/></svg></button>
+    <button class="round" id="histBtn" aria-label="Estatísticas"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V13M10 20V6M15 20v-9M20 20V9"/></svg></button>
     <button class="round" id="themeBtn" aria-label="Tema"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
     <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
   </div>
@@ -436,10 +440,10 @@
 </header>
 
 <section id="viewHistory" hidden>
-  <div class="hist-head">
-    <h2>Histórico</h2>
-    <button class="round" id="histClose" aria-label="Fechar histórico"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-  </div>
+  <header class="page-head">
+    <button class="page-back" id="histBack" aria-label="Voltar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h1>Estatísticas</h1>
+  </header>
 
   <div class="tiles" id="hTiles"></div>
 
@@ -1168,17 +1172,24 @@ document.querySelectorAll("#perSeg button").forEach(b => b.addEventListener("cli
   histPeriod = +b.dataset.p; renderHistory();
 }));
 
-/* ---------- Histórico: abre e fecha pelo botão do cabeçalho ---------- */
+/* ---------- Estatísticas: página própria (#estatisticas), com voltar ---------- */
+const ehStats = () => location.hash === "#estatisticas" || location.hash === "#historico";
 function route() {
-  const hist = location.hash === "#historico";
-  $("viewHistory").hidden = !hist;
-  $("viewToday").hidden = hist;
-  $("histBtn").setAttribute("aria-pressed", String(hist));
-  if (hist) { renderHistory(); window.scrollTo(0, 0); }
+  const st = ehStats();
+  $("viewHistory").hidden = !st;
+  $("viewToday").hidden = st;
+  document.body.classList.toggle("pagina-stats", st);
+  if (st) { renderHistory(); window.scrollTo(0, 0); }
 }
-const abrirHist = abrir => { history.replaceState(null, "", abrir ? "#historico" : location.pathname); route(); };
-$("histBtn").addEventListener("click", () => abrirHist(location.hash !== "#historico"));
-$("histClose").addEventListener("click", () => abrirHist(false));
+$("histBtn").addEventListener("click", () => {
+  history.pushState({ stats: true }, "", "#estatisticas");          // o voltar do sistema também funciona
+  route();
+});
+$("histBack").addEventListener("click", () => {
+  if (history.state && history.state.stats) history.back();
+  else { history.replaceState(null, "", location.pathname); route(); }
+});
+window.addEventListener("popstate", route);
 window.addEventListener("hashchange", route);
 
 renderDate();
