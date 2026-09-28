@@ -12,8 +12,8 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=75"></script>
-<script src="comum/catalogo.js?v=75"></script>
+<script src="comum/tema.js?v=76"></script>
+<script src="comum/catalogo.js?v=76"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -206,26 +206,29 @@
   .app[data-g].done a.game { opacity: 1; }
   .app[data-g].done .icon { filter: none; }
   .app[data-g].done .status { color: var(--tile-muted, var(--muted)); }
-  .app[data-g="quinhentos"] { --tile-bg: #1b1d24; --tile-ink: #fff; --tile-muted: rgba(255,255,255,.62); --tile-track: rgba(255,255,255,.2); }
-  .app[data-g="eclipse"]    { --tile-bg: #181b2b; --tile-ink: #fff; --tile-muted: rgba(255,255,255,.62); --tile-track: rgba(255,255,255,.2); }
-  .app[data-g="sanduba"]    { --tile-bg: #30291f; --tile-ink: #fbeedd; --tile-muted: rgba(251,238,221,.62); --tile-track: rgba(255,255,255,.2); }
-  .app[data-g="novelo"]     { --tile-bg: #2a242c; --tile-ink: #f6eee6; --tile-muted: rgba(246,238,230,.6); --tile-track: rgba(255,255,255,.18); }
-  .app[data-g="pingado"]    { --tile-bg: #261d17; --tile-ink: #f5ebdf; --tile-muted: rgba(245,235,223,.6); --tile-track: rgba(255,255,255,.18); }
-  .app[data-g="retalhos"]   { --tile-bg: #2b2925; --tile-ink: #f4eee3; --tile-muted: rgba(244,238,227,.6); --tile-track: rgba(255,255,255,.18); }
+  /* cores dos cartões: cada jogo tem o seu matiz, todos com a mesma saturação e luminosidade
+     (claro: 60% / 86%; escuro: 30% / 18%) — o Pingado fica um pouco mais fundo no claro, para a
+     xícara branca aparecer. O fundo dos ícones é exatamente essa cor. */
+  .app[data-g="sanduba"]    { --tile-bg: #3c3520; --tile-ink: #f4f2eb; --tile-muted: rgba(244,242,235,.62); --tile-track: rgba(255,255,255,.18); }
+  .app[data-g="quinhentos"] { --tile-bg: #203c2d; --tile-ink: #ebf4ef; --tile-muted: rgba(235,244,239,.62); --tile-track: rgba(255,255,255,.18); }
+  .app[data-g="eclipse"]    { --tile-bg: #20243c; --tile-ink: #ebecf4; --tile-muted: rgba(235,236,244,.62); --tile-track: rgba(255,255,255,.18); }
+  .app[data-g="novelo"]     { --tile-bg: #3c2022; --tile-ink: #f4ebec; --tile-muted: rgba(244,235,236,.62); --tile-track: rgba(255,255,255,.18); }
+  .app[data-g="retalhos"]   { --tile-bg: #20343c; --tile-ink: #ebf2f4; --tile-muted: rgba(235,242,244,.62); --tile-track: rgba(255,255,255,.18); }
+  .app[data-g="pingado"]    { --tile-bg: #3c2b20; --tile-ink: #f4efeb; --tile-muted: rgba(244,239,235,.62); --tile-track: rgba(255,255,255,.18); }
   @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) .app[data-g="quinhentos"] { --tile-bg: #eef0f4; --tile-border: rgba(20,24,33,.06); --tile-ink: #1d2027; --tile-muted: rgba(29,32,39,.58); --tile-track: rgba(29,32,39,.14); }
-    :root:not([data-theme="dark"]) .app[data-g="eclipse"] { --tile-bg: #e8ecf8; --tile-border: rgba(30,40,90,.06); --tile-ink: #1c2150; --tile-muted: rgba(28,33,80,.58); --tile-track: rgba(28,33,80,.14); }
-    :root:not([data-theme="dark"]) .app[data-g="sanduba"]  { --tile-bg: #f6ebd6; --tile-border: rgba(60,40,20,.06); --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
-    :root:not([data-theme="dark"]) .app[data-g="novelo"]   { --tile-bg: #f7f0e5; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2430; --tile-muted: rgba(43,36,48,.58); --tile-track: rgba(43,36,48,.14); }
-    :root:not([data-theme="dark"]) .app[data-g="pingado"]  { --tile-bg: #d9b48c; --tile-border: rgba(60,40,20,.08); --tile-ink: #2e1f14; --tile-muted: rgba(46,31,20,.66); --tile-track: rgba(46,31,20,.18); }
-    :root:not([data-theme="dark"]) .app[data-g="retalhos"] { --tile-bg: #f6efe0; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2823; --tile-muted: rgba(43,40,35,.58); --tile-track: rgba(43,40,35,.14); }
+    :root:not([data-theme="dark"]) .app[data-g="sanduba"]    { --tile-bg: #f1e7c6; --tile-border: transparent; --tile-ink: #3b3316; --tile-muted: rgba(59,51,22,.62); --tile-track: rgba(59,51,22,.15); }
+    :root:not([data-theme="dark"]) .app[data-g="quinhentos"] { --tile-bg: #c6f1da; --tile-border: transparent; --tile-ink: #163b28; --tile-muted: rgba(22,59,40,.62); --tile-track: rgba(22,59,40,.15); }
+    :root:not([data-theme="dark"]) .app[data-g="eclipse"]    { --tile-bg: #c6ccf1; --tile-border: transparent; --tile-ink: #161b3b; --tile-muted: rgba(22,27,59,.62); --tile-track: rgba(22,27,59,.15); }
+    :root:not([data-theme="dark"]) .app[data-g="novelo"]     { --tile-bg: #f1c6c9; --tile-border: transparent; --tile-ink: #3b1619; --tile-muted: rgba(59,22,25,.62); --tile-track: rgba(59,22,25,.15); }
+    :root:not([data-theme="dark"]) .app[data-g="retalhos"]   { --tile-bg: #c6e5f1; --tile-border: transparent; --tile-ink: #16313b; --tile-muted: rgba(22,49,59,.62); --tile-track: rgba(22,49,59,.15); }
+    :root:not([data-theme="dark"]) .app[data-g="pingado"]    { --tile-bg: #e9c3aa; --tile-border: transparent; --tile-ink: #3b2516; --tile-muted: rgba(59,37,22,.62); --tile-track: rgba(59,37,22,.15); }
   }
-  :root[data-theme="light"] .app[data-g="quinhentos"] { --tile-bg: #eef0f4; --tile-border: rgba(20,24,33,.06); --tile-ink: #1d2027; --tile-muted: rgba(29,32,39,.58); --tile-track: rgba(29,32,39,.14); }
-  :root[data-theme="light"] .app[data-g="eclipse"] { --tile-bg: #e8ecf8; --tile-border: rgba(30,40,90,.06); --tile-ink: #1c2150; --tile-muted: rgba(28,33,80,.58); --tile-track: rgba(28,33,80,.14); }
-  :root[data-theme="light"] .app[data-g="sanduba"]  { --tile-bg: #f6ebd6; --tile-border: rgba(60,40,20,.06); --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
-  :root[data-theme="light"] .app[data-g="novelo"]   { --tile-bg: #f7f0e5; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2430; --tile-muted: rgba(43,36,48,.58); --tile-track: rgba(43,36,48,.14); }
-  :root[data-theme="light"] .app[data-g="pingado"]  { --tile-bg: #d9b48c; --tile-border: rgba(60,40,20,.08); --tile-ink: #2e1f14; --tile-muted: rgba(46,31,20,.66); --tile-track: rgba(46,31,20,.18); }
-  :root[data-theme="light"] .app[data-g="retalhos"] { --tile-bg: #f6efe0; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2823; --tile-muted: rgba(43,40,35,.58); --tile-track: rgba(43,40,35,.14); }
+  :root[data-theme="light"] .app[data-g="sanduba"]    { --tile-bg: #f1e7c6; --tile-border: transparent; --tile-ink: #3b3316; --tile-muted: rgba(59,51,22,.62); --tile-track: rgba(59,51,22,.15); }
+  :root[data-theme="light"] .app[data-g="quinhentos"] { --tile-bg: #c6f1da; --tile-border: transparent; --tile-ink: #163b28; --tile-muted: rgba(22,59,40,.62); --tile-track: rgba(22,59,40,.15); }
+  :root[data-theme="light"] .app[data-g="eclipse"]    { --tile-bg: #c6ccf1; --tile-border: transparent; --tile-ink: #161b3b; --tile-muted: rgba(22,27,59,.62); --tile-track: rgba(22,27,59,.15); }
+  :root[data-theme="light"] .app[data-g="novelo"]     { --tile-bg: #f1c6c9; --tile-border: transparent; --tile-ink: #3b1619; --tile-muted: rgba(59,22,25,.62); --tile-track: rgba(59,22,25,.15); }
+  :root[data-theme="light"] .app[data-g="retalhos"]   { --tile-bg: #c6e5f1; --tile-border: transparent; --tile-ink: #16313b; --tile-muted: rgba(22,49,59,.62); --tile-track: rgba(22,49,59,.15); }
+  :root[data-theme="light"] .app[data-g="pingado"]    { --tile-bg: #e9c3aa; --tile-border: transparent; --tile-ink: #3b2516; --tile-muted: rgba(59,37,22,.62); --tile-track: rgba(59,37,22,.15); }
 
   a.game {
     display: flex; flex-direction: column; align-items: center; gap: 8px;
