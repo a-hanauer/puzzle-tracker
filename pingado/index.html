@@ -260,7 +260,7 @@
       <figure><svg id="demoA" viewBox="0 0 428 428"></svg>desafio</figure>
       <figure><svg id="demoB" viewBox="0 0 428 428"></svg>resolvido</figure>
     </div>
-    <p>Toque numa casa para trocar: vazia → café → leite → vazia. Arraste o dedo para repetir a mesma troca em várias casas. As casas mais escuras já vêm preenchidas. O que quebra uma regra fica com listras vermelhas.</p>
+    <p>Toque numa casa para trocar: vazia → café → leite → vazia. Arraste o dedo para repetir a mesma troca em várias casas. As casas mais escuras já vêm preenchidas. O que quebra uma regra fica com listras vermelhas a partir da jogada seguinte.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b>. O tabuleiro vai de 6×6 a 8×8; no fim de semana, a dificuldade vem de menos casas preenchidas e deduções mais longas.</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, que não contam nas estatísticas: escolha o <b>nível</b> (1 a 7) no botão ao lado de "Extra" e toque em ↻ para sortear outro.</p>
     <button class="btn-main" data-close>Jogar</button>
@@ -309,6 +309,7 @@
   let N = 0, C = 0, P = null, PID = "", fixed = null, cells = null, signs = [];
   let history = [], finished = false, kind = "dia", dayNum = 0, DAILY = null, FREE = null, freeIdx = -1;
   let timer = null, startedAt = 0, elapsed = 0, bad = new Set();
+  let fresh = new Set();      // casas mexidas na última jogada (os erros delas esperam a próxima)
   const U = 100, PAD = 14;
 
   function recomputeStats(st) {
@@ -330,7 +331,7 @@
     if (saved?.cells && saved.cells.length === C) for (let i = 0; i < C; i++) if (!fixed[i]) cells[i] = +saved.cells[i] || 0;
     elapsed = saved?.elapsed || 0;
     finished = !!saved?.done;
-    history = [];
+    history = []; fresh = new Set();
     const now = new Date();
     $("dayInfo").innerHTML = kind === "dia"
       ? `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`
@@ -416,8 +417,11 @@
   window.addEventListener("resize", () => { if (N) fit(); });
   if (window.visualViewport) visualViewport.addEventListener("resize", () => { if (N) fit(); });
 
-  // conflitos: três iguais seguidos, linha/coluna com gotas demais de um tipo, sinal desrespeitado
-  function conflicts() {
+  // conflitos: três iguais seguidos, linha/coluna com peças demais de um tipo, sinal desrespeitado.
+  // Um erro só aparece depois da jogada seguinte: com escondeNovas, os conflitos que
+  // envolvem alguma casa mexida na última jogada (fresh) ficam de fora.
+  function conflicts(escondeNovas) {
+    const hide = cs => escondeNovas && cs.some(i => fresh.has(i));
     const out = new Set(), badSigns = new Set();
     const lines = [];
     for (let r = 0; r < N; r++) lines.push([...Array(N)].map((_, c) => r * N + c));
@@ -426,23 +430,23 @@
     for (const line of lines) {
       for (let k = 0; k + 2 < N; k++) {
         const [a, b, c] = [line[k], line[k + 1], line[k + 2]];
-        if (cells[a] && cells[a] === cells[b] && cells[b] === cells[c]) { out.add(a); out.add(b); out.add(c); why.add("tres"); }
+        if (cells[a] && cells[a] === cells[b] && cells[b] === cells[c] && !hide([a, b, c])) { out.add(a); out.add(b); out.add(c); why.add("tres"); }
       }
       for (const v of [1, 2]) {
         const cs = line.filter(i => cells[i] === v);
-        if (cs.length > N / 2) { cs.forEach(i => out.add(i)); why.add(v === 1 ? "cafe" : "leite"); }
+        if (cs.length > N / 2 && !hide(cs)) { cs.forEach(i => out.add(i)); why.add(v === 1 ? "cafe" : "leite"); }
       }
     }
     signs.forEach((s, k) => {
       if (!cells[s.a] || !cells[s.b]) return;
-      if ((s.t === "=") !== (cells[s.a] === cells[s.b])) { out.add(s.a); out.add(s.b); badSigns.add(k); why.add(s.t === "=" ? "igual" : "dif"); }
+      if ((s.t === "=") !== (cells[s.a] === cells[s.b]) && !hide([s.a, s.b])) { out.add(s.a); out.add(s.b); badSigns.add(k); why.add(s.t === "=" ? "igual" : "dif"); }
     });
     return { out, badSigns, why };
   }
 
   let popAt = new Set();
   function render() {
-    const cf = conflicts();
+    const cf = conflicts(true);
     bad = cf.out;
     let sc = "", sd = "";
     for (let i = 0; i < C; i++) {
@@ -495,6 +499,7 @@
     if (i < 0 || fixed[i] || cells[i] === v) return;
     cells[i] = v;
     if (v) popAt.add(i);
+    fresh.add(i);
     if (window.jogosHaptico) jogosHaptico();
     render();
   }
@@ -504,6 +509,7 @@
     if (i < 0) return;
     e.preventDefault();
     drag = { id: e.pointerId, before: pack(), last: i, v: fixed[i] ? -1 : (cells[i] + 1) % 3 };
+    fresh = new Set();                                     // nova jogada: os erros da anterior aparecem
     try { $("board").setPointerCapture(e.pointerId); } catch {}
     if (drag.v >= 0) paint(i, drag.v);
     startTimer();
@@ -529,6 +535,7 @@
   $("undoBtn").addEventListener("click", () => {
     if (!history.length || finished) return;
     unpack(history.pop());
+    fresh = new Set();
     render(); persist();
   });
   $("clearBtn").addEventListener("click", () => { if (!finished && cells.some((v, i) => v && !fixed[i])) openModal("clearOverlay"); });
@@ -537,6 +544,7 @@
     if (finished) return;
     history.push(pack());
     cells = fixed.slice();
+    fresh = new Set();
     render(); persist();
   });
 
