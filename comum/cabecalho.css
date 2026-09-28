@@ -209,7 +209,7 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
   --kb-fs: 19px;         /* letra (Noto Sans extracondensada) */
   --kb-font: "Noto Sans", system-ui, sans-serif;
   --kb-stretch: 62.5%;   /* extracondensada */
-  --kb-weight: 400;      /* fina */
+  --kb-weight: 480;      /* fina, com um pouco de corpo */
   --kb-max: 40px;        /* largura máxima da tecla de letra */
   --kb-enter: 1.7;       /* ENTER ocupa 1,7 tecla */
   --kb-enter-max: 72px;
