@@ -31,6 +31,7 @@
     --tag-line: #d8ccb6;
     --tag-on: rgba(255, 253, 248, .94);
     --tag-ink: #2b2823;
+    --tag-fg: #fff;
     --empty: #d9d1c1;
     --empty-st: rgba(80, 70, 55, .35);
     --bad: #d64545;
@@ -58,6 +59,7 @@
       --tag-line: #4a463e;
       --tag-on: rgba(22, 20, 18, .78);
       --tag-ink: #f1ebe0;
+      --tag-fg: #1f1d1a;
       --empty: #3d3a34;
       --empty-st: rgba(255, 255, 255, .25);
       --bad: #ff6b6b;
@@ -85,6 +87,7 @@
       --tag-line: #4a463e;
       --tag-on: rgba(22, 20, 18, .78);
       --tag-ink: #f1ebe0;
+      --tag-fg: #1f1d1a;
       --empty: #3d3a34;
       --empty-st: rgba(255, 255, 255, .25);
       --bad: #ff6b6b;
@@ -130,14 +133,13 @@
   .prev { fill: rgba(127, 110, 80, .08); stroke: var(--ink); stroke-width: 4; stroke-dasharray: 14 10; stroke-linecap: round; }
   .prev-badge { fill: var(--ink); }
   .prev-t { fill: var(--bg); font: 800 28px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
-  /* etiqueta = o formato do retalho (horizontal, vertical, quadrado) em traço, com o número dentro;
-     formato livre = só os quatro cantos. Sem cor: a cor do tecido só aparece depois do retalho desenhado. */
-  .tg-sh { fill: var(--tag); stroke: var(--tag-ink); stroke-width: 4.2; }
-  .tg-any { fill: none; stroke: var(--tag-ink); stroke-width: 4.8; stroke-linecap: round; stroke-linejoin: round; }
-  .tg-n { fill: var(--tag-ink); font: 800 34px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
-  /* etiqueta já dentro do retalho certo: traço branco sobre o tecido */
-  .tg.on .tg-sh { fill: rgba(255, 255, 255, .16); stroke: rgba(255, 255, 255, .95); }
-  .tg.on .tg-any { stroke: rgba(255, 255, 255, .95); }
+  /* etiqueta = o formato do retalho em sólido (horizontal, vertical, quadrado), com o número em branco;
+     formato livre = uma cruz gorda (horizontal + vertical juntos), como no Patches.
+     Sem cor de tecido: a cor só aparece depois do retalho desenhado. */
+  .tg-sh { fill: var(--tag-ink); }
+  .tg-n { fill: var(--tag-fg); font: 800 34px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
+  /* etiqueta já dentro do retalho certo: fica escura e translúcida sobre o tecido */
+  .tg.on .tg-sh { fill: rgba(20, 18, 16, .58); }
   .tg.on .tg-n { fill: #fff; }
   .prev.ok { stroke: var(--ok); fill: color-mix(in srgb, var(--ok) 12%, transparent); }
   .prev.bad { stroke: var(--bad); fill: color-mix(in srgb, var(--bad) 8%, transparent); }
@@ -269,10 +271,10 @@
       <li>Cada retalho tem <b>exatamente uma etiqueta</b>.</li>
       <li>O <b>número</b> dentro da etiqueta é quantas casas o retalho tem.</li>
       <li>O <b>desenho da etiqueta</b> é o formato do retalho:
-        <svg class="g" viewBox="0 0 26 18"><rect x="2" y="4" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg> horizontal (mais largo que alto),
-        <svg class="g" viewBox="0 0 26 18"><rect x="8" y="1" width="10" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg> vertical (mais alto que largo),
-        <svg class="g" viewBox="0 0 26 18"><rect x="6" y="2" width="14" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg> quadrado e
-        <svg class="g" viewBox="0 0 26 18"><path d="M6 6V2h4M16 2h4v4M20 12v4h-4M10 16H6v-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> só os cantos: formato livre.</li>
+        <svg class="g" viewBox="0 0 26 18"><rect x="2" y="4" width="22" height="11" rx="2.5" fill="currentColor"/></svg> horizontal (mais largo que alto),
+        <svg class="g" viewBox="0 0 26 18"><rect x="8" y="1" width="10" height="16" rx="2.5" fill="currentColor"/></svg> vertical (mais alto que largo),
+        <svg class="g" viewBox="0 0 26 18"><rect x="6" y="2" width="14" height="14" rx="2.5" fill="currentColor"/></svg> quadrado e
+        <svg class="g" viewBox="0 0 26 18"><path d="M10 1h6v5h5v6h-5v5h-6v-5H5V6h5z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg> cruz: formato livre.</li>
       <li>Algumas etiquetas não têm número: aí vale só o formato.</li>
     </ul>
     <div class="demo">
@@ -460,15 +462,29 @@
       <rect class="p-st${stc}" x="${x + 10}" y="${y + 10}" width="${w - 20}" height="${h - 20}" rx="10"/></g>`;
   }
   // tamanho do desenho da etiqueta, em unidades da casa (1 casa = 100)
-  const TAG = { q: [60, 60], l: [86, 46], a: [48, 86], "*": [64, 64] };
+  const TAG = { q: [62, 62], l: [86, 48], a: [48, 86] };
   function tagSVG(c, on) {
     const x = PAD + (c.i % N) * U + U / 2, y = PAD + ((c.i / N) | 0) * U + U / 2;
-    const [w, h] = TAG[c.f], x0 = x - w / 2, y0 = y - h / 2, x1 = x0 + w, y1 = y0 + h, k = 15;
     let s = `<g class="tg${on ? " on" : ""}">`;
-    if (c.f === "*") s += `<path class="tg-any" d="M${x0} ${y0 + k}V${y0 + 4}Q${x0} ${y0} ${x0 + 4} ${y0}H${x0 + k}M${x1 - k} ${y0}H${x1 - 4}Q${x1} ${y0} ${x1} ${y0 + 4}V${y0 + k}M${x1} ${y1 - k}V${y1 - 4}Q${x1} ${y1} ${x1 - 4} ${y1}H${x1 - k}M${x0 + k} ${y1}H${x0 + 4}Q${x0} ${y1} ${x0} ${y1 - 4}V${y1 - k}"/>`;
-    else s += `<rect class="tg-sh" x="${x0}" y="${y0}" width="${w}" height="${h}" rx="9"/>`;
+    if (c.f === "*") {
+      // cruz gorda: um retângulo deitado e um em pé, sobrepostos
+      const L = 82, T = 46, r = 9;
+      s += `<path class="tg-sh" d="${cross(x, y, L, T, r)}"/>`;
+    } else {
+      const [w, h] = TAG[c.f];
+      s += `<rect class="tg-sh" x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="10"/>`;
+    }
     if (c.n) s += `<text class="tg-n" x="${x}" y="${y + 1}" style="font-size:${c.f === "a" && c.n > 9 ? 28 : 34}px">${c.n}</text>`;
     return s + "</g>";
+  }
+  // contorno da cruz com cantos arredondados (externos r, internos r/2)
+  function cross(x, y, L, T, r) {
+    const a = L / 2, b = T / 2, q = r / 2;
+    return `M${x - b + r} ${y - a}H${x + b - r}Q${x + b} ${y - a} ${x + b} ${y - a + r}V${y - b - q}Q${x + b} ${y - b} ${x + b + q} ${y - b}` +
+      `H${x + a - r}Q${x + a} ${y - b} ${x + a} ${y - b + r}V${y + b - r}Q${x + a} ${y + b} ${x + a - r} ${y + b}H${x + b + q}Q${x + b} ${y + b} ${x + b} ${y + b + q}` +
+      `V${y + a - r}Q${x + b} ${y + a} ${x + b - r} ${y + a}H${x - b + r}Q${x - b} ${y + a} ${x - b} ${y + a - r}V${y + b + q}Q${x - b} ${y + b} ${x - b - q} ${y + b}` +
+      `H${x - a + r}Q${x - a} ${y + b} ${x - a} ${y + b - r}V${y - b + r}Q${x - a} ${y - b} ${x - a + r} ${y - b}H${x - b - q}Q${x - b} ${y - b} ${x - b} ${y - b - q}` +
+      `V${y - a + r}Q${x - b} ${y - a} ${x - b + r} ${y - a}Z`;
   }
   function render() {
     const sts = patches.map(statusOf);
