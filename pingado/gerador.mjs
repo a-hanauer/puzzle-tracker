@@ -60,18 +60,18 @@ function randomSolution(N) {
 }
 
 export const WEEK = [
-  { n: 6, maxLevel: 1, extra: 3, styles: ["misto", "casas"] },            // segunda
-  { n: 6, maxLevel: 2, extra: 0, styles: ["misto", "sinais", "casas"] },  // terça
-  { n: 8, maxLevel: 2, extra: 2, styles: ["misto", "sinais", "casas"] },  // quarta
-  { n: 8, maxLevel: 3, extra: 0, styles: ["misto", "sinais"] },                    // quinta
-  { n: 8, maxLevel: 3, extra: 0, lean: 1, styles: ["misto", "sinais"] },           // sexta
-  { n: 8, maxLevel: 3, extra: 0, lean: 2, styles: ["misto", "sinais"] },           // sábado
-  { n: 8, maxLevel: 3, extra: 0, lean: 2, styles: ["sinais", "misto"] },           // domingo
+  { n: 6, maxLevel: 1, extra: 3, styles: ["misto", "casas"] },                     // segunda (nível 1)
+  { n: 6, maxLevel: 2, extra: 0, styles: ["misto", "sinais", "casas"] },           // terça (nível 2)
+  { n: 6, maxLevel: 2, extra: 0, lean: 1, styles: ["misto", "sinais"] },           // quarta (nível 3)
+  { n: 6, maxLevel: 3, extra: 0, lean: 2, styles: ["misto", "sinais"] },           // quinta (nível 4)
+  { n: 8, maxLevel: 3, extra: 0, styles: ["misto", "sinais"] },                    // sexta (nível 5)
+  { n: 8, maxLevel: 3, extra: 0, lean: 1, styles: ["misto", "sinais"] },           // sábado (nível 6)
+  { n: 8, maxLevel: 3, extra: 0, lean: 2, styles: ["sinais", "misto"] },           // domingo (nível 7)
 ];
-// O tabuleiro para em 8×8 (10×10 ficava cansativo). No fim da semana a
-// dificuldade vem de outro jeito: "lean" deixa o gerador tirar mais pistas
-// (quase nenhuma casa preenchida, menos sinais), e o dia fica com os
-// candidatos de maior esforço entre muitos sorteados.
+// 6×6 nos níveis 1 a 4 e 8×8 nos níveis 5 a 7 (10×10 ficava cansativo).
+// Dentro de cada tamanho, a dificuldade vem de outro jeito: "lean" deixa o
+// gerador tirar mais pistas (quase nenhuma casa preenchida, menos sinais), e
+// o dia fica com os candidatos de maior esforço entre muitos sorteados.
 
 export function makePuzzle(cfg, style) {
   const N = cfg.n, C = N * N;
@@ -142,8 +142,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   for (let k = 0; k < DAYS; k++) need[dayIdx(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
   // Cada dia gera mais candidatos do que precisa e fica com uma faixa de
   // esforço, para a dificuldade subir de segunda a domingo.
-  const BAND = [[0, 0.4], [0.5, 1], [0.3, 0.8], [0.3, 0.7], [0.5, 0.85], [0.7, 0.95], [0.85, 1]];
-  const MULT = [3, 3, 3, 3, 4, 6, 10];                      // candidatos por desafio
+  const BAND = [[0, 0.4], [0.3, 0.7], [0.5, 0.9], [0.75, 1], [0.4, 0.8], [0.65, 0.95], [0.85, 1]];
+  const MULT = [3, 3, 4, 6, 4, 6, 10];                      // candidatos por desafio
   const pools = [];
   for (let w = 0; w < 7; w++) {
     const cfg = WEEK[w], cand = [];
