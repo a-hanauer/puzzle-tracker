@@ -126,6 +126,8 @@ export function makePuzzle(cfg, style) {
       g: [...g].join(""),
       z: s.sort((a, b) => a.a - b.a || (a.d < b.d ? -1 : 1)).map(e => `${e.a}${e.d}${e.t}`).join(","),
       d: logic.score, lv: logic.level,
+      // interesse: menos pistas no tabuleiro, os dois sinais presentes e mais leitura de linha
+      i: 2 * logic.stats.l2 - (g.filter(Boolean).length + s.length) + (s.some(e => e.t === "=") && s.some(e => e.t === "x") ? 4 : 0),
     };
   }
   throw new Error("não consegui gerar um desafio");
@@ -133,52 +135,42 @@ export function makePuzzle(cfg, style) {
 
 // ---------- execução ----------
 export const EPOCH = [2026, 8, 28];            // #1 = segunda, 28/09/2026
-const dayIdx = date => (date.getDay() + 6) % 7;
-const FREE_PER_DAY = 20;
+const dayIdx = date => (date.getDay() + 6) % 7;  // segunda → 0 … domingo → 6
+const FREE_PER_DAY = 200;                      // jogo livre: desafios por nível (dia da semana)
 
+// Cada dia da semana gera muitos candidatos e fica com uma faixa de esforço, para a
+// dificuldade subir de segunda a domingo; dentro da faixa, os mais interessantes vão
+// para o desafio do dia e o resto para o jogo livre (comum/selecao.mjs).
+// Os desafios que já saíram continuam iguais.
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const DAYS = +(process.argv[2] || 364);
+  const DAYS = +(process.argv[2] || 730);
   if (process.argv[3]) seed = +process.argv[3];
   const t0 = Date.now();
+  const dir = dirname(fileURLToPath(import.meta.url));
+  const old = mantidos(dir, EPOCH);
   const need = new Array(7).fill(0);
-  for (let k = 0; k < DAYS; k++) need[dayIdx(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
-  // Cada dia gera mais candidatos do que precisa e fica com uma faixa de
-  // esforço, para a dificuldade subir de segunda a domingo.
+  for (let k = old.length; k < DAYS; k++) need[dayIdx(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
   const BAND = [[0, 0.4], [0.3, 0.7], [0.5, 0.9], [0.75, 1], [0.4, 0.8], [0.65, 0.95], [0.85, 1]];
-  const MULT = [3, 3, 4, 6, 4, 6, 10];                      // candidatos por desafio
+  const MULT = [3, 3, 4, 6, 4, 6, 10];                        // candidatos por desafio do dia
   const pools = [];
   for (let w = 0; w < 7; w++) {
-    const cfg = WEEK[w], cand = [];
-    const total = MULT[w] * need[w] + FREE_PER_DAY;
+    const cfg = WEEK[w], cand = [], [b0, b1] = BAND[w];
+    const total = Math.ceil(Math.max(MULT[w] * need[w], (need[w] + FREE_PER_DAY) / (b1 - b0) * 1.05));
     for (let k = 0; k < total; k++) cand.push(makePuzzle(cfg, cfg.styles[k % cfg.styles.length]));
-    cand.forEach(p => (p.q = rand()));
-    const [b0, b1] = BAND[w];
-    let chosen = [], rest = [];
-    for (const style of new Set(cfg.styles)) {
-      const g = cand.filter(p => p.s === style).sort((a, b) => a.d - b.d || a.q - b.q);
-      const i0 = Math.floor(g.length * b0), i1 = Math.floor(g.length * b1);
-      chosen.push(...g.slice(i0, i1));
-      rest.push(...g.slice(0, i0), ...g.slice(i1));
-    }
-    shuffle(chosen);
-    rest.push(...chosen.splice(need[w]));
-    pools.push({ chosen, extra: shuffle(rest).slice(0, FREE_PER_DAY) });
-    const ds = chosen.map(p => p.d).sort((a, b) => a - b);
-    const st = {}; chosen.forEach(p => (st[p.s] = (st[p.s] || 0) + 1));
-    const lv = {}; chosen.forEach(p => (lv[p.lv] = (lv[p.lv] || 0) + 1));
-    const giv = chosen.map(p => p.g.replace(/0/g, "").length), sg = chosen.map(p => p.z.split(",").length);
-    const avg = a => (a.reduce((x, y) => x + y, 0) / a.length).toFixed(1);
-    console.log(`dia ${w + 1} (${cfg.n}×${cfg.n}): esforço ${ds[0]}–${ds.at(-1)} (mediana ${ds[ds.length >> 1]}) · casas ${avg(giv)} · sinais ${avg(sg)} · técnica ${JSON.stringify(lv)} · ${JSON.stringify(st)} · ${((Date.now() - t0) / 1000).toFixed(0)}s`);
+    const sel = escolher(cand, need[w], FREE_PER_DAY, BAND[w], rand);
+    pools.push(sel);
+    const ds = sel.dia.map(p => p.d).sort((a, b) => a - b);
+    const st = {}; sel.dia.forEach(p => (st[p.s] = (st[p.s] || 0) + 1));
+    console.log(`dia ${w + 1} (${cfg.n}×${cfg.n}): ${total} candidatos · esforço do dia ${ds[0]}–${ds.at(-1)} (mediana ${ds[ds.length >> 1]}) · ${JSON.stringify(st)} · ${((Date.now() - t0) / 1000).toFixed(0)}s`);
   }
-  const out = [];
-  for (let k = 0; k < DAYS; k++) {
+  const out = [...old];
+  for (let k = old.length; k < DAYS; k++) {
     const w = dayIdx(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k));
-    const { q, ...p } = pools[w].chosen.shift(); out.push({ ...p, l: w + 1 });
+    out.push({ ...pools[w].dia.shift(), l: w + 1 });
   }
   const free = [];
-  for (let w = 0; w < 7; w++) for (const { q, ...p } of pools[w].extra) free.push({ ...p, l: w + 1 });
-  const dir = dirname(fileURLToPath(import.meta.url));
+  for (let w = 0; w < 7; w++) for (const p of pools[w].livre) free.push({ ...p, l: w + 1 });
   writeFileSync(join(dir, "desafios.json"), JSON.stringify({ epoch: EPOCH, puzzles: out }));
   writeFileSync(join(dir, "livre.json"), JSON.stringify({ puzzles: free }));
-  console.log(`pronto: ${out.length} dias + ${free.length} livres em ${((Date.now() - t0) / 1000).toFixed(0)}s`);
+  console.log(`pronto: ${out.length} dias (${old.length} mantidos) + ${free.length} livres em ${((Date.now() - t0) / 1000).toFixed(0)}s`);
 }
