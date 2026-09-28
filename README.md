@@ -17,7 +17,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | `quinhentos/` | O jogo Quinhentos (`index.html` + `icon.png`) |
 | `eclipse/` | O jogo Eclipse: `index.html`, `icon.png`, `desafios.json` (2 anos de desafios), `livre.json` (jogo livre) e `gerador.mjs` |
 | `novelo/` | O jogo Novelo: `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
-| `retalhos/` | O jogo Retalhos: `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
+| `azulejo/` | O jogo Azulejo (antigo Retalhos; `retalhos/` só redireciona): `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
 | `pingado/` | O jogo Pingado: `index.html`, `icon.png`, `desafios.json` (1 ano), `livre.json`, `gerador.mjs` e `motor.mjs` (regras e resolvedor) |
 | `comum/` | Partes comuns: cabeçalho e janelas dos jogos (`cabecalho.css`, `cabecalho.js`) e tema geral (`tema.js`) |
 
@@ -35,7 +35,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | 💼 LinkedIn (app) | https://www.linkedin.com/games/ |
 | 🌗 Eclipse | [`eclipse/`](eclipse/) (jogo próprio, neste repositório) |
 | 🧶 Novelo | [`novelo/`](novelo/) (Zip em português, neste repositório) |
-| 🧵 Retalhos | [`retalhos/`](retalhos/) (Patches em português, neste repositório) |
+| 🟦 Azulejo | [`azulejo/`](azulejo/) (Patches em português, neste repositório) |
 | ☕ Pingado | [`pingado/`](pingado/) (Tango em português, neste repositório) |
 
 ## Como funciona
@@ -149,16 +149,18 @@ Desenha-se arrastando o dedo a partir do 1 (ou da ponta do fio). O fio segue a c
 
 **Semana.** Segunda 6×6 (só técnicas simples e uns números a mais), terça 6×6, quarta 7×7, quinta 7×7, sexta 8×8, sábado 8×8 e domingo 9×9, com o esforço de dedução subindo dia a dia. Três estilos se alternam: **fio** (só números), **paredes** (algumas paredes) e **labirinto** (muitas paredes e pouquíssimos números).
 
-## Retalhos
+## Azulejo (antigo Retalhos)
 
-O Patches (LinkedIn) em português, como uma **colcha de retalhos**.
+O Patches (LinkedIn) em português, como uma **parede de azulejos portugueses**. Até 28/09/2026 se chamava Retalhos (tema de colcha); o id interno continua `retalhos` (progresso, estatísticas e desafios não mudam) e o endereço antigo redireciona para `azulejo/`.
+
+Cada painel certo vira um painel de azulejos: o desenho da etiqueta (flor, losango, estrela, rosácea, leque ou cruz, em azul-cobalto com um detalhe em mostarda, verde ou azul-claro) se repete casa a casa, com rejunte fino e moldura cobalto. Painel sem etiqueta fica em reboco liso; errado, com listras vermelhas. A faixa de concluído é azul-cobalto.
 
 - Divida o tabuleiro em **retângulos**, sem sobrar casa e sem sobrepor.
 - Cada retalho tem **exatamente uma etiqueta**. A etiqueta é o **formato** do retalho em sólido escuro — horizontal, vertical ou quadrado; uma cruz (horizontal + vertical juntos, como no Patches) = formato livre — com o **número de casas** em branco dentro. Sem cores nem costura: a cor do tecido só aparece depois do retalho desenhado. Algumas etiquetas não têm número.
 
 Arraste de um canto ao outro para desenhar um retalho: o contorno e o selo mostram o tamanho e se ele bate com a etiqueta de dentro (verde "3×2 · 6 ✓"; vermelho "4 de 6", "não é alto" ou "2 etiquetas"); um retalho novo não pode passar por cima de outro (o contorno fica vermelho com "sobrepõe" e, ao soltar, nada muda); arrastar a partir de um retalho já feito o redesenha — o canto oposto ao dedo fica parado e ele cresce ou encolhe; tocar num retalho o desfaz, e tocar numa casa livre cria um 1×1. Retalhos certos ganham o tecido da cor da etiqueta, em tom suave (poá, listras ou xadrez e pesponto bem discretos, para não brigar com as etiquetas, que continuam sólidas); retalho sem etiqueta fica neutro e retalho que não bate fica com listras vermelhas. A barra de baixo conta os retalhos certos.
 
-**Desafios.** Um por dia a partir de 28/09/2026 (#1), em `retalhos/desafios.json`, conferidos pelo `retalhos/gerador.mjs` (com `retalhos/motor.mjs`): **solução única** e **só dedução** (no máximo o nível 2 do resolvedor, sem testar uma opção e seguir até a contradição). O gerador sorteia uma colcha equilibrada (formatos variados, poucos 1×1), põe uma etiqueta em cada retalho e esconde informações (número ou formato) enquanto a solução continuar única e dentro do nível do dia. As cores são escolhidas para retalhos vizinhos nunca ficarem iguais.
+**Desafios.** Um por dia a partir de 28/09/2026 (#1), em `azulejo/desafios.json`, conferidos pelo `azulejo/gerador.mjs` (com `azulejo/motor.mjs`): **solução única** e **só dedução** (no máximo o nível 2 do resolvedor, sem testar uma opção e seguir até a contradição). O gerador sorteia uma colcha equilibrada (formatos variados, poucos 1×1), põe uma etiqueta em cada retalho e esconde informações (número ou formato) enquanto a solução continuar única e dentro do nível do dia. As cores são escolhidas para retalhos vizinhos nunca ficarem iguais.
 
 **Semana.** Segunda 6×6 com etiquetas completas, terça 6×6, quarta e quinta 7×7, sexta e sábado 8×8, domingo 9×9, escondendo cada vez mais informação. Estilos: **colcha**, **formas** (quase só formatos), **números** (quase só números), **grandes** e **miúdos**.
 
@@ -176,7 +178,7 @@ Toque numa casa para trocar: vazia → café → leite → vazia. Arrastar o ded
 
 **Semana.** Níveis 1 a 4 (segunda a quinta) em 6×6 e níveis 5 a 7 (sexta a domingo) em 8×8 — 10×10 ficava cansativo. Dentro de cada tamanho, a dificuldade sobe tirando pistas (menos casas preenchidas, só sinais) e ficando com os candidatos de maior esforço entre muitos sorteados; a técnica exigida vai de 1 (segunda, com umas pistas a mais) a 2. Três estilos se alternam: **misto**, **sinais** (poucas casas, muitos sinais) e **casas** (muitas casas, poucos sinais; só segunda e terça).
 
-**Nos três (Novelo, Retalhos e Pingado):** ícone com versão escura (`icon-escuro.png`), que o painel, o cabeçalho, a tela de fim e o "Próximo jogo" usam no tema escuro — no catálogo é o campo `iconDark`, e o `comum/tema.js` troca a imagem sozinho quando o tema muda; jogo livre (`livre.json`, 200 por dia da semana), cronômetro que pausa, partida salva, estatísticas por tempo no painel. Para gerar de novo: `node novelo/gerador.mjs [dias]`, `node retalhos/gerador.mjs [dias]` e `node pingado/gerador.mjs [dias]` (padrão: 730 dias a partir de 28/09/2026).
+**Nos três (Novelo, Azulejo e Pingado):** ícone com versão escura (`icon-escuro.png`), que o painel, o cabeçalho, a tela de fim e o "Próximo jogo" usam no tema escuro — no catálogo é o campo `iconDark`, e o `comum/tema.js` troca a imagem sozinho quando o tema muda; jogo livre (`livre.json`, 200 por dia da semana), cronômetro que pausa, partida salva, estatísticas por tempo no painel. Para gerar de novo: `node novelo/gerador.mjs [dias]`, `node azulejo/gerador.mjs [dias]` e `node pingado/gerador.mjs [dias]` (padrão: 730 dias a partir de 28/09/2026).
 
 ## Desafios do dia e jogo livre (jogos de lógica)
 

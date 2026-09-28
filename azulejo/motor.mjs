@@ -1,4 +1,4 @@
-// Motor do Retalhos: regras, dedução "humana" e contagem de soluções.
+// Motor do Azulejo (antigo Retalhos): regras, dedução "humana" e contagem de soluções.
 //
 // Regras (iguais às do Patches, do LinkedIn): dividir o tabuleiro em
 // retângulos, sem sobrar casa e sem sobrepor. Cada retângulo contém

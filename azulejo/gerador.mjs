@@ -1,4 +1,4 @@
-// Gerador de desafios do Retalhos.
+// Gerador de desafios do Azulejo (antigo Retalhos).
 //
 // Cada desafio sai de uma divisão aleatória do tabuleiro em retângulos (a
 // "colcha"). Cada retângulo recebe uma etiqueta numa casa sorteada, com o
@@ -13,7 +13,7 @@
 //   "grandes"  — poucos retalhos, grandes
 //   "miudos"   — muitos retalhos pequenos
 //
-// Uso:  node retalhos/gerador.mjs [dias] [semente]
+// Uso:  node azulejo/gerador.mjs [dias] [semente]
 
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

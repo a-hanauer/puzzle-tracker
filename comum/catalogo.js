@@ -29,14 +29,14 @@ const BASE_GAMES = [
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon-claro.png?v=12", iconDark: "eclipse/icon-escuro.png?v=12", iconFull: true, cor: ["#c6ccf1", "#161b3b", "#20243c", "#ebecf4"] },
   { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=10", iconDark: "novelo/icon-escuro.png?v=10", iconFull: true, cor: ["#f1c6c9", "#3b1619", "#3c2022", "#f4ebec"] },
-  { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png?v=10", iconDark: "retalhos/icon-escuro.png?v=10", iconFull: true, cor: ["#c6e5f1", "#16313b", "#20343c", "#ebf2f4"] },
+  { id: "retalhos",   name: "Azulejo",    emoji: "🟦", desc: "Uma parede de painéis",         url: "azulejo/", icon: "azulejo/icon.png?v=11", iconDark: "azulejo/icon-escuro.png?v=11", iconFull: true, cor: ["#c6e5f1", "#16313b", "#20343c", "#ebf2f4"] },
   { id: "pingado",    name: "Pingado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "pingado/", icon: "pingado/icon.png?v=10", iconDark: "pingado/icon-escuro.png?v=10", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
 ];
 
 /* ============================================================ */
 
 /* ---------- Progresso dos jogos deste repositório ----------
-   Misto (id "sanduba", o nome antigo) e Quinhentos rodam no mesmo endereço do painel, então o painel
+   Azulejo (id "retalhos", o nome antigo), Misto (id "sanduba", o nome antigo) e Quinhentos rodam no mesmo endereço do painel, então o painel
    consegue ler a partida do dia que eles salvam no navegador.
    Cada função devolve null (não começou) ou { tries, max, finished, won }. */
 function readJSON(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
