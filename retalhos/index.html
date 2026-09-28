@@ -281,7 +281,7 @@
       <figure><svg id="demoA" viewBox="0 0 330 330"></svg>etiquetas</figure>
       <figure><svg id="demoB" viewBox="0 0 330 330"></svg>colcha pronta</figure>
     </div>
-    <p>Arraste o dedo de um canto ao outro para desenhar um retalho. Toque num retalho para desfazê-lo. Enquanto você arrasta, o contorno fica verde quando o retalho bate com a etiqueta e vermelho quando não bate (com o motivo). Retalhos errados ficam com listras vermelhas.</p>
+    <p>Arraste o dedo de um canto ao outro para desenhar um retalho; ele não pode passar por cima de outro retalho. Para aumentar ou diminuir um retalho, arraste a partir dele: o canto oposto fica parado. Para desfazer um retalho, toque nele. Enquanto você arrasta, o contorno fica verde quando o retalho bate com a etiqueta e vermelho quando não bate (com o motivo). Retalhos errados ficam com listras vermelhas.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b> (9×9).</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, de níveis variados, que não contam nas estatísticas.</p>
     <button class="btn-main" data-close>Jogar</button>
@@ -487,10 +487,12 @@
       `V${y - a + r}Q${x - b} ${y - a} ${x - b + r} ${y - a}Z`;
   }
   function render() {
-    const sts = patches.map(statusOf);
-    gP.innerHTML = patches.map((p, k) => patchSVG(p, sts[k], k)).join("");
+    // o retalho que está sendo redesenhado some enquanto o dedo arrasta
+    const shown = patches.filter((_, k) => !(drag && drag.moved && k === drag.edit));
+    const sts = shown.map(statusOf);
+    gP.innerHTML = shown.map((p, k) => patchSVG(p, sts[k], k)).join("");
     const covered = new Set();
-    patches.forEach((p, k) => { if (sts[k].s >= 0) covered.add(sts[k].s); });
+    shown.forEach((p, k) => { if (sts[k].s >= 0) covered.add(sts[k].s); });
     gT.innerHTML = clues.map((c, j) => tagSVG(c, covered.has(j))).join("");
     const good = covered.size;
     $("progBar").style.width = (100 * good / clues.length) + "%";
@@ -536,7 +538,8 @@
     const x = PAD + p.c0 * U + 4, y = PAD + p.r0 * U + 4, w = p.w * U - 8, h = p.h * U - 8;
     const inside = clues.filter(c => contains(p, c.i)), area = p.h * p.w;
     let label = `${p.w}×${p.h}`, cls = "";
-    if (inside.length > 1) { cls = "bad"; label += ` · ${inside.length} etiquetas`; }
+    if (patches.some((q, k) => k !== drag?.edit && overlap(p, q))) { cls = "bad"; label += " · sobrepõe"; }
+    else if (inside.length > 1) { cls = "bad"; label += ` · ${inside.length} etiquetas`; }
     else if (inside.length === 1) {
       const c = inside[0];
       if (c.n && c.n !== area) { cls = "bad"; label += ` · ${area} de ${c.n}`; }
@@ -549,35 +552,49 @@
       <rect class="prev-badge ${cls}" x="${bx}" y="${by}" width="${bw}" height="44" rx="22"/>
       <text class="prev-t${cls ? " lt" : ""}" x="${bx + bw / 2}" y="${by + 23}">${label}</text>`;
   }
+  // Arrastar numa casa livre desenha um retalho novo. Arrastar começando dentro
+  // de um retalho já feito o redesenha: o canto oposto ao dedo fica parado e o
+  // retalho cresce ou encolhe acompanhando o dedo. Um retalho nunca passa por
+  // cima de outro (aí o desenho não vale). Para desfazer um retalho, é só tocar nele.
   let drag = null;
+  const rectNow = d => d.edit >= 0 ? rectOf(d.anchor, d.b) : rectOf(d.a, d.b);
   $("board").addEventListener("pointerdown", e => {
     if (finished || !N) return;
     const i = cellAt(e, false);
     if (i < 0) return;
     e.preventDefault();
-    drag = { a: i, b: i, moved: false, before: packPatches() };
+    const edit = patches.findIndex(p => contains(p, i));
+    let anchor = -1;
+    if (edit >= 0) {                                        // canto do retalho mais longe do dedo
+      const p = patches[edit], r = (i / N) | 0, c = i % N;
+      const ar = Math.abs(r - p.r0) >= Math.abs(p.r0 + p.h - 1 - r) ? p.r0 : p.r0 + p.h - 1;
+      const ac = Math.abs(c - p.c0) >= Math.abs(p.c0 + p.w - 1 - c) ? p.c0 : p.c0 + p.w - 1;
+      anchor = ar * N + ac;
+    }
+    drag = { a: i, b: i, moved: false, edit, anchor, before: packPatches(), id: e.pointerId };
+    try { $("board").setPointerCapture(e.pointerId); } catch {}
     startTimer();
   });
   $("board").addEventListener("pointermove", e => {
-    if (!drag) return;
+    if (!drag || e.pointerId !== drag.id) return;
     const i = cellAt(e, true);
     if (i === drag.b) return;
     drag.b = i;
-    if (i !== drag.a) drag.moved = true;
-    preview(drag.moved ? rectOf(drag.a, drag.b) : null);
+    if (i !== drag.a && !drag.moved) { drag.moved = true; if (drag.edit >= 0) render(); }
+    preview(drag.moved ? rectNow(drag) : null);
   });
-  const endDrag = () => {
-    if (!drag) return;
+  const endDrag = e => {
+    if (!drag || (e && e.pointerId !== undefined && e.pointerId !== drag.id)) return;
     const d = drag; drag = null;
     preview(null);
     if (!d.moved) {
-      const k = patches.findIndex(p => contains(p, d.a));
-      if (k >= 0) patches.splice(k, 1);                      // toque num retalho: desfaz
+      if (d.edit >= 0) patches.splice(d.edit, 1);            // toque num retalho: desfaz
       else patches.push(rectOf(d.a, d.a));                   // toque numa casa livre: retalho 1×1
     } else {
-      const p = rectOf(d.a, d.b);
-      patches = patches.filter(q => !overlap(p, q));
-      patches.push(p);
+      const p = rectNow(d);
+      if (!patches.some((q, k) => k !== d.edit && overlap(p, q))) {
+        if (d.edit >= 0) patches[d.edit] = p; else patches.push(p);
+      }
     }
     if (packPatches() !== d.before) { history.push(d.before); if (history.length > 300) history.shift(); }
     checkWin();
