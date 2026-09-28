@@ -164,13 +164,13 @@ Arraste de um canto ao outro para desenhar um retalho: o contorno e o selo mostr
 
 ## Pingado
 
-O Tango (LinkedIn) em português, com **café e leite**: gotas de café (marrom) e de leite (creme) no lugar de sol e lua.
+O Tango (LinkedIn) em português, com **café e leite**: grãos de café e gotas de leite no lugar de sol e lua (formas diferentes, para não confundir).
 
 - Cada **linha** e cada **coluna** tem o mesmo número de café e de leite.
 - Nunca **três iguais seguidos**, na horizontal ou na vertical.
 - **=** entre duas casas: iguais; **×**: diferentes.
 
-Toque numa casa para trocar: vazia → café → leite → vazia. Arrastar o dedo aplica a mesma troca em cada casa por onde ele passa. As casas que já vêm preenchidas têm fundo mais escuro e não mudam. O que quebra uma regra fica com listras vermelhas (e o sinal desrespeitado fica vermelho), e a linha de baixo diz qual regra. Controles embaixo: desfazer, barra de progresso (casas preenchidas) e recomeçar. Ao completar, as gotas dão um pulinho e a barra vira "Pingado pronto" com o tempo.
+Toque numa casa para trocar: vazia → café → leite → vazia. Arrastar o dedo aplica a mesma troca em cada casa por onde ele passa. As casas que já vêm preenchidas têm fundo mais escuro e não mudam. O que quebra uma regra fica com listras vermelhas (e o sinal desrespeitado fica vermelho), e a linha de baixo diz qual regra. Controles embaixo: desfazer, barra de progresso (casas preenchidas) e recomeçar. Ao completar, os grãos e as gotas dão um pulinho e a barra vira "Pingado pronto" com o tempo.
 
 **Desafios.** Um por dia a partir de 28/09/2026 (#1), em `pingado/desafios.json`, conferidos pelo `pingado/gerador.mjs` (com `pingado/motor.mjs`): **solução única** e **só dedução**. O gerador sorteia um tabuleiro completo, começa com todas as casas e parte dos sinais como pistas e vai tirando pistas enquanto o resolvedor "humano" continuar chegando ao fim no nível do dia. Técnicas do resolvedor: (1) pares e buracos (XX_, X_X), sinais e linha que já tem metade de um tipo; (2) olhar a linha inteira: das combinações válidas que sobram, as casas iguais em todas são certas; (3) testar um valor e ver que ele leva a contradição.
 

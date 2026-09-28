@@ -28,8 +28,8 @@
     --cell: #faf4ea;
     --cell-line: rgba(110, 80, 50, .10);
     --cell-fix: #e6d8c4;
-    --cafe: #5a3923;
-    --cafe-hi: rgba(255, 235, 210, .30);
+    --cafe: #6e452a;
+    --cafe-slit: #3a2314;
     --leite: #fffdf8;
     --leite-st: #cdb99d;
     --leite-sh: rgba(150, 115, 75, .16);
@@ -54,8 +54,8 @@
       --cell: #2c241e;
       --cell-line: rgba(255, 255, 255, .04);
       --cell-fix: #1f1814;
-      --cafe: #8c5a37;
-      --cafe-hi: rgba(255, 225, 190, .22);
+      --cafe: #92603c;
+      --cafe-slit: #4a2c18;
       --leite: #f3e8d6;
       --leite-st: rgba(0, 0, 0, 0);
       --leite-sh: rgba(120, 85, 50, .22);
@@ -80,8 +80,8 @@
       --cell: #2c241e;
       --cell-line: rgba(255, 255, 255, .04);
       --cell-fix: #1f1814;
-      --cafe: #8c5a37;
-      --cafe-hi: rgba(255, 225, 190, .22);
+      --cafe: #92603c;
+      --cafe-slit: #4a2c18;
       --leite: #f3e8d6;
       --leite-st: rgba(0, 0, 0, 0);
       --leite-sh: rgba(120, 85, 50, .22);
@@ -109,7 +109,7 @@
   }
 
   /* ---------- tabuleiro ----------
-     Um SVG só: as casas, as gotas (café e leite) e os sinais = e × nas
+     Um SVG só: as casas, os grãos de café, as gotas de leite e os sinais = e × nas
      bordas entre as casas. */
   .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 4px 0; }
   #board { display: block; touch-action: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(40, 25, 10, .08)) drop-shadow(0 8px 20px rgba(40, 25, 10, .08)); }
@@ -119,7 +119,7 @@
   .b-cell.bad { fill: url(#hatch); }
   .hb { fill: var(--bad-soft); } .hl { fill: var(--bad); opacity: .4; }
   .d-cafe { fill: var(--cafe); }
-  .d-cafe-hi { fill: var(--cafe-hi); }
+  .d-cafe-slit { fill: none; stroke: var(--cafe-slit); stroke-width: 5; stroke-linecap: round; }
   .d-leite { fill: var(--leite); stroke: var(--leite-st); stroke-width: 3; }
   .d-leite-sh { fill: var(--leite-sh); }
   .drop { transform-box: fill-box; transform-origin: 50% 70%; }
@@ -212,7 +212,7 @@
 
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Pingado — recarregar"><img src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt=""><b>PINGADO</b></a>
+  <a class="gh-brand" href="./" aria-label="Pingado — recarregar"><img src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt=""><b>PINGADO</b></a>
   <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
@@ -234,7 +234,7 @@
   <div class="prog" aria-live="polite">
     <span class="bar"><i id="progBar"></i></span><span class="n" id="progN"><b>0</b>/0</span>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
-      <img class="cup" src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt="">
+      <img class="cup" src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt="">
       <span class="txt"><b id="doneTitle">Pingado pronto</b><span id="doneSub"></span></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
@@ -249,7 +249,7 @@
 <div class="overlay" id="helpOverlay">
   <div class="modal">
     <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
-    <p>Preencha o tabuleiro com gotas de <b>café</b> <svg class="g" viewBox="-40 -37 80 80" id="gCafe"></svg> e de <b>leite</b> <svg class="g" viewBox="-40 -37 80 80" id="gLeite"></svg>.</p>
+    <p>Preencha o tabuleiro com grãos de <b>café</b> <svg class="g" viewBox="-40 -40 80 80" id="gCafe"></svg> e gotas de <b>leite</b> <svg class="g" viewBox="-40 -37 80 80" id="gLeite"></svg>.</p>
     <ul>
       <li>Cada <b>linha</b> e cada <b>coluna</b> tem o mesmo número de café e de leite.</li>
       <li>Nunca <b>três iguais seguidos</b>, na horizontal ou na vertical.</li>
@@ -271,7 +271,7 @@
 <div class="overlay" id="clearOverlay">
   <div class="modal" style="max-width:320px;text-align:center">
     <h2 style="justify-content:center">Esvaziar o tabuleiro?</h2>
-    <p style="color:var(--muted);margin:0 0 18px">Todas as gotas que você pôs saem. Dá para desfazer depois.</p>
+    <p style="color:var(--muted);margin:0 0 18px">Tudo o que você pôs sai. Dá para desfazer depois.</p>
     <button class="btn-main" id="clearYes">Recomeçar</button>
     <button class="close" data-close style="margin-top:12px;width:auto;padding:0 18px;height:36px;border-radius:99px">Cancelar</button>
   </div>
@@ -281,7 +281,7 @@
 <div class="overlay" id="endOverlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,40,20,.15)"></div>
+    <div class="fim-art"><img src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,40,20,.15)"></div>
     <h2 class="fim-title" id="endTitle">Pingado pronto!</h2>
     <div class="fim-result"><div class="fim-time" id="endTime">0:00</div></div>
     <p class="fim-sub" id="endSub"></p>
@@ -379,12 +379,13 @@
   }).catch(() => { $("stage").innerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
 
   // ---------- desenho ----------
-  // gota em pé, com a ponta para cima; (x, y) = centro da casa, s = escala (1 = casa de 100)
+  // café = grão (oval inclinado com o sulco em S); leite = gota em pé, com a ponta para cima
+  // (x, y) = centro da casa, s = escala (1 = casa de 100)
   function dropSVG(v, x, y, s = 1, cls = "") {
     const path = "M0 -34C9 -22 26 -6 26 10A26 26 0 0 1 -26 10C-26 -6 -9 -22 0 -34Z";
     const t = `translate(${x} ${y + 3}) scale(${s})`;
     // a posição fica no <g> de fora; a animação (CSS transform) só no de dentro
-    if (v === 1) return `<g transform="${t}"><g class="drop${cls}"><path class="d-cafe" d="${path}"/><ellipse class="d-cafe-hi" cx="-10" cy="8" rx="5.5" ry="9" transform="rotate(20 -10 8)"/></g></g>`;
+    if (v === 1) return `<g transform="translate(${x} ${y}) scale(${s}) rotate(-30)"><g class="drop${cls}"><ellipse class="d-cafe" rx="22" ry="30"/><path class="d-cafe-slit" d="M2 -24C-11 -9 11 9 -2 24"/></g></g>`;
     return `<g transform="${t}"><g class="drop${cls}"><path class="d-leite" d="${path}"/><path class="d-leite-sh" d="M17 4C22 18 12 30 -2 32C14 26 19 16 17 4Z"/></g></g>`;
   }
   // sinal na borda entre duas casas: = ou ×, sobre um quadradinho da cor do fundo
