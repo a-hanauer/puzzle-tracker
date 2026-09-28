@@ -24,7 +24,7 @@ const BASE_GAMES = [
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
   { id: "sanduba",    name: "Sando",      emoji: "🥪", desc: "Betweenle em português",        url: "sando/", icon: "sando/icon-claro.png?v=12", iconDark: "sando/icon-escuro.png?v=12", iconFull: true, cor: ["#f1e7c6", "#3b3316", "#3c3520", "#f4f2eb"] },
   { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/" },
-  { id: "quinhentos", name: "Quinhentos", emoji: "5️⃣", desc: "Word500 em português",          url: "quinhentos/", icon: "quinhentos/icon-claro.png?v=10", iconDark: "quinhentos/icon-escuro.png?v=10", iconFull: true, cor: ["#c6f1da", "#163b28", "#203c2d", "#ebf4ef"] },
+  { id: "quinhentos", name: "5PILA",      emoji: "💵", desc: "Word500 em português",          url: "5pila/", icon: "5pila/icon-claro.png?v=11", iconDark: "5pila/icon-escuro.png?v=11", iconFull: true, cor: ["#c6f1da", "#163b28", "#203c2d", "#ebf4ef"] },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon-claro.png?v=12", iconDark: "eclipse/icon-escuro.png?v=12", iconFull: true, cor: ["#c6ccf1", "#161b3b", "#20243c", "#ebecf4"] },
@@ -36,7 +36,7 @@ const BASE_GAMES = [
 /* ============================================================ */
 
 /* ---------- Progresso dos jogos deste repositório ----------
-   Azulejo (id "retalhos", o nome antigo), Sando (id "sanduba", o nome antigo) e Quinhentos rodam no mesmo endereço do painel, então o painel
+   Azulejo (id "retalhos", o nome antigo), Sando (id "sanduba", o nome antigo) e 5PILA (id "quinhentos", o nome antigo) rodam no mesmo endereço do painel, então o painel
    consegue ler a partida do dia que eles salvam no navegador.
    Cada função devolve null (não começou) ou { tries, max, finished, won }. */
 function readJSON(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
