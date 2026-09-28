@@ -12,8 +12,8 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=66"></script>
-<script src="comum/catalogo.js?v=66"></script>
+<script src="comum/tema.js?v=69"></script>
+<script src="comum/catalogo.js?v=69"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -207,16 +207,20 @@
   .app[data-g].done .icon { filter: none; }
   .app[data-g].done .status { color: var(--tile-muted, var(--muted)); }
   .app[data-g="quinhentos"] { --tile-bg: linear-gradient(180deg, #22252e 16px, #121318 80px); --tile-ink: #fff; --tile-muted: rgba(255,255,255,.62); --tile-track: rgba(255,255,255,.2); }
-  .app[data-g="eclipse"]    { --tile-bg: linear-gradient(180deg, #292e62 16px, #121532 80px); --tile-ink: #fff; --tile-muted: rgba(255,255,255,.62); --tile-track: rgba(255,255,255,.2); }
-  .app[data-g="sanduba"]    { --tile-bg: #3b2f22; --tile-ink: #fbeedd; --tile-muted: rgba(251,238,221,.62); --tile-track: rgba(255,255,255,.2); }
+  .app[data-g="eclipse"]    { --tile-bg: linear-gradient(180deg, #20243a 16px, #12141f 80px); --tile-ink: #fff; --tile-muted: rgba(255,255,255,.62); --tile-track: rgba(255,255,255,.2); }
+  .app[data-g="sanduba"]    { --tile-bg: #30291f; --tile-ink: #fbeedd; --tile-muted: rgba(251,238,221,.62); --tile-track: rgba(255,255,255,.2); }
   .app[data-g="novelo"]     { --tile-bg: #2a242c; --tile-ink: #f6eee6; --tile-muted: rgba(246,238,230,.6); --tile-track: rgba(255,255,255,.18); }
   .app[data-g="retalhos"]   { --tile-bg: #2b2925; --tile-ink: #f4eee3; --tile-muted: rgba(244,238,227,.6); --tile-track: rgba(255,255,255,.18); }
   @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) .app[data-g="sanduba"]  { --tile-bg: #edcf9d; --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
+    :root:not([data-theme="dark"]) .app[data-g="quinhentos"] { --tile-bg: linear-gradient(180deg, #f5f6f9 16px, #e6e9ef 80px); --tile-border: rgba(20,24,33,.06); --tile-ink: #1d2027; --tile-muted: rgba(29,32,39,.58); --tile-track: rgba(29,32,39,.14); }
+    :root:not([data-theme="dark"]) .app[data-g="eclipse"] { --tile-bg: linear-gradient(180deg, #eef1fb 16px, #dce2f4 80px); --tile-border: rgba(30,40,90,.06); --tile-ink: #1c2150; --tile-muted: rgba(28,33,80,.58); --tile-track: rgba(28,33,80,.14); }
+    :root:not([data-theme="dark"]) .app[data-g="sanduba"]  { --tile-bg: #f5e6ca; --tile-border: rgba(60,40,20,.06); --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
     :root:not([data-theme="dark"]) .app[data-g="novelo"]   { --tile-bg: #f7f0e5; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2430; --tile-muted: rgba(43,36,48,.58); --tile-track: rgba(43,36,48,.14); }
     :root:not([data-theme="dark"]) .app[data-g="retalhos"] { --tile-bg: #f6efe0; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2823; --tile-muted: rgba(43,40,35,.58); --tile-track: rgba(43,40,35,.14); }
   }
-  :root[data-theme="light"] .app[data-g="sanduba"]  { --tile-bg: #edcf9d; --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
+  :root[data-theme="light"] .app[data-g="quinhentos"] { --tile-bg: linear-gradient(180deg, #f5f6f9 16px, #e6e9ef 80px); --tile-border: rgba(20,24,33,.06); --tile-ink: #1d2027; --tile-muted: rgba(29,32,39,.58); --tile-track: rgba(29,32,39,.14); }
+  :root[data-theme="light"] .app[data-g="eclipse"] { --tile-bg: linear-gradient(180deg, #eef1fb 16px, #dce2f4 80px); --tile-border: rgba(30,40,90,.06); --tile-ink: #1c2150; --tile-muted: rgba(28,33,80,.58); --tile-track: rgba(28,33,80,.14); }
+  :root[data-theme="light"] .app[data-g="sanduba"]  { --tile-bg: #f5e6ca; --tile-border: rgba(60,40,20,.06); --tile-ink: #3b2a12; --tile-muted: rgba(59,42,18,.62); --tile-track: rgba(59,42,18,.16); }
   :root[data-theme="light"] .app[data-g="novelo"]   { --tile-bg: #f7f0e5; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2430; --tile-muted: rgba(43,36,48,.58); --tile-track: rgba(43,36,48,.14); }
   :root[data-theme="light"] .app[data-g="retalhos"] { --tile-bg: #f6efe0; --tile-border: rgba(60,40,20,.08); --tile-ink: #2b2823; --tile-muted: rgba(43,40,35,.58); --tile-track: rgba(43,40,35,.14); }
 

@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Quinhentos">
-<script src="../comum/tema.js?v=66"></script>
+<script src="../comum/tema.js?v=69"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -350,7 +350,7 @@ header{
 #btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=66">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=69">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--accent-ink); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -370,7 +370,7 @@ header{
 
   <header class="gh">
     <a class="gh-back back-home" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <a class="gh-brand" href="./" aria-label="Quinhentos — recarregar"><img src="icon.png?v=2" alt=""><b>QUINHENTOS</b></a>
+    <a class="gh-brand" href="./" aria-label="Quinhentos — recarregar"><img src="icon-claro.png?v=1" data-escuro="icon.png?v=2" alt=""><b>QUINHENTOS</b></a>
     <!-- estatísticas e configurações ficam no painel Jogos do Dia; os botões originais seguem ocultos -->
     <button class="iconbtn" id="btn-stats" hidden aria-hidden="true" tabindex="-1">📊</button>
     <button class="iconbtn" id="btn-settings" hidden aria-hidden="true" tabindex="-1">⚙️</button>
@@ -1296,12 +1296,12 @@ header{
 
 })();
 </script>
-<script src="../comum/cabecalho.js?v=66"></script>
+<script src="../comum/cabecalho.js?v=69"></script>
 <script>
   ghInfo(document.getElementById("ghInfo"), () => document.getElementById("mode-switch").classList.contains("on"),
     fn => new MutationObserver(fn).observe(document.getElementById("mode-switch"), { attributes: true, attributeFilter: ["class"] }));
 </script>
-<script src="../comum/catalogo.js?v=66"></script>
-<script src="../comum/proximo.js?v=66" data-jogo="quinhentos"></script>
+<script src="../comum/catalogo.js?v=69"></script>
+<script src="../comum/proximo.js?v=69" data-jogo="quinhentos"></script>
 </body>
 </html>
