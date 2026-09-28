@@ -56,6 +56,7 @@
         if (src.includes("google.com/s2") && img.naturalWidth <= 16) return next();
         if (g.iconFull) img.className = "full";
         box.textContent = ""; box.appendChild(img);
+        marcaIconeEscuro(g, img);
       };
       img.onerror = next; img.src = src;
     };

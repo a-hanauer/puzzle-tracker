@@ -26,8 +26,8 @@ const BASE_GAMES = [
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon.png", iconFull: true },
-  { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=2", iconFull: true },
-  { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png?v=3", iconFull: true },
+  { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=2", iconDark: "novelo/icon-escuro.png?v=1", iconFull: true },
+  { id: "retalhos",   name: "Retalhos",   emoji: "🧵", desc: "Uma colcha de retângulos",      url: "retalhos/", icon: "retalhos/icon.png?v=3", iconDark: "retalhos/icon-escuro.png?v=1", iconFull: true },
 ];
 
 /* ============================================================ */
@@ -91,7 +91,10 @@ function progressOf(g) {
    Tenta, em ordem: ícone definido → favicon do próprio caminho do site
    → serviço de favicons do Google. Se nada servir, fica o emoji. */
 function iconCandidates(g) {
-  if (g.icon) return [new URL(g.icon, CATALOGO_RAIZ).href];
+  if (g.icon) {                                  // versão escura: veja marcaIconeEscuro
+    const escuro = g.iconDark && window.jogosTema && jogosTema.escuro();
+    return [new URL(escuro ? g.iconDark : g.icon, CATALOGO_RAIZ).href];
+  }
   const u = new URL(g.url, CATALOGO_RAIZ);   // aceita endereços relativos (jogos dentro deste repositório)
   const base = u.origin + u.pathname.replace(/[^/]*$/, "");
   const list = [];
@@ -103,4 +106,14 @@ function iconCandidates(g) {
     list.push(u.origin + "/apple-touch-icon.png", u.origin + "/favicon.ico");
   }
   return list;
+}
+
+/* Ícone com versão para o tema escuro (iconDark): a imagem guarda as duas e o
+   comum/tema.js troca conforme o tema, inclusive quando ele muda. */
+function marcaIconeEscuro(g, img) {
+  if (!g.iconDark) return;
+  img.setAttribute("data-claro", new URL(g.icon, CATALOGO_RAIZ).href);
+  img.setAttribute("data-escuro", new URL(g.iconDark, CATALOGO_RAIZ).href);
+  const want = window.jogosTema && jogosTema.escuro() ? img.getAttribute("data-escuro") : img.getAttribute("data-claro");
+  if (img.src !== want) img.src = want;          // só troca se precisar (trocar dispara outro onload)
 }

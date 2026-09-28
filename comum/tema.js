@@ -4,6 +4,22 @@
 (function () {
   var KEY = "jogosDoDia.tema";
   function get() { try { return localStorage.getItem(KEY) || "auto"; } catch (e) { return "auto"; } }
+  // Ícones com versão escura: <img data-escuro="…"> troca de arquivo conforme o tema.
+  function escuro() {
+    var t = document.documentElement.getAttribute("data-theme");
+    if (t === "dark") return true;
+    if (t === "light") return false;
+    return !!(window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+  }
+  function trocaIcones() {
+    var imgs = document.querySelectorAll("img[data-escuro]"), e = escuro();
+    for (var i = 0; i < imgs.length; i++) {
+      var im = imgs[i];
+      if (!im.getAttribute("data-claro")) im.setAttribute("data-claro", im.getAttribute("src"));
+      var want = e ? im.getAttribute("data-escuro") : im.getAttribute("data-claro");
+      if (im.getAttribute("src") !== want) im.setAttribute("src", want);
+    }
+  }
   function apply(t) {
     var root = document.documentElement;
     if (t === "light" || t === "dark") root.setAttribute("data-theme", t);
@@ -16,6 +32,7 @@
       if (t === "auto") m.setAttribute("media", want);
       else m.setAttribute("media", want.indexOf(t) >= 0 ? "all" : "not all");
     }
+    trocaIcones();
   }
   // Sem zoom em nenhuma página: nem dois toques rápidos nem pinça.
   // (touch-action: manipulation em tudo desliga o zoom por dois toques sem
@@ -58,7 +75,11 @@
     document.addEventListener("touchend", naTecla, true);
     document.addEventListener("pointerup", function (e) { if (e.pointerType !== "touch") naTecla(e); }, true);
   } catch (e) {}
+  if (window.matchMedia) { try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", trocaIcones); } catch (e) {} }
+  document.addEventListener("DOMContentLoaded", trocaIcones);
   window.jogosTema = {
+    escuro: escuro,
+    trocaIcones: trocaIcones,
     get: get,
     set: function (t) { try { localStorage.setItem(KEY, t); } catch (e) {} apply(t); },
   };

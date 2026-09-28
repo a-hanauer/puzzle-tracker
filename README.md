@@ -158,7 +158,7 @@ Arraste de um canto ao outro para desenhar um retalho: o contorno e o selo mostr
 
 **Semana.** Segunda 6×6 com etiquetas completas, terça 6×6, quarta e quinta 7×7, sexta e sábado 8×8, domingo 9×9, escondendo cada vez mais informação. Estilos: **colcha**, **formas** (quase só formatos), **números** (quase só números), **grandes** e **miúdos**.
 
-**Nos dois:** jogo livre (`livre.json`, 20 por dia da semana), cronômetro que pausa, partida salva, estatísticas por tempo no painel. Para gerar de novo: `node novelo/gerador.mjs [dias]` e `node retalhos/gerador.mjs [dias]` (padrão: 364 dias a partir de 28/09/2026).
+**Nos dois:** ícone com versão escura (`icon-escuro.png`), que o painel, o cabeçalho, a tela de fim e o "Próximo jogo" usam no tema escuro — no catálogo é o campo `iconDark`, e o `comum/tema.js` troca a imagem sozinho quando o tema muda; jogo livre (`livre.json`, 20 por dia da semana), cronômetro que pausa, partida salva, estatísticas por tempo no painel. Para gerar de novo: `node novelo/gerador.mjs [dias]` e `node retalhos/gerador.mjs [dias]` (padrão: 364 dias a partir de 28/09/2026).
 
 ## Ícone e pendências fora do painel
 

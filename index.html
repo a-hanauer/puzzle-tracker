@@ -12,8 +12,8 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=61"></script>
-<script src="comum/catalogo.js?v=61"></script>
+<script src="comum/tema.js?v=66"></script>
+<script src="comum/catalogo.js?v=66"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -560,6 +560,7 @@ function loadIcon(g, box) {
       if (g.iconFull) img.className = "full";      // ícone ocupa o quadrado inteiro
       box.textContent = "";
       box.appendChild(img);
+      marcaIconeEscuro(g, img);
     };
     img.onerror = next;
     img.src = src;
@@ -1002,7 +1003,9 @@ function firstDay() {
 }
 function iconHTML(g) {
   const img = cards[g.id]?.querySelector(".icon img");
-  return img ? `<img src="${esc(img.src)}" alt="">` : `<span class="em">${g.emoji}</span>`;
+  if (!img) return `<span class="em">${g.emoji}</span>`;
+  const extra = img.dataset.escuro ? ` data-claro="${esc(img.dataset.claro)}" data-escuro="${esc(img.dataset.escuro)}"` : "";
+  return `<img src="${esc(img.src)}"${extra} alt="">`;
 }
 function bestStreak() {
   const ks = Object.keys(state.history).sort();
