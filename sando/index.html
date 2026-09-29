@@ -2,8 +2,8 @@
 <html lang="pt-BR" class="gh-carregando">
 <head>
 <meta charset="UTF-8">
-<script src="../comum/tema.js?v=106"></script>
-<script src="../comum/cabecalho.js?v=106"></script>
+<script src="../comum/tema.js?v=107"></script>
+<script src="../comum/cabecalho.js?v=107"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -426,6 +426,15 @@
   .dots-row::after{content:'';position:absolute;left:6px;top:50%;height:3px;margin-top:-1.5px;border-radius:3px;
     width:calc((100% - 12px) * var(--prog, 0));background:var(--accent);opacity:.55;transition:width .35s ease;}
   .dots-row.won::after{background:var(--good);}
+  /* jogo acabou: a linha do tempo inteira numa cor só — verde se acertou, vermelha se não */
+  .dots-row.fim-ganhou::after, .dots-row.fim-perdeu::after{opacity:1;}
+  .dots-row.fim-ganhou::after{background:var(--good);}
+  .dots-row.fim-perdeu::after{background:var(--bad);}
+  .dots-row.fim-ganhou .dot-pip::after{background:var(--good);box-shadow:none;}
+  .dots-row.fim-perdeu .dot-pip::after{background:var(--bad);box-shadow:none;}
+  .dots-row.fim-ganhou .dot-pip.win::after{box-shadow:0 0 0 3px var(--good-soft);}
+  .timeline-block:has(.fim-ganhou) .tries-count{color:var(--good);}
+  .timeline-block:has(.fim-perdeu) .tries-count{color:var(--bad);}
   .dot-pip::after{border:0;background:var(--tile-ghost);width:7px;height:7px;}
   .dot-pip.used::after{background:var(--accent);width:8px;height:8px;}
   .dot-pip.active::after{width:10px;height:10px;}
@@ -447,7 +456,7 @@
   .mode-switch-track{border:0;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=106">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=107">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: #fff; --fim-btn-border: 0; --gh-fim-ink: #fff; --gh-fim-border: 0; --gh-fim-border-lose: 0; --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
@@ -974,9 +983,11 @@
       dotsRow.appendChild(d);
     }
     // trilho preenchido até a tentativa atual (ou até a última, se o jogo acabou)
-    var ate = state.over ? state.guesses.length - 1 : state.guesses.length;
+    var ate = state.over ? MAX_GUESSES - 1 : state.guesses.length;   // jogo acabou: a linha toda
     dotsRow.style.setProperty('--prog', Math.max(0, Math.min(1, ate / (MAX_GUESSES - 1))));
     dotsRow.classList.toggle('won', !!state.won);
+    dotsRow.classList.toggle('fim-ganhou', !!state.over && !!state.won);   // linha e bolinhas todas verdes
+    dotsRow.classList.toggle('fim-perdeu', !!state.over && !state.won);    // ... ou todas vermelhas
 
     var loIdx = state.low ? state.low.idx : -1;
     var hiIdx = state.high ? state.high.idx : DICT.length;
@@ -1255,8 +1266,8 @@
     fn => { document.getElementById("practice-toggle").addEventListener("change", () => setTimeout(fn)); window.addEventListener("sanduba-livre", fn); },
     window.sandubaLivre);
 </script>
-<script src="../comum/catalogo.js?v=106"></script>
-<script src="../comum/celebra.js?v=106"></script>
-<script src="../comum/proximo.js?v=106" data-jogo="sanduba"></script>
+<script src="../comum/catalogo.js?v=107"></script>
+<script src="../comum/celebra.js?v=107"></script>
+<script src="../comum/proximo.js?v=107" data-jogo="sanduba"></script>
 </body>
 </html>

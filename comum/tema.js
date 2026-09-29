@@ -51,26 +51,36 @@
   // háptico. O iOS só aceita isso dentro de um gesto do usuário, que no toque
   // conta quando o dedo sai da tela (touchend/pointerup), não quando encosta.
   try {
-    var ultimoHap = 0;
+    var ultimoHap = 0, chave = null;
+    // o interruptor fica na página o tempo todo, invisível e fora da tela (não
+    // display:none: o iPhone só vibra ao alternar um interruptor "de verdade")
+    var interruptor = function () {
+      if (chave && chave.isConnected) return chave;
+      chave = document.createElement("label");
+      chave.setAttribute("aria-hidden", "true");
+      chave.style.cssText = "position:fixed;left:-60px;top:0;width:40px;height:24px;opacity:0.01;pointer-events:none;overflow:hidden;z-index:-1";
+      var inp = document.createElement("input");
+      inp.type = "checkbox"; inp.setAttribute("switch", ""); inp.tabIndex = -1;
+      chave.appendChild(inp);
+      (document.body || document.documentElement).appendChild(chave);
+      return chave;
+    };
     var haptico = function () {
       var agora = Date.now();
-      if (agora - ultimoHap < 40) return;          // touchend e pointerup do mesmo toque
+      if (agora - ultimoHap < 35) return;          // touchend e pointerup do mesmo toque
       ultimoHap = agora;
       if (navigator.vibrate) { try { navigator.vibrate(8); } catch (e) {} return; }
-      var label = document.createElement("label");
-      label.setAttribute("aria-hidden", "true");
-      label.style.display = "none";
-      var inp = document.createElement("input");
-      inp.type = "checkbox"; inp.setAttribute("switch", "");
-      label.appendChild(inp);
-      document.head.appendChild(label);
-      label.click();
-      document.head.removeChild(label);
+      try { interruptor().click(); } catch (e) {}
     };
     window.jogosHaptico = haptico;
+    document.addEventListener("DOMContentLoaded", interruptor);
+    // teclas dos jogos de letras e o fim de cada toque/arrasto nos tabuleiros
+    // (o fim do toque é quando o iPhone sempre aceita vibrar)
     var naTecla = function (e) {
-      var k = e.target && e.target.closest && e.target.closest(".key, .kb-key");
-      if (k && !k.disabled) haptico();
+      var t = e.target && e.target.closest ? e.target : null;
+      if (!t) return;
+      var k = t.closest(".key, .kb-key");
+      if ((k && !k.disabled) || t.closest("[data-tabuleiro], #board")) haptico();
     };
     document.addEventListener("touchend", naTecla, true);
     document.addEventListener("pointerup", function (e) { if (e.pointerType !== "touch") naTecla(e); }, true);
