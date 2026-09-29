@@ -121,9 +121,11 @@
   .tab { position: relative; line-height: 0; flex-shrink: 0; }   /* moldura do tabuleiro: recebe os toques (e o label da vibração no iPhone) */
   /* número alcançado no arrasto: um clarão suave e largo em volta, como uma luz que acende e apaga
      (maior que o dedo, para ser visto mesmo com o dedo em cima do número) */
-  :root { --luz: #ffb45c; }
-  .luz { pointer-events: none; animation: num-luz .85s ease-out both; }
-  @keyframes num-luz { 0% { opacity: 0; transform: scale(.55); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1); } }
+  :root { --luz: #ff8a1f; --luz-a: .75; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --luz: #ffc978; --luz-a: .8; } }
+  :root[data-theme="dark"] { --luz: #ffc978; --luz-a: .8; }
+  .luz { pointer-events: none; animation: num-luz .42s cubic-bezier(.2, .7, .3, 1) both; }
+  @keyframes num-luz { 0% { opacity: 0; transform: scale(.7); } 12% { opacity: 1; } 100% { opacity: 0; transform: scale(1.05); } }
   @media (prefers-reduced-motion: reduce) { .luz { display: none; } }
   #board { display: block; touch-action: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(40, 25, 10, .08)) drop-shadow(0 8px 20px rgba(40, 25, 10, .08)); }
   .b-bg { fill: var(--board); stroke: var(--board-edge); stroke-width: 1.5; }
@@ -475,12 +477,12 @@
       // pulso ao alcançar o número no arrasto (o render refaz tudo a cada casa: a animação
       // continua de onde estava, com atraso negativo, em vez de recomeçar)
       const dt = performance.now() - pulso.t;
-      if (i === pulso.i && dt < 900) {   // luz suave e larga, que aparece em volta do dedo
+      if (i === pulso.i && dt < 500) {   // luz suave e larga, que aparece em volta do dedo
         luz = `<circle class="luz" cx="${x}" cy="${y}" r="260" fill="url(#luz-num)" style="animation-delay:-${Math.round(dt)}ms;transform-origin:${x}px ${y}px"/>`;
       }
       top += botao;
     }
-    gTop.innerHTML = (luz ? `<defs><radialGradient id="luz-num"><stop offset="0" style="stop-color:var(--luz)" stop-opacity=".55"/><stop offset=".45" style="stop-color:var(--luz)" stop-opacity=".22"/><stop offset="1" style="stop-color:var(--luz)" stop-opacity="0"/></radialGradient></defs>` + luz : "") + top;
+    gTop.innerHTML = (luz ? `<defs><radialGradient id="luz-num"><stop offset="0" style="stop-color:var(--luz);stop-opacity:var(--luz-a)"/><stop offset=".4" style="stop-color:var(--luz);stop-opacity:calc(var(--luz-a) * .5)"/><stop offset="1" style="stop-color:var(--luz);stop-opacity:0"/></radialGradient></defs>` + luz : "") + top;
     drawThread();
     // progresso
     $("progBar").style.width = (100 * path.length / C) + "%";
