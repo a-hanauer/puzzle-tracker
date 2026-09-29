@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Novelo">
 <title>NOVELO — um fio por todas as casas</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=115"></script>
-<script src="../comum/cabecalho.js?v=115"></script>
-<script src="../comum/dica.js?v=115"></script>
+<script src="../comum/tema.js?v=116"></script>
+<script src="../comum/cabecalho.js?v=116"></script>
+<script src="../comum/dica.js?v=116"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -193,8 +193,8 @@
   .controls.done .done-bar { opacity: 1; pointer-events: auto; }
   .done-bar .ball { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }
   .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
-  .done-bar .txt b { font-size: 1.02rem; font-weight: 800; }
-  .done-bar .txt span { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.78); font-variant-numeric: tabular-nums; }
+  .done-bar .txt b { font-size: 1.32rem; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .done-bar .txt span { font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.78); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,255,255,.75); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
   .controls.play .done-bar .ball { animation: roll .8s cubic-bezier(.3,.7,.2,1) .15s both; }
   @keyframes roll { from { transform: translateX(-30px) rotate(-200deg); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -228,7 +228,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=115">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=116">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -493,8 +493,8 @@
     if (!finished) $("controls").classList.remove("play");
     $("doneBar").tabIndex = finished ? 0 : -1;
     if (finished) {
-      $("doneTitle").textContent = kind === "dia" ? "Novelo completo" : "Resolvido";
-      $("doneSub").textContent = `${fmt(elapsed)} · nível ${P.l}/7${dicaUsada ? " · com dica" : ""} · ${kind === "dia" ? "ver resultado" : "jogar outro"}`;
+      $("doneTitle").textContent = fmt(elapsed);
+      $("doneSub").textContent = `${kind === "dia" ? "Novelo completo" : "Resolvido"}${dicaUsada ? " · com dica" : ""}${kind === "dia" ? "" : " · jogar outro"}`;
     }
     updateTip();
     $("board").setAttribute("aria-label", `Tabuleiro ${N} por ${N}: fio com ${path.length} de ${C} casas, próximo número ${Math.min(nx, K)}`);
@@ -834,8 +834,8 @@
   demo("demoB", [0, 3, 6, 7, 4, 1, 2, 5, 8], [[0, 1], [8, 2]], "M115 27L115 203");
 })();
 </script>
-<script src="../comum/catalogo.js?v=115"></script>
-<script src="../comum/celebra.js?v=115"></script>
-<script src="../comum/proximo.js?v=115" data-jogo="novelo"></script>
+<script src="../comum/catalogo.js?v=116"></script>
+<script src="../comum/celebra.js?v=116"></script>
+<script src="../comum/proximo.js?v=116" data-jogo="novelo"></script>
 </body>
 </html>

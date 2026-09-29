@@ -299,8 +299,8 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
 .gh-fim.on .gh-fim-bar img { animation: gh-fim-in .7s cubic-bezier(.3, 1.4, .4, 1) .1s both; }
 @keyframes gh-fim-in { from { transform: scale(.3) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
 .gh-fim-bar .t { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
-.gh-fim-bar .t b { font-size: 1.02rem; font-weight: 800; }
-.gh-fim-bar .t span { font-size: .8rem; font-weight: 600; opacity: .8; font-variant-numeric: tabular-nums; }
+.gh-fim-bar .t b { font-size: 1.32rem; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.gh-fim-bar .t span { font-size: .78rem; font-weight: 600; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gh-fim-bar svg { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: .75; }
 .gh-fim-tip {
   margin-top: 12px; text-align: center; font-size: .78rem; line-height: 1.45; color: var(--gh-muted);

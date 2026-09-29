@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=115"></script>
-<script src="../comum/cabecalho.js?v=115"></script>
-<script src="../comum/dica.js?v=115"></script>
+<script src="../comum/tema.js?v=116"></script>
+<script src="../comum/cabecalho.js?v=116"></script>
+<script src="../comum/dica.js?v=116"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -209,8 +209,8 @@
   .seg > .done-bar { gap: 12px; }
   .done-bar .ecl { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }   /* mesma estrutura das faixas dos outros jogos */
   .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
-  .done-bar .txt b { font-size: 1.02rem; font-weight: 800; letter-spacing: .01em; }
-  .done-bar .txt span { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.72); font-variant-numeric: tabular-nums; }
+  .done-bar .txt b { font-size: 1.32rem; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .done-bar .txt span { font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.72); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,255,255,.7); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
   /* animação só na hora da vitória; ao reabrir um jogo já resolvido, fica parado */
   .controls.play .done-bar .ecl { animation: ecl-in .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
@@ -336,7 +336,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=115">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=116">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -769,8 +769,8 @@
     $("doneBar").tabIndex = finished ? 0 : -1;
     $("modeSun").tabIndex = $("modeMoon").tabIndex = finished ? -1 : 0;
     if (finished) {
-      $("doneTitle").textContent = kind === "dia" ? "Eclipse completo" : "Resolvido";
-      $("doneSub").textContent = `${fmt(elapsed)} · nível ${P.l}/7${dicaUsada ? " · com dica" : ""} · ${kind === "dia" ? "ver resultado" : "jogar outro"}`;
+      $("doneTitle").textContent = fmt(elapsed);
+      $("doneSub").textContent = `${kind === "dia" ? "Eclipse completo" : "Resolvido"}${dicaUsada ? " · com dica" : ""}${kind === "dia" ? "" : " · jogar outro"}`;
     }
     updateTip();
     if (!finished && s === N && m === N && bad.size === 0) win();
@@ -1017,8 +1017,8 @@
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 })();
 </script>
-<script src="../comum/catalogo.js?v=115"></script>
-<script src="../comum/celebra.js?v=115"></script>
-<script src="../comum/proximo.js?v=115" data-jogo="eclipse"></script>
+<script src="../comum/catalogo.js?v=116"></script>
+<script src="../comum/celebra.js?v=116"></script>
+<script src="../comum/proximo.js?v=116" data-jogo="eclipse"></script>
 </body>
 </html>
