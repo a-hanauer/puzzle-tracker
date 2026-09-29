@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Novelo">
 <title>NOVELO — um fio por todas as casas</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=108"></script>
-<script src="../comum/cabecalho.js?v=108"></script>
+<script src="../comum/tema.js?v=109"></script>
+<script src="../comum/cabecalho.js?v=109"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -219,7 +219,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=108">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=109">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -663,7 +663,7 @@
       }
       drag.pos = [x, y];
     }
-    if (changed) { if (window.jogosHaptico) jogosHaptico(); render(); } else drawThread();   // vibra a cada casa que o fio ganha ou perde
+    if (changed) { if (window.jogosHaptico) jogosHaptico(numAt[path.at(-1)] > 0); render(); } else drawThread();   // vibra a cada casa; mais forte ao chegar num número
   });
   const endDrag = e => {
     if (!drag || (e && e.pointerId !== undefined && e.pointerId !== drag.id)) return;
@@ -789,8 +789,8 @@
   demo("demoB", [0, 3, 6, 7, 4, 1, 2, 5, 8], [[0, 1], [8, 2]], "M115 27L115 203");
 })();
 </script>
-<script src="../comum/catalogo.js?v=108"></script>
-<script src="../comum/celebra.js?v=108"></script>
-<script src="../comum/proximo.js?v=108" data-jogo="novelo"></script>
+<script src="../comum/catalogo.js?v=109"></script>
+<script src="../comum/celebra.js?v=109"></script>
+<script src="../comum/proximo.js?v=109" data-jogo="novelo"></script>
 </body>
 </html>

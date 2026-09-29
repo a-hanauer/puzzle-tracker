@@ -61,11 +61,11 @@
   try {
     var IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     var ultimoHap = 0;
-    var haptico = function () {
+    var haptico = function (forte) {
       var agora = Date.now();
-      if (agora - ultimoHap < 35) return;
+      if (agora - ultimoHap < 35 && !forte) return;
       ultimoHap = agora;
-      if (navigator.vibrate) { try { navigator.vibrate(8); } catch (e) {} }
+      if (navigator.vibrate) { try { navigator.vibrate(forte ? [14, 40, 14] : 8); } catch (e) {} }
     };
     window.jogosHaptico = haptico;
     // Android: teclas e fim de cada toque nos tabuleiros
@@ -77,9 +77,11 @@
     };
     document.addEventListener("touchend", naTecla, true);
     if (IOS) {
-      var ALVOS = ".key, .kb-key, .tile.paintable, .cell, [data-haptico], .controls > button, .seg > button:not(.done-bar), .gh-btn, .fim-btn, .fx";
+      // teclas, casas, tabuleiros e qualquer botão ou link da interface (inclusive os cartões do painel)
+      var ALVOS = ".key, .kb-key, .tile.paintable, .cell, [data-haptico], button, a[href], [role=button], [role=switch]";
+      var FORA = "label, label *, svg *, [data-haptic-trigger], [data-haptic-trigger] *";
       var gatilho = function (el) {
-        if (el.querySelector(":scope > [data-haptic-trigger]")) return;
+        if (el.matches(FORA) || el.querySelector(":scope > [data-haptic-trigger]")) return;
         var lb = document.createElement("label");
         lb.setAttribute("data-haptic-trigger", ""); lb.setAttribute("aria-hidden", "true");
         lb.style.cssText = "position:absolute;inset:0;z-index:2;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border-radius:inherit";
@@ -88,6 +90,9 @@
         sw.style.cssText = "position:absolute;width:1px;height:1px;margin:0;visibility:hidden";
         sw.addEventListener("click", function (e) { e.stopPropagation(); });   // o label repassa o clique ao interruptor: essa cópia não conta para a tecla
         lb.appendChild(sw);
+        // link: o toque no label vibra mas não abriria o link (o label "ganha" o clique);
+        // então o clique do label para aqui e o link é aberto logo em seguida
+        if (el.tagName === "A") lb.addEventListener("click", function (e) { e.stopPropagation(); setTimeout(function () { el.click(); }, 0); });
         if (getComputedStyle(el).position === "static") el.style.position = "relative";
         el.appendChild(lb);
       };
