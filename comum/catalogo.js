@@ -23,7 +23,7 @@ const BASE_GAMES = [
   { id: "spotle",     name: "Spotle",     emoji: "🎵", desc: "Adivinhe o artista",            url: "https://spotle.io/" },
   { id: "betweenle",  name: "Betweenle",  emoji: "↕️", desc: "A palavra está entre…",         url: "https://betweenle.com/" },
   { id: "sanduba",    name: "Sando",      emoji: "🥪", desc: "Betweenle em português",        url: "sando/", icon: "sando/icon-claro.png?v=20", iconDark: "sando/icon-escuro.png?v=20", iconFull: true, cor: ["#f1e7c6", "#3b3316", "#3c3520", "#f4f2eb"] },
-  { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/" },
+  { id: "word500",    name: "Word500",    emoji: "🔢", desc: "Dedução por contagem",          url: "https://word500.com/game?mode=daily" },
   { id: "quinhentos", name: "5PILA",      emoji: "💵", desc: "Word500 em português",          url: "5pila/", icon: "5pila/icon-claro.png?v=20", iconDark: "5pila/icon-escuro.png?v=20", iconFull: true, cor: ["#c6f1da", "#163b28", "#203c2d", "#ebf4ef"] },
   { id: "foximax",    name: "Foximax",    emoji: "🦊", desc: "foximax.com",                   url: "https://foximax.com/" },
   { id: "linkedin",   name: "LinkedIn",   emoji: "💼", desc: "Queens, Tango, Zip, Pinpoint…", url: "https://www.linkedin.com/games/", app: true },

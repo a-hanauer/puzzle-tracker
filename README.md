@@ -29,7 +29,7 @@ Tudo roda em arquivos estáticos, sem dependências, build ou servidor.
 | 🎵 Spotle | https://spotle.io/ |
 | ↕️ Betweenle | https://betweenle.com/ |
 | 🥪 Sando | [`sando/`](sando/) (neste repositório) |
-| 🔢 Word500 | https://word500.com/ |
+| 🔢 Word500 | https://word500.com/game?mode=daily |
 | 💵 5PILA | [`5pila/`](5pila/) (neste repositório) |
 | 🦊 Foximax | https://foximax.com/ |
 | 💼 LinkedIn (app) | https://www.linkedin.com/games/ |
