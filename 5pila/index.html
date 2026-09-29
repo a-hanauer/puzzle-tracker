@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="5PILA">
 <link rel="icon" type="image/png" href="icon-claro.png?v=11">
 <link rel="apple-touch-icon" href="icon-claro.png?v=11">
-<script src="../comum/tema.js?v=97"></script>
-<script src="../comum/cabecalho.js?v=97"></script>
+<script src="../comum/tema.js?v=98"></script>
+<script src="../comum/cabecalho.js?v=98"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -154,7 +154,8 @@ header{
 .switch.on{background:var(--accent);}
 .switch.on .knob{transform:translateX(16px);background:var(--accent-ink);}
 /* ===== board ===== */
-.board-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:6px 0;min-height:0;}
+.board-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0;min-height:0;}
+.board-wrap > .fim-subrow{width:100%;max-width:460px;box-sizing:border-box;}
 /* a largura máxima é calculada em JS (ajustarTabuleiro) para as 8 linhas caberem na altura livre */
 .board{display:flex;flex-direction:column;gap:6px;width:100%;max-width:460px;}
 /* linha: a palavra (5 letras largas) e, à direita, o placar numa cápsula estreita */
@@ -355,7 +356,7 @@ header{
 #btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=97">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=98">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--accent-ink); --gh-fim-ink: var(--accent-ink); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -387,7 +388,7 @@ header{
   </div>
 
   <div class="board-wrap">
-    <div class="board" id="board"></div>
+    <div class="board" id="board" data-tabuleiro></div>
   </div>
 
   <div class="tools">
@@ -1358,7 +1359,7 @@ header{
     fn => { new MutationObserver(fn).observe(document.getElementById("mode-switch"), { attributes: true, attributeFilter: ["class"] }); window.addEventListener("quinhentos-livre", fn); },
     window.quinhentosLivre);
 </script>
-<script src="../comum/catalogo.js?v=97"></script>
-<script src="../comum/proximo.js?v=97" data-jogo="quinhentos"></script>
+<script src="../comum/catalogo.js?v=98"></script>
+<script src="../comum/proximo.js?v=98" data-jogo="quinhentos"></script>
 </body>
 </html>

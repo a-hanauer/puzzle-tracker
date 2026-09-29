@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<script src="../comum/tema.js?v=97"></script>
-<script src="../comum/cabecalho.js?v=97"></script>
+<script src="../comum/tema.js?v=98"></script>
+<script src="../comum/cabecalho.js?v=98"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -445,7 +445,7 @@
   .mode-switch-track{border:0;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=97">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=98">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: #fff; --fim-btn-border: 0; --gh-fim-ink: #fff; --gh-fim-border: 0; --gh-fim-border-lose: 0; --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
@@ -500,7 +500,7 @@
 
   <div id="hint"></div>
 
-  <div id="board-wrap">
+  <div id="board-wrap" data-tabuleiro>
     <div id="connectors">
       <div class="bubble-col">
         <div class="bubble top ghost" id="bubble-top">?</div>
@@ -1250,7 +1250,7 @@
     fn => { document.getElementById("practice-toggle").addEventListener("change", () => setTimeout(fn)); window.addEventListener("sanduba-livre", fn); },
     window.sandubaLivre);
 </script>
-<script src="../comum/catalogo.js?v=97"></script>
-<script src="../comum/proximo.js?v=97" data-jogo="sanduba"></script>
+<script src="../comum/catalogo.js?v=98"></script>
+<script src="../comum/proximo.js?v=98" data-jogo="sanduba"></script>
 </body>
 </html>

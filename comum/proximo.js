@@ -170,6 +170,20 @@
     return b;
   }
 
+  // a linha "Jogar um extra · Próximo em" fica logo abaixo do tabuleiro
+  // (o elemento marcado com data-tabuleiro em cada jogo), não no pé da tela
+  function subrows() {
+    const alvo = document.querySelector("[data-tabuleiro]");
+    if (!alvo) return [...document.querySelectorAll(".fim-subrow")];
+    let el = document.querySelector(".fim-subrow.junto");
+    if (!el) {
+      el = document.createElement("div");
+      el.className = "fim-subrow junto"; el.hidden = true;
+      alvo.after(el);
+    }
+    return [el];
+  }
+
   let ultimo = "";
   function atualizar(forcar) {
     montar();
@@ -190,7 +204,8 @@
       el.innerHTML = "";
       if (acabou && g) el.append(botaoProximo(g, s, "nx"));
     });
-    document.querySelectorAll(".fim-subrow").forEach(el => {
+    subrows().forEach(el => {
+      if (el.hidden === acabou) setTimeout(() => window.dispatchEvent(new Event("resize")), 0);   // o tabuleiro se reajusta
       el.hidden = !acabou;
       el.innerHTML = "";
       if (!acabou) return;

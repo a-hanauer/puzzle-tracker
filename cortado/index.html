@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Cortado">
 <title>CORTADO — café e leite em equilíbrio</title>
 <link rel="icon" type="image/png" href="icon.png">
-<script src="../comum/tema.js?v=97"></script>
-<script src="../comum/cabecalho.js?v=97"></script>
+<script src="../comum/tema.js?v=98"></script>
+<script src="../comum/cabecalho.js?v=98"></script>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -111,7 +111,8 @@
   /* ---------- tabuleiro ----------
      Um SVG só: as casas, os grãos de café, as gotas de leite e os sinais = e × nas
      bordas entre as casas. */
-  .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 4px 0; }
+  .stage { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 0; }
+  .stage > .fim-subrow { align-self: stretch; }
   #board { display: block; touch-action: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(40, 25, 10, .08)) drop-shadow(0 8px 20px rgba(40, 25, 10, .08)); }
   .b-bg { fill: var(--board); }
   .b-cell { fill: var(--cell); stroke: var(--cell-line); stroke-width: 1.5; }
@@ -203,7 +204,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=97">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=98">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -225,7 +226,7 @@
   </label>
 </div>
 
-<div class="stage" id="stage"><svg id="board" role="img" aria-label="Tabuleiro"></svg></div>
+<div class="stage" id="stage"><svg id="board" role="img" aria-label="Tabuleiro" data-tabuleiro></svg></div>
 
 <div class="controls" id="controls">
   <button id="undoBtn" disabled aria-label="Desfazer" title="Desfazer">
@@ -411,7 +412,8 @@
     const st = $("stage"), b = $("board");
     if (!st || !b) return;
     b.style.width = b.style.height = "0px";
-    const size = Math.floor(Math.min(st.clientWidth, st.clientHeight - 8));
+    const sub = st.querySelector(".fim-subrow:not([hidden])");   // linha de fim logo abaixo do tabuleiro
+    const size = Math.floor(Math.min(st.clientWidth, st.clientHeight - 8 - (sub ? sub.offsetHeight + 10 : 0)));
     b.style.width = b.style.height = Math.max(160, size) + "px";
   }
   window.addEventListener("resize", () => { if (N) fit(); });
@@ -658,7 +660,7 @@
   demo("demoB", true);
 })();
 </script>
-<script src="../comum/catalogo.js?v=97"></script>
-<script src="../comum/proximo.js?v=97" data-jogo="pingado"></script>
+<script src="../comum/catalogo.js?v=98"></script>
+<script src="../comum/proximo.js?v=98" data-jogo="pingado"></script>
 </body>
 </html>
