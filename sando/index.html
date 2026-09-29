@@ -1035,10 +1035,8 @@
     var hint = document.getElementById('hint');
     if(state.over){
       hint.textContent = state.won ? '' : 'Suas tentativas acabaram.';
-    } else if(!state.low && !state.high){
-      hint.textContent = '';
     } else {
-      hint.textContent = 'O recheio está escondido entre essas duas fatias abaixo.';
+      hint.textContent = '';
     }
 
     renderExcludedRow();
