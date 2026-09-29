@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=116"></script>
-<script src="../comum/cabecalho.js?v=116"></script>
-<script src="../comum/dica.js?v=116"></script>
+<script src="../comum/tema.js?v=117"></script>
+<script src="../comum/cabecalho.js?v=117"></script>
+<script src="../comum/dica.js?v=117"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -336,7 +336,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=116">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=117">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -770,7 +770,8 @@
     $("modeSun").tabIndex = $("modeMoon").tabIndex = finished ? -1 : 0;
     if (finished) {
       $("doneTitle").textContent = fmt(elapsed);
-      $("doneSub").textContent = `${kind === "dia" ? "Eclipse completo" : "Resolvido"}${dicaUsada ? " · com dica" : ""}${kind === "dia" ? "" : " · jogar outro"}`;
+      const rec = kind === "dia" && window.recordeDoDia ? recordeDoDia("eclipse:", dayNum) : null;   // comum/recorde.js
+      $("doneSub").textContent = `${kind === "dia" ? (rec ? `recorde de ${rec.dia}` : "Eclipse completo") : "Resolvido"}${dicaUsada ? " · com dica" : ""}${kind === "dia" ? "" : " · jogar outro"}`;
     }
     updateTip();
     if (!finished && s === N && m === N && bad.size === 0) win();
@@ -974,6 +975,8 @@
     const daily = kind === "dia";
     $("endTitle").textContent = "Eclipse completo!";
     $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l}/7` : `Jogo livre · nível ${P.l}/7`) + (dicaUsada ? " · com dica" : "");
+    const rec = daily && window.recordeDoDia ? recordeDoDia("eclipse:", dayNum) : null;
+    if (window.seloRecorde) seloRecorde($("endSub"), rec && `Seu melhor tempo de ${rec.dia} · antes ${fmt(rec.antes)}`);
     $("shareBtn").hidden = !daily;
     $("againBtn").hidden = daily;
     $("nextBox").hidden = !daily;
@@ -1017,8 +1020,9 @@
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 })();
 </script>
-<script src="../comum/catalogo.js?v=116"></script>
-<script src="../comum/celebra.js?v=116"></script>
-<script src="../comum/proximo.js?v=116" data-jogo="eclipse"></script>
+<script src="../comum/catalogo.js?v=117"></script>
+<script src="../comum/celebra.js?v=117"></script>
+<script src="../comum/recorde.js?v=117"></script>
+<script src="../comum/proximo.js?v=117" data-jogo="eclipse"></script>
 </body>
 </html>

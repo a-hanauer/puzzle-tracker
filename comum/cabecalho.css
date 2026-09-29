@@ -427,3 +427,10 @@ html.gh-carregando body { visibility: hidden; animation: gh-mostra 0s linear 1s 
 .fim-foot .fim-outro svg { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .fim-foot .fim-nxbtn { flex: 0 1 auto; margin-left: 0 !important; min-width: 0; }
 .fim-foot .fim-nxbtn .t b { overflow: hidden; text-overflow: ellipsis; }
+/* recorde (comum/recorde.js): selo verde com troféu logo abaixo da linha pequena da bandeja de fim */
+.fim-rec { display: flex; justify-content: center; margin: -6px 0 18px; }
+.rec-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 99px; font-size: .8rem; font-weight: 700; line-height: 1.2;
+  background: color-mix(in srgb, #3aa566 18%, transparent); color: #2f8a50; }
+.rec-pill svg { width: 14px; height: 14px; flex: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rec-pill { color: #74d69c; } }
+:root[data-theme="dark"] .rec-pill { color: #74d69c; }

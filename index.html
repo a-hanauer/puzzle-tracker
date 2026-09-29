@@ -12,8 +12,9 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=116"></script>
-<script src="comum/catalogo.js?v=116"></script>
+<script src="comum/tema.js?v=117"></script>
+<script src="comum/catalogo.js?v=117"></script>
+<script src="comum/celebra.js?v=117"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -123,6 +124,16 @@
   .dia-btn.fim.celebrate .dia-ok svg { animation: pop .35s ease .3s both; }
   @keyframes prog-shine { to { transform: translateX(110%); } }
   @media (prefers-reduced-motion: reduce) { .dia-btn.fim.celebrate::after, .dia-btn.fim.celebrate .dia-ok svg { animation: none; } }
+  /* marco de sequência (7, 30, 100 dias): bandeja com o quadro final dos jogos da casa, um a um */
+  .mc-folha { text-align: center; padding-top: 22px; }
+  .mc-mos { display: grid; grid-template-columns: repeat(var(--n, 6), 1fr); gap: 8px; margin: 4px 0 14px; }
+  .mc-mos svg { width: 100%; height: auto; animation: mc-pop .4s cubic-bezier(.3, 1.4, .45, 1) var(--d) both; }
+  .mc-n { font-size: 2.6rem; font-weight: 800; letter-spacing: -.04em; line-height: 1; margin-top: 4px; }
+  .mc-t { font-size: 1rem; font-weight: 700; margin-top: 4px; }
+  .mc-s { font-size: .82rem; color: var(--muted); margin-top: 6px; }
+  .mc-btn { margin-top: 18px; width: 100%; padding: 14px; border: 0; border-radius: 14px; font: inherit; font-weight: 800; cursor: pointer; background: var(--surface-2); color: var(--text); }
+  @keyframes mc-pop { from { transform: scale(.3); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .mc-mos svg { animation: none; } }
   /* resumo do dia: um cupom térmico sozinho sobre o fundo desfocado (só existe com tudo feito) */
   .sheet-bg.rc-fundo { flex-direction: column; align-items: center; justify-content: center; gap: 14px;
     padding: calc(12px + env(safe-area-inset-top, 0px)) 22px calc(12px + env(safe-area-inset-bottom, 0px)); background: rgba(8, 9, 12, .55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
@@ -532,6 +543,19 @@
   .minis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px; text-align: center; }
   .minis .v { font-size: 1.25rem; font-weight: 800; font-variant-numeric: tabular-nums; }
   .minis .l { font-size: .66rem; color: var(--muted); font-weight: 600; }
+  /* comparação com a semana anterior (↓ = melhorou, em verde; ↑ = piorou, discreto) */
+  .minis .cmp { display: block; margin-top: 1px; font-size: .68rem; font-weight: 700; color: var(--green); font-variant-numeric: tabular-nums; }
+  .minis .cmp.up { color: var(--muted); }
+  /* recorde por nível (seg … dom), o de hoje destacado */
+  .rec7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .rec7 > div { background: var(--surface-2); border-radius: 12px; padding: 7px 0 6px; text-align: center; }
+  .rec7 .d { display: block; font-size: .62rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .rec7 b { display: block; margin-top: 2px; font-size: .86rem; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .rec7 .hj { background: color-mix(in srgb, var(--green) 16%, var(--surface-2)); }
+  .rec7 .hj .d { color: var(--green); }
+  /* barras: verde = recorde naquele dia; as outras em cinza */
+  .vbars.recs .vbar.full i { background: color-mix(in srgb, var(--muted) 30%, var(--surface-2)); }
+  .vbars.recs .vbar.full.rec i { background: var(--green); }
   .mini-title { font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; }
   .dist .hrow { grid-template-columns: 14px 1fr 30px; margin: 4px 0; }
   .dist .n { color: var(--muted); font-weight: 700; font-size: .78rem; }
@@ -655,6 +679,13 @@
       </div>
       <div class="add-err" id="bkErr" hidden></div>
     </div>
+  </div>
+</div>
+<div class="sheet-bg" id="marco" hidden>
+  <div class="sheet mc-folha" role="dialog" aria-modal="true" aria-labelledby="mcT">
+    <div class="mc-mos" id="mcMos" aria-hidden="true"></div>
+    <div class="mc-n" id="mcN"></div><div class="mc-t" id="mcT">dias seguidos</div><div class="mc-s">Todos os jogos, todos os dias.</div>
+    <button class="mc-btn" type="button" data-close>Continuar</button>
   </div>
 </div>
 <div class="sheet-bg rc-fundo" id="resumo" role="dialog" aria-modal="true" aria-label="Resumo do dia" hidden>
@@ -928,6 +959,7 @@ function render() {
   db.dataset.complete = complete ? "1" : "0";
   db.setAttribute("aria-label", complete ? "Tudo feito por hoje. Abrir o resumo do dia" : `${n} de ${total} jogos feitos`);
   renderDiaBtn(done, n, complete);
+  if (complete) setTimeout(checaMarco, 700);
 
   document.querySelectorAll(".seg2 button[data-tab]").forEach(b => b.setAttribute("aria-checked", (b.dataset.tab === "new") === state.newTab));
 
@@ -1073,6 +1105,30 @@ $("diaBtn").addEventListener("click", () => {
 });
 
 /* ---------- Resumo do dia (compartilhável) ---------- */
+/* ---------- Marcos de sequência ----------
+   Ao voltar ao painel com o dia completo, se a sequência acabou de chegar a 7, 30 ou 100 dias,
+   mostra a bandeja uma vez só (os marcos já comemorados ficam em state.marcos, que entra no backup). */
+const MARCOS = [7, 30, 100];
+let mcEstilo = false;
+function checaMarco() {
+  const n = streak();
+  if (!MARCOS.includes(n) || (state.marcos || []).includes(n)) return;
+  if (document.querySelector(".sheet-bg:not([hidden]), .overlay.open") || $("viewToday").hidden) return;
+  if (!window.CELEBRA) return;
+  state.marcos = [...(state.marcos || []), n]; save();
+  if (!mcEstilo) {           // o quadro final de cada animação (comum/celebra.js), parado
+    const st = document.createElement("style");
+    st.textContent = CELEBRA.CSS + " #mcMos svg [class], #mcMos svg g { animation: none !important; } #mcMos .traco { stroke-dashoffset: 0 !important; }";
+    document.head.append(st); mcEstilo = true;
+  }
+  const ARTE = CELEBRA.ARTE, casa = ordemDoDia().filter(g => LOCAL_PROGRESS[g.id] && ARTE[g.id]);
+  $("mcMos").style.setProperty("--n", casa.length);
+  $("mcMos").innerHTML = casa.map((g, k) => `<svg viewBox="-100 -100 200 200" style="--d:${(.15 + .09 * k).toFixed(2)}s">${ARTE[g.id]()}</svg>`).join("");
+  $("mcN").textContent = n;
+  $("marco").hidden = false;
+}
+$("marco").addEventListener("click", e => { if (e.target === $("marco") || e.target.closest("[data-close]")) $("marco").hidden = true; });
+
 /* O recibo é descrito uma vez (linhas) e desenhado duas: na tela (HTML) e na imagem salva (canvas). */
 const SEM3 = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
 function reciboLinhas() {
@@ -1438,20 +1494,30 @@ function renderNative(t0) {
     { id: "sanduba", stats: () => { const s = readJSON("sanduba-stats") || {}; return { played: s.played || 0, wins: s.wins || 0, streak: s.streak || 0, best: s.best || 0 }; } },
     { id: "quinhentos", stats: () => { const s = readJSON("quinhentao:stats:padrao") || {}; return { played: s.played || 0, wins: s.wins || 0, streak: s.streak || 0, best: s.maxStreak || 0, dist: s.dist }; } },
   ];
+  // semana atual (desde segunda) e a anterior, para comparar médias
+  const seg0 = addDays(t0, -((t0.getDay() + 6) % 7)), segAnt = addDays(seg0, -7);
+  const cmpHTML = (dif, fmt) => dif == null || !isFinite(dif) || /^0(:00)?$/.test(fmt(Math.abs(dif))) ? "" : `<span class="cmp${dif > 0 ? " up" : ""}">${dif > 0 ? "↑" : "↓"} ${fmt(Math.abs(dif))}</span>`;
+  const media = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+  const dec = v => v.toFixed(1).replace(".", ",").replace(",0", "");
   for (const sp of specs) {
     const g = GAMES.find(x => x.id === sp.id);
     if (!g) continue;
     const s = sp.stats();
-    const pct = s.played ? Math.round(100 * s.wins / s.played) : 0;
+    // todas as partidas registradas, em ordem, para achar os recordes (menos tentativas que todas as anteriores)
+    const hist = Object.keys(state.results).sort().map(k => ({ k, r: state.results[k][g.id] })).filter(x => x.r && x.r.won);
+    const recDia = new Set(); let menor = Infinity;
+    hist.forEach((x, i) => { if (i > 0 && x.r.tries < menor) recDia.add(x.k); menor = Math.min(menor, x.r.tries); });
+    const melhor = hist.length ? Math.min(...hist.map(x => x.r.tries)) : null;
+    const naSemana = (ini, fim) => hist.filter(x => x.k >= dayKey(ini) && x.k < dayKey(fim)).map(x => x.r.tries);
+    const mS = media(naSemana(seg0, addDays(seg0, 7))), mA = media(naSemana(segAnt, seg0));
     const rs = days.map(d => state.results[dayKey(d)]?.[g.id]);
     const withData = rs.filter(Boolean);
-    const avg = withData.filter(r => r.won).map(r => r.tries);
     const max = withData[0]?.max || (g.id === "sanduba" ? 14 : 8);
     const bars = days.map((d, i) => {
-      const r = rs[i];
-      const cls = !r ? "none" : r.won ? "full" : "lost";
+      const r = rs[i], rec = r && r.won && recDia.has(dayKey(d));
+      const cls = !r ? "none" : r.won ? "full" + (rec ? " rec" : "") : "lost";
       const h = !r ? 0 : r.won ? 100 * r.tries / max : 100;
-      const lab = !r ? "sem partida" : r.won ? `${r.tries} de ${r.max} tentativas` : "não acertou";
+      const lab = !r ? "sem partida" : r.won ? `${r.tries} de ${r.max} tentativas${rec ? " · recorde" : ""}` : "não acertou";
       return `<button class="vbar ${cls}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${h}%"></i></button>`;
     }).join("");
     let dist = "";
@@ -1463,19 +1529,21 @@ function renderNative(t0) {
     blocks[g.id] = `
       <div class="minis">
         <div><div class="v">${s.played}</div><div class="l">jogadas</div></div>
-        <div><div class="v">${pct}%</div><div class="l">vitórias</div></div>
         <div><div class="v">${s.streak}</div><div class="l">sequência</div></div>
-        <div><div class="v">${s.best}</div><div class="l">melhor</div></div>
+        <div><div class="v">${mS == null ? "–" : dec(mS)}</div><div class="l">média da semana</div>${mS != null && mA != null ? cmpHTML(mS - mA, dec) : ""}</div>
+        <div><div class="v">${melhor == null ? "–" : melhor}</div><div class="l">melhor partida</div></div>
       </div>
-      <div class="mini-title">Tentativas por dia · 30 dias${avg.length ? ` · média ${(avg.reduce((a, b) => a + b, 0) / avg.length).toFixed(1).replace(".", ",")}` : ""}</div>
-      ${withData.length ? `<div class="vbars" style="height:80px">${bars}</div>
+      <div class="mini-title">Tentativas por dia · 30 dias</div>
+      ${withData.length ? `<div class="vbars recs" style="height:80px">${bars}</div>
         <div class="axis"><span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>hoje</span></div>
-        <div class="readout">Barra mais baixa = menos tentativas. Cinza = não acertou.</div>`
+        <div class="readout">Verde = recorde (menos tentativas até então). Toque numa barra para ver.</div>`
         : `<div class="empty">Os resultados começam a aparecer aqui a partir das próximas partidas.</div>`}
       ${dist}`;
   }
   // Eclipse, Novelo, Retalhos e Pingado: o desempenho é o tempo
   const TIMED = [{ id: "eclipse", epoch: [2026, 8, 27] }, { id: "novelo", epoch: [2026, 8, 28] }, { id: "retalhos", epoch: [2026, 8, 28] }, { id: "pingado", epoch: [2026, 8, 28] }];
+  const DIAS3 = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], DIAS_L = ["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"];
+  const nvHoje = (t0.getDay() + 6) % 7;                    // nível = dia da semana (segunda = 1)
   for (const tg of TIMED) {
     const ge = GAMES.find(x => x.id === tg.id);
     if (!ge) continue;
@@ -1483,27 +1551,36 @@ function renderNative(t0) {
     const times = st.times || {};                            // { número do dia: segundos }
     const e0 = new Date(tg.epoch[0], tg.epoch[1], tg.epoch[2]);
     const dnum = d => Math.round((d - e0) / 86400000) + 1;
+    const reg = Object.entries(times).map(([n, t]) => { const d = addDays(e0, +n - 1); return { d, k: dayKey(d), t, nv: (d.getDay() + 6) % 7 }; }).sort((a, b) => a.d - b.d);
+    // recorde no dia: mais rápido que todas as vezes anteriores naquele nível (a primeira vez não conta)
+    const recDia = new Set(), menor = Array(7).fill(Infinity), vezes = Array(7).fill(0);
+    reg.forEach(x => { if (vezes[x.nv] && x.t < menor[x.nv]) recDia.add(x.k); menor[x.nv] = Math.min(menor[x.nv], x.t); vezes[x.nv]++; });
+    const rec = menor.map(v => isFinite(v) ? v : null);
+    // média da semana × semana anterior, só nos níveis já jogados nesta semana (a semana ainda não acabou)
+    const semana = reg.filter(x => x.d >= seg0), nvs = new Set(semana.map(x => x.nv));
+    const anterior = reg.filter(x => x.d >= segAnt && x.d < seg0 && nvs.has(x.nv));
+    const mS = media(semana.map(x => x.t)), mA = media(anterior.map(x => x.t));
+    const best = reg.length ? Math.min(...reg.map(x => x.t)) : null;
     const vals = days.map(d => times[dnum(d)] ?? state.results[dayKey(d)]?.[tg.id]?.time ?? null);
-    const all = Object.values(times);
-    const best = all.length ? Math.min(...all) : null;
-    const avg = all.length ? all.reduce((a, b) => a + b, 0) / all.length : null;
     const top = Math.max(1, ...vals.filter(v => v != null));
     const bars = days.map((d, i) => {
-      const v = vals[i];
-      const lab = v == null ? "sem partida" : `resolvido em ${fmtTime(v)}`;
-      return `<button class="vbar ${v == null ? "none" : "full"}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${v == null ? 0 : Math.max(6, 100 * v / top)}%"></i></button>`;
+      const v = vals[i], r = v != null && recDia.has(dayKey(d));
+      const lab = v == null ? "sem partida" : `resolvido em ${fmtTime(v)}${r ? ` · recorde de ${DIAS_L[(d.getDay() + 6) % 7]}` : ""}`;
+      return `<button class="vbar ${v == null ? "none" : "full"}${r ? " rec" : ""}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${v == null ? 0 : Math.max(6, 100 * v / top)}%"></i></button>`;
     }).join("");
     blocks[tg.id] = `
       <div class="minis">
         <div><div class="v">${st.played || 0}</div><div class="l">resolvidos</div></div>
         <div><div class="v">${st.streak || 0}</div><div class="l">sequência</div></div>
-        <div><div class="v">${best == null ? "–" : fmtTime(best)}</div><div class="l">melhor</div></div>
-        <div><div class="v">${avg == null ? "–" : fmtTime(avg)}</div><div class="l">média</div></div>
+        <div><div class="v">${mS == null ? "–" : fmtTime(mS)}</div><div class="l">média da semana</div>${mS != null && mA != null ? cmpHTML(mS - mA, fmtTime) : ""}</div>
+        <div><div class="v">${best == null ? "–" : fmtTime(best)}</div><div class="l">mais rápido</div></div>
       </div>
+      <div class="mini-title">Recorde por nível</div>
+      <div class="rec7">${rec.map((t, n) => `<div class="${n === nvHoje ? "hj" : ""}"><span class="d">${DIAS3[n]}</span><b>${t == null ? "–" : fmtTime(t)}</b></div>`).join("")}</div>
       <div class="mini-title">Tempo por dia · 30 dias</div>
-      ${vals.some(v => v != null) ? `<div class="vbars" style="height:80px">${bars}</div>
+      ${vals.some(v => v != null) ? `<div class="vbars recs" style="height:80px">${bars}</div>
         <div class="axis"><span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>hoje</span></div>
-        <div class="readout">Barra mais baixa = mais rápido. Toque numa barra para ver o tempo.</div>`
+        <div class="readout">Verde = recorde daquele nível. Toque numa barra para ver o tempo.</div>`
         : `<div class="empty">Seus tempos aparecem aqui depois do primeiro desafio resolvido.</div>`}`;
   }
   const ids = Object.keys(blocks);

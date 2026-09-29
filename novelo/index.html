@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Novelo">
 <title>NOVELO — um fio por todas as casas</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=116"></script>
-<script src="../comum/cabecalho.js?v=116"></script>
-<script src="../comum/dica.js?v=116"></script>
+<script src="../comum/tema.js?v=117"></script>
+<script src="../comum/cabecalho.js?v=117"></script>
+<script src="../comum/dica.js?v=117"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -228,7 +228,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=116">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=117">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -494,7 +494,8 @@
     $("doneBar").tabIndex = finished ? 0 : -1;
     if (finished) {
       $("doneTitle").textContent = fmt(elapsed);
-      $("doneSub").textContent = `${kind === "dia" ? "Novelo completo" : "Resolvido"}${dicaUsada ? " · com dica" : ""}${kind === "dia" ? "" : " · jogar outro"}`;
+      const rec = kind === "dia" && window.recordeDoDia ? recordeDoDia("novelo:", dayNum) : null;   // comum/recorde.js
+      $("doneSub").textContent = `${kind === "dia" ? (rec ? `recorde de ${rec.dia}` : "Novelo completo") : "Resolvido"}${dicaUsada ? " · com dica" : ""}${kind === "dia" ? "" : " · jogar outro"}`;
     }
     updateTip();
     $("board").setAttribute("aria-label", `Tabuleiro ${N} por ${N}: fio com ${path.length} de ${C} casas, próximo número ${Math.min(nx, K)}`);
@@ -781,6 +782,8 @@
     $("endTime").textContent = fmt(elapsed);
     const daily = kind === "dia";
     $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l}/7 · ${N}×${N}` : `Jogo livre · nível ${P.l}/7 · ${N}×${N}`) + (dicaUsada ? " · com dica" : "");
+    const rec = daily && window.recordeDoDia ? recordeDoDia("novelo:", dayNum) : null;
+    if (window.seloRecorde) seloRecorde($("endSub"), rec && `Seu melhor tempo de ${rec.dia} · antes ${fmt(rec.antes)}`);
     $("shareBtn").hidden = !daily;
     $("againBtn").hidden = daily;
     $("nextBox").hidden = !daily;
@@ -834,8 +837,9 @@
   demo("demoB", [0, 3, 6, 7, 4, 1, 2, 5, 8], [[0, 1], [8, 2]], "M115 27L115 203");
 })();
 </script>
-<script src="../comum/catalogo.js?v=116"></script>
-<script src="../comum/celebra.js?v=116"></script>
-<script src="../comum/proximo.js?v=116" data-jogo="novelo"></script>
+<script src="../comum/catalogo.js?v=117"></script>
+<script src="../comum/celebra.js?v=117"></script>
+<script src="../comum/recorde.js?v=117"></script>
+<script src="../comum/proximo.js?v=117" data-jogo="novelo"></script>
 </body>
 </html>

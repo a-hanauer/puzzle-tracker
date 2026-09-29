@@ -1,11 +1,11 @@
 // Service worker do Jogos do Dia.
 // Deixa o painel e os jogos da casa instaláveis e funcionando offline (sempre tenta a versão mais nova primeiro).
-const CACHE = "jogos-do-dia-v146";
+const CACHE = "jogos-do-dia-v147";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 // Tudo o que os jogos da casa precisam para funcionar sem internet: páginas, scripts comuns,
 // ícones e os desafios (do dia e do jogo livre). Guardado já na instalação, sem esperar o
 // jogo ser aberto; se algum arquivo falhar, os outros continuam.
-const COMUM = ["cabecalho.css", "cabecalho.js", "catalogo.js", "celebra.js", "dica.js", "proximo.js", "tema.js"].map(f => "./comum/" + f);
+const COMUM = ["cabecalho.css", "cabecalho.js", "catalogo.js", "celebra.js", "dica.js", "proximo.js", "recorde.js", "tema.js"].map(f => "./comum/" + f);
 const LOGICA = ["eclipse", "novelo", "azulejo", "cortado"];
 const JOGOS = [
   ...LOGICA.flatMap(j => [`./${j}/`, `./${j}/index.html`, `./${j}/desafios.json`, `./${j}/livre.json`]),
