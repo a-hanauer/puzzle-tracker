@@ -145,6 +145,15 @@ header.gh {
   overscroll-behavior: contain;
   box-shadow: 0 -10px 40px rgba(0, 0, 0, .22) !important;
 }
+/* a bandeja sobe de baixo ao abrir; dá para fechá-la puxando para baixo pela alça (comum/cabecalho.js) */
+.overlay > .modal { position: relative; }
+.overlay.open > .modal { animation: gh-sobe .34s cubic-bezier(.22, .9, .3, 1) both; }
+@keyframes gh-sobe { from { transform: translateY(100%); } to { transform: none; } }
+.overlay > .modal::before {
+  content: ""; position: absolute; top: 7px; left: 50%; z-index: 4; width: 38px; height: 5px; margin-left: -19px;
+  border-radius: 3px; background: currentColor; opacity: .18; pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) { .overlay.open > .modal { animation: none; } }
 html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; overscroll-behavior: none; }   /* app instalado no iPhone (comum/tema.js) */
 .modal > h2:first-child, .modal > .close-row:first-child, .modal > .fim-top:first-child {
   position: sticky; top: calc(-1 * var(--mpad, 20px)); z-index: 3;

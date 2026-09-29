@@ -83,3 +83,50 @@ window.ghFim = function (el, o) {
   if (was) el.querySelector("img").style.animation = "none";      // só anima na primeira vez
   document.dispatchEvent(new Event("gh-fim"));
 };
+
+/* Bandejas (janelas que sobem de baixo): puxar para baixo fecha.
+   O arrasto só começa com o conteúdo rolado até o topo; soltando depois de
+   ~90 px (ou com um puxão rápido) a bandeja desce e fecha como um toque no
+   fundo escuro; antes disso, ela volta para o lugar. */
+(function () {
+  "use strict";
+  const LIMITE = 90;
+  let d = null;
+  const bandeja = t => t && t.closest && t.closest(".overlay.open > .modal");
+  function inicio(m, y) { d = m.scrollTop > 0 ? null : { m, y0: y, dy: 0, t0: Date.now(), vai: false }; }
+  function move(y, e) {
+    if (!d) return;
+    const dy = y - d.y0;
+    if (!d.vai) {
+      if (dy < -6) { d = null; return; }            // subindo: é rolagem normal
+      if (dy < 8) return;
+      d.vai = true; d.t0 = Date.now(); d.y0 = y - 8;
+      d.m.style.animation = "none"; d.m.style.transition = "none";
+    }
+    d.dy = Math.max(0, y - d.y0);
+    d.m.style.transform = `translateY(${d.dy}px)`;
+    if (e && e.cancelable) e.preventDefault();
+  }
+  function fim() {
+    if (!d) return;
+    const { m, dy, t0, vai } = d; d = null;
+    if (!vai) return;
+    const rapido = dy / Math.max(1, Date.now() - t0) > .7 && dy > 30;
+    m.style.transition = "transform .22s ease";
+    const limpa = () => { m.style.transition = m.style.transform = m.style.animation = ""; };
+    if (dy > LIMITE || rapido) {
+      m.style.transform = "translateY(105%)";
+      setTimeout(() => { const ov = m.closest(".overlay"); if (ov) ov.click(); limpa(); }, 210);
+    } else {
+      m.style.transform = "translateY(0)";
+      setTimeout(limpa, 230);
+    }
+  }
+  document.addEventListener("touchstart", e => { const m = bandeja(e.target); if (m) inicio(m, e.touches[0].clientY); }, { passive: true });
+  document.addEventListener("touchmove", e => move(e.touches[0].clientY, e), { passive: false });
+  document.addEventListener("touchend", fim);
+  document.addEventListener("touchcancel", fim);
+  document.addEventListener("mousedown", e => { const m = bandeja(e.target); if (m) inicio(m, e.clientY); });
+  document.addEventListener("mousemove", e => move(e.clientY, e));
+  document.addEventListener("mouseup", fim);
+})();
