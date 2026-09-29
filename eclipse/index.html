@@ -296,14 +296,14 @@
   html[data-theme="dark"][data-modo="S"], html[data-theme="dark"][data-modo="S"] body { --bg: #2a1e07; }
   html[data-theme="dark"][data-modo="M"], html[data-theme="dark"][data-modo="M"] body { --bg: #0a1438; }
   /* a interface toda (cabeçalho, botões, janelas) acompanha o modo: âmbar no sol, anil na lua */
-  html[data-modo="S"] { --surface: #fffaf0; --surface-2: #f4e9cf; --line: #ecdcb6; --muted: #86754f; --accent: #b86a00; --on-accent: #fff; }
-  html[data-modo="M"] { --surface: #fbfcff; --surface-2: #e0e6fb; --line: #d0d9f4; --muted: #5f6a98; --accent: #4f4fd0; --on-accent: #fff; }
+  html[data-modo="S"] { --surface: #fffaf0; --surface-2: #f4e9cf; --line: #ecdcb6; --muted: #86754f; --accent: #b86a00; --on-accent: #fff; --board: #e3c985; }
+  html[data-modo="M"] { --surface: #fbfcff; --surface-2: #e0e6fb; --line: #d0d9f4; --muted: #5f6a98; --accent: #4f4fd0; --on-accent: #fff; --board: #bcc5ef; }
   @media (prefers-color-scheme: dark) {
-    html[data-modo="S"]:not([data-theme="light"]) { --surface: #3a2b10; --surface-2: #4a3716; --line: #52401b; --muted: #bba77c; --accent: #fbbf24; --on-accent: #2a1e07; }
-    html[data-modo="M"]:not([data-theme="light"]) { --surface: #16214f; --surface-2: #203063; --line: #2b3a72; --muted: #95a3d2; --accent: #a5b4fc; --on-accent: #0a1438; }
+    html[data-modo="S"]:not([data-theme="light"]) { --surface: #3a2b10; --surface-2: #4a3716; --line: #52401b; --muted: #bba77c; --accent: #fbbf24; --on-accent: #2a1e07; --board: #1f1503; }
+    html[data-modo="M"]:not([data-theme="light"]) { --surface: #16214f; --surface-2: #203063; --line: #2b3a72; --muted: #95a3d2; --accent: #a5b4fc; --on-accent: #0a1438; --board: #050d30; }
   }
-  html[data-theme="dark"][data-modo="S"] { --surface: #3a2b10; --surface-2: #4a3716; --line: #52401b; --muted: #bba77c; --accent: #fbbf24; --on-accent: #2a1e07; }
-  html[data-theme="dark"][data-modo="M"] { --surface: #16214f; --surface-2: #203063; --line: #2b3a72; --muted: #95a3d2; --accent: #a5b4fc; --on-accent: #0a1438; }
+  html[data-theme="dark"][data-modo="S"] { --surface: #3a2b10; --surface-2: #4a3716; --line: #52401b; --muted: #bba77c; --accent: #fbbf24; --on-accent: #2a1e07; --board: #1f1503; }
+  html[data-theme="dark"][data-modo="M"] { --surface: #16214f; --surface-2: #203063; --line: #2b3a72; --muted: #95a3d2; --accent: #a5b4fc; --on-accent: #0a1438; --board: #050d30; }
   .gh-pill, .gh-btn, .controls button, .seg, .modal { transition: background-color .35s ease, color .35s ease; }
   /* foco sutil, só a partir das suas anotações: casa com ponto do modo atual perde
      um pouquinho de cor; marcada para os dois (nem sol nem lua), um pouco mais */
@@ -318,7 +318,8 @@
     filter: drop-shadow(0 0 2.5px rgba(255, 230, 160, .9)); }
   .ceu .st path { fill: #fff4cf; transform-box: fill-box; transform-origin: center; animation: tw var(--t) ease-in-out var(--d) infinite both; }
   @keyframes tw { 0%, 100% { opacity: .1; transform: scale(.45) rotate(0deg); } 50% { opacity: 1; transform: scale(1) rotate(20deg); } }
-  .board .regions path.reg, .board { transition: filter 1.2s ease, background-color 1.2s ease; }
+  .board .regions path.reg { transition: filter 1.2s ease; }
+  .board { transition: background-color .35s ease; }
 
   /* céu estrelado: ao concluir, o tabuleiro anoitece e se enche de estrelas piscando */
   .board.won { background: #0c1233; }
