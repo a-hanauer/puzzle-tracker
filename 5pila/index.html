@@ -598,6 +598,7 @@ header{
       if(!state.paint) state.paint = makeEmptyPaint();
       if(!state.tallies) state.tallies = [];
       if(state.won) revealAllPaint();
+      else if(!state.finished) propagateAll();   // aplica os vermelhos definitivos em jogos já salvos
     } else {
       state = {
         diff: diff, practice: practiceMode, secret: secret, dayNum: dayNum,
@@ -746,6 +747,8 @@ header{
     if(!state.paint) state.paint = makeEmptyPaint();
     if(!state.paint[r]) state.paint[r] = new Array(WORD_LEN).fill(0);
     var letter = state.guesses[r][c];
+    // letra de um palpite 0·0·5: vermelho definitivo, não dá pra repintar
+    if(letterIsDead(letter)) return;
     var cur = state.paint[r][c];
     var newVal;
     if(letterHasGY(letter)){
@@ -807,6 +810,15 @@ header{
         if(state.paint[r][c] === 4) state.paint[r][c] = 0;
       }
     }
+    // vermelho definitivo: toda letra de um palpite 0·0·5 fica vermelha em
+    // todo o tabuleiro, por cima de qualquer verde/amarelo que você tenha
+    // chutado antes (esses chutes estavam errados, o jogo provou)
+    var dead = deadLetters();
+    for(r=0;r<R;r++){
+      for(c=0;c<WORD_LEN;c++){
+        if(dead[state.guesses[r][c]]){ state.paint[r][c] = 1; state.auto[r][c] = 0; }
+      }
+    }
     var info = {}, greenCol = {};
     for(r=0;r<R;r++){
       for(c=0;c<WORD_LEN;c++){
@@ -837,6 +849,7 @@ header{
     for(var r=0; r<state.guesses.length; r++){
       if(state.tallies[r] && state.tallies[r].r === WORD_LEN) state.paint[r].fill(1);
     }
+    propagateAll();
     if(!practiceMode) save('game:'+diff, state);
     render();
   }
@@ -846,7 +859,19 @@ header{
   // absoluto — a letra some do jogo inteiro — MAS só vale enquanto
   // a letra nunca tiver sido marcada de verde/amarelo em lugar nenhum;
   // isso tem prioridade e nunca é sobrescrito por um vermelho.
+  // letras de palpites com as 5 letras erradas (0·0·5): fato, não palpite
+  function deadLetters(){
+    var d = {};
+    for(var r=0;r<state.guesses.length;r++){
+      if(state.tallies[r] && state.tallies[r].r === WORD_LEN){
+        for(var c=0;c<WORD_LEN;c++) d[state.guesses[r][c]] = true;
+      }
+    }
+    return d;
+  }
+  function letterIsDead(letter){ return !!deadLetters()[letter]; }
   function letterHasGY(letter){
+    if(letterIsDead(letter)) return false;
     for(var r=0;r<state.guesses.length;r++){
       var w = state.guesses[r];
       for(var c=0;c<WORD_LEN;c++){
@@ -859,6 +884,7 @@ header{
     return false;
   }
   function letterIsRed(letter){
+    if(letterIsDead(letter)) return true;
     if(letterHasGY(letter)) return false;
     for(var r=0;r<state.guesses.length;r++){
       var w = state.guesses[r];
@@ -870,6 +896,7 @@ header{
   }
   function effectivePaint(r,c){
     var letter = state.guesses[r][c];
+    if(letterIsDead(letter)) return 1;
     if(letterHasGY(letter)){
       var v = (state.paint[r] && state.paint[r][c]) || 0;
       return (v===2 || v===3 || v===4) ? v : 0;
@@ -901,7 +928,7 @@ header{
         if(submitted){
           t.textContent = word[c];
           var p = effectivePaint(r,c);
-          t.className = 'tile filled paintable ' + paintClass(p);
+          t.className = 'tile filled ' + (letterIsDead(word[c]) ? '' : 'paintable ') + paintClass(p);
         } else if(r===activeRow && !state.finished){
           t.textContent = current[c] || '';
           var cls = 'tile active-row';
