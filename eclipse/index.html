@@ -923,7 +923,7 @@
     }
     persist();
     render();
-    setTimeout(() => showEnd(true), 1700);   // depois que o eclipse da chave se fecha
+    celebrar("eclipse", { alvo: $("board"), esmaecer: $("board").querySelector(".grid") }).then(() => setTimeout(() => showEnd(true), 200));   // comum/celebra.js
   }
   function showEnd(fresh) {
     $("endTime").textContent = fmt(elapsed);
@@ -973,6 +973,7 @@
 })();
 </script>
 <script src="../comum/catalogo.js?v=99"></script>
+<script src="../comum/celebra.js?v=99"></script>
 <script src="../comum/proximo.js?v=99" data-jogo="eclipse"></script>
 </body>
 </html>

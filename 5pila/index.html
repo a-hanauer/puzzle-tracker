@@ -1147,7 +1147,10 @@ header{
       setTimeout(function(){
         if(won && rowEl) rowEl.classList.add('bounce');
         finishGame();
-        openEndModal();
+        if(won && window.celebrar){   // comum/celebra.js: as notas caem e se empilham
+          celebrar('quinhentos', { alvo: document.querySelector('.board-wrap'), esmaecer: document.getElementById('board') })
+            .then(function(){ setTimeout(openEndModal, 200); });
+        } else openEndModal();
       }, 500);
     }
   }
@@ -1360,6 +1363,7 @@ header{
     window.quinhentosLivre);
 </script>
 <script src="../comum/catalogo.js?v=99"></script>
+<script src="../comum/celebra.js?v=99"></script>
 <script src="../comum/proximo.js?v=99" data-jogo="quinhentos"></script>
 </body>
 </html>

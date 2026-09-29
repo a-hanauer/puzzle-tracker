@@ -689,7 +689,7 @@
       if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
     }
     persist();
-    setTimeout(() => showEnd(), 1400);
+    celebrar("retalhos", { alvo: $("stage"), esmaecer: $("board") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
   }
   function showEnd() {
     $("endTime").textContent = fmt(elapsed);
@@ -751,6 +751,7 @@
 })();
 </script>
 <script src="../comum/catalogo.js?v=99"></script>
+<script src="../comum/celebra.js?v=99"></script>
 <script src="../comum/proximo.js?v=99" data-jogo="retalhos"></script>
 </body>
 </html>

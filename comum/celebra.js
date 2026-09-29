@@ -11,7 +11,7 @@
    Uso:  <script src="../comum/celebra.js"></script>
          celebrar("pingado", { alvo: palco, esmaecer: tabuleiro }).then(abreResultado);
          · alvo      elemento sobre o qual o desenho aparece (vira position: relative)
-         · esmaecer  elemento que fica apagado durante a animação (padrão: o alvo)
+         · esmaecer  elemento (ou lista) que fica apagado durante a animação (padrão: o alvo)
    ========================================================================= */
 (function () {
   "use strict";
@@ -171,20 +171,20 @@
     const alvo = opts.alvo, arte = ARTE[jogo];
     if (!alvo || !arte) return Promise.resolve();
     if (!estilo) { const s = document.createElement("style"); s.textContent = CSS; document.head.append(s); estilo = true; }
-    const esm = opts.esmaecer || alvo;
+    const esm = [].concat(opts.esmaecer || alvo).filter(Boolean);
     alvo.classList.add("cel-host");
     const el = document.createElement("div");
     el.className = "celebra"; el.setAttribute("aria-hidden", "true");
     el.innerHTML = `<svg viewBox="-100 -100 200 200">${arte()}</svg>`;
     alvo.append(el);
-    esm.classList.add("cel-dim");
+    esm.forEach(e => e.classList.add("cel-dim"));
     return new Promise(res => {
       let feito = false;
-      const fim = () => { if (feito) return; feito = true; el.remove(); esm.classList.remove("cel-dim"); res(); };
+      const fim = () => { if (feito) return; feito = true; el.remove(); esm.forEach(e => e.classList.remove("cel-dim")); res(); };
       el.addEventListener("click", fim);
       el.addEventListener("animationend", e => { if (e.target === el) fim(); });
       setTimeout(fim, DUR + SAIDA + 200);                     // garantia
-      setTimeout(() => esm.classList.remove("cel-dim"), DUR);  // o tabuleiro volta enquanto o desenho some
+      setTimeout(() => esm.forEach(e => e.classList.remove("cel-dim")), DUR);  // o tabuleiro volta enquanto o desenho some
     });
   };
 })();

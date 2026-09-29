@@ -901,7 +901,10 @@
 
     if(state.over){
       registerResult(state.won);
-      setTimeout(function(){ openEnd(); }, 350);
+      if(state.won && window.celebrar){   // comum/celebra.js: o sanduíche se monta e é cortado
+        celebrar('sanduba', { alvo: document.getElementById('board-wrap'), esmaecer: [document.getElementById('connectors'), document.getElementById('rows')] })
+          .then(function(){ setTimeout(openEnd, 200); });
+      } else setTimeout(function(){ openEnd(); }, 350);
     }
     render();
   }
@@ -1251,6 +1254,7 @@
     window.sandubaLivre);
 </script>
 <script src="../comum/catalogo.js?v=99"></script>
+<script src="../comum/celebra.js?v=99"></script>
 <script src="../comum/proximo.js?v=99" data-jogo="sanduba"></script>
 </body>
 </html>
