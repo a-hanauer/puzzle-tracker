@@ -279,8 +279,11 @@
   html[data-modo="S"] { --mark: var(--mark-s); }
   html[data-modo="M"] { --mark: var(--mark-m); }
   html, body, .board { transition: background-color .35s ease; }
-  .cell > svg.dot { fill: var(--mark, var(--dot)); opacity: .8; }
-  .cell > svg.dot.auto { opacity: .55; }
+  /* pontos como estrelas: um brilho em volta, na cor do modo.
+     os seus brilham forte; os automáticos são menores e brilham fraco */
+  .cell > svg.dot { fill: var(--mark, var(--dot)); opacity: .95;
+    filter: drop-shadow(0 0 1.5px var(--mark, var(--dot))) drop-shadow(0 0 4px var(--mark, var(--dot))); }
+  .cell > svg.dot.auto { opacity: .5; filter: drop-shadow(0 0 1.5px var(--mark, var(--dot))); }
   .cell > svg.dim { opacity: .4; }
 
   /* dia e noite: o fundo da página esquenta no modo sol e esfria no modo lua */
