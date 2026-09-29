@@ -30,17 +30,17 @@
     --sun: #f59e0b;
     --sun-edge: #b45309;
     --sun-glow: rgba(245, 158, 11, .55);
-    --moon: #3b3bb5;
+    --moon: #2f2f9a;
     --moon-edge: #23237a;
     --moon-glow: rgba(35, 35, 122, .35);
-    --dot: rgba(26, 29, 46, .42);
+    --dot: rgba(26, 29, 46, .5);
     --ring: rgba(26, 29, 46, .38);
     --bad: #e5484d;
     --accent: #4f4fd0;
     --good: #3fa24c;
     /* regiões (claro): matizes bem separados e luminosidades alternadas, para vizinhas nunca se confundirem */
-    --r0: #f3a097; --r1: #f7dc74; --r2: #b0da83; --r3: #8fc1f0; --r4: #c4aef6;
-    --r5: #f5b4d8; --r6: #7fd4c1; --r7: #f8b37a; --r8: #cfd3de; --r9: #cbc27e;
+    --r0: #f5c3bb; --r1: #f4e19c; --r2: #cbe5ad; --r3: #b7d5f2; --r4: #d6c9f5;
+    --r5: #f3c9e0; --r6: #afe0d2; --r7: #f6cda6; --r8: #dcdfe8; --r9: #ddd6a3;
     --shadow: 0 1px 2px rgba(20,24,40,.06), 0 6px 18px rgba(20,24,40,.07);
     --on-accent: #fff;
   }
@@ -270,6 +270,36 @@
   }
   .tip .dt { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--dot); vertical-align: 1px; margin: 0 2px; }
   .tip .dt.a { width: 4px; height: 4px; opacity: .55; vertical-align: 2px; }
+
+  /* ================= modos sol / lua ================= */
+  /* marca de "não cabe" com a cor do modo */
+  :root { --mark-s: #b36a00; --mark-m: #3434a8; --veil: rgba(255,255,255,.62); --veil-x: rgba(120,126,150,.42); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --mark-s: #fbbf24; --mark-m: #b9c4ff; --veil: rgba(5,8,15,.6); --veil-x: rgba(150,160,200,.35); } }
+  :root[data-theme="dark"] { --mark-s: #fbbf24; --mark-m: #b9c4ff; --veil: rgba(5,8,15,.6); --veil-x: rgba(150,160,200,.35); }
+  html[data-modo="S"] { --mark: var(--mark-s); }
+  html[data-modo="M"] { --mark: var(--mark-m); }
+  html, body, .board { transition: background-color .35s ease; }
+  .cell > svg.dot { fill: var(--mark, var(--dot)); opacity: .8; }
+  .cell > svg.dot.auto { opacity: .55; }
+  .cell > svg.dim { opacity: .4; }
+
+  /* dia e noite: o fundo da página esquenta no modo sol e esfria no modo lua */
+  html[data-modo="S"], html[data-modo="S"] body { --bg: #f8f0dc; }
+  html[data-modo="M"], html[data-modo="M"] body { --bg: #e6e9f8; }
+  @media (prefers-color-scheme: dark) {
+    html[data-modo="S"]:not([data-theme="light"]), html[data-modo="S"]:not([data-theme="light"]) body { --bg: #1a1508; }
+    html[data-modo="M"]:not([data-theme="light"]), html[data-modo="M"]:not([data-theme="light"]) body { --bg: #0a0f24; }
+  }
+  html[data-theme="dark"][data-modo="S"], html[data-theme="dark"][data-modo="S"] body { --bg: #1a1508; }
+  html[data-theme="dark"][data-modo="M"], html[data-theme="dark"][data-modo="M"] body { --bg: #0a0f24; }
+  /* foco sutil: onde a peça do modo atual não cabe, a casa perde um pouco de cor;
+     onde nem sol nem lua cabem, ela fica bem apagada nos dois modos */
+  .cell.fora::before, .cell.nada::before {
+    content: ""; position: absolute; inset: 0; background: var(--veil); pointer-events: none;
+    opacity: .2; transition: opacity .25s ease;
+  }
+  .cell.nada::before { opacity: 1; }
+  .cell.nada > svg.dot { display: none; }
   .btn {
     width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer;
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
@@ -372,6 +402,7 @@
       <li>No <b>modo sol</b>, toque numa casa para marcar um <b>ponto</b> ("sol não cabe aqui"), toque de novo para pôr o <b>sol</b> e mais uma vez para limpar. Arraste o dedo para marcar várias casas.</li>
       <li>As luas aparecem apagadas, só de referência. No <b>modo lua</b> é o mesmo, para as luas.</li>
       <li>Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
+      <li>O fundo da tela esquenta no modo sol e esfria no modo lua. Casas onde a peça do modo não cabe perdem um pouco de cor, e as que não comportam nem sol nem lua ficam apagadas.</li>
     </ul>
     <p>Conflitos aparecem destacados com listras vermelhas.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia, e a dificuldade sobe ao longo da semana: <b>segunda é nível 1</b>, o mais fácil, e <b>domingo é nível 7</b>, o mais difícil. O tabuleiro cresce junto: 8×8 no começo da semana, 9×9 no meio e 10×10 no fim de semana.</p>
@@ -600,6 +631,7 @@
     "": "",
   };
   let mode = "S";                              // "S" = modo sol · "M" = modo lua
+  document.documentElement.dataset.modo = "S";
   const modeBit = () => (mode === "S" ? 1 : 2);
   const other = () => (mode === "S" ? "M" : "S");
   const nameOf = v => ({ S: "sol", M: "lua", Sd: "sol (outro modo)", Md: "lua (outro modo)",
@@ -678,6 +710,9 @@
       el.classList.toggle("sym", cells[i] === "S" || cells[i] === "M");
       el.classList.toggle("bad", bad.has(i));
       el.classList.toggle("pop", i === popIdx);
+      const vazia = cells[i] !== "S" && cells[i] !== "M", bl = (BITS[cells[i]] || 0) | (AUTO[i] || 0);
+      el.classList.toggle("nada", !finished && vazia && bl === 3);            // nem sol nem lua cabem
+      el.classList.toggle("fora", !finished && vazia && !!(bl & modeBit()));  // a peça do modo atual não cabe
       el.setAttribute("aria-label", `linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}: ${nameOf(v)}${givens.has(i) ? " (revelada)" : ""}`);
       if (cells[i] === "S") s++; if (cells[i] === "M") m++;
     }
@@ -711,6 +746,7 @@
   // ---------- toque e arrasto ----------
   function setMode(m) {
     mode = m;
+    document.documentElement.dataset.modo = m;
     $("modeSun").setAttribute("aria-pressed", m === "S");
     $("modeMoon").setAttribute("aria-pressed", m === "M");
     $("tipMode").textContent = m === "S" ? "Modo sol" : "Modo lua";
