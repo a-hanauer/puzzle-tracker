@@ -160,7 +160,6 @@
   .cell.pop > svg { animation: pop .18s ease; }
   @keyframes pop { from { transform: scale(.6); } to { transform: scale(1); } }
   .board .regions path.reg { transition: filter .4s; }
-  .board.won .regions path.reg { filter: saturate(.7); }
   .cell > svg.dim { opacity: .28; filter: none; }         /* peça do outro modo, só de referência */
   .seg {
     position: relative; overflow: hidden;
@@ -319,19 +318,19 @@
 
   /* ================= tabuleiro concluído ================= */
   .ceu { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0;
-    filter: drop-shadow(0 0 2.5px rgba(255, 230, 160, .9)); }
-  .ceu .st path { fill: #fff4cf; transform-box: fill-box; transform-origin: center; animation: tw var(--t) ease-in-out var(--d) infinite both; }
+    filter: drop-shadow(0 0 2.5px var(--estrela-brilho)); }
+  .ceu .st path { fill: var(--estrela); transform-box: fill-box; transform-origin: center; animation: tw var(--t) ease-in-out var(--d) infinite both; }
   @keyframes tw { 0%, 100% { opacity: .1; transform: scale(.45) rotate(0deg); } 50% { opacity: 1; transform: scale(1) rotate(20deg); } }
   .board .regions path.reg { transition: filter 1.2s ease; }
   .board { transition: background-color .35s ease; }
 
-  /* céu estrelado: ao concluir, o tabuleiro anoitece e se enche de estrelas piscando */
-  .board.won { background: #0c1233; }
-  .board.won .regions path.reg { filter: brightness(.34) saturate(.9); }
-  .board.won .regions .seams { stroke: rgba(255,255,255,.06); }
+  /* concluído: estrelas piscando entre as peças */
+  /* o tabuleiro continua como no jogo (regiões, peças e as suas anotações); só as estrelas dizem que acabou */
   .board.won .cell > svg.sun { filter: drop-shadow(0 0 6px var(--sun-glow)); }
-  .board.won .cell > svg.moon { --moon: #eef1ff; filter: drop-shadow(0 0 6px rgba(170,190,255,.9)); }
-  .board.won .cell.given::after { opacity: 0; }
+  .board.won .cell > svg.moon { filter: drop-shadow(0 0 5px var(--moon-glow)); }
+  :root { --estrela: #f0a800; --estrela-brilho: rgba(255, 190, 40, .9); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --estrela: #fff4cf; --estrela-brilho: rgba(255, 230, 160, .9); } }
+  :root[data-theme="dark"] { --estrela: #fff4cf; --estrela-brilho: rgba(255, 230, 160, .9); }
 
   @media (prefers-reduced-motion: reduce) { .ceu * { animation: none !important; } }
   .btn {
@@ -700,7 +699,7 @@
   let AUTO = [];
   function shown(i) {                         // o que aparece na casa, no modo atual
     const v = cells[i];
-    if (finished) return v === "S" || v === "M" ? v : "";   // tabuleiro resolvido: só as peças, todas acesas
+    if (finished) return v === "S" || v === "M" ? v : BITS[v] ? "X" : "";   // resolvido: peças acesas e as suas anotações
     if (v === mode) return v;
     if (v === other()) return v + "d";
     const man = BITS[v] || 0, b = modeBit();
