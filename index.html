@@ -240,6 +240,12 @@
     margin: 20px 4px 8px; font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
   }
   .cat-n { font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  .cat-dir { display: inline-flex; align-items: center; gap: 10px; }
+  /* marcar/desmarcar todos os outros jogos, ao lado do contador */
+  .cat-btn { height: 24px; margin: -4px 0; padding: 0 10px; border: 0; border-radius: 99px; cursor: pointer;
+    font: inherit; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--text); background: var(--surface-2); }
+  .cat-btn:active { transform: scale(.96); }
+  .cat-btn[hidden] { display: none; }
   .grid {
     list-style: none; padding: 0; margin: 0;
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
@@ -652,7 +658,7 @@
 <div id="viewToday">
 <div class="cat" id="catNative"><span>Jogos da casa</span><span class="cat-n" id="catNativeN"></span></div>
 <ul class="grid" id="gridNative"></ul>
-<div class="cat" id="catExternal"><span>Outros jogos</span><span class="cat-n" id="catExternalN"></span></div>
+<div class="cat" id="catExternal"><span>Outros jogos</span><span class="cat-dir"><button class="cat-btn" id="marcaTodos" type="button"></button><span class="cat-n" id="catExternalN"></span></span></div>
 <ul class="list" id="gridExternal"></ul>
 <button class="add-row" id="addRow"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Adicionar jogo</button>
 </div>
@@ -825,6 +831,15 @@ function setDone(id, value) {
   render();
 }
 
+// "Marcar todos" / "Desmarcar todos" dos outros jogos (os da casa se marcam sozinhos ao jogar)
+document.getElementById("marcaTodos").addEventListener("click", () => setTimeout(() => {   // setTimeout: o toque (vibração) no iPhone termina antes do render
+  const set = doneToday(), ext = GAMES.filter(g => !LOCAL_PROGRESS[g.id]), todos = ext.every(g => set.has(g.id));
+  ext.forEach(g => todos ? set.delete(g.id) : set.add(g.id));
+  state.history[today()] = [...set];
+  save();
+  render();
+}, 0));
+
 function streak() {
   const full = k => GAMES.every(g => (state.history[k] || []).includes(g.id));
   const d = new Date();
@@ -979,6 +994,9 @@ function render() {
   $("catNative").hidden = gridNative.hidden = nNat === 0;
   $("catNativeN").textContent = `${dNat}/${nNat}`;
   $("catExternalN").textContent = `${dExt}/${nExt}`;
+  const mt = $("marcaTodos");
+  mt.hidden = nExt === 0;
+  mt.textContent = nExt && dExt === nExt ? "Desmarcar todos" : "Marcar todos";
   const n = GAMES.filter(g => done.has(g.id)).length, total = GAMES.length;
   $("count").textContent = `${n}/${total}`;
   const pb = $("progBar");
