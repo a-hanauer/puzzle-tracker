@@ -1,7 +1,8 @@
 // Linha de informação do cabeçalho comum: "domingo, 27 set" ou, no jogo livre, "Partida extra".
 // Uso: ghInfo(elementoDaInfo, () => estaNoJogoLivre, assinar)
 // onde assinar(fn) chama fn sempre que o modo muda.
-// livre (opcional): { niveis, atual(), aoMudar(v), aoSortear() } — no jogo livre, mostra o seletor de dificuldade.
+// livre (opcional): { niveis, atual(), aoMudar(v), aoSortear(), diario } — no jogo livre, mostra o seletor de dificuldade;
+// diario: o nível do desafio do dia, junto da data ("quarta, 4 nov · normal"), como o "nível 3/7" dos jogos de lógica.
 window.ghInfo = function (el, isFree, subscribe, livre) {
   const W = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
   const M = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
@@ -9,7 +10,7 @@ window.ghInfo = function (el, isFree, subscribe, livre) {
     const d = new Date();
     if (isFree() && livre) { ghNivel(el, { ...livre, atual: livre.atual() }); return; }
     el.classList.remove("gh-nivel");
-    el.textContent = isFree() ? "Partida extra" : `${W[d.getDay()]}, ${d.getDate()} ${M[d.getMonth()]}`;
+    el.textContent = isFree() ? "Partida extra" : `${W[d.getDay()]}, ${d.getDate()} ${M[d.getMonth()]}${livre && livre.diario ? " · " + livre.diario : ""}`;
   };
   subscribe(update);
   document.addEventListener("visibilitychange", update);
