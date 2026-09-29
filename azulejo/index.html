@@ -380,12 +380,14 @@
       const [r0, c0, h, w] = t.split(".").map(Number);
       if ([r0, c0, h, w].some(x => !Number.isInteger(x)) || r0 < 0 || c0 < 0 || h < 1 || w < 1 || r0 + h > N || c0 + w > N) continue;
       const p = { r0, c0, h, w };
-      if (!out.some(q => overlap(p, q))) out.push(p);
+      if (!out.some(q => overlap(p, q)) && temEtiqueta(p)) out.push(p);   // azulejo sem etiqueta não vale
     }
     return out;
   }
   const overlap = (a, b) => a.r0 < b.r0 + b.h && b.r0 < a.r0 + a.h && a.c0 < b.c0 + b.w && b.c0 < a.c0 + a.w;
   const contains = (p, i) => { const r = (i / N) | 0, c = i % N; return r >= p.r0 && r < p.r0 + p.h && c >= p.c0 && c < p.c0 + p.w; };
+  // todo azulejo precisa ter pelo menos uma etiqueta (número e/ou formato) dentro
+  const temEtiqueta = p => clues.some(c => contains(p, c.i));
 
   // estado de um retalho: índice da etiqueta se estiver certo; -1 sem etiqueta; -2 errado
   function statusOf(p) {
@@ -566,6 +568,7 @@
     const inside = clues.filter(c => contains(p, c.i)), area = p.h * p.w;
     let label = `${p.w}×${p.h}`, cls = "";
     if (patches.some((q, k) => k !== drag?.edit && overlap(p, q))) { cls = "bad"; label += " · sobrepõe"; }
+    else if (!inside.length) { cls = "bad"; label += " · sem etiqueta"; }
     else if (inside.length > 1) { cls = "bad"; label += ` · ${inside.length} etiquetas`; }
     else if (inside.length === 1) {
       const c = inside[0];
@@ -582,7 +585,8 @@
   // Arrastar numa casa livre desenha um retalho novo. Arrastar começando dentro
   // de um retalho já feito o redesenha: o canto oposto ao dedo fica parado e o
   // retalho cresce ou encolhe acompanhando o dedo. Um retalho nunca passa por
-  // cima de outro (aí o desenho não vale). Para desfazer um retalho, é só tocar nele.
+  // cima de outro nem fica sem etiqueta dentro (aí o desenho não vale; um toque sem
+  // querer numa casa vazia não cria nada). Para desfazer um retalho, é só tocar nele.
   let drag = null;
   const rectNow = d => d.edit >= 0 ? rectOf(d.anchor, d.b) : rectOf(d.a, d.b);
   $("board").addEventListener("pointerdown", e => {
@@ -616,10 +620,11 @@
     preview(null);
     if (!d.moved) {
       if (d.edit >= 0) patches.splice(d.edit, 1);            // toque num retalho: desfaz
-      else patches.push(rectOf(d.a, d.a));                   // toque numa casa livre: retalho 1×1
+      else if (clueAt[d.a] >= 0) patches.push(rectOf(d.a, d.a));   // toque numa etiqueta livre: azulejo 1×1 (em casa vazia, nada)
     } else {
       const p = rectNow(d);
-      if (!patches.some((q, k) => k !== d.edit && overlap(p, q))) {
+      // não vale se passar por cima de outro azulejo ou se não tiver etiqueta dentro
+      if (!patches.some((q, k) => k !== d.edit && overlap(p, q)) && temEtiqueta(p)) {
         if (d.edit >= 0) patches[d.edit] = p; else patches.push(p);
       }
     }
