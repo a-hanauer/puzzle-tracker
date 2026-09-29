@@ -119,14 +119,14 @@
   .stage { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 0; }
   .stage > .fim-subrow { align-self: stretch; }
   .tab { position: relative; line-height: 0; flex-shrink: 0; }   /* moldura do tabuleiro: recebe os toques (e o label da vibração no iPhone) */
-  /* número alcançado no arrasto: um clarão suave e largo em volta, como uma luz que acende e apaga
-     (maior que o dedo, para ser visto mesmo com o dedo em cima do número) */
-  :root { --luz: #ff8a1f; --luz-a: .75; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --luz: #ffc978; --luz-a: .8; } }
-  :root[data-theme="dark"] { --luz: #ffc978; --luz-a: .8; }
-  .luz { pointer-events: none; animation: num-luz .42s cubic-bezier(.2, .7, .3, 1) both; }
-  @keyframes num-luz { 0% { opacity: 0; transform: scale(.7); } 12% { opacity: 1; } 100% { opacity: 0; transform: scale(1.05); } }
-  @media (prefers-reduced-motion: reduce) { .luz { display: none; } }
+  /* número alcançado no arrasto: a tela toda acende de leve e apaga, com fade (sem clarão seco) */
+  #piscada { position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0; background: var(--piscada); }
+  #piscada.on { animation: piscada .5s ease both; }
+  @keyframes piscada { 0% { opacity: 0; } 25% { opacity: 1; } 100% { opacity: 0; } }
+  :root { --piscada: rgba(255, 170, 110, .2); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --piscada: rgba(255, 215, 170, .13); } }
+  :root[data-theme="dark"] { --piscada: rgba(255, 215, 170, .13); }
+  @media (prefers-reduced-motion: reduce) { #piscada.on { animation-duration: .8s; } }
   #board { display: block; touch-action: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(40, 25, 10, .08)) drop-shadow(0 8px 20px rgba(40, 25, 10, .08)); }
   .b-bg { fill: var(--board); stroke: var(--board-edge); stroke-width: 1.5; }
   .b-weave { fill: url(#weave); }
@@ -249,6 +249,7 @@
   </label>
 </div>
 
+<div id="piscada" aria-hidden="true"></div>
 <div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro data-haptico><svg id="board" role="img" aria-label="Tabuleiro"></svg></div></div>
 
 <div class="controls" id="controls">
@@ -466,7 +467,7 @@
     // fio: os caminhos são criados aqui e atualizados por drawThread (também durante o arrasto)
     gThread.innerHTML = `<path class="th th-shadow"/><path class="th th-edge"/><path class="th th-main"/><path class="th th-twist"/><path class="th th-sheen"/>`;
     const head = path.at(-1);
-    let top = `<circle class="head" id="tipDot" r="27" style="display:none"/>`, luz = "";
+    let top = `<circle class="head" id="tipDot" r="27" style="display:none"/>`;
     // números: botões de roupa
     const nx = nextNum();
     for (let i = 0; i < C; i++) if (numAt[i]) {
@@ -474,15 +475,9 @@
       if (!finished && (numAt[i] === nx || (path.length === 1 && numAt[i] === 1))) top += `<circle class="next-ring" cx="${x}" cy="${y}" r="42"/>`;
       if (i === head && path.length > 1 && !finished) top += `<circle class="head-ring" cx="${x}" cy="${y}" r="40"/>`;
       const botao = `<circle class="btn-shadow" cx="${x}" cy="${y + 3}" r="33"/><circle class="btn" cx="${x}" cy="${y}" r="33"/><circle class="btn-rim" cx="${x}" cy="${y}" r="26.5"/><text class="btn-n" x="${x}" y="${y + 1}">${numAt[i]}</text>`;
-      // pulso ao alcançar o número no arrasto (o render refaz tudo a cada casa: a animação
-      // continua de onde estava, com atraso negativo, em vez de recomeçar)
-      const dt = performance.now() - pulso.t;
-      if (i === pulso.i && dt < 500) {   // luz suave e larga, que aparece em volta do dedo
-        luz = `<circle class="luz" cx="${x}" cy="${y}" r="260" fill="url(#luz-num)" style="animation-delay:-${Math.round(dt)}ms;transform-origin:${x}px ${y}px"/>`;
-      }
       top += botao;
     }
-    gTop.innerHTML = (luz ? `<defs><radialGradient id="luz-num"><stop offset="0" style="stop-color:var(--luz);stop-opacity:var(--luz-a)"/><stop offset=".4" style="stop-color:var(--luz);stop-opacity:calc(var(--luz-a) * .5)"/><stop offset="1" style="stop-color:var(--luz);stop-opacity:0"/></radialGradient></defs>` + luz : "") + top;
+    gTop.innerHTML = top;
     drawThread();
     // progresso
     $("progBar").style.width = (100 * path.length / C) + "%";
@@ -645,7 +640,12 @@
     for (let k = path.length - 1; k >= 0; k--) if (numAt[path[k]]) return k;
     return 0;
   }
-  let drag = null, pulso = { i: -1, t: 0 };
+  let drag = null;
+  // a tela inteira acende de leve e apaga (fade), ao alcançar um número no arrasto
+  function piscaTela() {
+    const el = $("piscada");
+    el.classList.remove("on"); void el.offsetWidth; el.classList.add("on");
+  }
   $("tab").addEventListener("pointerdown", e => {
     if (finished || !N) return;
     const i = cellAt(e);
@@ -680,7 +680,7 @@
     }
     if (changed) {
       const h = path.at(-1), num = numAt[h] > 0 && path.length > (drag.len || 0);   // chegou (avançando) num número
-      if (num && pulso.i !== h) pulso = { i: h, t: performance.now() };            // pulso visual (o iPhone não vibra no arrasto)
+      if (num) piscaTela();                    // aviso visual (o iPhone não vibra no arrasto); repete a cada chegada
       drag.len = path.length;
       if (window.jogosHaptico) jogosHaptico(num);
       render();
