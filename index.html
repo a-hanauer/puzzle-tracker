@@ -107,7 +107,7 @@
     padding-top: 1px; font-weight: 700; font-size: .95rem; font-stretch: 62.5%; letter-spacing: .06em; text-transform: uppercase; line-height: 1; }
   .dia-go .chev { display: block; }
   .dia-btn .chev { width: 14px; height: 14px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-  .dia-n { display: none; font-size: 1.05rem; font-stretch: 62.5%; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .dia-n { display: none; flex-shrink: 0; font-size: .95rem; font-stretch: 62.5%; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; padding-top: 1px; }
   /* tudo feito */
   .dia-btn.fim { padding: 10px 14px 10px 10px; background: var(--green); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 6px 18px rgba(63, 162, 76, .25); }
   .dia-btn.fim .prog { display: none; }
@@ -1135,7 +1135,7 @@ function renderDiaBtn(done, n, complete) {
   diaChave = chave;
   b.classList.toggle("fim", complete);
   if (complete) {
-    r.innerHTML = `<span class="dia-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12.6l4 4 8-8.6"/></svg></span><span class="dia-t"><b>Tudo feito</b><small>Resumo do dia</small></span><span class="dia-n">${total}/${total}</span>${CHEV_SVG}`;
+    r.innerHTML = `<span class="dia-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12.6l4 4 8-8.6"/></svg></span><span class="dia-t"><b>Tudo feito</b><small>${total} de ${total} jogos</small></span><span class="dia-n">Ver resumo do dia</span>${CHEV_SVG}`;
     b.dataset.jogo = "";
     return;
   }
