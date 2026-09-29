@@ -114,9 +114,17 @@
     -webkit-user-select: none; user-select: none;
   }
 
-  #cSun, #cMoon { font-variant-numeric: tabular-nums; }
-  #cSun.full, #cMoon.full { color: var(--good); }
-  #cSun i, #cMoon i { font-style: normal; }
+  /* contador de peças que faltam: número grande, rótulo e bolinhas (uma por peça) */
+  .cnt { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; font-variant-numeric: tabular-nums; min-width: 0; }
+  .cnt b { font-size: 1.5rem; font-weight: 800; letter-spacing: -.01em; }
+  .cnt small { font-size: .58rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+  .cnt .pips { display: flex; gap: 2px; margin-top: 4px; }
+  .cnt .pips s { width: 5px; height: 5px; border-radius: 50%; background: color-mix(in srgb, var(--ink) 16%, transparent); text-decoration: none; }
+  #cSun .pips s.on { background: var(--sun); }
+  #cMoon .pips s.on { background: var(--moon); }
+  .cnt .pips s.demais { background: var(--bad) !important; }
+  .cnt.full b, .cnt.full small { color: var(--good); }
+  .cnt.over b { color: var(--bad); }
   .linkbtn { border: none; background: none; padding: 0 0 0 2px; font: inherit; font-weight: 700; color: var(--accent); cursor: pointer; }
 
   /* ---------- tabuleiro ----------
@@ -395,8 +403,8 @@
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
   </button>
   <div class="seg" role="group" aria-label="Modo">
-    <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg class="sun"><use href="#i-orb"/></svg><span id="cSun"><b>0</b>/<i>9</i></span></button>
-    <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg class="moon"><use href="#i-luna"/></svg><span id="cMoon"><b>0</b>/<i>9</i></span></button>
+    <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg class="sun"><use href="#i-orb"/></svg><span class="cnt" id="cSun"><b>9</b><small>faltam</small><span class="pips"></span></span></button>
+    <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg class="moon"><use href="#i-luna"/></svg><span class="cnt" id="cMoon"><b>9</b><small>faltam</small><span class="pips"></span></span></button>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
       <svg class="ecl" viewBox="0 0 66 44" aria-hidden="true">
         <circle class="corona" cx="33" cy="22" r="19" fill="url(#g-corona)"/>
@@ -747,14 +755,19 @@
       el.setAttribute("aria-label", `linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}: ${nameOf(v)}${givens.has(i) ? " (revelada)" : ""}`);
       if (cells[i] === "S") s++; if (cells[i] === "M") m++;
     }
-    $("cSun").querySelector("b").textContent = s;
-    $("cMoon").querySelector("b").textContent = m;
-    $("cSun").querySelector("i").textContent = $("cMoon").querySelector("i").textContent = N;
-    $("cSun").classList.toggle("full", s === N);
-    $("cMoon").classList.toggle("full", m === N);
+    for (const [id, k] of [["cSun", s], ["cMoon", m]]) {   // quantas faltam, em número e em bolinhas
+      const el = $(id), falta = N - k;
+      el.querySelector("b").textContent = falta > 0 ? falta : falta === 0 ? "✓" : "+" + -falta;
+      el.querySelector("small").textContent = falta > 1 ? "faltam" : falta === 1 ? "falta" : falta === 0 ? "completo" : "demais";
+      el.querySelector(".pips").innerHTML = Array.from({ length: Math.max(N, k) }, (_, j) => `<s class="${j < k ? (j >= N ? "on demais" : "on") : ""}"></s>`).join("");
+      el.classList.toggle("full", falta === 0);
+      el.classList.toggle("over", falta < 0);
+    }
     $("undoBtn").disabled = finished || !history.length;
     $("clearBtn").disabled = finished;
     $("board").classList.toggle("won", finished);
+    if (finished) document.documentElement.dataset.modo = "M";   // concluído: tom azulado, o mesmo do céu do tabuleiro
+    else document.documentElement.dataset.modo = mode;
     ceu();
     document.querySelector(".controls").classList.toggle("done", finished);
     if (!finished) document.querySelector(".controls").classList.remove("play");
