@@ -7,7 +7,7 @@
    Depois de usada, a lâmpada fica apagada até o próximo desafio.
 
    Uso:  <script src="../comum/dica.js"></script>
-         const dica = ghDica({ usada: () => bool, bloqueada: () => bool, pedir: async () => "mensagem" });
+         const dica = ghDica({ usada: () => bool, bloqueada: () => bool, pedir: async () => "mensagem", antes: elemento? });
          dica.atualiza();   // depois de trocar de desafio, terminar etc.
    ========================================================================= */
 (function () {
@@ -32,7 +32,7 @@
 
   window.ghDica = function (opts) {
     const st = document.createElement("style"); st.textContent = CSS; document.head.append(st);
-    const ajuda = document.getElementById("helpBtn");
+    const ajuda = opts.antes || document.getElementById("helpBtn");
     const b = document.createElement("button");
     b.type = "button"; b.className = "gh-btn gh-dica"; b.id = "dicaBtn";
     b.setAttribute("aria-label", "Dica"); b.title = "Dica";

@@ -11,8 +11,9 @@
 <meta name="apple-mobile-web-app-title" content="5PILA">
 <link rel="icon" type="image/png" href="icon-claro.png?v=20">
 <link rel="apple-touch-icon" href="icon-claro.png?v=20">
-<script src="../comum/tema.js?v=114"></script>
-<script src="../comum/cabecalho.js?v=114"></script>
+<script src="../comum/tema.js?v=115"></script>
+<script src="../comum/cabecalho.js?v=115"></script>
+<script src="../comum/dica.js?v=115"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -356,7 +357,7 @@ header{
 #btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=114">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=115">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--accent-ink); --gh-fim-ink: var(--accent-ink); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -919,6 +920,7 @@ header{
   }
 
   function render(){
+    if(dica5) dica5.atualiza();
     var activeRow = state.guesses.length;
     for(var r=0;r<MAX_TRIES;r++){
       var submitted = r < state.guesses.length;
@@ -993,6 +995,36 @@ header{
     });
   }
   buildKeyboard();
+
+  // ---------- dica (comum/dica.js): bem fraca — pinta com a cor verdadeira uma letra
+  // de um palpite que você ainda não pintou (primeiro as que não existem na palavra,
+  // depois as deslocadas, por último as certas); se tudo já estiver pintado, corrige uma cor errada
+  var dica5 = null;
+  function pedirDica5(){
+    if(!state.guesses.length) return 'Faça um palpite primeiro: a dica pinta uma letra dele.';
+    var PESO = {absent:0, present:1, correct:2}, cand = [], errada = null;
+    for(var r=0;r<state.guesses.length;r++){
+      for(var c=0;c<WORD_LEN;c++){
+        var p = (state.paint[r] && state.paint[r][c]) || 0, auto = state.auto && state.auto[r] && state.auto[r][c] === 1;
+        var certo = statusToPaint(state.statuses[r][c]);
+        if(p === 0 || p === 4 || auto){ if(p !== certo) cand.push({r:r, c:c, v:certo, w:PESO[state.statuses[r][c]]}); }
+        else if(p !== certo && !errada) errada = {r:r, c:c, v:certo};
+      }
+    }
+    var alvo = null;
+    if(cand.length){ cand.sort(function(a,b){ return a.w - b.w; }); var menor = cand.filter(function(x){ return x.w === cand[0].w; }); alvo = menor[Math.floor(Math.random()*menor.length)]; }
+    else alvo = errada;
+    if(!alvo) return 'Todas as letras dos seus palpites já estão com a cor certa.';
+    state.paint[alvo.r][alvo.c] = alvo.v;
+    if(state.auto && state.auto[alvo.r]) state.auto[alvo.r][alvo.c] = 0;
+    state.dica = true;
+    propagateAll();
+    if(!practiceMode) save('game:'+diff, state);
+    render();
+    var letra = state.guesses[alvo.r][alvo.c].toUpperCase();
+    return 'O ' + letra + ' do ' + (alvo.r+1) + 'º palpite ' + (alvo.v === 1 ? 'não está na palavra.' : alvo.v === 2 ? 'está na palavra, mas em outra posição.' : 'está na posição certa.');
+  }
+  dica5 = ghDica({ usada: function(){ return !!(state && state.dica); }, bloqueada: function(){ return !state || !!state.finished; }, pedir: pedirDica5, antes: document.getElementById('btn-help-top') });
   onTap(document.getElementById('btn-wipe'), function(){ clearAllPaint(); toast('Cores limpas'); });
   function renderKeyboard(){
     var mapG = {}, mapY = {}, mapR = {}, used = {};
@@ -1216,7 +1248,7 @@ header{
   /* ============ COMPARTILHAR ============ */
   function shareText(){
     var emojiMap = {correct:'🟩', present:'🟨', absent:'⬛'};
-    var lines = ['5PILA #'+state.dayNum+(state.won?' '+state.guesses.length+'/8':' X/8')];
+    var lines = ['5PILA #'+state.dayNum+(state.won?' '+state.guesses.length+'/8':' X/8')+(state.dica?' 💡':'')];
     for(var i=0;i<state.statuses.length;i++){
       lines.push(state.statuses[i].map(function(s){return emojiMap[s];}).join(''));
     }
@@ -1301,7 +1333,7 @@ header{
       w.appendChild(t);
     });
     var n = state.guesses.length;
-    var detalhe = state.won ? ('em ' + n + ' de ' + MAX_TRIES + ' tentativas') : ('você usou as ' + MAX_TRIES + ' tentativas');
+    var detalhe = (state.won ? ('em ' + n + ' de ' + MAX_TRIES + ' tentativas') : ('você usou as ' + MAX_TRIES + ' tentativas')) + (state.dica ? ' · com dica' : '');
     document.getElementById('end-sub').textContent = (practiceMode ? 'Jogo livre' : '#' + state.dayNum) + ' · ' + detalhe;
     document.getElementById('btn-share2').hidden = practiceMode;
     document.getElementById('btn-again').hidden = !practiceMode;
@@ -1361,8 +1393,8 @@ header{
     fn => { new MutationObserver(fn).observe(document.getElementById("mode-switch"), { attributes: true, attributeFilter: ["class"] }); window.addEventListener("quinhentos-livre", fn); },
     window.quinhentosLivre);
 </script>
-<script src="../comum/catalogo.js?v=114"></script>
-<script src="../comum/celebra.js?v=114"></script>
-<script src="../comum/proximo.js?v=114" data-jogo="quinhentos"></script>
+<script src="../comum/catalogo.js?v=115"></script>
+<script src="../comum/celebra.js?v=115"></script>
+<script src="../comum/proximo.js?v=115" data-jogo="quinhentos"></script>
 </body>
 </html>

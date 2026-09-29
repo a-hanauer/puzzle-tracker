@@ -48,7 +48,7 @@ const LOCAL_PROGRESS = {
     if (!p || !Array.isArray(p.guesses) || !p.guesses.length) return null;
     const max = 14, tries = p.guesses.length;
     const won = p.guesses.some(g => g.word === p.secret);
-    return { tries, max, won, finished: won || tries >= max };
+    return { tries, max, won, finished: won || tries >= max, dica: !!p.dica };
   },
   quinhentos() {
     const p = readJSON("quinhentao:game:padrao");
@@ -56,7 +56,7 @@ const LOCAL_PROGRESS = {
     const today0 = new Date(); today0.setHours(0, 0, 0, 0);
     const dayNum = Math.floor((today0 - new Date(2024, 0, 1)) / 86400000) + 1;
     if (!p || p.dayNum !== dayNum || !Array.isArray(p.guesses) || !p.guesses.length) return null;
-    return { tries: p.guesses.length, max: 8, won: !!p.won, finished: !!p.finished };
+    return { tries: p.guesses.length, max: 8, won: !!p.won, finished: !!p.finished, dica: !!p.dica };
   },
   eclipse() {
     // desafio #1 = 27/09/2026 (mesma conta do jogo)

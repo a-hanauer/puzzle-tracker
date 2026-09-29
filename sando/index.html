@@ -2,8 +2,9 @@
 <html lang="pt-BR" class="gh-carregando" data-fixa>
 <head>
 <meta charset="UTF-8">
-<script src="../comum/tema.js?v=114"></script>
-<script src="../comum/cabecalho.js?v=114"></script>
+<script src="../comum/tema.js?v=115"></script>
+<script src="../comum/cabecalho.js?v=115"></script>
+<script src="../comum/dica.js?v=115"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -456,7 +457,7 @@
   .mode-switch-track{border:0;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=114">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=115">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: #fff; --fim-btn-border: 0; --gh-fim-ink: #fff; --gh-fim-border: 0; --gh-fim-border-lose: 0; --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
@@ -731,7 +732,8 @@
         // mudar de tamanho) e o segredo do dia, para invalidar o progresso
         // caso a lista de segredos mude e o recheio do dia seja outro.
         secret: state.secret,
-        guesses: state.guesses.map(function(g){ return {word: g.word}; })
+        guesses: state.guesses.map(function(g){ return {word: g.word}; }),
+        dica: state.dica ? state.dica.word : null
       }));
     }catch(e){}
   }
@@ -748,7 +750,7 @@
 
   function rebuildBoundsFromGuesses(){
     state.low = null; state.high = null;
-    state.guesses.forEach(function(g){
+    state.guesses.concat(state.dica ? [state.dica] : []).forEach(function(g){   // a dica conta como um limite a mais
       if(g.cmp < 0 && (!state.low || g.idx > state.low.idx)) state.low = {word:g.word, idx:g.idx};
       if(g.cmp > 0 && (!state.high || g.idx < state.high.idx)) state.high = {word:g.word, idx:g.idx};
     });
@@ -967,6 +969,7 @@
   }
 
   function render(){
+    if(dicaS) dicaS.atualiza();
     document.getElementById('tries-label').textContent = state.won
       ? state.guesses.length
       : Math.min(state.guesses.length+1, MAX_GUESSES);
@@ -1135,7 +1138,7 @@
     var daily = state.mode !== 'practice';
     var d = new Date(), MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
     document.getElementById('end-text').textContent = state.won ? 'Sando completo!' : 'Não foi dessa vez';
-    var detalhe = state.won ? ('em ' + state.guesses.length + ' de ' + MAX_GUESSES + ' tentativas') : ('você usou as ' + MAX_GUESSES + ' tentativas');
+    var detalhe = (state.won ? ('em ' + state.guesses.length + ' de ' + MAX_GUESSES + ' tentativas') : ('você usou as ' + MAX_GUESSES + ' tentativas')) + (state.dica ? ' · com dica' : '');
     document.getElementById('end-sub').textContent = (daily ? d.getDate() + ' ' + MESES[d.getMonth()] : 'Jogo livre') + ' · ' + detalhe;
     var fatia = document.getElementById('end-word');
     fatia.innerHTML = state.secret.split('').map(function(ch){ return letterTile(ch, ''); }).join('');
@@ -1149,7 +1152,7 @@
   function buildShareText(){
     var lines = state.guesses.map(function(g){ return g.cmp===0 ? '🟩' : (g.cmp<0 ? '⬆️' : '⬇️'); });
     var header = 'SANDO ' + (state.mode==='daily' ? state.dateKey : 'jogo livre') +
-      ' ' + (state.won ? state.guesses.length : 'X') + '/' + MAX_GUESSES;
+      ' ' + (state.won ? state.guesses.length : 'X') + '/' + MAX_GUESSES + (state.dica ? ' 💡' : '');
     return header + '\n' + lines.join('') + '\nhttps://a-hanauer.github.io/puzzle-tracker/sando/';
   }
 
@@ -1180,6 +1183,11 @@
   function loadModeState(mode){
     var prog = mode === 'daily' ? loadDailyProgress() : null;
     newGame(mode);
+    if(prog && prog.dica && (!prog.secret || prog.secret === state.secret)){   // limite dado pela dica
+      var di = idx(prog.dica);
+      if(di !== -1 && di !== state.secretIdx) state.dica = {word: prog.dica, idx: di, cmp: di < state.secretIdx ? -1 : 1};
+      rebuildBoundsFromGuesses();
+    }
     if(prog && prog.guesses && prog.guesses.length){
       // Os índices salvos podem estar defasados se o dicionário mudou de
       // tamanho desde a última partida. Por isso recalculamos idx e cmp a
@@ -1244,6 +1252,23 @@
     applyThemeTag();
   })();
 
+  /* ---------- dica (comum/dica.js): aperta o intervalo um pouco (≈12% do que falta),
+     puxando para perto do recheio o limite que estiver mais longe dele ---------- */
+  var dicaS = null;
+  function pedirDicaSando(){
+    var lo = state.low ? state.low.idx : 0, hi = state.high ? state.high.idx : DICT.length - 1, s = state.secretIdx;
+    var passo = Math.max(1, Math.round((hi - lo) * 0.12)), novo, cmp;
+    if(s - lo >= hi - s){ novo = Math.min(s - 1, lo + passo); cmp = -1; if(novo <= lo) return 'O intervalo já está bem apertado — sem espaço para dica.'; }
+    else { novo = Math.max(s + 1, hi - passo); cmp = 1; if(novo >= hi) return 'O intervalo já está bem apertado — sem espaço para dica.'; }
+    // prefere uma palavra comum (da lista de recheios) perto desse ponto, do mesmo lado do recheio
+    var boas = GOOD_SECRET_INDICES.filter(function(k){ return cmp < 0 ? (k > lo && k < s) : (k < hi && k > s); });
+    if(boas.length){ novo = boas.reduce(function(m, k){ return Math.abs(k - novo) < Math.abs(m - novo) ? k : m; }, boas[0]); }
+    state.dica = {word: DICT[novo], idx: novo, cmp: cmp};
+    rebuildBoundsFromGuesses(); saveDailyProgress(); render();
+    return 'O limite de ' + (cmp < 0 ? 'cima' : 'baixo') + ' avançou para ' + DICT[novo].toUpperCase() + '.';
+  }
+  dicaS = ghDica({ usada: function(){ return !!(state && state.dica); }, bloqueada: function(){ return !state || state.over; }, pedir: pedirDicaSando, antes: document.getElementById('help-btn') });
+
   /* ---------- inicialização ---------- */
   loadModeState('daily');
   // desafio do dia já terminado: a faixa de fim fica à mostra; a bandeja só abre pelo toque nela
@@ -1266,8 +1291,8 @@
     fn => { document.getElementById("practice-toggle").addEventListener("change", () => setTimeout(fn)); window.addEventListener("sanduba-livre", fn); },
     window.sandubaLivre);
 </script>
-<script src="../comum/catalogo.js?v=114"></script>
-<script src="../comum/celebra.js?v=114"></script>
-<script src="../comum/proximo.js?v=114" data-jogo="sanduba"></script>
+<script src="../comum/catalogo.js?v=115"></script>
+<script src="../comum/celebra.js?v=115"></script>
+<script src="../comum/proximo.js?v=115" data-jogo="sanduba"></script>
 </body>
 </html>
