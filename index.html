@@ -362,8 +362,8 @@
     transform: rotate(90deg); transform-origin: 18px 18px;
     stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .3s .15s;
   }
-  .badge.finished .mr-arc { fill: var(--muted); stroke: var(--muted); }
-  .badge.finished { opacity: .6; }
+  /* jogo da casa concluído: o cartão não esmaece, então o check verde é o que marca o feito */
+  .badge.finished .mr-arc { fill: var(--green); stroke: var(--green); }
   .badge.finished .mr-check { stroke-dashoffset: 0; }
 
 
