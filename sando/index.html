@@ -1018,9 +1018,11 @@
     }
 
     var inputRow = document.getElementById('row-input');
-    inputRow.className = 'tile-row ' + (state.won ? 'win' : 'input');
+    // partida encerrada: a palavra secreta fica na linha do meio — verde se acertou, vermelha se não
+    var perdeu = state.over && !state.won;
+    inputRow.className = 'tile-row ' + (state.won ? 'win' : perdeu ? 'lose' : 'input');
     var html = '';
-    if(state.won){
+    if(state.won || perdeu){
       for(var i=0;i<5;i++){
         html += letterTile(state.secret[i], '');
       }
