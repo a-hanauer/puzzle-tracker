@@ -30,7 +30,7 @@ const BASE_GAMES = [
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon-claro.png?v=12", iconDark: "eclipse/icon-escuro.png?v=12", iconFull: true, cor: ["#c6ccf1", "#161b3b", "#20243c", "#ebecf4"] },
   { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=10", iconDark: "novelo/icon-escuro.png?v=10", iconFull: true, cor: ["#f1c6c9", "#3b1619", "#3c2022", "#f4ebec"] },
   { id: "retalhos",   name: "Azulejo",    emoji: "🟦", desc: "Uma parede de painéis",         url: "azulejo/", icon: "azulejo/icon.png?v=11", iconDark: "azulejo/icon-escuro.png?v=11", iconFull: true, cor: ["#c6e5f1", "#16313b", "#20343c", "#ebf2f4"] },
-  { id: "pingado",    name: "Cortado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "cortado/", icon: "cortado/icon.png?v=10", iconDark: "cortado/icon-escuro.png?v=10", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
+  { id: "pingado",    name: "Cortado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "cortado/", icon: "cortado/icon.png?v=11", iconDark: "cortado/icon-escuro.png?v=11", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
 ];
 
 /* ============================================================ */
