@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=107"></script>
-<script src="../comum/cabecalho.js?v=107"></script>
+<script src="../comum/tema.js?v=108"></script>
+<script src="../comum/cabecalho.js?v=108"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -335,7 +335,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=107">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=108">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -731,7 +731,11 @@
     let s = 0, m = 0;
     for (let i = 0; i < N * N; i++) {
       const v = shown(i), el = cellEls[i];
-      if (el.dataset.v !== v) { el.innerHTML = ICON[v]; el.dataset.v = v; }
+      if (el.dataset.v !== v) {                 // troca só o desenho: o label da vibração (iPhone) fica
+        el.querySelectorAll(":scope > svg").forEach(s => s.remove());
+        if (ICON[v]) el.insertAdjacentHTML("afterbegin", ICON[v]);
+        el.dataset.v = v;
+      }
       el.classList.toggle("sym", cells[i] === "S" || cells[i] === "M");
       el.classList.toggle("bad", bad.has(i));
       el.classList.toggle("pop", i === popIdx);
@@ -821,7 +825,7 @@
     return CHAR[man | b];                      // senão, anota o ponto (mesmo onde o jogo já marcou)
   }
   let drag = null;
-  const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.classList.contains("cell") ? +el.dataset.i : -1; };
+  const cellAt = (x, y) => { const el = document.elementFromPoint(x, y), c = el && el.closest && el.closest(".cell"); return c ? +c.dataset.i : -1; };
 
   $("board").addEventListener("pointerdown", e => {
     if (finished) return;
@@ -973,8 +977,8 @@
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 })();
 </script>
-<script src="../comum/catalogo.js?v=107"></script>
-<script src="../comum/celebra.js?v=107"></script>
-<script src="../comum/proximo.js?v=107" data-jogo="eclipse"></script>
+<script src="../comum/catalogo.js?v=108"></script>
+<script src="../comum/celebra.js?v=108"></script>
+<script src="../comum/proximo.js?v=108" data-jogo="eclipse"></script>
 </body>
 </html>

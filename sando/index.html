@@ -2,8 +2,8 @@
 <html lang="pt-BR" class="gh-carregando">
 <head>
 <meta charset="UTF-8">
-<script src="../comum/tema.js?v=107"></script>
-<script src="../comum/cabecalho.js?v=107"></script>
+<script src="../comum/tema.js?v=108"></script>
+<script src="../comum/cabecalho.js?v=108"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -426,12 +426,12 @@
   .dots-row::after{content:'';position:absolute;left:6px;top:50%;height:3px;margin-top:-1.5px;border-radius:3px;
     width:calc((100% - 12px) * var(--prog, 0));background:var(--accent);opacity:.55;transition:width .35s ease;}
   .dots-row.won::after{background:var(--good);}
-  /* jogo acabou: a linha do tempo inteira numa cor só — verde se acertou, vermelha se não */
+  /* jogo acabou: o trecho percorrido numa cor só — verde se acertou, vermelha se não */
   .dots-row.fim-ganhou::after, .dots-row.fim-perdeu::after{opacity:1;}
   .dots-row.fim-ganhou::after{background:var(--good);}
   .dots-row.fim-perdeu::after{background:var(--bad);}
-  .dots-row.fim-ganhou .dot-pip::after{background:var(--good);box-shadow:none;}
-  .dots-row.fim-perdeu .dot-pip::after{background:var(--bad);box-shadow:none;}
+  .dots-row.fim-ganhou .dot-pip.used::after, .dots-row.fim-ganhou .dot-pip.win::after{background:var(--good);box-shadow:none;}
+  .dots-row.fim-perdeu .dot-pip.used::after{background:var(--bad);box-shadow:none;}
   .dots-row.fim-ganhou .dot-pip.win::after{box-shadow:0 0 0 3px var(--good-soft);}
   .timeline-block:has(.fim-ganhou) .tries-count{color:var(--good);}
   .timeline-block:has(.fim-perdeu) .tries-count{color:var(--bad);}
@@ -456,7 +456,7 @@
   .mode-switch-track{border:0;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=107">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=108">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: #fff; --fim-btn-border: 0; --gh-fim-ink: #fff; --gh-fim-border: 0; --gh-fim-border-lose: 0; --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
@@ -983,7 +983,7 @@
       dotsRow.appendChild(d);
     }
     // trilho preenchido até a tentativa atual (ou até a última, se o jogo acabou)
-    var ate = state.over ? MAX_GUESSES - 1 : state.guesses.length;   // jogo acabou: a linha toda
+    var ate = state.over ? state.guesses.length - 1 : state.guesses.length;   // jogo acabou: até o último palpite
     dotsRow.style.setProperty('--prog', Math.max(0, Math.min(1, ate / (MAX_GUESSES - 1))));
     dotsRow.classList.toggle('won', !!state.won);
     dotsRow.classList.toggle('fim-ganhou', !!state.over && !!state.won);   // linha e bolinhas todas verdes
@@ -1101,7 +1101,7 @@
     btn.className = 'kb-key ' + cls;
     if(label.indexOf('<') === 0){ btn.innerHTML = label; } else { btn.textContent = label; }
     btn.disabled = disabled;
-    btn.addEventListener('click', function(){ onClick(); btn.blur(); });
+    btn.addEventListener('click', function(){ setTimeout(function(){ onClick(); btn.blur(); }, 0); });   // depois do clique: o label da vibração (iPhone) precisa terminar
     return btn;
   }
   function renderKbRow(id, letters, baseDisabled, extra){
@@ -1113,7 +1113,7 @@
       btn.className = 'kb-key';
       btn.textContent = ch;
       btn.disabled = baseDisabled;
-      btn.addEventListener('click', function(){ typeLetter(ch); btn.blur(); });
+      btn.addEventListener('click', function(){ setTimeout(function(){ typeLetter(ch); btn.blur(); }, 0); });
       row.appendChild(btn);
     });
     if(extra && extra.after){ row.appendChild(extra.after); }
@@ -1266,8 +1266,8 @@
     fn => { document.getElementById("practice-toggle").addEventListener("change", () => setTimeout(fn)); window.addEventListener("sanduba-livre", fn); },
     window.sandubaLivre);
 </script>
-<script src="../comum/catalogo.js?v=107"></script>
-<script src="../comum/celebra.js?v=107"></script>
-<script src="../comum/proximo.js?v=107" data-jogo="sanduba"></script>
+<script src="../comum/catalogo.js?v=108"></script>
+<script src="../comum/celebra.js?v=108"></script>
+<script src="../comum/proximo.js?v=108" data-jogo="sanduba"></script>
 </body>
 </html>

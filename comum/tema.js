@@ -50,32 +50,25 @@
   // vibração, mas alternar um <input type="checkbox" switch> dá um toque
   // háptico. O iOS só aceita isso dentro de um gesto do usuário, que no toque
   // conta quando o dedo sai da tela (touchend/pointerup), não quando encosta.
+  // ---------- vibração ----------
+  // Android: navigator.vibrate, chamado pelos jogos a cada toque e a cada casa do arrasto.
+  // iPhone: o Safari não tem API de vibração. O único jeito é o próprio dedo tocar num
+  // interruptor (<input type="checkbox" switch>): desde o iOS 26.5, um clique feito pelo
+  // código não vibra mais. Por isso, cada tecla, casa e tabuleiro ganha por cima um
+  // <label> transparente com um interruptor escondido: o toque de verdade cai no label,
+  // o iPhone vibra, e o clique segue normalmente para a tecla/casa (o label está dentro dela).
+  // Limite do iPhone: só vibra em toques; no meio de um arrasto não há clique, então não vibra.
   try {
-    var ultimoHap = 0, chave = null;
-    // o interruptor fica na página o tempo todo, invisível e fora da tela (não
-    // display:none: o iPhone só vibra ao alternar um interruptor "de verdade")
-    var interruptor = function () {
-      if (chave && chave.isConnected) return chave;
-      chave = document.createElement("label");
-      chave.setAttribute("aria-hidden", "true");
-      chave.style.cssText = "position:fixed;left:-60px;top:0;width:40px;height:24px;opacity:0.01;pointer-events:none;overflow:hidden;z-index:-1";
-      var inp = document.createElement("input");
-      inp.type = "checkbox"; inp.setAttribute("switch", ""); inp.tabIndex = -1;
-      chave.appendChild(inp);
-      (document.body || document.documentElement).appendChild(chave);
-      return chave;
-    };
+    var IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    var ultimoHap = 0;
     var haptico = function () {
       var agora = Date.now();
-      if (agora - ultimoHap < 35) return;          // touchend e pointerup do mesmo toque
+      if (agora - ultimoHap < 35) return;
       ultimoHap = agora;
-      if (navigator.vibrate) { try { navigator.vibrate(8); } catch (e) {} return; }
-      try { interruptor().click(); } catch (e) {}
+      if (navigator.vibrate) { try { navigator.vibrate(8); } catch (e) {} }
     };
     window.jogosHaptico = haptico;
-    document.addEventListener("DOMContentLoaded", interruptor);
-    // teclas dos jogos de letras e o fim de cada toque/arrasto nos tabuleiros
-    // (o fim do toque é quando o iPhone sempre aceita vibrar)
+    // Android: teclas e fim de cada toque nos tabuleiros
     var naTecla = function (e) {
       var t = e.target && e.target.closest ? e.target : null;
       if (!t) return;
@@ -83,7 +76,29 @@
       if ((k && !k.disabled) || t.closest("[data-tabuleiro], #board")) haptico();
     };
     document.addEventListener("touchend", naTecla, true);
-    document.addEventListener("pointerup", function (e) { if (e.pointerType !== "touch") naTecla(e); }, true);
+    if (IOS) {
+      var ALVOS = ".key, .kb-key, .tile.paintable, .cell, [data-haptico], .controls > button, .seg > button:not(.done-bar), .gh-btn, .fim-btn, .fx";
+      var gatilho = function (el) {
+        if (el.querySelector(":scope > [data-haptic-trigger]")) return;
+        var lb = document.createElement("label");
+        lb.setAttribute("data-haptic-trigger", ""); lb.setAttribute("aria-hidden", "true");
+        lb.style.cssText = "position:absolute;inset:0;z-index:2;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border-radius:inherit";
+        var sw = document.createElement("input");
+        sw.type = "checkbox"; sw.setAttribute("switch", ""); sw.tabIndex = -1;
+        sw.style.cssText = "position:absolute;width:1px;height:1px;margin:0;visibility:hidden";
+        sw.addEventListener("click", function (e) { e.stopPropagation(); });   // o label repassa o clique ao interruptor: essa cópia não conta para a tecla
+        lb.appendChild(sw);
+        if (getComputedStyle(el).position === "static") el.style.position = "relative";
+        el.appendChild(lb);
+      };
+      var pendente = false;
+      var varre = function () { pendente = false; document.querySelectorAll(ALVOS).forEach(gatilho); };
+      var agenda = function () { if (!pendente) { pendente = true; requestAnimationFrame(varre); } };
+      document.addEventListener("DOMContentLoaded", function () {
+        varre();
+        new MutationObserver(agenda).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+      });
+    }
   } catch (e) {}
   if (window.matchMedia) { try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", trocaIcones); } catch (e) {} }
   document.addEventListener("DOMContentLoaded", trocaIcones);
