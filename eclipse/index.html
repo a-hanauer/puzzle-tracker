@@ -296,9 +296,9 @@
      onde nem sol nem lua cabem, ela fica bem apagada nos dois modos */
   .cell.fora::before, .cell.nada::before {
     content: ""; position: absolute; inset: 0; background: var(--veil); pointer-events: none;
-    opacity: .2; transition: opacity .25s ease;
+    opacity: .07; transition: opacity .25s ease;
   }
-  .cell.nada::before { opacity: 1; }
+  .cell.nada::before { opacity: .45; }
   .cell.nada > svg.dot { display: none; }
   .btn {
     width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer;
