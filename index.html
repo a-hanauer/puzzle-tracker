@@ -15,6 +15,7 @@
 <script src="comum/tema.js?v=119"></script>
 <script src="comum/catalogo.js?v=119"></script>
 <script src="comum/celebra.js?v=119"></script>
+<script src="comum/recorde.js?v=119"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -316,7 +317,7 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .status {
-    height: 1.1em; margin-top: -4px;
+    min-height: 22px; margin-top: -2px;
     font-size: .72rem; font-weight: 600; color: var(--muted);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
   }
@@ -326,6 +327,19 @@
   .status .si { width: 13px; height: 13px; flex: none; }
   .status .dim { opacity: .55; font-weight: 500; }
   .status .lose { display: inline-flex; align-items: center; gap: 3px; color: #e5484d; }
+  /* jogos da casa: o resultado numa pílula clara (translúcida sobre a cor do cartão), separada do título.
+     Antes de jogar: o nível do dia; jogando: o progresso; no fim: o resultado, com troféu (recorde) e lâmpada (dica). */
+  .pl { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 99px;
+    font-size: .74rem; font-weight: 700; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums;
+    background: color-mix(in srgb, var(--surface) 78%, transparent); color: var(--tile-ink, var(--text)); box-shadow: 0 1px 2px rgba(0, 0, 0, .06); }
+  .pl .si { width: 12px; height: 12px; }
+  .pl .dim { opacity: .6; font-weight: 600; }
+  .pl .tr { color: #c8920a; margin-left: 1px; }
+  .pl.leve { background: color-mix(in srgb, var(--surface) 38%, transparent); color: var(--tile-muted, var(--muted)); box-shadow: none; }
+  .pl.perdeu { color: #d13b40; }
+  .pl .nv { display: inline-flex; gap: 2px; margin-left: 3px; }
+  .pl .nv i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .3; }
+  .pl .nv i.on { opacity: 1; }
   .tag {
     font-size: .58rem; font-weight: 700; letter-spacing: .05em;
     color: var(--muted); background: var(--surface-2);
@@ -887,19 +901,36 @@ const MINI_CIRC = 2 * Math.PI * 14;
 // ícones pequenos do marcador (cronômetro, vitória, derrota)
 const ST_ICON = {
   tempo: '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V10M10 3h4M18.5 6.5l1.5-1.5"/></g></svg>',
-  ok: '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  erro: '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+  ok: '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  erro: '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>',
+  meio: '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.6" opacity=".35"/><path d="M12 4a8 8 0 0 1 8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+  trofeu: '<svg class="si tr" viewBox="0 0 24 24" fill="currentColor" aria-label="recorde"><path d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V18h3v3H8v-3h3v-3.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3V3zm0 4H6v1a2 2 0 0 0 1 1.7V7zm10 0v2.7A2 2 0 0 0 18 8V7h-1z"/></svg>',
+  dica: '<svg class="si" viewBox="0 0 24 24" fill="currentColor" aria-label="com dica"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zM9 20h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/></svg>',
 };
-function statusText(g, p, isDone) {
-  if (p) {
-    if (!p.finished) return `<span class="dim">${p.tries}/${p.max}</span>`;
-    if (p.time != null) return `${ST_ICON.tempo}${fmtTime(p.time)}`;
-    return p.won
-      ? `${ST_ICON.ok}${p.tries}<span class="dim">/${p.max}</span>`
-      : `<span class="lose">${ST_ICON.erro}${p.tries}/${p.max}</span>`;
+// jogos de lógica: nível = dia da semana (segunda = 1); número do desafio conta a partir da estreia de cada um
+const LOGICA = { eclipse: { pre: "eclipse:", ep: [2026, 8, 27] }, novelo: { pre: "novelo:", ep: [2026, 8, 28] }, retalhos: { pre: "retalhos:", ep: [2026, 8, 28] }, pingado: { pre: "pingado:", ep: [2026, 8, 28] } };
+function recordeHoje(g, p) {
+  const lg = LOGICA[g.id];
+  if (lg && window.recordeDoDia) {
+    const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+    return !!recordeDoDia(lg.pre, Math.round((t0 - new Date(lg.ep[0], lg.ep[1], lg.ep[2])) / 86400000) + 1);
   }
-  if (isDone) return "Feito";
-  return g.app ? '<span class="tag">APP</span>' : "";
+  return !lg && p.won && window.recordePalavras ? !!recordePalavras(g.id, p.tries) : false;
+}
+function statusText(g, p, isDone) {
+  if (!LOCAL_PROGRESS[g.id]) return isDone ? "Feito" : (g.app ? '<span class="tag">APP</span>' : "");
+  if (!p) {                                             // ainda não jogado: o nível do dia
+    if (isDone) return `<span class="pl">Feito</span>`;
+    if (!LOGICA[g.id]) return `<span class="pl leve">normal</span>`;
+    const n = (new Date().getDay() + 6) % 7 + 1;
+    return `<span class="pl leve">nível ${n}<span class="nv" aria-hidden="true">${[...Array(7)].map((_, i) => `<i${i < n ? ' class="on"' : ""}></i>`).join("")}</span></span>`;
+  }
+  if (!p.finished) return `<span class="pl leve">${ST_ICON.meio}${p.tries}/${p.max}</span>`;
+  const extra = (p.won && recordeHoje(g, p) ? ST_ICON.trofeu : "") + (p.dica ? ST_ICON.dica : "");
+  if (p.time != null) return `<span class="pl">${ST_ICON.tempo}${fmtTime(p.time)}${extra}</span>`;
+  return p.won
+    ? `<span class="pl">${ST_ICON.ok}${p.tries}<span class="dim">/${p.max}</span>${extra}</span>`
+    : `<span class="pl perdeu">${ST_ICON.erro}${p.tries}/${p.max}${extra}</span>`;
 }
 
 function render() {
