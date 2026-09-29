@@ -190,7 +190,7 @@ header{
   border-color:transparent;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45);
 }
 .cnt{
-  display:flex;align-items:stretch;justify-content:center;padding:0 5px;
+  display:flex;align-items:stretch;justify-content:center;padding:0;overflow:hidden;
   border-radius:13px;background:var(--panel);border:1.5px solid var(--line);
   transition:background .2s ease,border-color .2s ease;
 }
@@ -201,10 +201,11 @@ header{
   line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums;
 }
 .count-cell.cg{color:var(--accent);}
-/* divisórias finas entre os números, como num odômetro */
-.cnt .count-cell + .count-cell{box-shadow:inset 1px 0 0 color-mix(in srgb,var(--line) 85%,transparent);margin:7px 0;}
-.cnt .count-cell:first-child,.cnt .count-cell:last-child{margin:7px 0;}
-.cnt .count-cell{padding:0 3px;}
+/* odômetro: três casas de mesma largura, cada número centrado na sua casa
+   (o espaço até a borda é o mesmo que até a divisória), e as divisórias
+   vão de fora a fora, de borda a borda do contador */
+.cnt .count-cell{padding:0;}
+.cnt .count-cell + .count-cell{box-shadow:inset 1.5px 0 0 var(--line);}
 .cnt.empty .count-cell + .count-cell{box-shadow:none;}
 .count-cell.cy{color:var(--present);}
 .count-cell.cr{color:var(--danger);}
