@@ -284,21 +284,21 @@
   .cell > svg.dim { opacity: .4; }
 
   /* dia e noite: o fundo da página esquenta no modo sol e esfria no modo lua */
-  html[data-modo="S"], html[data-modo="S"] body { --bg: #f8f0dc; }
-  html[data-modo="M"], html[data-modo="M"] body { --bg: #e6e9f8; }
+  html[data-modo="S"], html[data-modo="S"] body { --bg: #faecc8; }
+  html[data-modo="M"], html[data-modo="M"] body { --bg: #dfe5fb; }
   @media (prefers-color-scheme: dark) {
-    html[data-modo="S"]:not([data-theme="light"]), html[data-modo="S"]:not([data-theme="light"]) body { --bg: #1a1508; }
-    html[data-modo="M"]:not([data-theme="light"]), html[data-modo="M"]:not([data-theme="light"]) body { --bg: #0a0f24; }
+    html[data-modo="S"]:not([data-theme="light"]), html[data-modo="S"]:not([data-theme="light"]) body { --bg: #2a1e07; }
+    html[data-modo="M"]:not([data-theme="light"]), html[data-modo="M"]:not([data-theme="light"]) body { --bg: #0a1438; }
   }
-  html[data-theme="dark"][data-modo="S"], html[data-theme="dark"][data-modo="S"] body { --bg: #1a1508; }
-  html[data-theme="dark"][data-modo="M"], html[data-theme="dark"][data-modo="M"] body { --bg: #0a0f24; }
+  html[data-theme="dark"][data-modo="S"], html[data-theme="dark"][data-modo="S"] body { --bg: #2a1e07; }
+  html[data-theme="dark"][data-modo="M"], html[data-theme="dark"][data-modo="M"] body { --bg: #0a1438; }
   /* foco sutil, só a partir das suas anotações: casa com ponto do modo atual perde
      um pouquinho de cor; marcada para os dois (nem sol nem lua), um pouco mais */
   .cell.fora::before, .cell.nada::before {
     content: ""; position: absolute; inset: 0; background: var(--veil); pointer-events: none;
-    opacity: .05; transition: opacity .25s ease;
+    opacity: .08; transition: opacity .25s ease;
   }
-  .cell.nada::before { opacity: .1; }
+  .cell.nada::before { opacity: .15; }
   .btn {
     width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer;
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
