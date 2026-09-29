@@ -91,16 +91,17 @@ function colorize(N, rects) {
 }
 
 export const WEEK = [
-  { n: 6, maxLevel: 1, hide: [0, 0.15], styles: ["colcha", "grandes"] },                 // segunda
-  { n: 6, maxLevel: 2, hide: [0.3, 0.5], styles: ["colcha", "numeros", "miudos"] },      // terça
-  { n: 7, maxLevel: 2, hide: [0.4, 0.6], styles: ["colcha", "formas", "numeros", "grandes"] }, // quarta
-  // da quinta em diante, no máximo o nível 2: o nível 3 (testar uma opção e seguir a
-  // propagação até ver contradição) é chute para uma pessoa. A dificuldade vem de
-  // tabuleiros maiores, etiquetas com menos informação e deduções mais longas.
-  { n: 7, maxLevel: 2, hide: [0.5, 0.8], styles: ["colcha", "formas", "miudos"] },       // quinta
-  { n: 8, maxLevel: 2, hide: [0.5, 0.8], styles: ["colcha", "formas", "grandes"] },      // sexta
-  { n: 8, maxLevel: 2, hide: [0.7, 1], styles: ["colcha", "formas", "miudos"] },         // sábado
-  { n: 9, maxLevel: 2, hide: [0.8, 1], styles: ["colcha", "formas", "grandes"] },        // domingo
+  // grade compacta (6×6 até quarta, 7×7 depois), com poucos retalhos e grandes: a
+  // dificuldade vem das etiquetas com menos informação e deduções mais longas.
+  { n: 6, maxLevel: 1, hide: [0, 0.3], styles: ["grandes", "colcha"] },                   // segunda
+  { n: 6, maxLevel: 2, hide: [0.4, 0.7], styles: ["grandes", "colcha", "grandes"] },      // terça
+  { n: 6, maxLevel: 2, hide: [0.6, 0.9], styles: ["grandes", "colcha", "grandes"] },      // quarta
+  // o nível 3 (testar uma opção e seguir a propagação até ver contradição) é chute
+  // para uma pessoa, então nunca entra.
+  { n: 7, maxLevel: 2, hide: [0.5, 0.8], styles: ["grandes", "colcha", "grandes"] },      // quinta
+  { n: 7, maxLevel: 2, hide: [0.7, 1], styles: ["grandes", "colcha", "grandes"] },        // sexta
+  { n: 7, maxLevel: 2, hide: [0.8, 1], styles: ["grandes", "colcha", "grandes"] },        // sábado
+  { n: 7, maxLevel: 2, hide: [0.85, 1], styles: ["grandes", "colcha", "grandes"] },       // domingo
 ];
 
 export function makePuzzle(cfg, style) {
@@ -160,7 +161,7 @@ export function makePuzzle(cfg, style) {
       d: logic.score, lv: logic.level,
       // interesse: etiquetas com informação escondida, formatos variados, poucos 1×1
       i: 2 * clues.filter(c => !c.n || c.f === "*").length + 3 * new Set(rects.map(q => shapeOf(q.h, q.w))).size
-         - 3 * rects.filter(q => q.h * q.w === 1).length + logic.stats.l2,
+         - 3 * rects.filter(q => q.h * q.w === 1).length + logic.stats.l2 - 2 * clues.length,   // poucas etiquetas
     };
   }
   throw new Error("não consegui gerar um desafio");
@@ -183,7 +184,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const old = mantidos(dir, EPOCH);
   const need = new Array(7).fill(0);
   for (let k = old.length; k < DAYS; k++) need[dayIdx(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
-  const BAND = [[0, 0.3], [0.6, 1], [0.6, 1], [0.8, 1], [0.7, 1], [0.7, 1], [0.8, 1]];
+  const BAND = [[0, 0.3], [0.4, 0.8], [0.6, 1], [0.3, 0.7], [0.5, 0.9], [0.7, 1], [0.8, 1]];   // 7×7 de quinta a domingo: sobe pelo esforço
   const MULT = [5, 5, 5, 5, 5, 5, 5];                        // candidatos por desafio do dia
   const pools = [];
   for (let w = 0; w < 7; w++) {

@@ -55,16 +55,17 @@ function randomPath(N) {
 //   estilos: "fio" (só números) · "paredes" (algumas paredes) · "labirinto"
 //   (muitas paredes e pouquíssimos números)
 export const WEEK = [
-  { n: 6, maxLevel: 1, styles: ["fio", "fio", "paredes"], extra: 2 },           // segunda
-  { n: 6, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // terça
-  { n: 7, maxLevel: 2, styles: ["fio", "paredes", "paredes"], extra: 1 },       // quarta
-  // da quinta em diante, no máximo o nível 2: o nível 3 (testar uma ligação e seguir
-  // a propagação até ver contradição) é chute para uma pessoa. A dificuldade vem de
-  // tabuleiros maiores, menos números e deduções mais longas.
-  { n: 7, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // quinta
-  { n: 8, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // sexta
-  { n: 8, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // sábado
-  { n: 9, maxLevel: 2, styles: ["fio", "paredes", "labirinto"], extra: 0 },     // domingo
+  // grade compacta (6×6 até quarta, 7×7 depois): a dificuldade vem de menos números e
+  // deduções mais longas, não do tamanho. Sem o estilo "labirinto" (paredes demais).
+  { n: 6, maxLevel: 1, styles: ["fio", "paredes"], extra: 2 },                  // segunda
+  { n: 6, maxLevel: 2, styles: ["fio", "paredes"], extra: 1 },                  // terça
+  { n: 6, maxLevel: 2, styles: ["fio", "paredes"], extra: 0 },                  // quarta
+  // o nível 3 (testar uma ligação e seguir a propagação até ver contradição) é chute
+  // para uma pessoa, então nunca entra.
+  { n: 7, maxLevel: 2, styles: ["fio", "paredes"], extra: 1 },                  // quinta
+  { n: 7, maxLevel: 2, styles: ["fio", "paredes"], extra: 0 },                  // sexta
+  { n: 7, maxLevel: 2, styles: ["fio", "paredes"], extra: 0 },                  // sábado
+  { n: 7, maxLevel: 2, styles: ["fio", "paredes"], extra: 0 },                  // domingo
 ];
 
 function wallsFor(style, N, pathEdges, B0) {
@@ -155,7 +156,7 @@ export function makePuzzle(dayCfg, style) {
       d: logic.score,                                           // esforço de dedução
       lv: logic.level,
       // interesse: fio com mais curvas (menos retas longas), menos números e passagens para descobrir
-      i: 30 * path.slice(1, -1).filter((c, k) => c - path[k] !== path[k + 2] - c).length / C - S.size + 2 * Math.min(logic.stats.l2, 5),
+      i: 30 * path.slice(1, -1).filter((c, k) => c - path[k] !== path[k + 2] - c).length / C - 2 * S.size - walls.length + 2 * Math.min(logic.stats.l2, 5),
     };
   }
   throw new Error("não consegui gerar um desafio");
@@ -178,7 +179,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const old = mantidos(dir, EPOCH);
   const need = new Array(7).fill(0);
   for (let k = old.length; k < DAYS; k++) need[dayIdx(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
-  const BAND = [[0, 0.5], [0.5, 1], [0.5, 1], [0.5, 1], [0.5, 1], [0.5, 1], [0.5, 1]];
+  const BAND = [[0, 0.5], [0.3, 0.7], [0.5, 1], [0.2, 0.6], [0.4, 0.8], [0.6, 1], [0.75, 1]];   // 7×7 de quinta a domingo: sobe pelo esforço
   const MULT = [2, 2, 2, 2, 2, 2, 2];                        // candidatos por desafio do dia
   const pools = [];
   for (let w = 0; w < 7; w++) {
