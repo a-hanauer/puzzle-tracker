@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<script src="../comum/tema.js?v=99"></script>
-<script src="../comum/cabecalho.js?v=99"></script>
+<script src="../comum/tema.js?v=100"></script>
+<script src="../comum/cabecalho.js?v=100"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -11,8 +11,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f6f3ea" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)">
-<link rel="apple-touch-icon" href="icon-claro.png?v=13">
-<link rel="icon" type="image/png" href="icon-claro.png?v=13">
+<link rel="apple-touch-icon" href="icon-claro.png?v=20">
+<link rel="icon" type="image/png" href="icon-claro.png?v=20">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <title>SANDO — Ache o recheio escondido</title>
 <style>
@@ -445,7 +445,7 @@
   .mode-switch-track{border:0;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=99">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=100">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: #fff; --fim-btn-border: 0; --gh-fim-ink: #fff; --gh-fim-border: 0; --gh-fim-border-lose: 0; --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
@@ -481,7 +481,7 @@
 
   <header class="gh">
     <a class="gh-back back-home" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <a class="gh-brand" href="./" aria-label="Sando — recarregar"><img src="icon-claro.png?v=13" data-escuro="icon-escuro.png?v=13" alt=""><b>SANDO</b></a>
+    <a class="gh-brand" href="./" aria-label="Sando — recarregar"><img src="icon-claro.png?v=20" data-escuro="icon-escuro.png?v=20" alt=""><b>SANDO</b></a>
     <button class="gh-btn" id="help-btn" title="Como jogar" aria-label="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
     <!-- configurações e estatísticas ficam no painel Jogos do Dia; o botão original segue oculto -->
       <button class="icon-btn" id="settings-btn" hidden aria-hidden="true" tabindex="-1">
@@ -592,7 +592,7 @@
 <div class="overlay" id="end-overlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close="end-overlay" aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon-claro.png?v=13" data-escuro="icon-escuro.png?v=13" alt="Sando" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,40,20,.15)"></div>
+    <div class="fim-art"><img src="icon-claro.png?v=20" data-escuro="icon-escuro.png?v=20" alt="Sando" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,40,20,.15)"></div>
     <h2 class="fim-title" id="end-text">Sando completo!</h2>
     <div class="fim-result"><div class="tile-row end-slice win" id="end-word"></div><button class="fim-share" id="end-share" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="end-sub"></p>
@@ -1038,7 +1038,7 @@
     document.getElementById('keyboard').style.display = acabou ? 'none' : '';
     document.querySelector('.letters-panel').style.display = acabou ? 'none' : '';
     ghFim(document.getElementById('fim'), !acabou ? null : {
-      img: 'icon-claro.png?v=13', imgEscuro: 'icon-escuro.png?v=13', nome: 'Sando',
+      img: 'icon-claro.png?v=20', imgEscuro: 'icon-escuro.png?v=20', nome: 'Sando',
       titulo: state.won ? 'Sando completo' : 'Não foi dessa vez',
       sub: state.won ? state.guesses.length + '/' + MAX_GUESSES + ' tentativas' : 'o recheio era ' + state.secret.toUpperCase(),
       perdeu: !state.won, diario: daily,
@@ -1253,8 +1253,8 @@
     fn => { document.getElementById("practice-toggle").addEventListener("change", () => setTimeout(fn)); window.addEventListener("sanduba-livre", fn); },
     window.sandubaLivre);
 </script>
-<script src="../comum/catalogo.js?v=99"></script>
-<script src="../comum/celebra.js?v=99"></script>
-<script src="../comum/proximo.js?v=99" data-jogo="sanduba"></script>
+<script src="../comum/catalogo.js?v=100"></script>
+<script src="../comum/celebra.js?v=100"></script>
+<script src="../comum/proximo.js?v=100" data-jogo="sanduba"></script>
 </body>
 </html>

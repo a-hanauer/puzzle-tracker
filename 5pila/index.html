@@ -9,10 +9,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="5PILA">
-<link rel="icon" type="image/png" href="icon-claro.png?v=11">
-<link rel="apple-touch-icon" href="icon-claro.png?v=11">
-<script src="../comum/tema.js?v=99"></script>
-<script src="../comum/cabecalho.js?v=99"></script>
+<link rel="icon" type="image/png" href="icon-claro.png?v=20">
+<link rel="apple-touch-icon" href="icon-claro.png?v=20">
+<script src="../comum/tema.js?v=100"></script>
+<script src="../comum/cabecalho.js?v=100"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -356,7 +356,7 @@ header{
 #btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=99">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=100">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--accent-ink); --gh-fim-ink: var(--accent-ink); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -376,7 +376,7 @@ header{
 
   <header class="gh">
     <a class="gh-back back-home" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <a class="gh-brand" href="./" aria-label="5PILA — recarregar"><img src="icon-claro.png?v=11" data-escuro="icon-escuro.png?v=11" alt=""><b>5PILA</b></a>
+    <a class="gh-brand" href="./" aria-label="5PILA — recarregar"><img src="icon-claro.png?v=20" data-escuro="icon-escuro.png?v=20" alt=""><b>5PILA</b></a>
     <!-- estatísticas e configurações ficam no painel Jogos do Dia; os botões originais seguem ocultos -->
     <button class="iconbtn" id="btn-stats" hidden aria-hidden="true" tabindex="-1">📊</button>
     <button class="iconbtn" id="btn-settings" hidden aria-hidden="true" tabindex="-1">⚙️</button>
@@ -480,7 +480,7 @@ header{
 <div class="overlay" id="overlay-end">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close="overlay-end" aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon.png?v=10" alt=""></div>
+    <div class="fim-art"><img src="icon.png?v=20" alt=""></div>
     <h2 class="fim-title" id="end-title">5PILA completo!</h2>
     <div class="fim-result"><div class="fim-word" id="end-word"></div><button class="fim-share" id="btn-share2" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="end-sub"></p>
@@ -958,7 +958,7 @@ header{
     document.getElementById('keyboard').style.display = acabou ? 'none' : '';
     document.querySelector('.tools').style.display = acabou ? 'none' : '';
     ghFim(document.getElementById('fim'), !acabou ? null : {
-      img: 'icon-claro.png?v=11', imgEscuro: 'icon-escuro.png?v=11', nome: '5PILA',
+      img: 'icon-claro.png?v=20', imgEscuro: 'icon-escuro.png?v=20', nome: '5PILA',
       titulo: state.won ? '5PILA completo' : 'Não foi dessa vez',
       sub: state.won ? state.guesses.length + '/' + MAX_TRIES + ' tentativas' : 'a palavra era ' + state.secret.toUpperCase(),
       perdeu: !state.won, diario: !practiceMode,
@@ -1362,8 +1362,8 @@ header{
     fn => { new MutationObserver(fn).observe(document.getElementById("mode-switch"), { attributes: true, attributeFilter: ["class"] }); window.addEventListener("quinhentos-livre", fn); },
     window.quinhentosLivre);
 </script>
-<script src="../comum/catalogo.js?v=99"></script>
-<script src="../comum/celebra.js?v=99"></script>
-<script src="../comum/proximo.js?v=99" data-jogo="quinhentos"></script>
+<script src="../comum/catalogo.js?v=100"></script>
+<script src="../comum/celebra.js?v=100"></script>
+<script src="../comum/proximo.js?v=100" data-jogo="quinhentos"></script>
 </body>
 </html>

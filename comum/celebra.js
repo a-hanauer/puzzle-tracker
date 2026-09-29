@@ -167,6 +167,7 @@
   };
 
   let estilo = false;
+  window.CELEBRA = { ARTE, CSS };   // também usados para gerar os ícones (o ícone é o quadro final da animação)
   window.celebrar = function (jogo, opts = {}) {
     const alvo = opts.alvo, arte = ARTE[jogo];
     if (!alvo || !arte) return Promise.resolve();
