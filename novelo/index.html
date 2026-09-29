@@ -273,7 +273,7 @@
       <figure><svg id="demoA" viewBox="0 0 330 330"></svg>assim: tudo coberto</figure>
       <figure><svg id="demoB" viewBox="0 0 330 330"></svg>parede: dá a volta</figure>
     </div>
-    <p>Arraste o dedo para desenhar. Para voltar atrás, arraste de volta pelo fio ou toque numa casa do fio: ele é cortado ali.</p>
+    <p>Arraste o dedo para desenhar. Para voltar atrás, arraste de volta pelo fio ou toque num número que você já alcançou: o fio fica até ele.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b> (9×9).</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, que não contam nas estatísticas: escolha o <b>nível</b> (1 a 7) no botão ao lado de "Extra" e toque em ↻ para sortear outro.</p>
     <button class="btn-main" data-close>Jogar</button>
@@ -609,12 +609,23 @@
     const c = cellUnder(px, py), h = path.at(-1);
     if (c < 0 || c === h) return false;
     const at = path.indexOf(c);
-    if (at >= 0) { path.length = at + 1; return true; }           // voltou por cima do fio: recolhe até ali
+    if (at >= 0) {                                                  // voltou por cima do fio
+      // o último número alcançado é uma âncora: passar o dedo por um trecho
+      // antigo do fio não recolhe tudo até lá. Só recolhe voltando pelo
+      // próprio fio, casa a casa (ou até o trecho depois da âncora)
+      if (at < lastAnchor() && at < path.length - 3) return false;
+      path.length = at + 1; return true;
+    }
     if (manh(h, c) === 1) { if (!canStep(h, c)) return false; path.push(c); return true; }
     const r = route(c, from);                                       // salto: preenche o caminho
     if (!r) return false;
     path.push(...r);
     return true;
+  }
+  // posição no fio do último número alcançado (a âncora do arrasto)
+  function lastAnchor() {
+    for (let k = path.length - 1; k >= 0; k--) if (numAt[path[k]]) return k;
+    return 0;
   }
   let drag = null;
   $("board").addEventListener("pointerdown", e => {
@@ -624,7 +635,9 @@
     e.preventDefault();
     const before = path.join(",");
     const at = path.indexOf(i);
-    if (at >= 0) path.length = at + 1;                            // toca no fio: corta ali e continua dali
+    if (at >= 0 && (numAt[i] || at >= lastAnchor())) path.length = at + 1;   // toca num número já alcançado (ou no trecho depois dele): o fio fica até ali
+    else if (at >= 0) return;                                     // toque no fio antes do último número não apaga nada
+
     else if (adjacent(path.at(-1), i) && canStep(path.at(-1), i)) path.push(i);   // casa ao lado da ponta
     else { nudge(i); return; }
     drag = { before, id: e.pointerId, pos: boardPos(e) };
