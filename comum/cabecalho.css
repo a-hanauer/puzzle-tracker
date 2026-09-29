@@ -318,6 +318,14 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
 .fim-row > .controls { flex: 1; min-width: 0; padding-top: 0 !important; margin-top: 0 !important; }
 .fim-row > .gh-fim-bar { flex: 1; min-width: 0; }
 .fim-nx:empty { display: none; }
+/* faixa de resultado e botão do próximo jogo, mais altos e com mais respiro */
+.fim-row > .gh-fim-bar { height: 70px; padding: 0 20px; }
+.fim-row > .controls.done, .fim-row > .controls.done > .seg, .fim-row > .controls.done > .prog { min-height: 70px; }
+.fim-row > .controls.done > .prog { height: 70px; }
+.fim-row a.nx { min-height: 70px; width: 104px; padding: 10px 12px 10px 14px; gap: 8px; }
+.fim-row a.nx .nx-col { gap: 5px; }
+.fim-row a.nx .px-ic { width: 36px; height: 36px; }
+.fim-row a.nx small { font-size: .64rem; }
 /* próximo jogo: à direita da faixa de resultado e da mesma altura — ícone com "Próximo"
    embaixo e uma seta. Jogo da casa: o botão inteiro tem a cor do cartão dele no painel
    (o ícone tem esse mesmo fundo, então não aparece o quadrado). Jogo externo: painel
