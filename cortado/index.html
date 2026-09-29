@@ -30,9 +30,9 @@
     --cell-fix: #e6d8c4;
     --cafe: #6e452a;
     --cafe-slit: #3a2314;
-    --leite: #fffdf8;
-    --leite-st: #cdb99d;
-    --leite-sh: rgba(150, 115, 75, .16);
+    --leite: #ecd8b5;
+    --leite-st: rgba(0, 0, 0, 0);
+    --leite-sh: #d5bb92;
     --sign: #9a8068;
     --sign-bg: #e8dccb;
     --bad: #d64545;
@@ -58,7 +58,7 @@
       --cafe-slit: #4a2c18;
       --leite: #f3e8d6;
       --leite-st: rgba(0, 0, 0, 0);
-      --leite-sh: rgba(120, 85, 50, .22);
+      --leite-sh: #d9c6aa;
       --sign: #b19a82;
       --sign-bg: #1e1814;
       --bad: #ff6b6b;
@@ -84,7 +84,7 @@
       --cafe-slit: #4a2c18;
       --leite: #f3e8d6;
       --leite-st: rgba(0, 0, 0, 0);
-      --leite-sh: rgba(120, 85, 50, .22);
+      --leite-sh: #d9c6aa;
       --sign: #b19a82;
       --sign-bg: #1e1814;
       --bad: #ff6b6b;
@@ -120,7 +120,7 @@
   .b-cell.bad { fill: url(#hatch); }
   .hb { fill: var(--bad-soft); } .hl { fill: var(--bad); opacity: .4; }
   .d-cafe { fill: var(--cafe); }
-  .d-cafe-slit { fill: none; stroke: var(--cafe-slit); stroke-width: 5; stroke-linecap: round; }
+  .d-cafe-slit { fill: none; stroke: var(--cafe-slit); stroke-width: 4.2; stroke-linecap: round; }
   .d-leite { fill: var(--leite); stroke: var(--leite-st); stroke-width: 3; }
   .d-leite-sh { fill: var(--leite-sh); }
   .drop { transform-box: fill-box; transform-origin: 50% 70%; }
@@ -129,6 +129,24 @@
   .sg-bg { fill: var(--sign-bg); }
   .sg { stroke: var(--sign); stroke-width: 4.5; stroke-linecap: round; fill: none; }
   .sg.bad { stroke: var(--bad); }
+
+  /* ---------- vitória: uma xícara com latte art se forma sobre o tabuleiro ---------- */
+  .stage { position: relative; }
+  .xicara { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 3; pointer-events: auto; cursor: pointer;
+    animation: xc-out .45s ease 3.1s forwards; }
+  .xicara svg { width: min(62%, 300px); height: auto; overflow: visible; filter: drop-shadow(0 10px 24px rgba(60, 35, 15, .28)); }
+  .xicara .pires, .xicara .copo { transform-box: fill-box; transform-origin: center; animation: xc-in .55s cubic-bezier(.3, 1.4, .45, 1) both; }
+  .xicara .copo { animation-delay: .12s; }
+  .xicara .coracao { transform-box: fill-box; transform-origin: 50% 30%; animation: xc-leite 1s cubic-bezier(.25, .8, .3, 1) .75s both; }
+  .xicara .fio { stroke-dasharray: 60; stroke-dashoffset: 60; animation: xc-fio .45s ease-in 1.75s forwards; }
+  .xicara .gota-cai { animation: xc-cai .5s ease-in .45s both; }
+  #board.servindo { transition: opacity .35s ease, filter .35s ease; opacity: .28; filter: blur(1.5px); }
+  @keyframes xc-in { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes xc-leite { 0% { transform: scale(.1); opacity: 0; } 30% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+  @keyframes xc-fio { to { stroke-dashoffset: 0; } }
+  @keyframes xc-cai { 0% { transform: translateY(-70px); opacity: 0; } 30% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(0); opacity: 0; } }
+  @keyframes xc-out { to { opacity: 0; transform: scale(.92); visibility: hidden; } }
+  @media (prefers-reduced-motion: reduce) { .xicara, .xicara * { animation-duration: .01s !important; animation-delay: 0s !important; } }
   .won .drop { animation: puff .45s cubic-bezier(.3, 1.6, .5, 1) both; }
   @keyframes puff { 0% { transform: scale(1); } 45% { transform: scale(1.18); } 100% { transform: scale(1); } }
   @media (prefers-reduced-motion: reduce) { .won .drop, .drop.pop { animation: none !important; } }
@@ -383,11 +401,11 @@
   // café = grão (oval inclinado com o sulco em S); leite = gota em pé, com a ponta para cima
   // (x, y) = centro da casa, s = escala (1 = casa de 100)
   function dropSVG(v, x, y, s = 1, cls = "") {
-    const path = "M0 -34C9 -22 26 -6 26 10A26 26 0 0 1 -26 10C-26 -6 -9 -22 0 -34Z";
-    const t = `translate(${x} ${y + 3}) scale(${s})`;
+    const path = "M0 -29C8 -19 21 -6 21 8A21 21 0 0 1 -21 8C-21 -6 -8 -19 0 -29Z";
+    const t = `translate(${x} ${y + 2}) scale(${s})`;
     // a posição fica no <g> de fora; a animação (CSS transform) só no de dentro
-    if (v === 1) return `<g transform="translate(${x} ${y}) scale(${s}) rotate(-30)"><g class="drop${cls}"><ellipse class="d-cafe" rx="22" ry="30"/><path class="d-cafe-slit" d="M2 -24C-11 -9 11 9 -2 24"/></g></g>`;
-    return `<g transform="${t}"><g class="drop${cls}"><path class="d-leite" d="${path}"/><path class="d-leite-sh" d="M17 4C22 18 12 30 -2 32C14 26 19 16 17 4Z"/></g></g>`;
+    if (v === 1) return `<g transform="translate(${x} ${y}) scale(${s}) rotate(-28)"><g class="drop${cls}"><ellipse class="d-cafe" rx="19" ry="26"/><path class="d-cafe-slit" d="M1.5 -20C-9 -7 9 7 -1.5 20"/></g></g>`;
+    return `<g transform="${t}"><g class="drop${cls}"><path class="d-leite" d="${path}"/><path class="d-leite-sh" d="M13 5C16 15 10 23 1 25C11 20 14 13 13 5Z"/></g></g>`;
   }
   // sinal na borda entre duas casas: = ou ×, sobre um quadradinho da cor do fundo
   function signSVG(s, isBad) {
@@ -574,6 +592,30 @@
   setInterval(() => { if (timer) persist(); }, 5000);
 
   // ---------- vitória ----------
+  // xícara com latte art sobre o tabuleiro, só na hora da vitória (tocar pula)
+  function servir() {
+    const st = $("stage");
+    const x = document.createElement("div");
+    x.className = "xicara"; x.setAttribute("aria-hidden", "true");
+    x.innerHTML = `<svg viewBox="-80 -70 175 140">
+      <defs><radialGradient id="xc-cafe" r="50%"><stop offset=".72" stop-color="#7a4a2a"/><stop offset=".93" stop-color="#9c6a3f"/><stop offset="1" stop-color="#b98556"/></radialGradient></defs>
+      <g class="pires"><ellipse rx="66" ry="62" fill="#efe4d4"/><ellipse rx="52" ry="49" fill="#e4d6c1"/></g>
+      <g class="copo">
+        <rect x="38" y="-10" width="34" height="20" rx="10" fill="#fbf5ec"/>
+        <circle r="46" fill="#fbf5ec"/><circle r="39" fill="url(#xc-cafe)"/>
+        <clipPath id="xc-borda"><circle r="39"/></clipPath><g clip-path="url(#xc-borda)">
+          <circle class="gota-cai" cy="-2" r="4" fill="#f6ecdc"/>
+          <path class="coracao" d="M0 25C-27 7 -30 -14 -15 -19C-7 -22 0 -16 0 -9C0 -16 7 -22 15 -19C30 -14 27 7 0 25Z" fill="#f6ecdc"/>
+          <path class="fio" d="M0 -32V28" stroke="#f6ecdc" stroke-width="3" stroke-linecap="round" fill="none"/>
+        </g>
+      </g></svg>`;
+    x.addEventListener("click", () => x.remove());
+    st.append(x);
+    $("board").classList.add("servindo");
+    setTimeout(() => $("board").classList.remove("servindo"), 3150);
+    setTimeout(() => x.remove(), 3600);
+  }
+
   function checkWin() {
     if (finished || cells.some(v => !v) || conflicts().out.size) return;
     stopTimer();
@@ -586,7 +628,8 @@
       if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
     }
     persist();
-    setTimeout(() => showEnd(), 1400);
+    servir();
+    setTimeout(() => showEnd(), 3700);
   }
   function showEnd() {
     $("endTime").textContent = fmt(elapsed);
@@ -614,7 +657,7 @@
         : "Casas com <b>×</b> precisam ser diferentes.";
     }
     else if (!cells.some((v, i) => v && !fixed[i])) t.innerHTML = "Toque numa casa: vazia → café → leite.<br>Arraste para repetir a troca.";
-    else t.innerHTML = `Faltam <b>${left}</b> casas`;
+    else t.innerHTML = left === 1 ? "Falta <b>1</b> casa" : `Faltam <b>${left}</b> casas`;
   }
 
   $("shareBtn").addEventListener("click", () => {
