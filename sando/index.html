@@ -1046,7 +1046,7 @@
     renderFim();
   }
 
-  // partida encerrada: teclado e letras possíveis dão lugar à faixa de resultado
+  // partida encerrada: teclado, tentativas e letras possíveis dão lugar à faixa de resultado
   // recorde (comum/recorde.js): menos tentativas que todas as vitórias anteriores; só no desafio do dia
   function recordeHoje(){
     var daily = state.mode !== 'practice';
@@ -1056,6 +1056,7 @@
     var acabou = !!state.over, daily = state.mode !== 'practice';
     document.getElementById('keyboard').style.display = acabou ? 'none' : '';
     document.querySelector('.letters-panel').style.display = acabou ? 'none' : '';
+    document.querySelector('.timeline-block').style.display = acabou ? 'none' : '';   // a faixa de resultado já diz as tentativas
     ghFim(document.getElementById('fim'), !acabou ? null : {
       img: 'icon-claro.png?v=20', imgEscuro: 'icon-escuro.png?v=20', nome: 'Sando',
       titulo: state.won ? (recordeHoje() ? 'novo recorde' : 'Sando completo') : 'Não foi dessa vez',
