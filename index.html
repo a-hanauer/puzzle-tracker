@@ -12,8 +12,8 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=112"></script>
-<script src="comum/catalogo.js?v=112"></script>
+<script src="comum/tema.js?v=113"></script>
+<script src="comum/catalogo.js?v=113"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -103,6 +103,32 @@
   @keyframes prog-shine { to { transform: translateX(110%); } }
   .prog-n .done-seal { display: none; }
   .prog.complete .prog-n { color: var(--green); font-weight: 700; }
+  /* começar o dia / continuar / resumo do dia */
+  .dia-btn { display: flex; align-items: center; gap: 12px; width: calc(100% - 8px); margin: 14px 4px 0; padding: 10px 14px 10px 10px; min-height: 56px;
+    border: none; border-radius: 16px; cursor: pointer; font: inherit; text-align: left; background: var(--green); color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 6px 18px rgba(63, 162, 76, .25); }
+  .dia-btn[hidden] { display: none; }
+  .dia-btn:active { transform: scale(.98); }
+  .dia-btn .dia-ic { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.22); font-size: 20px; }
+  .dia-btn .dia-ic img { width: 100%; height: 100%; object-fit: cover; }
+  .dia-btn .dia-ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .dia-btn .dia-t { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; flex: 1; }
+  .dia-btn .dia-t b { font-size: 1rem; font-weight: 800; }
+  .dia-btn .dia-t small { font-size: .78rem; font-weight: 600; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dia-btn > .chev { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
+  .dia-btn.resumo { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+  .dia-btn.resumo .dia-ic { background: var(--green-soft); color: var(--green); }
+  /* resumo do dia */
+  .rs-lista { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .rs-lista li { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; background: var(--surface-2); }
+  .rs-lista .icon { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 18px; }
+  .rs-lista .icon img { width: 100%; height: 100%; object-fit: cover; }
+  .rs-lista .nm { flex: 1; font-weight: 700; font-size: .95rem; min-width: 0; }
+  .rs-lista .rs { font-weight: 800; font-variant-numeric: tabular-nums; font-size: .95rem; }
+  .rs-lista .rs small { font-weight: 600; font-size: .72rem; color: var(--muted); margin-left: 4px; }
+  .rs-lista .rs.no { color: var(--muted); font-weight: 600; }
+  .rs-top { text-align: center; margin: -4px 0 14px; color: var(--muted); font-size: .88rem; }
+  .rs-top b { display: block; color: var(--text); font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; }
   .prog.complete .prog-n .cnt { display: none; }
   .prog.complete .prog-n .done-seal { display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase; letter-spacing: .06em; }
   .prog-n .done-seal svg { width: 15px; height: 15px; flex: none; }
@@ -501,6 +527,7 @@
     <div class="prog-bar" id="progBar" aria-hidden="true"></div>
     <span class="prog-n"><span class="cnt" id="count"></span><span class="done-seal"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7.5 12.4l3 3 6-6.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Tudo feito</span></span>
   </div>
+  <button class="dia-btn" id="diaBtn" type="button" hidden></button>
 </header>
 
 <section id="viewSettings" hidden>
@@ -605,6 +632,14 @@
       </div>
       <div class="add-err" id="bkErr" hidden></div>
     </div>
+  </div>
+</div>
+<div class="sheet-bg" id="resumo" hidden>
+  <div class="sheet tall" role="dialog" aria-modal="true" aria-labelledby="rsTitle">
+    <div class="sheet-head"><b id="rsTitle">Resumo do dia</b><button class="round" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="rs-top" id="rsTop"></div>
+    <ul class="rs-lista" id="rsLista"></ul>
+    <div class="bk-actions"><button class="add-btn" id="rsShare" type="button">Compartilhar resumo</button></div>
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -873,6 +908,7 @@ function render() {
   prog.classList.toggle("complete", complete);
   prog.dataset.complete = complete ? "1" : "0";
   prog.setAttribute("aria-label", complete ? "Tudo feito por hoje" : `${n} de ${total} jogos feitos`);
+  renderDiaBtn(done, n, complete);
 
   document.querySelectorAll(".seg2 button[data-tab]").forEach(b => b.setAttribute("aria-checked", (b.dataset.tab === "new") === state.newTab));
 
@@ -984,6 +1020,75 @@ function openManage(focusAdd) {
   if (focusAdd) setTimeout(() => $("addUrl").focus(), 60);
 }
 
+
+/* ---------- Começar o dia / Continuar / Resumo do dia ----------
+   Abre o primeiro jogo pendente (jogos da casa primeiro, na ordem do painel).
+   Cada jogo, ao terminar, já indica o próximo; com tudo feito, o botão vira o resumo. */
+const CHEV_SVG = '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+const ordemDoDia = () => [...GAMES.filter(g => LOCAL_PROGRESS[g.id]), ...GAMES.filter(g => !LOCAL_PROGRESS[g.id])];
+let diaChave = "";
+function renderDiaBtn(done, n, complete) {
+  const b = $("diaBtn");
+  if (!GAMES.length) { b.hidden = true; return; }
+  const prox = ordemDoDia().find(g => !done.has(g.id));
+  const chave = complete ? "resumo" : `${n ? "cont" : "comeca"}|${prox && prox.id}`;
+  b.hidden = false;
+  if (chave === diaChave) return;
+  diaChave = chave;
+  b.classList.toggle("resumo", complete);
+  if (complete) {
+    b.innerHTML = `<span class="dia-ic"><svg viewBox="0 0 24 24"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg></span><span class="dia-t"><b>Resumo do dia</b><small>Veja e compartilhe os resultados</small></span>${CHEV_SVG}`;
+    b.dataset.jogo = "";
+    return;
+  }
+  b.innerHTML = `<span class="dia-ic">${prox.emoji}</span><span class="dia-t"><b>${n ? "Continuar" : "Começar o dia"}</b><small>${n ? "Próximo" : "Primeiro"}: ${escHTML(prox.name)}</small></span>${CHEV_SVG}`;
+  b.dataset.jogo = prox.id;
+  loadIcon(prox, b.querySelector(".dia-ic"));
+}
+$("diaBtn").addEventListener("click", () => {
+  const id = $("diaBtn").dataset.jogo;
+  if (!id) return abreResumo();
+  const a = cards[id] && cards[id].querySelector("a");
+  if (a) a.click();                              // mesmo caminho do cartão (marca externos, nova aba etc.)
+});
+
+/* ---------- Resumo do dia (compartilhável) ---------- */
+function resultadoDe(g, done) {
+  const p = LOCAL_PROGRESS[g.id] ? progressOf(g) : null;
+  if (!LOCAL_PROGRESS[g.id]) return done.has(g.id) ? { txt: "✓", share: "✓" } : { txt: "—", no: true, share: "—" };
+  if (!p) return { txt: "—", no: true, share: "—" };
+  const dica = p.dica ? " · dica" : "";
+  if ("time" in p && p.time != null) return { txt: fmtTime(p.time), sub: p.dica ? "com dica" : "", share: fmtTime(p.time) + dica };
+  if (p.finished) return p.won ? { txt: `${p.tries}/${p.max}`, share: `${p.tries}/${p.max}` } : { txt: "X", sub: `de ${p.max}`, share: `X/${p.max}` };
+  return { txt: "—", no: true, share: "—" };
+}
+function abreResumo() {
+  const done = doneToday(), ordem = ordemDoDia(), n = ordem.filter(g => done.has(g.id)).length;
+  const d = new Date();
+  $("rsTop").innerHTML = `<b>${n}/${ordem.length}</b>${d.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}`;
+  $("rsLista").innerHTML = "";
+  ordem.forEach(g => {
+    const r = resultadoDe(g, done), li = document.createElement("li");
+    li.innerHTML = `<span class="icon">${g.emoji}</span><span class="nm">${escHTML(g.name)}</span><span class="rs${r.no ? " no" : ""}">${r.txt}${r.sub ? `<small>${r.sub}</small>` : ""}</span>`;
+    loadIcon(g, li.querySelector(".icon"));
+    $("rsLista").append(li);
+  });
+  $("resumo").hidden = false;
+}
+function textoResumo() {
+  const done = doneToday(), ordem = ordemDoDia(), n = ordem.filter(g => done.has(g.id)).length;
+  const d = new Date(), dia = `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
+  const casa = ordem.filter(g => LOCAL_PROGRESS[g.id]).map(g => `${g.emoji} ${g.name} ${resultadoDe(g, done).share}`);
+  const fora = ordem.filter(g => !LOCAL_PROGRESS[g.id] && done.has(g.id)).map(g => g.name);
+  return [`Jogos do Dia · ${dia} · ${n}/${ordem.length}${n === ordem.length ? " 🎉" : ""}`, "", ...casa,
+    ...(fora.length ? ["", `✓ ${fora.join(" · ")}`] : []), "", new URL("./", location.href).href].join("\n");
+}
+$("resumo").addEventListener("click", e => { if (e.target === $("resumo") || e.target.closest("[data-close]")) $("resumo").hidden = true; });
+$("rsShare").addEventListener("click", async () => {
+  const txt = textoResumo();
+  try { if (navigator.share) { await navigator.share({ text: txt }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+  try { await navigator.clipboard.writeText(txt); toast("Resumo copiado"); } catch { toast("Não foi possível copiar"); }
+});
 /* ---------- Backup: exportar / importar ----------
    Junta tudo o que os Jogos do Dia guardam neste navegador (painel e jogos da casa)
    num código de texto. Importar substitui esses dados e recarrega. */

@@ -67,7 +67,7 @@ const LOCAL_PROGRESS = {
     const placed = (p.cells.match(/[SM]/g) || []).length;
     if (!p.done && !p.started) return null;             // aberto, mas nenhuma jogada ainda
     const max = 2 * Math.round(Math.sqrt(p.cells.length));   // o tabuleiro vai de 8×8 a 10×10
-    return { tries: placed, max, won: !!p.done, finished: !!p.done, time: p.done ? p.time : null };
+    return { tries: placed, max, won: !!p.done, finished: !!p.done, time: p.done ? p.time : null, dica: !!p.dica };
   },
   // Novelo, Retalhos e Pingado: desafio #1 = 28/09/2026; prog = [feito, total]
   novelo() { return progressoPorTempo("novelo"); },
@@ -80,7 +80,7 @@ function progressoPorTempo(jogo) {
   const p = readJSON(`${jogo}:dia:${dayNum}`);
   if (!p || (!p.done && !p.started)) return null;
   const [tries, max] = Array.isArray(p.prog) ? p.prog : [0, 0];
-  return { tries, max, won: !!p.done, finished: !!p.done, time: p.done ? p.time : null };
+  return { tries, max, won: !!p.done, finished: !!p.done, time: p.done ? p.time : null, dica: !!p.dica };
 }
 
 const fmtTime = s => { s = Math.round(s || 0); const m = Math.floor(s / 60); return m >= 60 ? `${Math.floor(m / 60)}h${String(m % 60).padStart(2, "0")}` : `${m}:${String(s % 60).padStart(2, "0")}`; };
