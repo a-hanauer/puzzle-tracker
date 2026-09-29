@@ -12,8 +12,8 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=113"></script>
-<script src="comum/catalogo.js?v=113"></script>
+<script src="comum/tema.js?v=114"></script>
+<script src="comum/catalogo.js?v=114"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -1057,7 +1057,7 @@ function resultadoDe(g, done) {
   const p = LOCAL_PROGRESS[g.id] ? progressOf(g) : null;
   if (!LOCAL_PROGRESS[g.id]) return done.has(g.id) ? { txt: "✓", share: "✓" } : { txt: "—", no: true, share: "—" };
   if (!p) return { txt: "—", no: true, share: "—" };
-  const dica = p.dica ? " · dica" : "";
+  const dica = p.dica ? " 💡" : "";
   if ("time" in p && p.time != null) return { txt: fmtTime(p.time), sub: p.dica ? "com dica" : "", share: fmtTime(p.time) + dica };
   if (p.finished) return p.won ? { txt: `${p.tries}/${p.max}`, share: `${p.tries}/${p.max}` } : { txt: "X", sub: `de ${p.max}`, share: `X/${p.max}` };
   return { txt: "—", no: true, share: "—" };

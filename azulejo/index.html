@@ -10,8 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Azulejo">
 <title>AZULEJO — uma parede de painéis</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=113"></script>
-<script src="../comum/cabecalho.js?v=113"></script>
+<script src="../comum/tema.js?v=114"></script>
+<script src="../comum/cabecalho.js?v=114"></script>
+<script src="../comum/dica.js?v=114"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -234,7 +235,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=113">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=114">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -354,6 +355,7 @@
     return st;
   }
 
+  let dicaUsada = false, dica = null;   // uma dica por desafio (comum/dica.js)
   function setup(puzzle, saved, k) {
     stopTimer();
     kind = k; P = puzzle; N = P.n; C = N * N;
@@ -365,6 +367,7 @@
     patches = saved?.patches ? parsePatches(saved.patches) : [];
     elapsed = saved?.elapsed || 0;
     finished = !!saved?.done;
+    dicaUsada = !!saved?.dica;
     history = [];
     const now = new Date();
     $("dayInfo").innerHTML = kind === "dia"
@@ -519,6 +522,7 @@
       `V${y - a + r}Q${x - b} ${y - a} ${x - b + r} ${y - a}Z`;
   }
   function render() {
+    if (dica) dica.atualiza();
     // o retalho que está sendo redesenhado some enquanto o dedo arrasta
     const shown = patches.filter((_, k) => !(drag && drag.moved && k === drag.edit));
     const sts = shown.map(statusOf);
@@ -537,7 +541,7 @@
     $("doneBar").tabIndex = finished ? 0 : -1;
     if (finished) {
       $("doneTitle").textContent = kind === "dia" ? "Azulejo completo" : "Resolvido";
-      $("doneSub").textContent = `${fmt(elapsed)} · nível ${P.l}/7 · ${kind === "dia" ? "ver resultado" : "jogar outro"}`;
+      $("doneSub").textContent = `${fmt(elapsed)} · nível ${P.l}/7${dicaUsada ? " · com dica" : ""} · ${kind === "dia" ? "ver resultado" : "jogar outro"}`;
     }
     updateTip(sts);
     $("board").setAttribute("aria-label", `Tabuleiro ${N} por ${N}: ${good} de ${clues.length} painéis certos`);
@@ -546,7 +550,7 @@
   function persist() {
     if (!P) return;
     const good = new Set(patches.map(statusOf).filter(s => s.s >= 0).map(s => s.s)).size;
-    const data = { pid: PID, patches: packPatches(), elapsed: currentElapsed(), done: finished, prog: [good, clues.length], started: patches.length > 0 };
+    const data = { pid: PID, patches: packPatches(), elapsed: currentElapsed(), done: finished, prog: [good, clues.length], started: patches.length > 0 , dica: dicaUsada };
     if (kind === "livre") { save("livre", { idx: freeIdx, ...data }); return; }
     save("dia:" + dayNum, { ...data, time: finished ? elapsed : null });
   }
@@ -676,6 +680,24 @@
   });
   setInterval(() => { if (timer) persist(); }, 5000);
 
+
+  // ---------- dica (comum/dica.js): tira um azulejo errado ou coloca um certo ----------
+  async function pedirDica() {
+    const M = await import("./motor.mjs");
+    const r = M.countSolutions(N, clues, 1, 3e6);
+    if (!r.sols.length) return "";
+    const sol = r.sols[0], igual = (p, q) => p.r0 === q.r0 && p.c0 === q.c0 && p.h === q.h && p.w === q.w;
+    history.push(packPatches());
+    dicaUsada = true;
+    const k = patches.findIndex(p => !sol.some(q => igual(p, q)));
+    if (k >= 0) { patches.splice(k, 1); render(); persist(); return "Um azulejo estava errado e foi retirado."; }
+    const q = sol.find(q => !patches.some(p => igual(p, q)));
+    if (!q) { persist(); return ""; }
+    patches.push({ r0: q.r0, c0: q.c0, h: q.h, w: q.w });
+    checkWin(); render(); persist();
+    return "Um azulejo certo foi colocado.";
+  }
+
   // ---------- vitória ----------
   function checkWin() {
     if (finished) return;
@@ -696,7 +718,7 @@
   function showEnd() {
     $("endTime").textContent = fmt(elapsed);
     const daily = kind === "dia";
-    $("endSub").textContent = daily ? `#${dayNum} · nível ${P.l}/7 · ${N}×${N}` : `Jogo livre · nível ${P.l}/7 · ${N}×${N}`;
+    $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l}/7 · ${N}×${N}` : `Jogo livre · nível ${P.l}/7 · ${N}×${N}`) + (dicaUsada ? " · com dica" : "");
     $("shareBtn").hidden = !daily;
     $("againBtn").hidden = daily;
     $("nextBox").hidden = !daily;
@@ -717,7 +739,7 @@
   }
 
   $("shareBtn").addEventListener("click", () => {
-    const text = `AZULEJO #${dayNum} · nível ${P.l}/7\n🟦 ${fmt(elapsed)}\nhttps://a-hanauer.github.io/puzzle-tracker/azulejo/`;
+    const text = `AZULEJO #${dayNum} · nível ${P.l}/7\n🟦 ${fmt(elapsed)}${dicaUsada ? " 💡" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/azulejo/`;
     ghCompartilhar($("shareBtn"), text);
   });
   $("againBtn").addEventListener("click", () => newFree());
@@ -733,6 +755,7 @@
   document.querySelectorAll(".overlay").forEach(o => {
     o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); });
   });
+  dica = ghDica({ usada: () => dicaUsada, bloqueada: () => finished || !N, pedir: pedirDica });
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 
   // exemplo no Como jogar (3×3): etiquetas soltas e a colcha pronta
@@ -752,8 +775,8 @@
   demo("demoB", true);
 })();
 </script>
-<script src="../comum/catalogo.js?v=113"></script>
-<script src="../comum/celebra.js?v=113"></script>
-<script src="../comum/proximo.js?v=113" data-jogo="retalhos"></script>
+<script src="../comum/catalogo.js?v=114"></script>
+<script src="../comum/celebra.js?v=114"></script>
+<script src="../comum/proximo.js?v=114" data-jogo="retalhos"></script>
 </body>
 </html>

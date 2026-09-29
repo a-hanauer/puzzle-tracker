@@ -10,8 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=113"></script>
-<script src="../comum/cabecalho.js?v=113"></script>
+<script src="../comum/tema.js?v=114"></script>
+<script src="../comum/cabecalho.js?v=114"></script>
+<script src="../comum/dica.js?v=114"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -335,7 +336,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=113">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=114">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -490,6 +491,7 @@
   }
 
   // prepara o tabuleiro para um desafio (do dia ou livre)
+  let dicaUsada = false, dica = null;   // uma dica por desafio (comum/dica.js)
   function setup(puzzle, saved, k) {
     stopTimer();
     kind = k; P = puzzle;
@@ -502,6 +504,7 @@
     for (const [i, v] of givens) cells[i] = v;
     elapsed = saved?.elapsed || 0;
     finished = !!saved?.done;
+    dicaUsada = !!saved?.dica;
     history = []; UNITS = null;
     $("dayInfo").innerHTML = kind === "dia"
       ? `${WEEK[new Date().getDay()]}, ${new Date().getDate()} ${MONTHS[new Date().getMonth()]} · nível ${P.l}/7`
@@ -726,6 +729,7 @@
   }
 
   function render(popIdx = -1) {
+    if (dica) dica.atualiza();
     const bad = conflicts();
     AUTO = autoBits();
     let s = 0, m = 0;
@@ -766,7 +770,7 @@
     $("modeSun").tabIndex = $("modeMoon").tabIndex = finished ? -1 : 0;
     if (finished) {
       $("doneTitle").textContent = kind === "dia" ? "Eclipse completo" : "Resolvido";
-      $("doneSub").textContent = `${fmt(elapsed)} · nível ${P.l}/7 · ${kind === "dia" ? "ver resultado" : "jogar outro"}`;
+      $("doneSub").textContent = `${fmt(elapsed)} · nível ${P.l}/7${dicaUsada ? " · com dica" : ""} · ${kind === "dia" ? "ver resultado" : "jogar outro"}`;
     }
     updateTip();
     if (!finished && s === N && m === N && bad.size === 0) win();
@@ -799,8 +803,8 @@
   function persist() {
     const started = cells.some((v, i) => !givens.has(i) && v !== ".");
     if (!P) return;
-    if (kind === "livre") { save("livre", { idx: freeIdx, pid: PID, cells: cells.join(""), elapsed: currentElapsed(), done: finished }); return; }
-    save("dia:" + dayNum, { pid: PID, cells: cells.join(""), elapsed: currentElapsed(), done: finished, time: finished ? elapsed : null, started });
+    if (kind === "livre") { save("livre", { idx: freeIdx, pid: PID, cells: cells.join(""), elapsed: currentElapsed(), done: finished, dica: dicaUsada }); return; }
+    save("dia:" + dayNum, { pid: PID, cells: cells.join(""), elapsed: currentElapsed(), done: finished, time: finished ? elapsed : null, started, dica: dicaUsada });
   }
 
   // ---------- toque e arrasto ----------
@@ -915,6 +919,41 @@
   });
   setInterval(() => { if (timer) persist(); }, 5000);
 
+
+  // ---------- dica (comum/dica.js): corrige uma peça errada ou coloca uma certa ----------
+  function solucaoEclipse() {
+    const sol = new Array(N * N).fill(""), cS = new Set(), cM = new Set(), rS = new Set(), rM = new Set();
+    const naLinha = r => { const g = {}; for (const [i, v] of givens) if (rowOf(i) === r) g[v] = colOf(i); return g; };
+    const perto = (a, b) => Math.abs(a - b) <= 1;
+    function rec(r, pS, pM) {
+      if (r === N) return true;
+      const g = naLinha(r);
+      for (let s = 0; s < N; s++) {
+        if ((g.S !== undefined && s !== g.S) || cS.has(s) || rS.has(regions[r * N + s]) || perto(s, pS) || perto(s, pM)) continue;
+        for (let m = 0; m < N; m++) {
+          if ((g.M !== undefined && m !== g.M) || perto(s, m) || cM.has(m) || rM.has(regions[r * N + m]) || perto(m, pS) || perto(m, pM)) continue;
+          cS.add(s); cM.add(m); rS.add(regions[r * N + s]); rM.add(regions[r * N + m]); sol[r * N + s] = "S"; sol[r * N + m] = "M";
+          if (rec(r + 1, s, m)) return true;
+          cS.delete(s); cM.delete(m); rS.delete(regions[r * N + s]); rM.delete(regions[r * N + m]); sol[r * N + s] = sol[r * N + m] = "";
+        }
+      }
+      return false;
+    }
+    return rec(0, -9, -9) ? sol : null;
+  }
+  async function pedirDica() {
+    const sol = solucaoEclipse();
+    if (!sol) return "";
+    history.push(cells.join(""));
+    dicaUsada = true;
+    const errada = cells.findIndex((v, i) => (v === "S" || v === "M") && !givens.has(i) && sol[i] !== v);
+    if (errada >= 0) { cells[errada] = "."; render(errada); persist(); return `A peça da linha ${rowOf(errada) + 1}, coluna ${colOf(errada) + 1} estava errada e saiu.`; }
+    const i = sol.findIndex((v, k) => v && cells[k] !== v);
+    if (i < 0) { persist(); return ""; }
+    cells[i] = sol[i]; render(i); persist();
+    return `${sol[i] === "S" ? "Um sol entrou" : "Uma lua entrou"} na linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}.`;
+  }
+
   // ---------- vitória ----------
   function win() {
     stopTimer();
@@ -934,7 +973,7 @@
     $("endTime").textContent = fmt(elapsed);
     const daily = kind === "dia";
     $("endTitle").textContent = "Eclipse completo!";
-    $("endSub").textContent = daily ? `#${dayNum} · nível ${P.l}/7` : `Jogo livre · nível ${P.l}/7`;
+    $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l}/7` : `Jogo livre · nível ${P.l}/7`) + (dicaUsada ? " · com dica" : "");
     $("shareBtn").hidden = !daily;
     $("againBtn").hidden = daily;
     $("nextBox").hidden = !daily;
@@ -957,7 +996,7 @@
   setInterval(tickCountdown, 1000); tickCountdown();
 
   $("shareBtn").addEventListener("click", () => {
-    const text = `ECLIPSE #${dayNum} · nível ${P.l}/7\n☀️🌙 ${fmt(elapsed)}\nhttps://a-hanauer.github.io/puzzle-tracker/eclipse/`;
+    const text = `ECLIPSE #${dayNum} · nível ${P.l}/7\n☀️🌙 ${fmt(elapsed)}${dicaUsada ? " 💡" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/eclipse/`;
     ghCompartilhar($("shareBtn"), text);
   });
 
@@ -974,11 +1013,12 @@
   document.querySelectorAll(".overlay").forEach(o => {
     o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); });
   });
+  dica = ghDica({ usada: () => dicaUsada, bloqueada: () => finished || !N, pedir: pedirDica });
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 })();
 </script>
-<script src="../comum/catalogo.js?v=113"></script>
-<script src="../comum/celebra.js?v=113"></script>
-<script src="../comum/proximo.js?v=113" data-jogo="eclipse"></script>
+<script src="../comum/catalogo.js?v=114"></script>
+<script src="../comum/celebra.js?v=114"></script>
+<script src="../comum/proximo.js?v=114" data-jogo="eclipse"></script>
 </body>
 </html>
