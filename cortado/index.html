@@ -130,23 +130,6 @@
   .sg { stroke: var(--sign); stroke-width: 4.5; stroke-linecap: round; fill: none; }
   .sg.bad { stroke: var(--bad); }
 
-  /* ---------- vitória: uma xícara com latte art se forma sobre o tabuleiro ---------- */
-  .stage { position: relative; }
-  .xicara { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 3; pointer-events: auto; cursor: pointer;
-    animation: xc-out .45s ease 3.1s forwards; }
-  .xicara svg { width: min(62%, 300px); height: auto; overflow: visible; filter: drop-shadow(0 10px 24px rgba(60, 35, 15, .28)); }
-  .xicara .pires, .xicara .copo { transform-box: fill-box; transform-origin: center; animation: xc-in .55s cubic-bezier(.3, 1.4, .45, 1) both; }
-  .xicara .copo { animation-delay: .12s; }
-  .xicara .coracao { transform-box: fill-box; transform-origin: 50% 30%; animation: xc-leite 1s cubic-bezier(.25, .8, .3, 1) .75s both; }
-  .xicara .fio { stroke-dasharray: 60; stroke-dashoffset: 60; animation: xc-fio .45s ease-in 1.75s forwards; }
-  .xicara .gota-cai { animation: xc-cai .5s ease-in .45s both; }
-  #board.servindo { transition: opacity .35s ease, filter .35s ease; opacity: .28; filter: blur(1.5px); }
-  @keyframes xc-in { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
-  @keyframes xc-leite { 0% { transform: scale(.1); opacity: 0; } 30% { opacity: 1; } 100% { transform: none; opacity: 1; } }
-  @keyframes xc-fio { to { stroke-dashoffset: 0; } }
-  @keyframes xc-cai { 0% { transform: translateY(-70px); opacity: 0; } 30% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(0); opacity: 0; } }
-  @keyframes xc-out { to { opacity: 0; transform: scale(.92); visibility: hidden; } }
-  @media (prefers-reduced-motion: reduce) { .xicara, .xicara * { animation-duration: .01s !important; animation-delay: 0s !important; } }
   .won .drop { animation: puff .45s cubic-bezier(.3, 1.6, .5, 1) both; }
   @keyframes puff { 0% { transform: scale(1); } 45% { transform: scale(1.18); } 100% { transform: scale(1); } }
   @media (prefers-reduced-motion: reduce) { .won .drop, .drop.pop { animation: none !important; } }
@@ -592,29 +575,6 @@
   setInterval(() => { if (timer) persist(); }, 5000);
 
   // ---------- vitória ----------
-  // xícara com latte art sobre o tabuleiro, só na hora da vitória (tocar pula)
-  function servir() {
-    const st = $("stage");
-    const x = document.createElement("div");
-    x.className = "xicara"; x.setAttribute("aria-hidden", "true");
-    x.innerHTML = `<svg viewBox="-80 -70 175 140">
-      <defs><radialGradient id="xc-cafe" r="50%"><stop offset=".72" stop-color="#7a4a2a"/><stop offset=".93" stop-color="#9c6a3f"/><stop offset="1" stop-color="#b98556"/></radialGradient></defs>
-      <g class="pires"><ellipse rx="66" ry="62" fill="#efe4d4"/><ellipse rx="52" ry="49" fill="#e4d6c1"/></g>
-      <g class="copo">
-        <rect x="38" y="-10" width="34" height="20" rx="10" fill="#fbf5ec"/>
-        <circle r="46" fill="#fbf5ec"/><circle r="39" fill="url(#xc-cafe)"/>
-        <clipPath id="xc-borda"><circle r="39"/></clipPath><g clip-path="url(#xc-borda)">
-          <circle class="gota-cai" cy="-2" r="4" fill="#f6ecdc"/>
-          <path class="coracao" d="M0 25C-27 7 -30 -14 -15 -19C-7 -22 0 -16 0 -9C0 -16 7 -22 15 -19C30 -14 27 7 0 25Z" fill="#f6ecdc"/>
-        </g>
-      </g></svg>`;
-    x.addEventListener("click", () => x.remove());
-    st.append(x);
-    $("board").classList.add("servindo");
-    setTimeout(() => $("board").classList.remove("servindo"), 3150);
-    setTimeout(() => x.remove(), 3600);
-  }
-
   function checkWin() {
     if (finished || cells.some(v => !v) || conflicts().out.size) return;
     stopTimer();
@@ -627,8 +587,7 @@
       if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
     }
     persist();
-    servir();
-    setTimeout(() => showEnd(), 3700);
+    celebrar("pingado", { alvo: $("stage"), esmaecer: $("board") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
   }
   function showEnd() {
     $("endTime").textContent = fmt(elapsed);
@@ -703,6 +662,7 @@
 })();
 </script>
 <script src="../comum/catalogo.js?v=99"></script>
+<script src="../comum/celebra.js?v=99"></script>
 <script src="../comum/proximo.js?v=99" data-jogo="pingado"></script>
 </body>
 </html>
