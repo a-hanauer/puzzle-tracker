@@ -200,7 +200,7 @@
   .seg > button:not(.done-bar) { transition: opacity .25s ease, transform .25s ease; }
   .controls.done .seg > button:not(.done-bar) { opacity: 0; transform: scale(.9); pointer-events: none; }
   .done-bar {
-    position: absolute; inset: 0; display: flex !important; align-items: center; justify-content: flex-start; gap: 12px;
+    position: absolute; inset: 0; display: flex !important; align-items: center; justify-content: flex-start !important; gap: 12px;   /* !important: ".controls button" centraliza */
     padding: 0 18px !important; margin: 0; border: 0; border-radius: 14px !important; background: none !important;
     box-shadow: none !important; color: #fff !important; font: inherit; text-align: left; cursor: pointer;
     opacity: 0; pointer-events: none; transition: opacity .3s ease .15s;
