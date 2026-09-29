@@ -82,6 +82,7 @@
 
   const CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
   const REFRESH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>';
+  const CASA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4.5l8.5 6.5"/><path d="M5.5 9.8V19.5h13V9.8"/></svg>';
   const VOLTA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
   const NOME = (BASE_GAMES.find(g => g.id === ATUAL) || {}).name || "";
 
@@ -131,7 +132,7 @@
     document.querySelectorAll(".modal.fim").forEach(m => {
       if (m.querySelector(".fim-free")) return;
       const sub = m.querySelector(".fim-sub");
-      if (sub) sub.insertAdjacentHTML("afterend", '<div class="fim-free"></div>');
+      if (sub) sub.insertAdjacentHTML("afterend", '<div class="fim-free"></div><div class="fim-cd"></div>');
       const pe = m.querySelector("[data-proximo]");
       if (pe) { pe.className = "fim-foot"; pe.removeAttribute("data-proximo"); pe.hidden = false; }
     });
@@ -217,12 +218,22 @@
     const tip = document.getElementById("tip");
     if (tip && document.getElementById("controls")) tip.hidden = acabou;
     // bandeja de resultado
-    document.querySelectorAll(".modal.fim .fim-free").forEach(el => { el.innerHTML = ""; el.append(atalhoExtra()); });
+    // contagem logo abaixo do placar; no pé: início · jogar outro · próximo jogo
+    document.querySelectorAll(".modal.fim .fim-free").forEach(el => { el.innerHTML = ""; el.hidden = true; });
+    document.querySelectorAll(".modal.fim .fim-cd").forEach(el => {
+      el.innerHTML = livre ? "" : contagem;
+      el.hidden = livre;
+    });
     document.querySelectorAll(".modal.fim .fim-foot").forEach(el => {
       el.innerHTML = "";
-      if (!livre) el.insertAdjacentHTML("beforeend", contagem.replace('class="cd"', 'class="cd grande"'));
+      el.insertAdjacentHTML("beforeend", `<a class="fim-btn fim-home" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia">${CASA}</a>`);
+      const outro = document.createElement("button");
+      outro.type = "button"; outro.className = "fim-btn fim-outro";
+      outro.innerHTML = `${REFRESH}<span>Jogar outro</span>`;
+      outro.addEventListener("click", jogarExtra);
+      el.append(outro);
       if (g) el.append(botaoProximo(g, s, "fim-btn fim-nxbtn"));
-      el.hidden = !el.childNodes.length;
+      el.hidden = false;
     });
     document.dispatchEvent(new Event("gh-contagem"));
   }
