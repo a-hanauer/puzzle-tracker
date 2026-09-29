@@ -204,14 +204,16 @@
       el.innerHTML = "";
       if (acabou && g) el.append(botaoProximo(g, s, "nx"));
     });
+    let reajusta = false;
     subrows().forEach(el => {
-      if (el.hidden === acabou) setTimeout(() => window.dispatchEvent(new Event("resize")), 0);   // o tabuleiro se reajusta
+      if (el.hidden === acabou) reajusta = true;
       el.hidden = !acabou;
       el.innerHTML = "";
       if (!acabou) return;
       el.append(atalhoExtra());
       if (!livre) el.insertAdjacentHTML("beforeend", `<span class="cd">Próximo em <b data-contagem>--:--:--</b></span>`);
     });
+    if (reajusta) window.dispatchEvent(new Event("resize"));   // o tabuleiro se reajusta já, antes de a tela ser desenhada
     const tip = document.getElementById("tip");
     if (tip && document.getElementById("controls")) tip.hidden = acabou;
     // bandeja de resultado
@@ -239,8 +241,18 @@
 
   // os jogos gravam o progresso no navegador; basta conferir de tempos em tempos
   const tick = () => atualizar(false);
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tick); else tick();
+  // primeira arrumação: com tudo no lugar, a tela aparece (html.gh-carregando, comum/cabecalho.css)
+  const mostra = () => requestAnimationFrame(() => document.documentElement.classList.remove("gh-carregando"));
+  const primeiro = () => { tick(); mostra(); };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", primeiro); else primeiro();
   setInterval(tick, 1200);
+  // assim que a partida aparece terminada (inclusive ao abrir um jogo já resolvido),
+  // atualiza na hora, antes de a tela ser desenhada: nada aparece num lugar e pula para outro
+  const vigia = () => {
+    const obs = new MutationObserver(() => atualizar(false));
+    document.querySelectorAll("#controls, .gh-fim").forEach(el => obs.observe(el, { attributes: true, attributeFilter: ["class"] }));
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", vigia); else vigia();
   document.addEventListener("visibilitychange", () => { if (!document.hidden) atualizar(true); });
   window.addEventListener("pageshow", () => atualizar(true));
 })();

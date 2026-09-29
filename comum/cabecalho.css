@@ -396,3 +396,15 @@ a.nx.tinta .px-ic { background: none; }
 
 /* a faixa de resultado abre a bandeja, não navega: sem seta */
 .gh-fim-bar > svg, .done-bar > .chev { display: none !important; }
+
+/* jogo terminado: a dica de baixo some desde o primeiro desenho da tela
+   (a contagem para o próximo desafio fica logo abaixo do tabuleiro) */
+#controls.done ~ .tip, .fim-row:has(#controls.done) ~ .tip { display: none !important; }
+/* linha "Jogar um extra · Próximo em" sob o tabuleiro: altura fixa, e o espaço dela já fica
+   reservado desde o primeiro desenho de um jogo terminado — o tabuleiro não pula quando ela chega */
+.fim-subrow.junto { height: 24px; box-sizing: border-box; }
+body:has(.gh-fim.on) [data-tabuleiro]:not(:has(+ .fim-subrow.junto:not([hidden]))) { margin-bottom: 34px !important; }
+/* ao abrir um jogo, a tela só aparece quando já está na posição final (comum/proximo.js tira a
+   classe); se algo falhar, aparece sozinha depois de 1 s */
+html.gh-carregando body { visibility: hidden; animation: gh-mostra 0s linear 1s forwards; }
+@keyframes gh-mostra { to { visibility: visible; } }
