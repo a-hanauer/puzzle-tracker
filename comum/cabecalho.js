@@ -92,7 +92,7 @@ window.ghFim = function (el, o) {
   "use strict";
   const LIMITE = 90;
   let d = null;
-  const bandeja = t => t && t.closest && t.closest(".overlay.open > .modal");
+  const bandeja = t => t && t.closest && t.closest(".overlay.open > .modal:not(.fim)");   // a janela de fim é um diálogo, não se arrasta
   function inicio(m, y) { d = m.scrollTop > 0 ? null : { m, y0: y, dy: 0, t0: Date.now(), vai: false }; }
   function move(y, e) {
     if (!d) return;

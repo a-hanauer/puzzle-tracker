@@ -36,6 +36,7 @@
   @keyframes cel-traco { to { stroke-dashoffset: 0; } }
   @keyframes cel-brilha { 0%, 100% { opacity: .15; transform: scale(.5); } 50% { opacity: 1; transform: scale(1); } }
   @keyframes cel-sai { to { opacity: 0; transform: scale(.92); visibility: hidden; } }
+  .celebra.segura { animation: none; }
 
   /* Cortado: xícara com latte art */
   .celebra .cafe-gota { animation: cel-cai .33s ease-in .3s both; }
@@ -168,19 +169,90 @@
 
   let estilo = false;
   window.CELEBRA = { ARTE, CSS };   // também usados para gerar os ícones (o ícone é o quadro final da animação)
+  // Passagem para o resultado: se a página tem a janela de fim (.modal.fim), o desenho não some no fim da
+  // animação — fica no lugar e, quando o jogo abre a janela, voa até a arte dela enquanto a janela
+  // surge no centro, como se saísse do próprio desenho. Sem janela aberta em 1,5 s, some como antes.
+  let espera = null;            // { el, esm, svg } do desenho que aguarda a janela
+  const MODO = () => window.CEL_PASSAGEM || "voa";
+  function solta(fade) {
+    if (!espera) return;
+    const { el, esm } = espera; espera = null;
+    esm.forEach(e => e.classList.remove("cel-dim"));
+    if (!fade) return el.remove();
+    el.style.animation = `cel-sai ${SAIDA}ms ease forwards`;
+    setTimeout(() => el.remove(), SAIDA + 50);
+  }
+  function passagem(ov) {
+    const { el, svg } = espera, esm = espera.esm; espera = null;
+    const modal = ov.querySelector(".modal"), slot = modal.querySelector(".fim-art > *");
+    const de = svg.getBoundingClientRect();
+    modal.style.animation = "none";                       // mede a posição final, sem a animação de abrir
+    const para = slot ? slot.getBoundingClientRect() : null;
+    const caixa = modal.getBoundingClientRect();
+    modal.style.animation = "";
+    // o desenho sai do tabuleiro e passa a voar por cima de tudo
+    const voo = document.createElement("div");
+    voo.className = "cel-voo";
+    voo.style.cssText = `position:fixed;left:${de.left}px;top:${de.top}px;width:${de.width}px;height:${de.height}px;z-index:9999;pointer-events:none;`;
+    voo.append(svg); document.body.append(voo); el.remove();
+    const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches, T = reduz ? 1 : 460;
+    if (slot) slot.style.visibility = "hidden";
+    // tamanho final: o desenho ocupa a arte da janela (o ícone é o quadro final dele)
+    const lado = para ? Math.min(para.width, para.height) * .82 : 0;
+    const dx = para ? para.left + para.width / 2 - (de.left + de.width / 2) : 0, dy = para ? para.top + para.height / 2 - (de.top + de.height / 2) : 0;
+    const k = para ? lado / de.width : .3;
+    const va = voo.animate([{ transform: "none" }, { transform: `translate(${dx}px, ${dy}px) scale(${k})` }], { duration: T, easing: "cubic-bezier(.45, 0, .2, 1)", fill: "forwards" });
+    let entra;
+    if (MODO() === "cresce") {                             // a janela cresce em círculo a partir do desenho
+      const cx = de.left + de.width / 2 - caixa.left, cy = de.top + de.height / 2 - caixa.top, r0 = de.width * .42;
+      entra = modal.animate([{ clipPath: `circle(${r0}px at ${cx}px ${cy}px)` }, { clipPath: `circle(${Math.hypot(caixa.width, caixa.height)}px at ${cx}px ${cy}px)` }],
+        { duration: T, easing: "cubic-bezier(.5, 0, .2, 1)" });
+    } else {                                              // a janela surge (escala + opacidade) em volta do desenho
+      entra = modal.animate([{ opacity: 0, transform: "scale(.9)" }, { opacity: 1, transform: "none" }], { duration: T * .8, delay: T * .15, easing: "cubic-bezier(.2, .9, .3, 1.1)", fill: "backwards" });
+    }
+    ov.animate([{ backgroundColor: "transparent", backdropFilter: "blur(0px)" }, {}], { duration: T * .7 });
+    setTimeout(() => esm.forEach(e => e.classList.remove("cel-dim")), T);   // o tabuleiro só volta com o fundo da janela já por cima
+    va.finished.then(() => {
+      if (slot) slot.style.visibility = "";
+      const f = voo.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduz ? 1 : 160, fill: "forwards" });
+      f.finished.then(() => voo.remove());
+    });
+  }
+  new MutationObserver(ms => {
+    if (!espera) return;
+    for (const m of ms) {
+      const ov = m.target;
+      if (ov.classList && ov.classList.contains("open") && ov.querySelector(":scope > .modal.fim")) { passagem(ov); return; }
+    }
+  }).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ["class"] });
+
   window.celebrar = function (jogo, opts = {}) {
     const alvo = opts.alvo, arte = ARTE[jogo];
     if (!alvo || !arte) return Promise.resolve();
     if (!estilo) { const s = document.createElement("style"); s.textContent = CSS; document.head.append(s); estilo = true; }
     const esm = [].concat(opts.esmaecer || alvo).filter(Boolean);
+    const segura = !!document.querySelector(".overlay > .modal.fim");   // haverá janela de fim: o desenho espera por ela
     alvo.classList.add("cel-host");
     const el = document.createElement("div");
-    el.className = "celebra"; el.setAttribute("aria-hidden", "true");
+    el.className = "celebra" + (segura ? " segura" : ""); el.setAttribute("aria-hidden", "true");
     el.innerHTML = `<svg viewBox="-100 -100 200 200">${arte()}</svg>`;
     alvo.append(el);
     esm.forEach(e => e.classList.add("cel-dim"));
     return new Promise(res => {
       let feito = false;
+      if (segura) {
+        const pronto = () => {
+          if (feito) return; feito = true;
+          // tocar pula: o desenho aparece completo e a janela já vem
+          el.querySelectorAll("*").forEach(n => n.getAnimations && n.getAnimations().forEach(a => a.finish()));
+          espera = { el, esm, svg: el.querySelector("svg") };
+          setTimeout(() => { if (espera && espera.el === el) solta(true); }, 1500);   // a janela não veio
+          res();
+        };
+        el.addEventListener("click", pronto);
+        setTimeout(pronto, DUR);
+        return;
+      }
       const fim = () => { if (feito) return; feito = true; el.remove(); esm.forEach(e => e.classList.remove("cel-dim")); res(); };
       el.addEventListener("click", fim);
       el.addEventListener("animationend", e => { if (e.target === el) fim(); });

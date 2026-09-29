@@ -434,3 +434,15 @@ html.gh-carregando body { visibility: hidden; animation: gh-mostra 0s linear 1s 
 .rec-pill svg { width: 14px; height: 14px; flex: none; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rec-pill { color: #74d69c; } }
 :root[data-theme="dark"] .rec-pill { color: #74d69c; }
+/* Janela de fim de jogo: um diálogo no centro da tela (não uma bandeja). Depois da vitória, ele surge
+   do próprio desenho da animação (comum/celebra.js); aberto pela faixa, só aparece no lugar. */
+.overlay:has(> .modal.fim) { align-items: center !important; padding: 12px !important; padding-top: calc(12px + env(safe-area-inset-top, 0px)) !important; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important; }
+.overlay > .modal.fim {
+  max-width: 400px !important; border-radius: 28px !important;
+  max-height: 100% !important; padding: 18px !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .3) !important;
+}
+.overlay > .modal.fim::before { display: none; }          /* sem alça: não é bandeja */
+.overlay.open > .modal.fim { animation: gh-surge .3s cubic-bezier(.2, .9, .3, 1.1) both; }
+@keyframes gh-surge { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .overlay.open > .modal.fim { animation: none; } }
