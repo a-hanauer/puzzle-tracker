@@ -334,6 +334,11 @@
     font: inherit; font-weight: 600; font-size: .92rem; text-align: left; cursor: pointer;
   }
   .set-btn[hidden] { display: none; }
+  .bk-code { width: 100%; box-sizing: border-box; height: 96px; margin: 10px 0 12px; padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--border);
+    background: var(--surface-2); color: var(--text); font: .72rem/1.35 ui-monospace, Menlo, monospace; resize: none; word-break: break-all; }
+  .bk-actions { display: flex; gap: 8px; }
+  .bk-actions > * { flex: 1; justify-content: center; text-align: center; }
+  .add-btn.bk-sec { background: var(--surface-2); color: var(--text); }
   .set-btn.danger { color: #e5484d; }
   .set-btn.confirm { background: #e5484d; border-color: #e5484d; color: #fff; }
   .set-note { color: var(--muted); font-size: .78rem; margin: 10px 2px 0; line-height: 1.4; }
@@ -518,7 +523,11 @@
     <button class="set-btn" id="badgeBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg><span>Mostrar pendentes no ícone do app</span></button>
     <button class="set-btn" id="manageBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Gerenciar jogos</span></button>
     <button class="set-btn danger" id="reset"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Desmarcar jogos externos de hoje</span></button>
-    <div class="set-note">Misto, Quinhentos e Eclipse seguem o que você jogou e não são desmarcados.</div>
+    <div class="set-note">Os jogos da casa seguem o que você jogou e não são desmarcados.</div>
+    <div class="set-label" style="margin-top:22px">Backup</div>
+    <button class="set-btn" id="exportBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5"/><path d="M7.5 8 12 3.5 16.5 8"/><path d="M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg><span>Exportar progresso</span></button>
+    <button class="set-btn" id="importBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5V15"/><path d="M7.5 10.5 12 15l4.5-4.5"/><path d="M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg><span>Importar progresso</span></button>
+    <div class="set-note">O progresso fica só neste aparelho. Exporte para guardar uma cópia ou levar para outro celular: sequências, tempos, histórico, jogos da casa em andamento e a sua lista de jogos.</div>
   </div>
 </section>
 
@@ -573,6 +582,29 @@
     <div class="set-label">Seus jogos</div>
     <ul class="mlist" id="mlist"></ul>
     <div class="set-note">Jogos ocultos saem do painel e da contagem do dia, mas continuam aqui para mostrar de novo. A lista fica salva neste aparelho.</div>
+  </div>
+</div>
+<div class="sheet-bg" id="backup" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="bkTitle">
+    <div class="sheet-head"><b id="bkTitle">Backup</b><button class="round" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div id="bkExport">
+      <div class="set-note" style="margin-top:0">Guarde este código (nas Notas, por exemplo) ou mande para o outro aparelho. Para restaurar, use "Importar progresso".</div>
+      <textarea class="bk-code" id="bkCode" readonly></textarea>
+      <div class="bk-actions">
+        <button class="add-btn" id="bkCopy" type="button">Copiar código</button>
+        <button class="add-btn bk-sec" id="bkShare" type="button">Compartilhar</button>
+      </div>
+    </div>
+    <div id="bkImport">
+      <div class="set-note" style="margin-top:0">Cole o código do backup ou escolha o arquivo. O progresso deste aparelho será substituído.</div>
+      <textarea class="bk-code" id="bkPaste" placeholder="Cole aqui o código (começa com JDD1:)"></textarea>
+      <div class="bk-actions">
+        <button class="add-btn" id="bkRestore" type="button">Restaurar</button>
+        <label class="add-btn bk-sec" for="bkFile">Escolher arquivo</label>
+        <input type="file" id="bkFile" accept=".txt,text/plain" hidden>
+      </div>
+      <div class="add-err" id="bkErr" hidden></div>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -951,6 +983,61 @@ function openManage(focusAdd) {
   $("addErr").hidden = true; $("manage").hidden = false;
   if (focusAdd) setTimeout(() => $("addUrl").focus(), 60);
 }
+
+/* ---------- Backup: exportar / importar ----------
+   Junta tudo o que os Jogos do Dia guardam neste navegador (painel e jogos da casa)
+   num código de texto. Importar substitui esses dados e recarrega. */
+const BK_PREFIXOS = ["jogosDoDia.", "eclipse:", "novelo:", "retalhos:", "pingado:", "quinhentao:", "sanduba-"];
+const ehNosso = k => BK_PREFIXOS.some(p => k.startsWith(p));
+const b64 = str => btoa(unescape(encodeURIComponent(str)));
+const deb64 = str => decodeURIComponent(escape(atob(str)));
+function codigoBackup() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (ehNosso(k)) data[k] = localStorage.getItem(k); }
+  return "JDD1:" + b64(JSON.stringify({ v: 1, em: new Date().toISOString(), data }));
+}
+function abreBackup(modo) {
+  closeSettings && closeSettings();
+  $("bkExport").hidden = modo !== "exportar"; $("bkImport").hidden = modo !== "importar";
+  $("bkTitle").textContent = modo === "exportar" ? "Exportar progresso" : "Importar progresso";
+  $("bkErr").hidden = true; $("bkPaste").value = "";
+  if (modo === "exportar") $("bkCode").value = codigoBackup();
+  $("backup").hidden = false;
+}
+$("exportBtn").addEventListener("click", () => abreBackup("exportar"));
+$("importBtn").addEventListener("click", () => abreBackup("importar"));
+$("backup").addEventListener("click", e => { if (e.target === $("backup") || e.target.closest("[data-close]")) $("backup").hidden = true; });
+$("bkCopy").addEventListener("click", async () => {
+  const t = $("bkCode");
+  try { await navigator.clipboard.writeText(t.value); } catch { t.select(); document.execCommand("copy"); }
+  toast("Código copiado");
+});
+$("bkShare").addEventListener("click", async () => {
+  const txt = $("bkCode").value, dia = today();
+  try {
+    const file = new File([txt], `jogos-do-dia-backup-${dia}.txt`, { type: "text/plain" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: "Backup · Jogos do Dia" }); return; }
+    if (navigator.share) { await navigator.share({ title: "Backup · Jogos do Dia", text: txt }); return; }
+  } catch (e) { if (e && e.name === "AbortError") return; }
+  const a = document.createElement("a");                  // sem compartilhar: baixa o arquivo
+  a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain" })); a.download = `jogos-do-dia-backup-${dia}.txt`; a.click();
+});
+function restaura(txt) {
+  const err = m => { $("bkErr").textContent = m; $("bkErr").hidden = false; };
+  txt = (txt || "").trim();
+  const i = txt.indexOf("JDD1:");
+  if (i < 0) return err("Esse não parece ser um código de backup dos Jogos do Dia.");
+  let pac;
+  try { pac = JSON.parse(deb64(txt.slice(i + 5).replace(/\s+/g, ""))); } catch { return err("O código está incompleto ou corrompido. Copie de novo, inteiro."); }
+  if (!pac || !pac.data) return err("O código não tem dados.");
+  if (!confirm(`Restaurar o backup de ${new Date(pac.em).toLocaleString("pt-BR")}? O progresso deste aparelho será substituído.`)) return;
+  const velhas = []; for (let j = 0; j < localStorage.length; j++) { const k = localStorage.key(j); if (ehNosso(k)) velhas.push(k); }
+  velhas.forEach(k => localStorage.removeItem(k));
+  Object.entries(pac.data).forEach(([k, v]) => { if (ehNosso(k)) localStorage.setItem(k, v); });
+  location.reload();
+}
+$("bkRestore").addEventListener("click", () => restaura($("bkPaste").value));
+$("bkFile").addEventListener("change", async e => { const f = e.target.files[0]; if (f) restaura(await f.text()); e.target.value = ""; });
 $("manageBtn").addEventListener("click", () => openManage(false));
 $("addRow").addEventListener("click", () => openManage(true));
 $("manage").addEventListener("click", e => {
