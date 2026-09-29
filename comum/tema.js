@@ -171,6 +171,33 @@
       window.addEventListener("orientationchange", function () { setTimeout(ajustar, 300); });
     }
   } catch (e) {}
+  // Telas dos jogos (<html data-fixa>): a página não rola nem "estica" com o dedo — o arrasto
+  // é do jogo (Novelo, Azulejo...). Continua rolando o que precisa rolar (texto das
+  // bandejas) e, se num celular pequeno a página não couber na tela, ela rola normalmente.
+  try {
+    if (document.documentElement.hasAttribute("data-fixa")) {
+      var st2 = document.createElement("style");
+      st2.textContent = "html[data-fixa],html[data-fixa] body{overscroll-behavior:none}";
+      document.head.appendChild(st2);
+      var rolavel = function (el) {
+        for (; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+          var oy = getComputedStyle(el).overflowY;
+          if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight + 1) return true;
+        }
+        return false;
+      };
+      var cabe = function () {
+        var se = document.scrollingElement || document.documentElement;
+        var sobra = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sobra")) || 0;
+        return se.scrollHeight <= window.innerHeight + sobra + 2;
+      };
+      document.addEventListener("touchmove", function (e) {
+        if (e.touches && e.touches.length > 1) return;
+        if (!cabe() || rolavel(e.target)) return;
+        if (e.cancelable) e.preventDefault();
+      }, { passive: false });
+    }
+  } catch (e) {}
   document.addEventListener("DOMContentLoaded", function () { apply(get()); });   // metas que vêm depois do script
   // se o tema mudar em outra aba (ou ao voltar do painel), acompanha
   window.addEventListener("storage", function (e) { if (e.key === KEY) apply(get()); });
