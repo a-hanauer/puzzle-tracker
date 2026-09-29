@@ -199,26 +199,22 @@
   .seg > button:not(.done-bar) { transition: opacity .25s ease, transform .25s ease; }
   .controls.done .seg > button:not(.done-bar) { opacity: 0; transform: scale(.9); pointer-events: none; }
   .done-bar {
-    position: absolute; inset: 0; display: flex !important; align-items: center; justify-content: center; gap: 12px;
+    position: absolute; inset: 0; display: flex !important; align-items: center; justify-content: flex-start; gap: 12px;
     padding: 0 18px !important; margin: 0; border: 0; border-radius: 14px !important; background: none !important;
     box-shadow: none !important; color: #fff !important; font: inherit; text-align: left; cursor: pointer;
     opacity: 0; pointer-events: none; transition: opacity .3s ease .15s;
   }
   .controls.done .done-bar { opacity: 1; pointer-events: auto; }
-  .done-bar .ecl { width: 66px; height: 44px; flex-shrink: 0; overflow: visible; }
+  .seg > .done-bar { gap: 12px; }
+  .done-bar .ecl { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }   /* mesma estrutura das faixas dos outros jogos */
   .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
   .done-bar .txt b { font-size: 1.02rem; font-weight: 800; letter-spacing: .01em; }
   .done-bar .txt span { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.72); font-variant-numeric: tabular-nums; }
   .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,255,255,.7); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-  .done-bar .ecl .corona { opacity: 1; transform-origin: 33px 22px; }
   /* animação só na hora da vitória; ao reabrir um jogo já resolvido, fica parado */
-  .controls.play .done-bar .ecl .s { animation: ecl-s .9s cubic-bezier(.3,.7,.2,1) .2s both; }
-  .controls.play .done-bar .ecl .m { animation: ecl-m .9s cubic-bezier(.3,.7,.2,1) .2s both; }
-  .controls.play .done-bar .ecl .corona { animation: ecl-c .7s ease 1s both; }
-  .controls.play .done-bar .txt { animation: ecl-t .5s ease .9s both; }
-  @keyframes ecl-s { from { transform: translateX(-15px); } to { transform: none; } }
-  @keyframes ecl-m { from { transform: translateX(17px); } to { transform: none; } }
-  @keyframes ecl-c { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+  .controls.play .done-bar .ecl { animation: ecl-in .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
+  .controls.play .done-bar .txt { animation: ecl-t .5s ease .3s both; }
+  @keyframes ecl-in { from { transform: scale(.3) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes ecl-t { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .controls.play .done-bar * { animation: none !important; } }
   .controls button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
@@ -401,11 +397,7 @@
     <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg class="sun"><use href="#i-orb"/></svg><span class="cnt" id="cSun"><span class="pips"></span></span></button>
     <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg class="moon"><use href="#i-luna"/></svg><span class="cnt" id="cMoon"><span class="pips"></span></span></button>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
-      <svg class="ecl" viewBox="0 0 66 44" aria-hidden="true">
-        <circle class="corona" cx="33" cy="22" r="19" fill="url(#g-corona)"/>
-        <g class="s"><circle cx="33" cy="22" r="12.5" fill="url(#g-sun)"/></g>
-        <g class="m"><circle cx="34.2" cy="21" r="11.9" fill="#0d1233"/></g>
-      </svg>
+      <img class="ecl" src="icon-claro.png?v=20" data-escuro="icon-escuro.png?v=20" alt="">
       <span class="txt"><b id="doneTitle">Eclipse completo</b><span id="doneSub"></span></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
