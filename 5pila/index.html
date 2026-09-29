@@ -428,7 +428,7 @@ header{
       <div class="row2"><div class="tile present" style="width:32px;height:32px;font-size:14px;flex-shrink:0;">A</div><span>2 toques — marca como certa, posição errada</span></div>
       <div class="row2"><div class="tile correct" style="width:32px;height:32px;font-size:14px;flex-shrink:0;">A</div><span>3 toques — marca como certa, posição certa</span></div>
     </div>
-    <p>O teclado se pinta sozinho seguindo suas marcações. Vermelho é definitivo — a letra some do jogo, então marcar uma ocorrência como vermelha já pinta todas as outras aparições dela e a tecla correspondente. Verde e amarelo dependem da posição, então se a mesma letra já foi marcada das duas formas em palpites diferentes, a tecla aparece pintada meio a meio — e, nesse caso, ela nunca vira vermelha, já que você já sabe que ela existe na palavra.</p>
+    <p>O teclado se pinta sozinho seguindo suas marcações. Vermelho vale para a letra inteira — ela some do jogo, então marcar uma ocorrência como vermelha pinta todas as outras aparições dela e a tecla correspondente, e apaga os verdes e amarelos que ela tinha. Verde e amarelo dependem da posição, então se a mesma letra já foi marcada das duas formas em palpites diferentes, a tecla aparece pintada meio a meio.</p><p>Cada toque segue a cor que a ficha está mostrando, mesmo as pintadas sozinhas, e o último toque vence: dá pra levar qualquer letra de verde ou amarelo para vermelho (e de volta) só tocando nela.</p>
     <p>A marcação também é esperta com a posição: pintar uma letra de <b>amarelo</b> pinta de amarelo a mesma letra na mesma posição em todos os palpites. Pintar de <b>verde</b> pinta de verde a mesma letra na mesma posição, e de amarelo as aparições dela em outras posições. Enquanto uma letra só tiver amarelo, as aparições dela em outras posições ficam <b>listradas de verde e amarelo</b>: ela existe, mas ainda não se sabe se aquela é a posição. Desfazer a marca original desfaz também o que ela pintou.</p>
     <p>Se um palpite não tiver nenhuma letra certa (nem verde, nem amarela), o jogo já pinta a linha inteira de vermelho pra você — não tem o que deduzir ali.</p>
     <p>Errou uma pintura? Toque de novo na ficha até voltar ao neutro, ou use o botão <b>Limpar cores</b> acima do teclado pra apagar todas de uma vez — sem perder seus palpites. Os palpites com as 5 letras erradas continuam vermelhos, porque isso não é dedução.</p>
@@ -751,37 +751,36 @@ header{
     var letter = state.guesses[r][c];
     // letra de um palpite 0·0·5: vermelho definitivo, não dá pra repintar
     if(letterIsDead(letter)) return;
-    var cur = state.paint[r][c];
-    var newVal;
-    if(letterHasGY(letter)){
-      // a letra já foi marcada de verde/amarelo em algum lugar — verde e
-      // amarelo são contextuais (dependem da posição), então essa ficha
-      // cicla só entre amarelo → verde → neutro (nunca vermelho), pra
-      // ainda dar pra limpar essa marcação específica tocando de novo
-      newVal = (cur === 0 || cur === 4) ? 2 : (cur === 2 ? 3 : 0);
-    } else {
-      newVal = (cur + 1) % 4; // 0 nada → 1 vermelho → 2 amarelo → 3 verde
-    }
+    // o toque segue a cor que a ficha está mostrando (inclusive as pintadas sozinhas):
+    // neutro → vermelho → amarelo → verde → neutro; a listrada (4) conta como meio amarela → amarelo.
+    // O último toque vence: vermelho vale para a letra inteira e apaga os verdes/amarelos dela;
+    // amarelo ou verde numa letra vermelha tira o vermelho dela.
+    var shown = effectivePaint(r,c);
+    var newVal = shown === 4 ? 2 : (shown + 1) % 4;
     if(!state.auto) state.auto = makeEmptyPaint();
     if(!state.auto[r]) state.auto[r] = new Array(WORD_LEN).fill(0);
     var wasAuto = state.auto[r][c] === 1;
+    var rr, cc, w;
+    if(newVal === 1 || newVal === 2 || newVal === 3){
+      // começa a letra do zero em todo o tabuleiro: some o que ela tinha (vermelho, ou verde/amarelo
+      // e o que eles espalharam) e as fichas dela voltam a poder ser pintadas sozinhas
+      for(rr=0; rr<state.guesses.length; rr++){
+        w = state.guesses[rr];
+        if(!state.paint[rr]) state.paint[rr] = new Array(WORD_LEN).fill(0);
+        if(!state.auto[rr]) state.auto[rr] = new Array(WORD_LEN).fill(0);
+        for(cc=0; cc<WORD_LEN; cc++){
+          if(w[cc] !== letter || (rr === r && cc === c)) continue;
+          var v = state.paint[rr][cc];
+          // trocando entre amarelo e verde, as outras marcas feitas à mão nessa letra continuam
+          var mantem = newVal !== 1 && (v === 2 || v === 3) && state.auto[rr][cc] !== 1;
+          if(!mantem){ state.paint[rr][cc] = 0; state.auto[rr][cc] = 0; }
+        }
+      }
+    }
     state.paint[r][c] = newVal;
     // 0 = ficha livre · 1 = pintada automaticamente · 2 = você limpou uma
     // ficha automática, então ela fica neutra e não é repintada sozinha
     state.auto[r][c] = (newVal === 0 && wasAuto) ? 2 : 0;
-    if(newVal === 2 || newVal === 3){
-      // essa letra passou a ter uma marca verde/amarela — limpa qualquer
-      // vermelho "órfão" que tenha ficado gravado em outra aparição dela,
-      // pra ele não reaparecer do nada se essa proteção for removida depois
-      for(var rr=0; rr<state.guesses.length; rr++){
-        var w = state.guesses[rr];
-        for(var cc=0; cc<WORD_LEN; cc++){
-          if(w[cc]===letter && state.paint[rr] && state.paint[rr][cc]===1){
-            state.paint[rr][cc] = 0;
-          }
-        }
-      }
-    }
     propagateAll();
     if(!practiceMode) save('game:'+diff, state);
     render();
