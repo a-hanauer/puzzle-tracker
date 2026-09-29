@@ -393,3 +393,6 @@ a.nx.tinta .px-ic { background: none; }
 .fim-row .done-bar .txt, .fim-row .gh-fim-bar .t { min-width: 0; }
 .fim-row .done-bar .txt b, .fim-row .done-bar .txt span,
 .fim-row .gh-fim-bar .t b, .fim-row .gh-fim-bar .t span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* a faixa de resultado abre a bandeja, não navega: sem seta */
+.gh-fim-bar > svg, .done-bar > .chev { display: none !important; }
