@@ -3,8 +3,9 @@
 
    Na hora da vitória (nunca ao reabrir um jogo já resolvido):
      · o tabuleiro esmaece;
-     · o objeto do tema do jogo aparece no centro e se completa (~2 s);
-     · tudo some e o tabuleiro volta; a promessa resolve e o jogo abre o resultado.
+     · o objeto do tema do jogo aparece no centro e se completa (~1 s);
+     · a promessa resolve e o jogo abre o resultado: o desenho voa até a arte da janela de fim,
+       que surge no centro da tela (sem janela de fim, o desenho some e o tabuleiro volta).
    Tocar pula a animação. Com "reduzir movimento" ligado, o desenho aparece
    pronto e some logo.
 
@@ -15,7 +16,10 @@
    ========================================================================= */
 (function () {
   "use strict";
-  const DUR = 2050;          // quando o desenho começa a sumir (ms): animação de ~2 s
+  // Os desenhos abaixo foram marcados para ~2 s e são tocados RITMO vezes mais rápido (~1 s):
+  // tempos e atrasos (inclusive os --d de cada peça) valem em "tempo de desenho".
+  const RITMO = 2;
+  const DUR = Math.round(2050 / RITMO);   // quando o desenho está completo (ms, tempo real)
   const SAIDA = 320;         // duração do sumiço (ms)
 
   const CSS = `
@@ -173,7 +177,6 @@
   // animação — fica no lugar e, quando o jogo abre a janela, voa até a arte dela enquanto a janela
   // surge no centro, como se saísse do próprio desenho. Sem janela aberta em 1,5 s, some como antes.
   let espera = null;            // { el, esm, svg } do desenho que aguarda a janela
-  const MODO = () => window.CEL_PASSAGEM || "voa";
   function solta(fade) {
     if (!espera) return;
     const { el, esm } = espera; espera = null;
@@ -188,7 +191,6 @@
     const de = svg.getBoundingClientRect();
     modal.style.animation = "none";                       // mede a posição final, sem a animação de abrir
     const para = slot ? slot.getBoundingClientRect() : null;
-    const caixa = modal.getBoundingClientRect();
     modal.style.animation = "";
     // o desenho sai do tabuleiro e passa a voar por cima de tudo
     const voo = document.createElement("div");
@@ -202,14 +204,8 @@
     const dx = para ? para.left + para.width / 2 - (de.left + de.width / 2) : 0, dy = para ? para.top + para.height / 2 - (de.top + de.height / 2) : 0;
     const k = para ? lado / de.width : .3;
     const va = voo.animate([{ transform: "none" }, { transform: `translate(${dx}px, ${dy}px) scale(${k})` }], { duration: T, easing: "cubic-bezier(.45, 0, .2, 1)", fill: "forwards" });
-    let entra;
-    if (MODO() === "cresce") {                             // a janela cresce em círculo a partir do desenho
-      const cx = de.left + de.width / 2 - caixa.left, cy = de.top + de.height / 2 - caixa.top, r0 = de.width * .42;
-      entra = modal.animate([{ clipPath: `circle(${r0}px at ${cx}px ${cy}px)` }, { clipPath: `circle(${Math.hypot(caixa.width, caixa.height)}px at ${cx}px ${cy}px)` }],
-        { duration: T, easing: "cubic-bezier(.5, 0, .2, 1)" });
-    } else {                                              // a janela surge (escala + opacidade) em volta do desenho
-      entra = modal.animate([{ opacity: 0, transform: "scale(.9)" }, { opacity: 1, transform: "none" }], { duration: T * .8, delay: T * .15, easing: "cubic-bezier(.2, .9, .3, 1.1)", fill: "backwards" });
-    }
+    // a janela surge (escala + opacidade) em volta do desenho, que chega ao lugar da arte
+    modal.animate([{ opacity: 0, transform: "scale(.9)" }, { opacity: 1, transform: "none" }], { duration: T * .8, delay: T * .15, easing: "cubic-bezier(.2, .9, .3, 1.1)", fill: "backwards" });
     ov.animate([{ backgroundColor: "transparent", backdropFilter: "blur(0px)" }, {}], { duration: T * .7 });
     setTimeout(() => esm.forEach(e => e.classList.remove("cel-dim")), T);   // o tabuleiro só volta com o fundo da janela já por cima
     va.finished.then(() => {
@@ -237,6 +233,7 @@
     el.className = "celebra" + (segura ? " segura" : ""); el.setAttribute("aria-hidden", "true");
     el.innerHTML = `<svg viewBox="-100 -100 200 200">${arte()}</svg>`;
     alvo.append(el);
+    el.getAnimations({ subtree: true }).forEach(a => { if (a.effect && a.effect.target !== el) a.playbackRate = RITMO; });
     esm.forEach(e => e.classList.add("cel-dim"));
     return new Promise(res => {
       let feito = false;
@@ -244,7 +241,7 @@
         const pronto = () => {
           if (feito) return; feito = true;
           // tocar pula: o desenho aparece completo e a janela já vem
-          el.querySelectorAll("*").forEach(n => n.getAnimations && n.getAnimations().forEach(a => a.finish()));
+          el.getAnimations({ subtree: true }).forEach(a => { if (a.effect && a.effect.target !== el && isFinite(a.effect.getComputedTiming().endTime)) a.finish(); });   // as estrelas piscam sem fim
           espera = { el, esm, svg: el.querySelector("svg") };
           setTimeout(() => { if (espera && espera.el === el) solta(true); }, 1500);   // a janela não veio
           res();
