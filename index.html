@@ -200,10 +200,11 @@
     background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
     box-shadow: var(--shadow); transition: background .25s, border-color .25s;
   }
-  /* concluído: sai de cena (sem cartão, ícone acinzentado, texto apagado); o pendente é que chama atenção */
+  /* concluído: sai de cena (sem cartão, nome riscado, ícone e texto um pouco apagados); o pendente é que chama atenção */
   .row.done { background: transparent; border-color: color-mix(in srgb, var(--border) 70%, transparent); box-shadow: none; }
-  .row.done a.game { opacity: .5; }
-  .row.done .icon { filter: grayscale(.7); }
+  .row.done a.game { opacity: .72; }
+  .row.done .icon { filter: grayscale(.4); }
+  .row.done .nm { text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: color-mix(in srgb, currentColor 70%, transparent); }
   .row a.game {
     flex: 1; min-width: 0; display: flex; flex-direction: row; align-items: center; gap: 12px; text-align: left;
     padding: 10px 6px 10px 12px; color: inherit; text-decoration: none;
@@ -265,7 +266,8 @@
   .app[data-g] .icon { background: transparent; box-shadow: none; }
   .app[data-g] .status { color: var(--tile-muted, var(--muted)); }
   .app[data-g] .mr-track { stroke: var(--tile-track, var(--border)); }
-  .app[data-g].done { background: var(--tile-bg, var(--surface)); border-color: transparent; box-shadow: none; filter: grayscale(.75); opacity: .5; }
+  /* concluído: continua com a cara normal (o jogo volta amanhã); só o check do canto muda */
+  .app[data-g].done { background: var(--tile-bg, var(--surface)); border-color: var(--tile-border, transparent); box-shadow: var(--shadow); }
   .app[data-g].done a.game { opacity: 1; }
   .app[data-g].done .icon { filter: none; }
   .app[data-g].done .status { color: var(--tile-muted, var(--muted)); }
@@ -862,7 +864,7 @@ function buildRow(g, li) {
     <a class="game" href="${escHTML(g.url)}">
       <span class="icon">${g.emoji}</span>
       <span class="info">
-        <span class="name">${escHTML(g.name)}${g.app ? '<span class="tag">APP</span>' : ""}</span>
+        <span class="name"><span class="nm">${escHTML(g.name)}</span>${g.app ? '<span class="tag">APP</span>' : ""}</span>
         <span class="desc">${escHTML(g.desc || "")}</span>
       </span>
     </a>
