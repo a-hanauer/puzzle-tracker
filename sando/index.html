@@ -1035,12 +1035,7 @@
     }
     inputRow.innerHTML = html;
 
-    var hint = document.getElementById('hint');
-    if(state.over){
-      hint.textContent = state.won ? '' : 'Suas tentativas acabaram.';
-    } else {
-      hint.textContent = '';
-    }
+    document.getElementById('hint').textContent = '';   // fim de partida: a linha do meio (verde/vermelha) e a faixa já dizem tudo
 
     renderExcludedRow();
     renderKeyboard();
