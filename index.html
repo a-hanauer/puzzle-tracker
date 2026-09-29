@@ -83,41 +83,44 @@
   .app-mark { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
   .app-mark img { width: 34px; height: 34px; border-radius: 9px; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
   .app-mark h1 { margin: 0; font-size: 1.55rem; font-weight: 800; letter-spacing: -.02em; line-height: 1; color: var(--text); white-space: nowrap; }
-  /* progresso do dia: barra segmentada + contador (mesmo estilo dos contadores das seções) */
-  .prog { display: flex; align-items: center; gap: 12px; margin: 14px 4px 0 4px; }
-  .prog-bar { flex: 1; display: grid; grid-template-columns: repeat(var(--t, 1), 1fr); gap: 3px; height: 8px; }
-  .prog-bar i { border-radius: 3px; background: var(--surface-2); transition: background .25s; }
-  .prog-bar i.on { background: var(--green); }
-  /* tudo feito: os trechos se fundem numa barra só, com um brilho que passa uma vez,
-     e o contador vira um selo verde */
-  .prog-bar { position: relative; border-radius: 99px; transition: gap .45s ease; }
-  .prog-bar i { transition: background .25s, border-radius .45s ease; }
-  .prog.complete .prog-bar { gap: 0; overflow: hidden; }
-  .prog.complete .prog-bar i { border-radius: 0; }
-  .prog.complete .prog-bar::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, .75) 50%, transparent 80%);
-    transform: translateX(-110%);
-  }
-  .prog.complete.celebrate .prog-bar::after { animation: prog-shine 1.1s ease .35s both; }
-  @keyframes prog-shine { to { transform: translateX(110%); } }
-  .prog-n .done-seal { display: none; }
-  .prog.complete .prog-n { color: var(--green); font-weight: 700; }
-  /* começar o dia / continuar / resumo do dia */
-  .dia-btn { display: flex; align-items: center; gap: 12px; width: calc(100% - 8px); margin: 14px 4px 0; padding: 10px 14px 10px 10px; min-height: 56px;
-    border: none; border-radius: 16px; cursor: pointer; font: inherit; text-align: left; background: var(--green); color: #fff;
-    box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 6px 18px rgba(63, 162, 76, .25); }
+  /* o dia num só elemento: em andamento = cartão com a barra (um trecho por jogo) + o próximo jogo;
+     tudo feito = botão verde "Tudo feito · Resumo do dia" */
+  .dia-btn { display: block; width: calc(100% - 8px); margin: 14px 4px 0; padding: 12px 12px 10px; border: none; border-radius: 18px; cursor: pointer;
+    font: inherit; text-align: left; background: var(--surface); color: var(--text); box-shadow: var(--shadow); position: relative; overflow: hidden;
+    -webkit-tap-highlight-color: transparent; }
   .dia-btn[hidden] { display: none; }
   .dia-btn:active { transform: scale(.98); }
-  .dia-btn .dia-ic { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.22); font-size: 20px; }
-  .dia-btn .dia-ic img { width: 100%; height: 100%; object-fit: cover; }
-  .dia-btn .dia-ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-  .dia-btn .dia-t { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; flex: 1; }
-  .dia-btn .dia-t b { font-size: 1rem; font-weight: 800; }
-  .dia-btn .dia-t small { font-size: .78rem; font-weight: 600; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .dia-btn > .chev { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
-  .dia-btn.resumo { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
-  .dia-btn.resumo .dia-ic { background: var(--green-soft); color: var(--green); }
+  .prog { display: flex; align-items: center; gap: 10px; padding: 0 2px 10px; }
+  .prog-bar { flex: 1; display: grid; grid-template-columns: repeat(var(--t, 1), 1fr); gap: 3px; height: 6px; }
+  .prog-bar i { border-radius: 3px; background: var(--surface-2); transition: background .25s; }
+  .prog-bar i.on { background: var(--green); }
+  .prog-n { font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .02em; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .dia-row { display: flex; align-items: center; gap: 12px; padding: 0 0 2px 2px; }
+  .dia-ic { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .dia-ic img { width: 100%; height: 100%; object-fit: cover; }
+  .dia-t { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; flex: 1; }
+  .dia-t b { font-size: .95rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dia-t small { font-size: .78rem; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dia-go { flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; padding: 8px 12px; border-radius: 99px; background: var(--green); color: #fff; font-weight: 800; font-size: .85rem; }
+  .dia-btn .chev { width: 14px; height: 14px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .dia-n { display: none; font-size: 1.05rem; font-stretch: 62.5%; font-weight: 600; font-variant-numeric: tabular-nums; }
+  /* tudo feito */
+  .dia-btn.fim { padding: 10px 14px 10px 10px; background: var(--green); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 6px 18px rgba(63, 162, 76, .25); }
+  .dia-btn.fim .prog { display: none; }
+  .dia-btn.fim .dia-row { padding: 0; }
+  .dia-btn.fim .dia-t b { font-size: 1rem; }
+  .dia-btn.fim .dia-t small { color: inherit; opacity: .85; }
+  .dia-btn.fim .dia-n { display: block; }
+  .dia-btn.fim > .dia-row > .chev { width: 18px; height: 18px; opacity: .85; }
+  .dia-ok { width: 36px; height: 36px; border-radius: 50%; background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .dia-ok svg { width: 22px; height: 22px; fill: none; stroke: var(--green); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  /* ao completar (ou abrir já completo): um brilho passa uma vez e o check aparece */
+  .dia-btn.fim::after { content: ""; position: absolute; inset: 0; pointer-events: none; transform: translateX(-110%);
+    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, .35) 50%, transparent 80%); }
+  .dia-btn.fim.celebrate::after { animation: prog-shine 1.1s ease .35s both; }
+  .dia-btn.fim.celebrate .dia-ok svg { animation: pop .35s ease .3s both; }
+  @keyframes prog-shine { to { transform: translateX(110%); } }
+  @media (prefers-reduced-motion: reduce) { .dia-btn.fim.celebrate::after, .dia-btn.fim.celebrate .dia-ok svg { animation: none; } }
   /* resumo do dia */
   .rs-lista { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
   .rs-lista li { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; background: var(--surface-2); }
@@ -129,12 +132,6 @@
   .rs-lista .rs.no { color: var(--muted); font-weight: 600; }
   .rs-top { text-align: center; margin: -4px 0 14px; color: var(--muted); font-size: .88rem; }
   .rs-top b { display: block; color: var(--text); font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; }
-  .prog.complete .prog-n .cnt { display: none; }
-  .prog.complete .prog-n .done-seal { display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase; letter-spacing: .06em; }
-  .prog-n .done-seal svg { width: 15px; height: 15px; flex: none; }
-  .prog.complete.celebrate .prog-n .done-seal { animation: pop .35s ease .3s both; }
-  @media (prefers-reduced-motion: reduce) { .prog.complete.celebrate .prog-bar::after, .prog.complete.celebrate .prog-n .done-seal { animation: none; } }
-  .prog-n { font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .02em; color: var(--muted); font-variant-numeric: tabular-nums; }
   .greet-text { min-width: 0; flex: 1; }
   h1 { font-size: 1.85rem; font-weight: 800; margin: 0; letter-spacing: -.03em; line-height: 1.1; }
   #summary { margin: 6px 0 0; color: var(--muted); font-size: .92rem; line-height: 1.35; }
@@ -522,12 +519,11 @@
     <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
   </div>
   </div>
-  <!-- progresso do dia: um trecho por jogo, contador no padrão das seções -->
-  <div class="prog">
-    <div class="prog-bar" id="progBar" aria-hidden="true"></div>
-    <span class="prog-n"><span class="cnt" id="count"></span><span class="done-seal"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7.5 12.4l3 3 6-6.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Tudo feito</span></span>
-  </div>
-  <button class="dia-btn" id="diaBtn" type="button" hidden></button>
+  <!-- o dia: barra (um trecho por jogo) + próximo jogo; com tudo feito, vira o resumo -->
+  <button class="dia-btn" id="diaBtn" type="button" hidden>
+    <span class="prog"><span class="prog-bar" id="progBar" aria-hidden="true"></span><span class="prog-n" id="count"></span></span>
+    <span class="dia-row" id="diaRow"></span>
+  </button>
 </header>
 
 <section id="viewSettings" hidden>
@@ -900,12 +896,11 @@ function render() {
   if (pb.children.length !== total) pb.innerHTML = "<i></i>".repeat(total);
   [...pb.children].forEach((seg, i) => seg.classList.toggle("on", i < n));
 
-  const prog = document.querySelector(".prog"), complete = n === total && total > 0;
-  if (complete && prog.dataset.complete !== "1") prog.classList.add("celebrate");   // ao completar (ou abrir já completo): brilho uma vez
-  if (!complete) prog.classList.remove("celebrate");
-  prog.classList.toggle("complete", complete);
-  prog.dataset.complete = complete ? "1" : "0";
-  prog.setAttribute("aria-label", complete ? "Tudo feito por hoje" : `${n} de ${total} jogos feitos`);
+  const complete = n === total && total > 0, db = $("diaBtn");
+  if (complete && db.dataset.complete !== "1") db.classList.add("celebrate");   // ao completar (ou abrir já completo): brilho uma vez
+  if (!complete) db.classList.remove("celebrate");
+  db.dataset.complete = complete ? "1" : "0";
+  db.setAttribute("aria-label", complete ? "Tudo feito por hoje. Abrir o resumo do dia" : `${n} de ${total} jogos feitos`);
   renderDiaBtn(done, n, complete);
 
   document.querySelectorAll(".seg2 button[data-tab]").forEach(b => b.setAttribute("aria-checked", (b.dataset.tab === "new") === state.newTab));
@@ -1026,22 +1021,23 @@ const CHEV_SVG = '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path
 const ordemDoDia = () => [...GAMES.filter(g => LOCAL_PROGRESS[g.id]), ...GAMES.filter(g => !LOCAL_PROGRESS[g.id])];
 let diaChave = "";
 function renderDiaBtn(done, n, complete) {
-  const b = $("diaBtn");
-  if (!GAMES.length) { b.hidden = true; return; }
-  const prox = ordemDoDia().find(g => !done.has(g.id));
-  const chave = complete ? "resumo" : `${n ? "cont" : "comeca"}|${prox && prox.id}`;
+  const b = $("diaBtn"), r = $("diaRow"), total = GAMES.length;
+  if (!total) { b.hidden = true; return; }
+  const prox = ordemDoDia().find(g => !done.has(g.id)), falta = total - n;
+  const chave = complete ? `fim|${total}` : `${n ? "cont" : "comeca"}|${prox && prox.id}|${falta}`;
   b.hidden = false;
   if (chave === diaChave) return;
   diaChave = chave;
-  b.classList.toggle("resumo", complete);
+  b.classList.toggle("fim", complete);
   if (complete) {
-    b.innerHTML = `<span class="dia-ic"><svg viewBox="0 0 24 24"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg></span><span class="dia-t"><b>Resumo do dia</b><small>Veja e compartilhe os resultados</small></span>${CHEV_SVG}`;
+    r.innerHTML = `<span class="dia-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12.6l4 4 8-8.6"/></svg></span><span class="dia-t"><b>Tudo feito</b><small>Resumo do dia</small></span><span class="dia-n">${total}/${total}</span>${CHEV_SVG}`;
     b.dataset.jogo = "";
     return;
   }
-  b.innerHTML = `<span class="dia-ic">${prox.emoji}</span><span class="dia-t"><b>${n ? "Continuar" : "Começar o dia"}</b><small>${n ? "Próximo" : "Primeiro"}: ${escHTML(prox.name)}</small></span>${CHEV_SVG}`;
+  const sub = n ? `${falta} ${falta === 1 ? "jogo" : "jogos"} para terminar o dia` : `${total} ${total === 1 ? "jogo" : "jogos"} hoje`;
+  r.innerHTML = `<span class="dia-ic">${prox.emoji}</span><span class="dia-t"><b>${n ? "Próximo" : "Primeiro"}: ${escHTML(prox.name)}</b><small>${sub}</small></span><span class="dia-go">${n ? "Jogar" : "Começar"}${CHEV_SVG}</span>`;
   b.dataset.jogo = prox.id;
-  loadIcon(prox, b.querySelector(".dia-ic"));
+  loadIcon(prox, r.querySelector(".dia-ic"));
 }
 $("diaBtn").addEventListener("click", () => {
   const id = $("diaBtn").dataset.jogo;
