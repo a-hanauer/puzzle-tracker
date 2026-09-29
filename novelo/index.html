@@ -122,12 +122,12 @@
   .tab { position: relative; line-height: 0; flex-shrink: 0; }   /* moldura do tabuleiro: recebe os toques (e o label da vibração no iPhone) */
   /* número alcançado no arrasto: a tela toda acende de leve e apaga, com fade (sem clarão seco) */
   #piscada { position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0; background: var(--piscada); }
-  #piscada.on { animation: piscada .5s ease both; }
-  @keyframes piscada { 0% { opacity: 0; } 25% { opacity: 1; } 100% { opacity: 0; } }
-  :root { --piscada: rgba(255, 170, 110, .2); }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --piscada: rgba(255, 215, 170, .13); } }
-  :root[data-theme="dark"] { --piscada: rgba(255, 215, 170, .13); }
-  @media (prefers-reduced-motion: reduce) { #piscada.on { animation-duration: .8s; } }
+  #piscada.on { animation: piscada .28s ease-out both; }   /* sutil: toque leve de cor, rápido */
+  @keyframes piscada { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+  :root { --piscada: rgba(255, 170, 110, .08); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --piscada: rgba(255, 215, 170, .055); } }
+  :root[data-theme="dark"] { --piscada: rgba(255, 215, 170, .055); }
+  @media (prefers-reduced-motion: reduce) { #piscada.on { animation-duration: .5s; } }
   #board { display: block; touch-action: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(40, 25, 10, .08)) drop-shadow(0 8px 20px rgba(40, 25, 10, .08)); }
   .b-bg { fill: var(--board); stroke: var(--board-edge); stroke-width: 1.5; }
   .b-weave { fill: url(#weave); }

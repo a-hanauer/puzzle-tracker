@@ -1,6 +1,6 @@
 // Service worker do Jogos do Dia.
 // Deixa o painel e os jogos da casa instaláveis e funcionando offline (sempre tenta a versão mais nova primeiro).
-const CACHE = "jogos-do-dia-v160";
+const CACHE = "jogos-do-dia-v161";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 // Tudo o que os jogos da casa precisam para funcionar sem internet: páginas, scripts comuns,
 // ícones e os desafios (do dia e do jogo livre). Guardado já na instalação, sem esperar o
