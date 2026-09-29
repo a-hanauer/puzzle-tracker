@@ -292,14 +292,13 @@
   }
   html[data-theme="dark"][data-modo="S"], html[data-theme="dark"][data-modo="S"] body { --bg: #1a1508; }
   html[data-theme="dark"][data-modo="M"], html[data-theme="dark"][data-modo="M"] body { --bg: #0a0f24; }
-  /* foco sutil: onde a peça do modo atual não cabe, a casa perde um pouco de cor;
-     onde nem sol nem lua cabem, ela fica bem apagada nos dois modos */
+  /* foco sutil, só a partir das suas anotações: casa com ponto do modo atual perde
+     um pouquinho de cor; marcada para os dois (nem sol nem lua), um pouco mais */
   .cell.fora::before, .cell.nada::before {
     content: ""; position: absolute; inset: 0; background: var(--veil); pointer-events: none;
-    opacity: .07; transition: opacity .25s ease;
+    opacity: .05; transition: opacity .25s ease;
   }
-  .cell.nada::before { opacity: .45; }
-  .cell.nada > svg.dot { display: none; }
+  .cell.nada::before { opacity: .1; }
   .btn {
     width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer;
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
@@ -402,7 +401,7 @@
       <li>No <b>modo sol</b>, toque numa casa para marcar um <b>ponto</b> ("sol não cabe aqui"), toque de novo para pôr o <b>sol</b> e mais uma vez para limpar. Arraste o dedo para marcar várias casas.</li>
       <li>As luas aparecem apagadas, só de referência. No <b>modo lua</b> é o mesmo, para as luas.</li>
       <li>Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
-      <li>O fundo da tela esquenta no modo sol e esfria no modo lua. Casas onde a peça do modo não cabe perdem um pouco de cor, e as que não comportam nem sol nem lua ficam apagadas.</li>
+      <li>O fundo da tela esquenta no modo sol e esfria no modo lua. As casas que você marcou com ponto perdem um pouquinho de cor, e um pouco mais quando você marcou que não cabe nem sol nem lua.</li>
     </ul>
     <p>Conflitos aparecem destacados com listras vermelhas.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia, e a dificuldade sobe ao longo da semana: <b>segunda é nível 1</b>, o mais fácil, e <b>domingo é nível 7</b>, o mais difícil. O tabuleiro cresce junto: 8×8 no começo da semana, 9×9 no meio e 10×10 no fim de semana.</p>
@@ -710,9 +709,10 @@
       el.classList.toggle("sym", cells[i] === "S" || cells[i] === "M");
       el.classList.toggle("bad", bad.has(i));
       el.classList.toggle("pop", i === popIdx);
-      const vazia = cells[i] !== "S" && cells[i] !== "M", bl = (BITS[cells[i]] || 0) | (AUTO[i] || 0);
-      el.classList.toggle("nada", !finished && vazia && bl === 3);            // nem sol nem lua cabem
-      el.classList.toggle("fora", !finished && vazia && !!(bl & modeBit()));  // a peça do modo atual não cabe
+      // o realce segue só as anotações feitas por você (certas ou erradas), nunca a dedução do jogo
+      const vazia = cells[i] !== "S" && cells[i] !== "M", bl = BITS[cells[i]] || 0;
+      el.classList.toggle("nada", !finished && vazia && bl === 3);            // você marcou que nem sol nem lua cabem
+      el.classList.toggle("fora", !finished && vazia && !!(bl & modeBit()));  // você marcou que a peça do modo não cabe
       el.setAttribute("aria-label", `linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}: ${nameOf(v)}${givens.has(i) ? " (revelada)" : ""}`);
       if (cells[i] === "S") s++; if (cells[i] === "M") m++;
     }
@@ -755,14 +755,14 @@
   }
   $("modeSun").addEventListener("click", () => setMode("S"));
   $("modeMoon").addEventListener("click", () => setMode("M"));
-  // toque: ponto (não cabe) → peça do modo → vazio. Se a casa já está bloqueada, vai direto para a peça.
+  // toque: ponto (não cabe) → peça do modo → vazio, sempre nessa ordem.
   function tapValue(i) {
     const v = cells[i];
     if (v === mode) return ".";
     if (v === other()) return v;              // a peça do outro modo não muda aqui
     const man = BITS[v] || 0, b = modeBit();
-    if ((man | (AUTO[i] || 0)) & b) return mode;
-    return CHAR[man | b];
+    if (man & b) return mode;                  // já tem o seu ponto → vira peça
+    return CHAR[man | b];                      // senão, anota o ponto (mesmo onde o jogo já marcou)
   }
   let drag = null;
   const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.classList.contains("cell") ? +el.dataset.i : -1; };
