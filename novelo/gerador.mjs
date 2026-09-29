@@ -133,6 +133,12 @@ export function makePuzzle(dayCfg, style) {
     };
     while (logic && logic.stuck && addBack(logic.st)) logic = logicSolve(board(S), dayCfg.maxLevel);
     if (!logic || logic.stuck) continue;
+    // 3b. tira de novo os números que a dedução dispensa (os devolvidos no passo 3 nem sempre eram os melhores)
+    for (const p of shuffle([...S].filter(p => p !== 0 && p !== C - 1))) {
+      S.delete(p);
+      const l = logicSolve(board(S), dayCfg.maxLevel);
+      if (!l || l.stuck) S.add(p);
+    }
     for (let k = 0; k < dayCfg.extra; k++) {             // dias mais leves ganham uns números a mais
       const open = [];
       for (let p = 2; p < C - 2; p++) if (!S.has(p) && !S.has(p - 1) && !S.has(p + 1)) open.push(p);

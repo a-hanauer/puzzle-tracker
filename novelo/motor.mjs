@@ -119,8 +119,73 @@ export function bridges(B, st) {
   return out;
 }
 
+// "bolsões" com duas entradas: se tirar duas ligações possíveis parte o tabuleiro em dois,
+// e um dos lados não tem ponta do fio (o 1 ou o último número) ou tem as duas, o fio
+// precisa entrar e sair por elas — as duas são ligadas. Se o lado tem só uma ponta, o
+// fio cruza uma vez: estando uma ligada, a outra sai. Devolve [arestas a ligar, a cortar].
+export function pockets(B, st) {
+  const { C, E, eA, eB, cellEdges, tgt } = B;
+  const liga = new Set(), corta = new Set();
+  const side = new Int8Array(C);
+  for (let e = 0; e < E; e++) {
+    if (st[e] === -1) continue;
+    const s2 = st.slice(); s2[e] = -1;
+    const br = bridges(B, s2);
+    if (!br) continue;
+    for (const f of br) {
+      if (f <= e && st[f] !== 1) { if (st[e] !== 1 && f < e) continue; }
+      if (f === e) continue;
+      // lado de eA[e] sem as duas ligações
+      side.fill(0);
+      const q = [eA[e]]; side[eA[e]] = 1;
+      while (q.length) {
+        const u = q.pop();
+        for (const g of cellEdges[u]) {
+          if (g === e || g === f || st[g] === -1) continue;
+          const v = eA[g] === u ? eB[g] : eA[g];
+          if (!side[v]) { side[v] = 1; q.push(v); }
+        }
+      }
+      let pontas = 0, n = 0;
+      for (let i = 0; i < C; i++) if (side[i]) { n++; if (tgt[i] === 1) pontas++; }
+      if (n === C) continue;                                  // não separou
+      if (pontas !== 1) { if (st[e] === 0) liga.add(e); if (st[f] === 0) liga.add(f); }
+      else if (st[e] === 1 && st[f] === 0) corta.add(f);
+      else if (st[f] === 1 && st[e] === 0) corta.add(e);
+    }
+  }
+  return [liga, corta];
+}
+
+// casa encurralada: ligar a aresta e (a–b) faria a ou b completarem as ligações e
+// fecharem os outros lados; se com isso uma casa vizinha fica sem ligações suficientes,
+// a aresta não pode ser usada. É o "se eu passar aqui, aquela casa fica sem saída".
+export function cornered(B, st) {
+  const { C, E, eA, eB, cellEdges, tgt } = B;
+  const on = new Int8Array(C), unk = new Int8Array(C);
+  for (let e = 0; e < E; e++) {
+    if (st[e] === 1) { on[eA[e]]++; on[eB[e]]++; }
+    else if (st[e] === 0) { unk[eA[e]]++; unk[eB[e]]++; }
+  }
+  const out = [];
+  for (let e = 0; e < E; e++) {
+    if (st[e] !== 0) continue;
+    const perde = new Map();                                    // casa vizinha → ligações que ela perde
+    for (const x of [eA[e], eB[e]]) {
+      if (on[x] + 1 < tgt[x]) continue;                        // x ainda não se completa
+      for (const g of cellEdges[x]) {
+        if (g === e || st[g] !== 0) continue;
+        const y = eA[g] === x ? eB[g] : eA[g];
+        perde.set(y, (perde.get(y) || 0) + 1);
+      }
+    }
+    for (const [y, n] of perde) if (on[y] + unk[y] - n < tgt[y]) { out.push(e); break; }
+  }
+  return out;
+}
+
 // propaga as deduções até estabilizar. level 1: grau + junções válidas;
-// level 2: + pontes (conectividade). Devolve false se achar contradição.
+// level 2: + pontes e bolsões de duas entradas (conectividade). Devolve false se achar contradição.
 export function propagate(B, st, level = 2, stats = null) {
   const { C, cellEdges, tgt, E } = B;
   for (let guard = 0; guard < 10000; guard++) {
@@ -144,6 +209,10 @@ export function propagate(B, st, level = 2, stats = null) {
       const br = bridges(B, st);
       if (!br) return false;
       if (br.length) { for (const e of br) st[e] = 1; if (stats) stats.l2++; continue; }
+      const enc = cornered(B, st);
+      if (enc.length) { for (const e of enc) st[e] = -1; if (stats) stats.l2++; continue; }
+      const [liga, corta] = pockets(B, st);
+      if (liga.size || corta.size) { for (const e of liga) st[e] = 1; for (const e of corta) st[e] = -1; if (stats) stats.l2++; continue; }
     }
     return true;
   }
