@@ -70,13 +70,33 @@
     return box;
   }
 
+  // Jogo externo aberto daqui: ao voltar, a pessoa cai no painel (não no jogo da casa de onde saiu),
+  // e o painel conta o tempo fora, como se o jogo tivesse sido aberto por ele (index.html).
+  const CASA_URL = new URL("./", CATALOGO_RAIZ).href, VOLTA_CASA = "gh-volta-casa";
+  function voltaCasa() {
+    let v = null; try { v = sessionStorage.getItem(VOLTA_CASA); } catch {}
+    if (!v || document.hidden) return;
+    try { sessionStorage.removeItem(VOLTA_CASA); } catch {}
+    location.replace(CASA_URL);
+  }
+  window.addEventListener("pageshow", voltaCasa);            // voltou pelo "voltar" (mesma aba)
+  document.addEventListener("visibilitychange", voltaCasa);  // voltou do app do jogo (ex.: LinkedIn)
+
   function abrir(e, g, s) {
     const url = new URL(g.url, CATALOGO_RAIZ).href;
     if (!nativo(g)) {                                  // externo: abrir já marca como feito
       const k = dayKey(new Date()), set = new Set(s.history[k] || []);
       set.add(g.id); s.history[k] = [...set];
-      try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {}
-      if (s.newTab && !g.app) { e.preventDefault(); window.open(url, "_blank", "noopener"); atualizar(true); }
+      try {
+        localStorage.setItem(KEY, JSON.stringify(s));
+        localStorage.setItem("jogosDoDia.fora", JSON.stringify({ id: g.id, t0: Date.now(), dia: k }));
+        sessionStorage.setItem(VOLTA_CASA, "1");
+      } catch {}
+      if (s.newTab && !g.app) {                        // nova aba: esta já vai para o painel, que espera a volta
+        e.preventDefault(); window.open(url, "_blank", "noopener");
+        try { sessionStorage.removeItem(VOLTA_CASA); } catch {}
+        location.replace(CASA_URL);
+      }
     }
   }
 

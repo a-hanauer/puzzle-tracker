@@ -12,10 +12,10 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=119"></script>
-<script src="comum/catalogo.js?v=119"></script>
-<script src="comum/celebra.js?v=119"></script>
-<script src="comum/recorde.js?v=119"></script>
+<script src="comum/tema.js?v=120"></script>
+<script src="comum/catalogo.js?v=120"></script>
+<script src="comum/celebra.js?v=120"></script>
+<script src="comum/recorde.js?v=120"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -1142,9 +1142,12 @@ function fechaFora(acao) {
 function voltou() {
   if (document.hidden) return;
   let f = null;
-  try { f = JSON.parse(localStorage.getItem(FORA)); localStorage.removeItem(FORA); } catch {}
+  try { f = JSON.parse(localStorage.getItem(FORA)); } catch {}
   if (!f || !f.t0) return;
   const s = Math.round((Date.now() - f.t0) / 1000), g = GAMES.find(x => x.id === f.id);
+  // acabou de sair (ex.: o jogo da casa abriu o externo em outra aba e mandou esta para o painel): continua esperando
+  if (g && s < 3) return;
+  try { localStorage.removeItem(FORA); } catch {}
   if (!g || s < FORA_MIN) return;                         // voltou logo: não conta
   if (foraPend) fechaFora("ok");                         // um aviso anterior ainda aberto: registra
   foraPend = { id: g.id, dia: f.dia, s };
