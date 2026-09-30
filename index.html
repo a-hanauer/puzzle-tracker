@@ -467,6 +467,34 @@
     white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  /* tempo fora do app (jogos externos): ao voltar, confirma o registro; some sozinho e registra */
+  .fora { position: fixed; left: 12px; right: 12px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 31; max-width: 420px; margin: 0 auto;
+    display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 12px; border-radius: 18px; overflow: hidden;
+    background: var(--text); color: var(--bg); box-shadow: 0 10px 30px rgba(0,0,0,.28); animation: fora-in .25s ease both; }
+  .fora[hidden] { display: none; }
+  @keyframes fora-in { from { opacity: 0; transform: translateY(12px); } }
+  .fora .icon { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; font-size: 1.2rem; }
+  .fora .icon img { width: 24px; height: 24px; }
+  .fora-t { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+  .fora-t b { font-size: .95rem; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fora-t small { font-size: .74rem; font-weight: 600; opacity: .65; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fora button { flex-shrink: 0; height: 34px; padding: 0 12px; border: 0; border-radius: 99px; cursor: pointer; font: inherit; font-weight: 700; font-size: .82rem;
+    background: color-mix(in srgb, var(--bg) 16%, transparent); color: inherit; }
+  .fora button.pri { background: var(--green); color: #fff; }
+  .fora-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--green); transform-origin: left; animation: fora-bar linear both; }
+  @keyframes fora-bar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+  /* pílula de tempo na linha do jogo externo */
+  .row .tx { flex-shrink: 0; margin-left: auto; display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 99px;
+    font-size: .74rem; font-weight: 700; font-variant-numeric: tabular-nums; background: var(--surface-2); color: var(--text); }
+  .row .tx[hidden] { display: none; }
+  .row .tx .si { width: 12px; height: 12px; }
+  /* estatísticas: tempo nos outros jogos */
+  .ext-l { display: grid; grid-template-columns: 30px 1fr auto; gap: 4px 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--border); }
+  .ext-l:first-of-type { border-top: 0; }
+  .ext-l .icon { width: 30px; height: 30px; border-radius: 8px; font-size: 1rem; grid-row: span 2; }
+  .ext-l .icon img { width: 20px; height: 20px; }
+  .ext-l b { font-size: .92rem; } .ext-l .m { font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+  .ext-l .vbars { grid-column: 2 / 4; height: 26px; border-bottom: 0; }
   .toast svg { width: 16px; height: 16px; }
 
   /* ---------- Histórico (aberto pelo botão do cabeçalho) ---------- */
@@ -651,6 +679,12 @@
     <div class="segx" id="gameSeg" role="radiogroup" aria-label="Jogo"></div>
     <div id="gameBody"></div>
   </div>
+
+  <!-- outros jogos: tempo fora do app, medido do toque no jogo até a volta -->
+  <div class="card" id="extCard" hidden>
+    <div class="mini-title">Outros jogos · tempo · 30 dias</div>
+    <div id="extBody"></div>
+  </div>
 </section>
 
 <div id="viewToday">
@@ -714,6 +748,7 @@
   <div class="rc-acoes"><button class="rc-salvar" id="rsShare" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Salvar imagem</button></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="fora" id="fora" role="status" aria-live="polite" hidden></div>
 
 <script>
 /* A lista de jogos (BASE_GAMES), a leitura do progresso dos jogos da casa
@@ -894,12 +929,13 @@ function buildRow(g, li) {
         <span class="name"><span class="nm">${escHTML(g.name)}</span>${g.app ? '<span class="tag">APP</span>' : ""}</span>
         <span class="desc">${escHTML(g.desc || "")}</span>
       </span>
+      <span class="tx" hidden></span>
     </a>
     <button class="toggle" role="checkbox" aria-checked="false" aria-label="${escHTML(g.name)} feito">
       <span class="check">${CHECK_SVG}</span>
     </button>`;
   loadIcon(g, li.querySelector(".icon"));
-  li.querySelector("a").addEventListener("click", () => setDone(g.id, true));   // abrir já marca como feito
+  li.querySelector("a").addEventListener("click", () => { saiuPara(g); setDone(g.id, true); });   // abrir já marca como feito e começa a contar o tempo fora
   li.querySelector(".toggle").addEventListener("click", e => {
     setDone(g.id, e.currentTarget.getAttribute("aria-checked") !== "true");
   });
@@ -964,6 +1000,10 @@ function render() {
     const p = LOCAL_PROGRESS[g.id] ? progressOf(g) : null;
     li.classList.toggle("done", isDone);
     if (native) li.querySelector(".status").innerHTML = statusText(g, p, isDone);
+    else {                                               // tempo fora do app registrado hoje
+      const tx = li.querySelector(".tx"), t = state.results?.[today()]?.[g.id]?.time;
+      if (tx) { tx.hidden = !t; if (t) tx.innerHTML = `${ST_ICON.tempo}${fmtTime(t)}`; }
+    }
 
     const auto = li.querySelector(".badge.auto");
     if (auto) {
@@ -1076,6 +1116,53 @@ function toast(html) {
   $("toast").innerHTML = html; $("toast").classList.add("show");
   clearTimeout(toastTimer); toastTimer = setTimeout(() => $("toast").classList.remove("show"), 1400);
 }
+/* ---------- Tempo nos jogos externos ----------
+   O painel não enxerga a aba do outro site: mede o tempo fora do app, do toque no jogo até a
+   volta. Ao voltar, um aviso mostra o tempo e registra sozinho em alguns segundos (ou descarta,
+   se foi mais de meia hora — provavelmente você saiu para outra coisa). O tempo vai para o
+   jogo aberto por último e soma, se o mesmo jogo for aberto mais de uma vez no dia. */
+const FORA = "jogosDoDia.fora", FORA_MIN = 10, FORA_MAX = 30 * 60, FORA_ESPERA = 7000;
+function saiuPara(g) {
+  if (LOCAL_PROGRESS[g.id]) return;
+  try { localStorage.setItem(FORA, JSON.stringify({ id: g.id, t0: Date.now(), dia: today() })); } catch {}
+}
+let foraTimer = 0, foraPend = null;
+function registraFora(p) {
+  const r = (state.results[p.dia] ??= {});
+  r[p.id] = { ...(r[p.id] || {}), time: ((r[p.id] && r[p.id].time) || 0) + p.s };
+  save(); render();
+  if (location.hash === "#estatisticas") renderHistory();
+}
+function fechaFora(acao) {
+  clearTimeout(foraTimer);
+  if (foraPend && acao === "ok") registraFora(foraPend);
+  foraPend = null;
+  $("fora").hidden = true;
+}
+function voltou() {
+  if (document.hidden) return;
+  let f = null;
+  try { f = JSON.parse(localStorage.getItem(FORA)); localStorage.removeItem(FORA); } catch {}
+  if (!f || !f.t0) return;
+  const s = Math.round((Date.now() - f.t0) / 1000), g = GAMES.find(x => x.id === f.id);
+  if (!g || s < FORA_MIN) return;                         // voltou logo: não conta
+  if (foraPend) fechaFora("ok");                         // um aviso anterior ainda aberto: registra
+  foraPend = { id: g.id, dia: f.dia, s };
+  const longo = s > FORA_MAX;
+  const el = $("fora");
+  el.innerHTML = `<span class="icon">${g.emoji}</span><span class="fora-t"><b>${escHTML(g.name)} · ${fmtTime(s)}</b><small>${longo ? "Muito tempo — registrar?" : "fora do app"}</small></span>`
+    + `<button type="button" data-a="nao">Descartar</button><button type="button" class="pri" data-a="ok">Registrar</button>`
+    + `<i class="fora-bar" style="animation-duration:${FORA_ESPERA}ms"></i>`;
+  loadIcon(g, el.querySelector(".icon"));
+  el.hidden = false;
+  clearTimeout(foraTimer);
+  foraTimer = setTimeout(() => fechaFora(longo ? "nao" : "ok"), FORA_ESPERA);   // sem resposta: registra (ou descarta, se foi longo)
+}
+$("fora").addEventListener("click", e => { const b = e.target.closest("button[data-a]"); if (b) setTimeout(() => fechaFora(b.dataset.a), 0); });
+document.addEventListener("visibilitychange", voltou);
+window.addEventListener("pageshow", voltou);
+setTimeout(voltou, 0);                                      // voltou recarregando a página (mesma aba)
+
 function renderTheme() {
   const t = window.jogosTema ? jogosTema.get() : "auto";
   document.querySelectorAll("#themeSeg button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.theme === t)));
@@ -1199,9 +1286,12 @@ function reciboLinhas() {
     { t: "m", txt: `${SEM3[d.getDay()]} ${p2(d.getDate())}/${p2(d.getMonth() + 1)}/${d.getFullYear()} · ${p2(d.getHours())}:${p2(d.getMinutes())}` },
   ];
   if (casa.length) { L.push({ t: "sep" }, { t: "tit", txt: "JOGOS DA CASA" }); casa.forEach(g => L.push({ t: "l", nm: g.name.toUpperCase(), v: valor(g) })); }
-  if (outros.length) { L.push({ t: "sep" }, { t: "tit", txt: "OUTROS JOGOS" }); outros.forEach(g => L.push({ t: "l", nm: g.name.toUpperCase(), v: done.has(g.id) ? "✓" : "—" })); }
+  let tempoFora = 0;
+  const valorFora = g => { const t = state.results[today()]?.[g.id]?.time; if (t) { tempoFora += t; return fmtTime(t); } return done.has(g.id) ? "✓" : "—"; };
+  if (outros.length) { L.push({ t: "sep" }, { t: "tit", txt: "OUTROS JOGOS" }); outros.forEach(g => L.push({ t: "l", nm: g.name.toUpperCase(), v: valorFora(g) })); }
   const st = streak(), pe = [];
   if (tempo) pe.push({ t: "l", nm: "TEMPO (LÓGICA)", v: fmtTime(tempo) });
+  if (tempoFora) pe.push({ t: "l", nm: "TEMPO (OUTROS)", v: fmtTime(tempoFora) });
   if (dicas) pe.push({ t: "l", nm: "DICAS", v: String(dicas) });
   pe.push({ t: "l", nm: "SEQUÊNCIA", v: `${st} ${st === 1 ? "DIA" : "DIAS"}` });
   if (dicas) pe.push({ t: "nota", txt: "* COM DICA" });
@@ -1473,6 +1563,7 @@ function renderHistory() {
   }).join("");
 
   renderNative(t0);
+  renderExterno(t0);
 }
 
 // calendário das últimas 12 semanas (colunas = semanas, começando na segunda)
@@ -1534,6 +1625,28 @@ function showDay(k, total) {
 }
 
 // jogos da casa: estatísticas de um jogo por vez, trocando pelo controle
+// outros jogos: tempo fora do app nos últimos 30 dias (só os que têm algum tempo)
+function renderExterno(t0) {
+  const days = [...Array(30)].map((_, i) => addDays(t0, i - 29));
+  const linhas = [];
+  for (const g of GAMES) {
+    if (LOCAL_PROGRESS[g.id]) continue;
+    const vals = days.map(d => state.results[dayKey(d)]?.[g.id]?.time ?? null), com = vals.filter(v => v != null);
+    if (!com.length) continue;
+    const top = Math.max(...com), med = com.reduce((a, b) => a + b, 0) / com.length;
+    const bars = days.map((d, i) => { const v = vals[i];
+      return `<button class="vbar ${v == null ? "none" : "full"}" data-lab="${esc(fmtDay(d) + " · " + (v == null ? "sem registro" : fmtTime(v)))}"><i style="height:${v == null ? 0 : Math.max(8, 100 * v / top)}%"></i></button>`; }).join("");
+    linhas.push(`<div class="ext-l"><span class="icon" data-g="${g.id}">${g.emoji}</span><b>${esc(g.name)}</b><span class="m">média ${fmtTime(med)} · ${com.length} ${com.length === 1 ? "dia" : "dias"}</span><div class="vbars">${bars}</div></div>`);
+  }
+  $("extCard").hidden = !linhas.length;
+  $("extBody").innerHTML = linhas.join("") + (linhas.length ? '<div class="readout">Tempo fora do app, do toque no jogo até a volta. Toque numa barra para ver.</div>' : "");
+  $("extBody").querySelectorAll(".icon[data-g]").forEach(el => { const g = GAMES.find(x => x.id === el.dataset.g); if (g) loadIcon(g, el); });
+  $("extBody").querySelectorAll(".vbar").forEach(b => b.addEventListener("click", () => {
+    $("extBody").querySelectorAll(".vbar.sel").forEach(x => x.classList.remove("sel")); b.classList.add("sel");
+    const r = $("extBody").querySelector(".readout"); if (r) r.textContent = b.closest(".ext-l").querySelector("b").textContent + " · " + b.dataset.lab;
+  }));
+}
+
 function renderNative(t0) {
   const blocks = {};
   const days = [...Array(30)].map((_, i) => addDays(t0, i - 29));
