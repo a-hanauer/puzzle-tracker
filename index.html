@@ -1125,6 +1125,25 @@ const FORA = "jogosDoDia.fora", FORA_MIN = 10, FORA_MAX = 30 * 60, FORA_ESPERA =
 function saiuPara(g) {
   if (LOCAL_PROGRESS[g.id]) return;
   try { localStorage.setItem(FORA, JSON.stringify({ id: g.id, t0: Date.now(), dia: today() })); } catch {}
+  vigia();
+}
+// No app instalado no iPhone, o site externo abre numa janela por cima do app e a página
+// não fica "escondida" (não há visibilitychange). O que dá para perceber é que, enquanto a
+// janela está por cima, os relógios da página param: um intervalo de 1 s que "pula" vários
+// segundos indica que a pessoa voltou. Também contam: foco na janela e o primeiro toque.
+let vigiaTimer = 0, vigiaUlt = 0;
+function vigia() {
+  let tem = false; try { tem = !!localStorage.getItem(FORA); } catch {}
+  if (!tem) { clearInterval(vigiaTimer); vigiaTimer = 0; return; }
+  if (vigiaTimer) return;
+  vigiaUlt = Date.now();
+  vigiaTimer = setInterval(() => {
+    const agora = Date.now(), pulo = agora - vigiaUlt > 3000;
+    vigiaUlt = agora;
+    if (pulo) voltou();
+    let ainda = false; try { ainda = !!localStorage.getItem(FORA); } catch {}
+    if (!ainda) { clearInterval(vigiaTimer); vigiaTimer = 0; }
+  }, 1000);
 }
 let foraTimer = 0, foraPend = null;
 function registraFora(p) {
@@ -1164,7 +1183,9 @@ function voltou() {
 $("fora").addEventListener("click", e => { const b = e.target.closest("button[data-a]"); if (b) setTimeout(() => fechaFora(b.dataset.a), 0); });
 document.addEventListener("visibilitychange", voltou);
 window.addEventListener("pageshow", voltou);
-setTimeout(voltou, 0);                                      // voltou recarregando a página (mesma aba)
+window.addEventListener("focus", voltou);
+document.addEventListener("pointerdown", voltou, true);
+setTimeout(() => { voltou(); vigia(); }, 0);                // voltou recarregando a página (mesma aba) ou veio de um jogo da casa
 
 function renderTheme() {
   const t = window.jogosTema ? jogosTema.get() : "auto";
