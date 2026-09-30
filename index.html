@@ -12,10 +12,10 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=120"></script>
-<script src="comum/catalogo.js?v=120"></script>
-<script src="comum/celebra.js?v=120"></script>
-<script src="comum/recorde.js?v=120"></script>
+<script src="comum/tema.js?v=121"></script>
+<script src="comum/catalogo.js?v=121"></script>
+<script src="comum/celebra.js?v=121"></script>
+<script src="comum/recorde.js?v=121"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -240,7 +240,7 @@
     margin: 20px 4px 8px; font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
   }
   /* marcar/desmarcar todos os outros jogos, no lugar do contador */
-  .cat-btn { height: 24px; margin: -4px 0; padding: 0 10px; border: 0; border-radius: 99px; cursor: pointer;
+  .cat-btn { display: none; height: 24px; margin: -4px 0; padding: 0 10px; border: 0; border-radius: 99px; cursor: pointer;
     font: inherit; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--text); background: var(--surface-2); }
   .cat-btn:active { transform: scale(.96); }
   .cat-btn[hidden] { display: none; }
@@ -481,6 +481,7 @@
   .fora button { flex-shrink: 0; height: 34px; padding: 0 12px; border: 0; border-radius: 99px; cursor: pointer; font: inherit; font-weight: 700; font-size: .82rem;
     background: color-mix(in srgb, var(--bg) 16%, transparent); color: inherit; }
   .fora button.pri { background: var(--green); color: #fff; }
+  .fora button.pri.perigo { background: #e5484d; }
   .fora-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--green); transform-origin: left; animation: fora-bar linear both; }
   @keyframes fora-bar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
   /* pílula de tempo na linha do jogo externo */
@@ -690,7 +691,7 @@
 <div id="viewToday">
 <div class="cat" id="catNative"><span>Jogos da casa</span></div>
 <ul class="grid" id="gridNative"></ul>
-<div class="cat" id="catExternal"><span>Outros jogos</span><button class="cat-btn" id="marcaTodos" type="button"></button></div>
+<div class="cat" id="catExternal"><span>Outros jogos</span></div>
 <ul class="list" id="gridExternal"></ul>
 <button class="add-row" id="addRow"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Adicionar jogo</button>
 </div>
@@ -864,15 +865,6 @@ function setDone(id, value) {
   render();
 }
 
-// "Marcar todos" / "Desmarcar todos" dos outros jogos (os da casa se marcam sozinhos ao jogar)
-document.getElementById("marcaTodos").addEventListener("click", () => setTimeout(() => {   // setTimeout: o toque (vibração) no iPhone termina antes do render
-  const set = doneToday(), ext = GAMES.filter(g => !LOCAL_PROGRESS[g.id]), todos = ext.every(g => set.has(g.id));
-  ext.forEach(g => todos ? set.delete(g.id) : set.add(g.id));
-  state.history[today()] = [...set];
-  save();
-  render();
-}, 0));
-
 function streak() {
   const full = k => GAMES.every(g => (state.history[k] || []).includes(g.id));
   const d = new Date();
@@ -910,13 +902,6 @@ function buildCard(g) {
       </span>`);
     return li;
   }
-  // jogos externos: abrir já marca como feito; o selo marca/desmarca à mão
-  li.insertAdjacentHTML("beforeend",
-    `<button class="badge" role="switch" aria-checked="false" aria-label="${g.name} feito">${CHECK_SVG}</button>`);
-  li.querySelector("a").addEventListener("click", () => setDone(g.id, true));
-  li.querySelector("button.badge").addEventListener("click", e => {
-    setDone(g.id, e.currentTarget.getAttribute("aria-checked") !== "true");
-  });
   return li;
 }
 // linha da lista de outros jogos: ícone, nome e descrição, e o check
@@ -935,9 +920,12 @@ function buildRow(g, li) {
       <span class="check">${CHECK_SVG}</span>
     </button>`;
   loadIcon(g, li.querySelector(".icon"));
-  li.querySelector("a").addEventListener("click", () => { saiuPara(g); setDone(g.id, true); });   // abrir já marca como feito e começa a contar o tempo fora
+  // feito = jogado de verdade: abrir começa a contar o tempo fora, e é o aviso da volta (Registrar)
+  // que marca o jogo. O check não marca à mão; tocar nele num jogo feito pede para desmarcar.
+  li.querySelector("a").addEventListener("click", () => saiuPara(g));
   li.querySelector(".toggle").addEventListener("click", e => {
-    setDone(g.id, e.currentTarget.getAttribute("aria-checked") !== "true");
+    const feito = e.currentTarget.getAttribute("aria-checked") === "true";
+    setTimeout(() => feito ? pedeDesmarcar(g) : toast("Abra o jogo para marcar como feito"), 0);
   });
   return li;
 }
@@ -1030,9 +1018,6 @@ function render() {
     if (want.some((li, k) => grid.children[k] !== li)) want.forEach(li => grid.appendChild(li));
   }
   $("catNative").hidden = gridNative.hidden = nNat === 0;
-  const mt = $("marcaTodos");
-  mt.hidden = nExt === 0;
-  mt.textContent = nExt && dExt === nExt ? "Desmarcar todos" : "Marcar todos";
   const n = GAMES.filter(g => done.has(g.id)).length, total = GAMES.length;
   $("count").textContent = `${n}/${total}`;
   const pb = $("progBar");
@@ -1149,11 +1134,18 @@ let foraTimer = 0, foraPend = null;
 function registraFora(p) {
   const r = (state.results[p.dia] ??= {});
   r[p.id] = { ...(r[p.id] || {}), time: ((r[p.id] && r[p.id].time) || 0) + p.s };
+  const feitos = new Set(state.history[p.dia] || []); feitos.add(p.id); state.history[p.dia] = [...feitos];   // registrado = jogado
   save(); render();
   if (location.hash === "#estatisticas") renderHistory();
 }
 function fechaFora(acao) {
   clearTimeout(foraTimer);
+  if (acao === "desmarca") {
+    const id = $("fora").dataset.jogo, r = state.results[today()];
+    if (r && r[id]) delete r[id].time;
+    setDone(id, false);
+  }
+  delete $("fora").dataset.jogo;
   if (foraPend && acao === "ok") registraFora(foraPend);
   foraPend = null;
   $("fora").hidden = true;
@@ -1179,6 +1171,16 @@ function voltou() {
   el.hidden = false;
   clearTimeout(foraTimer);
   foraTimer = setTimeout(() => fechaFora(longo ? "nao" : "ok"), FORA_ESPERA);   // sem resposta: registra (ou descarta, se foi longo)
+}
+function pedeDesmarcar(g) {
+  if (foraPend) fechaFora("ok");
+  clearTimeout(foraTimer);
+  const t = state.results[today()]?.[g.id]?.time, el = $("fora");
+  el.innerHTML = `<span class="icon">${g.emoji}</span><span class="fora-t"><b>Desmarcar?</b><small>${escHTML(g.name)}${t ? ` · apaga ${fmtTime(t)}` : ""}</small></span>`
+    + `<button type="button" data-a="nao">Não</button><button type="button" class="pri perigo" data-a="desmarca">Desmarcar</button>`;
+  el.dataset.jogo = g.id;
+  loadIcon(g, el.querySelector(".icon"));
+  el.hidden = false;
 }
 $("fora").addEventListener("click", e => { const b = e.target.closest("button[data-a]"); if (b) setTimeout(() => fechaFora(b.dataset.a), 0); });
 document.addEventListener("visibilitychange", voltou);

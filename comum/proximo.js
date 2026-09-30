@@ -12,8 +12,8 @@
    A chave "Jogo livre" de cada jogo continua na página, escondida: é ela que
    este arquivo aciona. No jogo livre, o botão "‹ Desafio do dia" volta.
    O próximo é o primeiro jogo ainda não feito hoje, na ordem do painel
-   (jogos da casa, depois os outros). Abrir um jogo externo por aqui já o
-   marca como feito, como no painel.
+   (jogos da casa, depois os outros). Um jogo externo aberto por aqui, como no
+   painel, só fica feito quando o painel registra o tempo jogado, na volta.
 
    Uso:  <script src="../comum/catalogo.js"></script>
          <script src="../comum/proximo.js" data-jogo="eclipse"></script>
@@ -84,11 +84,9 @@
 
   function abrir(e, g, s) {
     const url = new URL(g.url, CATALOGO_RAIZ).href;
-    if (!nativo(g)) {                                  // externo: abrir já marca como feito
-      const k = dayKey(new Date()), set = new Set(s.history[k] || []);
-      set.add(g.id); s.history[k] = [...set];
+    if (!nativo(g)) {                                  // externo: conta o tempo fora; o painel marca como feito ao registrar
+      const k = dayKey(new Date());
       try {
-        localStorage.setItem(KEY, JSON.stringify(s));
         localStorage.setItem("jogosDoDia.fora", JSON.stringify({ id: g.id, t0: Date.now(), dia: k }));
         sessionStorage.setItem(VOLTA_CASA, "1");
       } catch {}
