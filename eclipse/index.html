@@ -178,6 +178,25 @@
   .seg button svg.moon { filter: drop-shadow(0 0 3px var(--moon-glow)); }
   #modeSun[aria-pressed="true"] { background: color-mix(in srgb, var(--sun) 26%, var(--surface)); color: var(--ink); }
   #modeMoon[aria-pressed="true"] { background: color-mix(in srgb, var(--moon) 22%, var(--surface)); color: var(--ink); }
+  /* todos os sóis (ou luas) no tabuleiro: o botão fica cheio na cor do símbolo, o símbolo vira silhueta
+     e as bolinhas dão lugar a um ✓; um anel claro por dentro continua mostrando o modo ativo */
+  .seg button .ok { display: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .seg button.completo .cnt { display: none; }
+  .seg button.completo .ok { display: block; }
+  #modeSun.completo { background: var(--sun); color: #fff; }
+  #modeMoon.completo { background: var(--moon); color: #fff; }
+  .seg button.completo svg.sun, .seg button.completo svg.moon { filter: brightness(0) invert(1); }
+  .seg button.completo[aria-pressed="true"] { box-shadow: inset 0 0 0 2.5px color-mix(in srgb, #fff 70%, transparent) !important; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) #modeSun.completo { color: #3a2a00; }
+    :root:not([data-theme="light"]) #modeMoon.completo { color: #23234f; }
+    :root:not([data-theme="light"]) #modeSun.completo svg.sun { filter: brightness(0) opacity(.75); }
+    :root:not([data-theme="light"]) #modeMoon.completo svg.moon { filter: brightness(0) opacity(.8); }
+  }
+  :root[data-theme="dark"] #modeSun.completo { color: #3a2a00; }
+  :root[data-theme="dark"] #modeMoon.completo { color: #23234f; }
+  :root[data-theme="dark"] #modeSun.completo svg.sun { filter: brightness(0) opacity(.75); }
+  :root[data-theme="dark"] #modeMoon.completo svg.moon { filter: brightness(0) opacity(.8); }
   .controls { display: flex; gap: 10px; margin-top: auto; padding-top: 14px; }
   #board { margin-top: auto; }
   .controls button {
@@ -395,8 +414,8 @@
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
   </button>
   <div class="seg" role="group" aria-label="Modo">
-    <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg class="sun"><use href="#i-orb"/></svg><span class="cnt" id="cSun"><span class="pips"></span></span></button>
-    <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg class="moon"><use href="#i-luna"/></svg><span class="cnt" id="cMoon"><span class="pips"></span></span></button>
+    <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg class="sun"><use href="#i-orb"/></svg><span class="cnt" id="cSun"><span class="pips"></span></span><svg class="ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+    <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg class="moon"><use href="#i-luna"/></svg><span class="cnt" id="cMoon"><span class="pips"></span></span><svg class="ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
       <img class="ecl" src="icon-claro.png?v=20" data-escuro="icon-escuro.png?v=20" alt="">
       <span class="txt"><b id="doneTitle">Eclipse completo</b><span id="doneSub"></span></span>
@@ -757,6 +776,7 @@
       el.querySelector(".pips").innerHTML = Array.from({ length: Math.max(N, k) }, (_, j) => `<s class="${j < k ? (j >= N ? "on demais" : "on") : ""}"></s>`).join("");
       el.classList.toggle("full", falta === 0);
       el.classList.toggle("over", falta < 0);
+      el.closest("button").classList.toggle("completo", falta === 0);
     }
     $("undoBtn").disabled = finished || !history.length;
     $("clearBtn").disabled = finished;
