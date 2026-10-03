@@ -164,7 +164,7 @@
   .cell > svg.dim { opacity: .28; filter: none; }         /* peça do outro modo, só de referência */
   .seg {
     position: relative; overflow: hidden;
-    flex: 1; min-height: 62px; display: grid; grid-template-columns: 1fr 52px 1fr; gap: 3px; padding: 3px;
+    flex: 1; min-height: 70px; display: grid; grid-template-columns: 1fr 52px 1fr; gap: 3px; padding: 3px;
     background: var(--surface); border-radius: 14px; box-shadow: var(--shadow);
     transition: background .5s ease;
   }
@@ -176,10 +176,16 @@
   .seg button svg { width: 38px; height: 38px; margin: -4px -2px; overflow: visible; }
   .seg button svg.sun { filter: drop-shadow(0 0 3px var(--sun-glow)); }
   .seg button svg.moon { filter: drop-shadow(0 0 3px var(--moon-glow)); }
+  /* quantas peças já entraram: bolinhas em anel em volta do sol e da lua */
+  #modeSun, #modeMoon { position: relative; }
+  #modeSun svg.sun, #modeMoon svg.moon { width: 28px; height: 28px; margin: 0; }
+  .seg .cnt { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+  .seg .cnt .pips { display: block; }
+  .seg .cnt .pips s { position: absolute; left: -2.5px; top: -2.5px; width: 5px; height: 5px; transform: rotate(var(--a)) translateY(-22px); }
   #modeSun[aria-pressed="true"] { background: color-mix(in srgb, var(--sun) 26%, var(--surface)); color: var(--ink); }
   #modeMoon[aria-pressed="true"] { background: color-mix(in srgb, var(--moon) 22%, var(--surface)); color: var(--ink); }
   /* visão geral (meio da chave): sóis e luas juntos e as casas onde nada cabe; marcar aqui vale nas duas vistas */
-  #modeAll svg { width: 30px; height: 30px; margin: 0; opacity: .55; filter: none; transition: opacity .25s ease; }
+  #modeAll svg { width: 30px; height: 30px; margin: 0; opacity: .85; filter: none; transition: opacity .25s ease; }
   #modeAll[aria-pressed="true"] { background: color-mix(in srgb, var(--ink) 10%, var(--surface)); }
   #modeAll[aria-pressed="true"] svg { opacity: 1; }
   /* todos os sóis (ou luas) no tabuleiro: o botão fica cheio na cor do símbolo, o símbolo vira silhueta
@@ -782,8 +788,8 @@
     for (const [id, k] of [["cSun", s], ["cMoon", m]]) {   // quantas faltam, em número e em bolinhas
       const el = $(id), falta = N - k;
       el.setAttribute("aria-label", falta > 0 ? `faltam ${falta}` : falta === 0 ? "completo" : `${-falta} a mais`);
-      el.querySelector(".pips").style.gridTemplateColumns = `repeat(${Math.ceil(Math.max(N, k) / 2)}, 8px)`;   // duas fileiras
-      el.querySelector(".pips").innerHTML = Array.from({ length: Math.max(N, k) }, (_, j) => `<s class="${j < k ? (j >= N ? "on demais" : "on") : ""}"></s>`).join("");
+      const tot = Math.max(N, k);   // em anel, a partir do topo, no sentido do relógio
+      el.querySelector(".pips").innerHTML = Array.from({ length: tot }, (_, j) => `<s class="${j < k ? (j >= N ? "on demais" : "on") : ""}" style="--a:${(j * 360 / tot).toFixed(1)}deg"></s>`).join("");
       el.classList.toggle("full", falta === 0);
       el.classList.toggle("over", falta < 0);
       el.closest("button").classList.toggle("completo", falta === 0);
