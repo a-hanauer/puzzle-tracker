@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Azulejo">
 <title>AZULEJO — uma parede de painéis</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=121"></script>
-<script src="../comum/cabecalho.js?v=121"></script>
-<script src="../comum/dica.js?v=121"></script>
+<script src="../comum/tema.js?v=122"></script>
+<script src="../comum/cabecalho.js?v=122"></script>
+<script src="../comum/dica.js?v=122"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -235,7 +235,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=121">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=122">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -722,6 +722,7 @@
     $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l}/7 · ${N}×${N}` : `Jogo livre · nível ${P.l}/7 · ${N}×${N}`) + (dicaUsada ? " · com dica" : "");
     const rec = daily && window.recordeDoDia ? recordeDoDia("retalhos:", dayNum) : null;
     if (window.seloRecorde) seloRecorde($("endSub"), rec && `Seu melhor tempo de ${rec.dia} · antes ${fmt(rec.antes)}`);
+    if (window.semanaFim) semanaFim($("endSub"), daily ? semanaTempos("retalhos:", dayNum) : null, "tempo");   // últimos 7 dias
     $("shareBtn").hidden = !daily;
     $("againBtn").hidden = daily;
     $("nextBox").hidden = !daily;
@@ -778,9 +779,9 @@
   demo("demoB", true);
 })();
 </script>
-<script src="../comum/catalogo.js?v=121"></script>
-<script src="../comum/celebra.js?v=121"></script>
-<script src="../comum/recorde.js?v=121"></script>
-<script src="../comum/proximo.js?v=121" data-jogo="retalhos"></script>
+<script src="../comum/catalogo.js?v=122"></script>
+<script src="../comum/celebra.js?v=122"></script>
+<script src="../comum/recorde.js?v=122"></script>
+<script src="../comum/proximo.js?v=122" data-jogo="retalhos"></script>
 </body>
 </html>

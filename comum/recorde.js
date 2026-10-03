@@ -38,4 +38,61 @@
     s.innerHTML = '<span class="rec-pill">' + TROFEU + '<span></span></span>';
     s.querySelector(".rec-pill > span").textContent = texto;
   };
+
+  /* ---------- Últimos 7 dias, na bandeja de fim (só no desafio do dia) ----------
+     Barras de hoje e dos 6 dias anteriores; barra mais baixa = mais rápido / menos tentativas.
+     Dia sem partida fica só com um traço, sem aviso. */
+  var INI = ["D", "S", "T", "Q", "Q", "S", "S"];
+  var fmtT = function (s) { s = Math.round(s); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+  var chave = function (d, zeros) { var m = d.getMonth() + 1, dd = d.getDate(); return d.getFullYear() + "-" + (zeros ? String(m).padStart(2, "0") : m) + "-" + (zeros ? String(dd).padStart(2, "0") : dd); };
+  function seteDias() { var out = [], d0 = new Date(); d0.setHours(12, 0, 0, 0); for (var k = 6; k >= 0; k--) { var d = new Date(d0); d.setDate(d0.getDate() - k); out.push(d); } return out; }
+  // jogos com tempo: prefixo "eclipse:" etc. e o número do desafio de hoje
+  window.semanaTempos = function (prefixo, dayNum) {
+    var st = ler(prefixo + "stats"), t = (st && st.times) || {};
+    return seteDias().map(function (d, i) { var v = t[dayNum - 6 + i]; return { d: d, v: v == null ? null : v }; });
+  };
+  // jogos de palavras: o painel guarda os resultados por dia; o Sando também guarda cada partida do dia
+  window.semanaPalavras = function (id, hoje) {
+    var st = ler("jogosDoDia.v1"), res = (st && st.results) || {};
+    return seteDias().map(function (d, i) {
+      if (i === 6 && hoje) return { d: d, v: hoje.tries, perdeu: !hoje.won };
+      var r = res[chave(d, true)] && res[chave(d, true)][id];
+      if (!r && id === "sanduba") {
+        var p = ler("sanduba-daily-" + chave(d, false));
+        if (p && Array.isArray(p.guesses) && p.guesses.length) {
+          var won = p.guesses.some(function (g) { return g.word === p.secret; });
+          if (won || p.guesses.length >= 14) r = { tries: p.guesses.length, won: won };
+        }
+      }
+      return r && r.tries != null ? { d: d, v: r.tries, perdeu: !r.won } : { d: d, v: null };
+    });
+  };
+  // desenha (ou tira, com dias = null) o bloco logo abaixo da linha pequena e do selo de recorde
+  window.semanaFim = function (subEl, dias, tipo) {
+    var box = subEl.parentNode.querySelector(".fim-semana");
+    if (!dias) { if (box) box.remove(); return; }
+    if (!box) { box = document.createElement("div"); box.className = "fim-semana"; }
+    var ancora = subEl.parentNode.querySelector(".fim-rec") || subEl;
+    ancora.after(box);
+    var tempo = tipo === "tempo", vals = dias.filter(function (x) { return x.v != null; }).map(function (x) { return x.v; });
+    var topo = Math.max.apply(null, vals.concat([1]));
+    var barras = dias.map(function (x, i) {
+      var cls = "b" + (i === 6 ? " hoje" : "") + (x.v == null ? " vazio" : "") + (x.perdeu ? " perdeu" : "");
+      var h = x.v == null ? 4 : Math.max(8, Math.round(52 * x.v / topo));
+      var lab = x.v == null ? "" : tempo ? fmtT(x.v) : String(x.v);
+      return '<div class="' + cls + '"><small>' + lab + '</small><i style="height:' + h + 'px"></i></div>';
+    }).join("");
+    var nomes = dias.map(function (x, i) { return '<span' + (i === 6 ? ' class="hoje"' : "") + ">" + INI[x.d.getDay()] + "</span>"; }).join("");
+    var rodape;
+    if (tempo) {
+      var media = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+      rodape = vals.length > 1 ? "média <b>" + fmtT(media) + "</b> · melhor <b>" + fmtT(Math.min.apply(null, vals)) + "</b>" : "";
+    } else {
+      var vit = dias.filter(function (x) { return x.v != null && !x.perdeu; }).map(function (x) { return x.v; });
+      var m = vit.length ? (vit.reduce(function (a, b) { return a + b; }, 0) / vit.length).toFixed(1).replace(".", ",").replace(",0", "") : null;
+      rodape = vals.length > 1 ? vals.length + " de 7" + (m ? " · média <b>" + m + "</b> tentativas" : "") : "";
+    }
+    box.innerHTML = '<div class="sem-tit">Últimos 7 dias</div><div class="sem-barras">' + barras + '</div><div class="sem-dias">' + nomes + "</div>" + (rodape ? '<div class="sem-rodape">' + rodape + "</div>" : "");
+    box.setAttribute("aria-label", "Últimos 7 dias: " + dias.map(function (x) { return x.v == null ? "sem partida" : (tempo ? fmtT(x.v) : x.v + " tentativas") + (x.perdeu ? " (não foi)" : ""); }).join(", "));
+  };
 })();

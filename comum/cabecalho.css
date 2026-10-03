@@ -446,3 +446,20 @@ html.gh-carregando body { visibility: hidden; animation: gh-mostra 0s linear 1s 
 .overlay.open > .modal.fim { animation: gh-surge .3s cubic-bezier(.2, .9, .3, 1.1) both; }
 @keyframes gh-surge { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .overlay.open > .modal.fim { animation: none; } }
+
+/* Últimos 7 dias na bandeja de fim (comum/recorde.js: semanaFim) */
+.fim-semana { margin: -4px 0 18px; padding: 14px 12px 12px; border-radius: 16px; background: color-mix(in srgb, var(--gh-ink) 5%, transparent); text-align: center; }
+.fim-semana .sem-tit { margin: 0 0 10px; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gh-muted); }
+.fim-semana .sem-barras, .fim-semana .sem-dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; padding: 0 4px; }
+.fim-semana .sem-barras { height: 70px; align-items: end; }
+.fim-semana .b { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; height: 100%; min-width: 0; }
+.fim-semana .b i { display: block; width: 100%; max-width: 26px; border-radius: 6px 6px 3px 3px; background: color-mix(in srgb, var(--gh-ink) 18%, transparent); }
+.fim-semana .b.hoje i { background: var(--gh-accent); }
+.fim-semana .b.vazio i { background: color-mix(in srgb, var(--gh-ink) 8%, transparent); }
+.fim-semana .b.perdeu i { background: color-mix(in srgb, #e5484d 55%, transparent); }
+.fim-semana .b small { font-size: .62rem; font-weight: 700; line-height: 1; color: var(--gh-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fim-semana .b.hoje small { color: var(--gh-ink); }
+.fim-semana .sem-dias { padding-top: 6px; font-size: .66rem; font-weight: 700; color: var(--gh-muted); }
+.fim-semana .sem-dias .hoje { color: var(--gh-ink); }
+.fim-semana .sem-rodape { margin-top: 10px; font-size: .8rem; color: var(--gh-muted); }
+.fim-semana .sem-rodape b { color: var(--gh-ink); font-variant-numeric: tabular-nums; }
