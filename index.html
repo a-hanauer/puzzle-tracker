@@ -195,9 +195,9 @@
   .ring .num small { color: var(--muted); font-weight: 600; font-size: .68rem; }
 
   /* lista dos outros jogos (sites externos) */
-  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .row {
-    display: flex; align-items: center;
+    display: flex; align-items: center; min-width: 0;
     background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
     box-shadow: var(--shadow); transition: background .25s, border-color .25s;
   }
@@ -246,10 +246,10 @@
   .cat-btn[hidden] { display: none; }
   .grid {
     list-style: none; padding: 0; margin: 0;
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;   /* minmax(0,…): conteúdo largo nunca alarga a coluna */
   }
   .app {
-    position: relative;
+    position: relative; min-width: 0; container-type: inline-size;
     background: var(--surface);
     border: 1.5px solid var(--border);
     border-radius: 20px;
@@ -344,6 +344,10 @@
   .pl .nv { display: inline-flex; gap: 2px; margin-left: 3px; }
   .pl .nv i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .3; }
   .pl .nv i.on { opacity: 1; }
+  .pl { max-width: 100%; min-width: 0; overflow: hidden; }
+  @container (max-width: 112px) { .pl .nv { display: none; } }   /* cartão estreito (celular pequeno): sai a régua do nível */
+  /* a página inicial nunca rola para o lado */
+  html, body { overflow-x: hidden; overflow-x: clip; overscroll-behavior-x: none; }
   .tag {
     font-size: .58rem; font-weight: 700; letter-spacing: .05em;
     color: var(--muted); background: var(--surface-2);
