@@ -178,7 +178,7 @@
   .seg button svg.moon { filter: drop-shadow(0 0 3px var(--moon-glow)); }
   #modeSun[aria-pressed="true"] { background: color-mix(in srgb, var(--sun) 26%, var(--surface)); color: var(--ink); }
   #modeMoon[aria-pressed="true"] { background: color-mix(in srgb, var(--moon) 22%, var(--surface)); color: var(--ink); }
-  /* visão geral (meio da chave): sóis e luas juntos, sem anotações, só para olhar */
+  /* visão geral (meio da chave): sóis e luas juntos e as casas onde nada cabe; marcar aqui vale nas duas vistas */
   #modeAll svg { width: 30px; height: 30px; margin: 0; opacity: .55; filter: none; transition: opacity .25s ease; }
   #modeAll[aria-pressed="true"] { background: color-mix(in srgb, var(--ink) 10%, var(--surface)); }
   #modeAll[aria-pressed="true"] svg { opacity: 1; }
@@ -419,7 +419,7 @@
   </button>
   <div class="seg" role="group" aria-label="Modo">
     <button id="modeSun" aria-pressed="true" aria-label="Modo sol"><svg class="sun"><use href="#i-orb"/></svg><span class="cnt" id="cSun"><span class="pips"></span></span><svg class="ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
-    <button id="modeAll" aria-pressed="false" aria-label="Ver tudo: sóis e luas juntos, sem anotações"><svg viewBox="0 0 44 44" aria-hidden="true"><use href="#i-eclipse"/></svg></button>
+    <button id="modeAll" aria-pressed="false" aria-label="Visão geral: sóis e luas juntos"><svg viewBox="0 0 44 44" aria-hidden="true"><use href="#i-eclipse"/></svg></button>
     <button id="modeMoon" aria-pressed="false" aria-label="Modo lua"><svg class="moon"><use href="#i-luna"/></svg><span class="cnt" id="cMoon"><span class="pips"></span></span><svg class="ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
       <img class="ecl" src="icon-claro.png?v=20" data-escuro="icon-escuro.png?v=20" alt="">
@@ -431,7 +431,7 @@
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
   </button>
 </div>
-<div class="tip" id="tip"><span id="tipAll" hidden><b>Visão geral</b>: sóis e luas juntos, sem anotações<br>Escolha sol ou lua para voltar a jogar</span><span id="tipPlay"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-orb"/></svg>&nbsp;→&nbsp;vazio<br>Pontos pequenos <i class="dt a"></i> são automáticos · arraste marca vários</span><span id="tipDone" hidden></span></div>
+<div class="tip" id="tip"><span id="tipAll" hidden><b>Visão geral</b>: sóis e luas juntos<br>toque = <i class="dt"></i> nada cabe, nas duas vistas · arraste marca vários</span><span id="tipPlay"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-orb"/></svg>&nbsp;→&nbsp;vazio<br>Pontos pequenos <i class="dt a"></i> são automáticos · arraste marca vários</span><span id="tipDone" hidden></span></div>
 
 <!-- Como jogar -->
 <div class="overlay" id="helpOverlay">
@@ -682,12 +682,12 @@
     X: '<svg class="dot"><use href="#i-dot"/></svg>', Xa: '<svg class="dot auto"><use href="#i-dot"/></svg>',
     "": "",
   };
-  let mode = "S";                              // "S" = modo sol · "M" = modo lua · "E" = visão geral (só olhar)
+  let mode = "S";                              // "S" = modo sol · "M" = modo lua · "E" = visão geral (peças das duas e marcas "nada cabe")
   document.documentElement.dataset.modo = "S";
-  const modeBit = () => (mode === "S" ? 1 : 2);
+  const modeBit = () => (mode === "S" ? 1 : mode === "M" ? 2 : 3);   // visão geral: as duas marcas juntas
   const other = () => (mode === "S" ? "M" : "S");
   const nameOf = v => ({ S: "sol", M: "lua", Sd: "sol (outro modo)", Md: "lua (outro modo)",
-    X: `${mode === "S" ? "sol" : "lua"} não cabe`, Xa: `${mode === "S" ? "sol" : "lua"} não cabe (automático)`, "": "vazia" })[v];
+    X: mode === "E" ? "nem sol nem lua cabem" : `${mode === "S" ? "sol" : "lua"} não cabe`, Xa: mode === "E" ? "nem sol nem lua cabem (automático)" : `${mode === "S" ? "sol" : "lua"} não cabe (automático)`, "": "vazia" })[v];
 
   // Anotação automática, calculada a partir das peças (some sozinha quando a peça sai):
   // vizinhas → nada cabe; mesma linha/coluna/região de um sol → sol não pode; de uma lua → lua não pode.
@@ -719,7 +719,11 @@
   function shown(i) {                         // o que aparece na casa, no modo atual
     const v = cells[i];
     if (finished) return v === "S" || v === "M" ? v : BITS[v] ? "X" : "";   // resolvido: peças acesas e as suas anotações
-    if (mode === "E") return v === "S" || v === "M" ? v : "";               // visão geral: as duas peças, nenhuma anotação
+    if (mode === "E") {                       // visão geral: as duas peças e só as casas onde nada cabe
+      if (v === "S" || v === "M") return v;
+      const man = BITS[v] || 0;
+      return man === 3 ? "X" : (man | (AUTO[i] || 0)) === 3 ? "Xa" : "";
+    }
     if (v === mode) return v;
     if (v === other()) return v + "d";
     const man = BITS[v] || 0, b = modeBit();
@@ -770,7 +774,7 @@
       el.classList.toggle("pop", i === popIdx);
       // o realce segue só as anotações feitas por você (certas ou erradas), nunca a dedução do jogo
       const vazia = cells[i] !== "S" && cells[i] !== "M", bl = BITS[cells[i]] || 0;
-      el.classList.toggle("nada", !finished && mode !== "E" && vazia && bl === 3);            // você marcou que nem sol nem lua cabem
+      el.classList.toggle("nada", !finished && vazia && bl === 3);            // você marcou que nem sol nem lua cabem
       el.classList.toggle("fora", !finished && mode !== "E" && vazia && !!(bl & modeBit()));  // você marcou que a peça do modo não cabe
       el.setAttribute("aria-label", `linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}: ${nameOf(v)}${givens.has(i) ? " (revelada)" : ""}`);
       if (cells[i] === "S") s++; if (cells[i] === "M") m++;
@@ -853,6 +857,10 @@
   // toque: ponto (não cabe) → peça do modo → vazio, sempre nessa ordem.
   function tapValue(i) {
     const v = cells[i];
+    if (mode === "E") {                        // visão geral: marca (ou desmarca) as duas vistas de uma vez; peças não mudam
+      if (v === "S" || v === "M") return v;
+      return BITS[v] === 3 ? "." : "x";
+    }
     if (v === mode) return ".";
     if (v === other()) return v;              // a peça do outro modo não muda aqui
     const man = BITS[v] || 0, b = modeBit();
@@ -863,7 +871,7 @@
   const cellAt = (x, y) => { const el = document.elementFromPoint(x, y), c = el && el.closest && el.closest(".cell"); return c ? +c.dataset.i : -1; };
 
   $("board").addEventListener("pointerdown", e => {
-    if (finished || mode === "E") return;          // visão geral: só olhar
+    if (finished) return;
     const i = cellAt(e.clientX, e.clientY);
     if (i < 0) return;
     e.preventDefault();
@@ -877,7 +885,7 @@
     if (!drag.moved) {
       // o arrasto marca pontos se começou numa casa vazia, e apaga se começou num ponto
       drag.moved = true;
-      drag.mode = (BITS[cells[drag.start]] || 0) & modeBit() ? "erase" : "paint";   // começa num ponto → apaga
+      drag.mode = ((BITS[cells[drag.start]] || 0) & modeBit()) === modeBit() ? "erase" : "paint";   // começa num ponto → apaga
       paint(drag.start);
     }
     drag.touched.add(i);
