@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Novelo">
 <title>NOVELO — um fio por todas as casas</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=122"></script>
-<script src="../comum/cabecalho.js?v=122"></script>
-<script src="../comum/dica.js?v=122"></script>
+<script src="../comum/tema.js?v=123"></script>
+<script src="../comum/cabecalho.js?v=123"></script>
+<script src="../comum/dica.js?v=123"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -228,7 +228,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=122">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=123">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -746,6 +746,19 @@
 
 
   // ---------- dica (comum/dica.js): volta o fio até onde está certo e avança um trecho ----------
+  // por que o fio vai da ponta e para c (para a dica explicar)
+  function porqueSegue(e, c) {
+    const livre = (a, b) => b >= 0 && b < C && adjacent(a, b) && !walls.has(key(a, b)) && !path.includes(b);
+    const vizinhos = a => [a - N, a + N, a % N ? a - 1 : -1, (a + 1) % N ? a + 1 : -1].filter(b => b >= 0 && b < C);
+    const opcoes = vizinhos(e).filter(b => canStep(e, b));
+    if (numAt[c] && numAt[c] === nextNum()) return `O próximo número, ${numAt[c]}, está logo ali.`;
+    if (opcoes.length === 1) return "Dali, essa é a única casa livre para o fio seguir.";
+    const saidas = b => vizinhos(b).filter(x => x !== e && livre(b, x)).length;
+    if (saidas(c) <= 1 && numAt[c] !== K) return "Essa casa só tem mais uma saída: se o fio não passar por ela agora, ela fica num beco e não dá mais para visitá-la.";
+    const beco = opcoes.find(b => b !== c && saidas(b) === 0 && numAt[b] !== K);
+    if (beco != null) return "O outro lado é um beco sem saída: o fio entraria e não conseguiria sair.";
+    return "Indo por outro lado, alguma casa ficaria isolada antes do próximo número: o fio precisa cobrir todas.";
+  }
   async function pedirDica() {
     const M = await import("./motor.mjs");
     const B = M.makeBoard(N, new Map(P.k.split(",").map((c, j) => [+c, j + 1])), []);
@@ -758,9 +771,12 @@
     let k = 0; while (k < path.length && path[k] === sol[k]) k++;
     const errou = k < path.length;
     path.length = Math.max(1, k);
+    const motivo = porqueSegue(path[path.length - 1], sol[path.length]);
     for (let add = 0; path.length < sol.length && add < 4; add++) { const c = sol[path.length]; path.push(c); if (numAt[c]) break; }
     checkWin(); render(); persist();
-    return errou ? "O fio tinha saído do caminho: voltou até onde estava certo e avançou um trecho." : "O fio avançou um trecho no caminho certo.";
+    const ate = path[path.length - 1];
+    return (errou ? "O fio tinha saído do caminho certo: voltei até o último ponto bom. " : "") +
+      `Segui até a linha ${rc(ate)[0] + 1}, coluna ${rc(ate)[1] + 1}. ${motivo}`;
   }
 
   // ---------- vitória ----------
@@ -838,9 +854,9 @@
   demo("demoB", [0, 3, 6, 7, 4, 1, 2, 5, 8], [[0, 1], [8, 2]], "M115 27L115 203");
 })();
 </script>
-<script src="../comum/catalogo.js?v=122"></script>
-<script src="../comum/celebra.js?v=122"></script>
-<script src="../comum/recorde.js?v=122"></script>
-<script src="../comum/proximo.js?v=122" data-jogo="novelo"></script>
+<script src="../comum/catalogo.js?v=123"></script>
+<script src="../comum/celebra.js?v=123"></script>
+<script src="../comum/recorde.js?v=123"></script>
+<script src="../comum/proximo.js?v=123" data-jogo="novelo"></script>
 </body>
 </html>

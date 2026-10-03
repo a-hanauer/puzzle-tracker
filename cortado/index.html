@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Cortado">
 <title>CORTADO — café e leite em equilíbrio</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=122"></script>
-<script src="../comum/cabecalho.js?v=122"></script>
-<script src="../comum/dica.js?v=122"></script>
+<script src="../comum/tema.js?v=123"></script>
+<script src="../comum/cabecalho.js?v=123"></script>
+<script src="../comum/dica.js?v=123"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,9 +31,15 @@
     --cell-fix: #e6d8c4;
     --cafe: #6e452a;
     --cafe-slit: #3a2314;
-    --leite: #ecd8b5;
-    --leite-st: rgba(0, 0, 0, 0);
-    --leite-sh: #d5bb92;
+    --leite: #f2e3c7;
+    --leite-st: #c4a57a;
+    --leite-sh: #e2cba5;
+    /* casa com peça: café em tom leve (grão escuro por cima), leite claro; vazia listrada */
+    --cell-stripe: #ede2d1;
+    --cell-cafe: #e6d2bd;
+    --cell-leite: #fffdf8;
+    --fix-ring-cafe: rgba(110, 69, 42, .32);
+    --fix-ring-leite: rgba(120, 85, 50, .28);
     --sign: #9a8068;
     --sign-bg: #e8dccb;
     --bad: #d64545;
@@ -57,9 +63,16 @@
       --cell-fix: #1f1814;
       --cafe: #92603c;
       --cafe-slit: #4a2c18;
-      --leite: #f3e8d6;
-      --leite-st: rgba(0, 0, 0, 0);
-      --leite-sh: #d9c6aa;
+      --leite: #fffdf8;
+      --leite-st: #8f6e48;
+      --leite-sh: #e6d4b6;
+      --cell-stripe: #352b24;
+      --cell-cafe: #8a6c55;
+      --grao: #3a2314;
+      --grao-slit: #8a6c55;
+      --cell-leite: #eadfcc;
+      --fix-ring-cafe: rgba(255, 240, 220, .4);
+      --fix-ring-leite: rgba(80, 55, 30, .35);
       --sign: #b19a82;
       --sign-bg: #1e1814;
       --bad: #ff6b6b;
@@ -83,9 +96,16 @@
       --cell-fix: #1f1814;
       --cafe: #92603c;
       --cafe-slit: #4a2c18;
-      --leite: #f3e8d6;
-      --leite-st: rgba(0, 0, 0, 0);
-      --leite-sh: #d9c6aa;
+      --leite: #fffdf8;
+      --leite-st: #8f6e48;
+      --leite-sh: #e6d4b6;
+      --cell-stripe: #352b24;
+      --cell-cafe: #8a6c55;
+      --grao: #3a2314;
+      --grao-slit: #8a6c55;
+      --cell-leite: #eadfcc;
+      --fix-ring-cafe: rgba(255, 240, 220, .4);
+      --fix-ring-leite: rgba(80, 55, 30, .35);
       --sign: #b19a82;
       --sign-bg: #1e1814;
       --bad: #ff6b6b;
@@ -119,10 +139,19 @@
   .b-bg { fill: var(--board); }
   .b-cell { fill: var(--cell); stroke: var(--cell-line); stroke-width: 1.5; }
   .b-cell.fix { fill: var(--cell-fix); }
+  /* casa com peça ganha a cor da peça (café escuro, leite claro); a vazia fica listrada */
+  .b-cell.vaz { fill: url(#vazio); }
+  .vz-a { fill: var(--cell); } .vz-b { fill: var(--cell-stripe, var(--cell)); }
+  .b-cell.v1 { fill: var(--cell-cafe, var(--cell)); }
+  .b-cell.v2 { fill: var(--cell-leite, var(--cell)); }
+  .b-cell.fix.v1 { fill: var(--cell-cafe-fix, var(--cell-cafe, var(--cell-fix))); }
+  .b-cell.fix.v2 { fill: var(--cell-leite-fix, var(--cell-leite, var(--cell-fix))); }
+  .fix-mark { fill: none; stroke: transparent; stroke-width: 3; }
+  .fix-mark.m1 { stroke: var(--fix-ring-cafe, transparent); } .fix-mark.m2 { stroke: var(--fix-ring-leite, transparent); }
   .b-cell.bad { fill: url(#hatch); }
   .hb { fill: var(--bad-soft); } .hl { fill: var(--bad); opacity: .4; }
-  .d-cafe { fill: var(--cafe); }
-  .d-cafe-slit { fill: none; stroke: var(--cafe-slit); stroke-width: 4.2; stroke-linecap: round; }
+  .d-cafe { fill: var(--grao, var(--cafe)); }
+  .d-cafe-slit { fill: none; stroke: var(--grao-slit, var(--cafe-slit)); stroke-width: 4.2; stroke-linecap: round; }
   .d-leite { fill: var(--leite); stroke: var(--leite-st); stroke-width: 3; }
   .d-leite-sh { fill: var(--leite-sh); }
   .drop { transform-box: fill-box; transform-origin: 50% 70%; }
@@ -154,9 +183,20 @@
     transition: background .5s ease;
   }
   .prog .bar { flex: 1; height: 8px; border-radius: 9px; background: var(--surface-2); overflow: hidden; }
+  .prog .bar { position: relative; overflow: visible; }
   .prog .bar i { display: block; height: 100%; width: 0; border-radius: 9px; background: var(--accent); transition: width .2s ease; }
+  /* a barra é a linha do tempo das jogadas: arrastar volta (ou avança de novo) até o ponto escolhido */
+  .prog { touch-action: none; cursor: grab; }
+  .prog .bar u { position: absolute; top: 50%; left: 0; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%;
+    background: var(--surface); box-shadow: 0 0 0 3px var(--accent), 0 2px 6px rgba(0,0,0,.18); transition: left .2s ease, transform .15s ease; pointer-events: none; }
+  .prog.sem-hist .bar u { opacity: 0; }
+  .prog.scrub { cursor: grabbing; }
+  .prog.scrub .bar i, .prog.scrub .bar u { transition: none; }
+  .prog.scrub .bar u { transform: scale(1.2); }
+  .prog.scrub .bar i { background: color-mix(in srgb, var(--accent) 70%, var(--surface-2)); }
   .prog .n { font-weight: 700; font-size: .95rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .prog .n b { color: var(--ink); font-weight: 800; }
+  .prog .n small { font-size: .72rem; font-weight: 700; }
   .prog > .bar, .prog > .n { transition: opacity .25s ease; }
   .controls.done > button { flex-basis: 0; opacity: 0; pointer-events: none; }
   .controls.done #undoBtn { margin-right: -10px; }
@@ -207,7 +247,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=122">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=123">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -236,7 +276,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
   </button>
   <div class="prog" aria-live="polite">
-    <span class="bar"><i id="progBar"></i></span><span class="n" id="progN"><b>0</b>/0</span>
+    <span class="bar"><i id="progBar"></i><u id="progKnob"></u></span><span class="n" id="progN"><b>0</b>/0</span>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
       <img class="cup" src="icon.png?v=20" data-escuro="icon-escuro.png?v=20" alt="">
       <span class="txt"><b id="doneTitle">Cortado pronto</b><span id="doneSub"></span></span>
@@ -264,8 +304,8 @@
       <figure><svg id="demoA" viewBox="0 0 428 428"></svg>desafio</figure>
       <figure><svg id="demoB" viewBox="0 0 428 428"></svg>resolvido</figure>
     </div>
-    <p>Toque numa casa para trocar: vazia → café → leite → vazia. Arraste o dedo para repetir a mesma troca em várias casas. As casas mais escuras já vêm preenchidas. O que quebra uma regra fica com listras vermelhas a partir da jogada seguinte.</p>
-    <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b>. Os níveis 1 a 4 são em 6×6 e os níveis 5 a 7 em 8×8; dentro de cada tamanho, a dificuldade vem de menos casas preenchidas e deduções mais longas.</p>
+    <p>Toque numa casa para trocar: vazia → café → leite → vazia. Arraste o dedo para repetir a mesma troca em várias casas. As casas com um anel por dentro já vêm preenchidas; as vazias ficam listradas. O que quebra uma regra fica com listras vermelhas a partir da jogada seguinte. Para voltar várias jogadas de uma vez, <b>arraste a barra de progresso</b> até o ponto que quiser (e arraste de novo para a frente, se mudar de ideia).</p>
+    <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b>. De segunda a sexta (níveis 1 a 5) o tabuleiro é 6×6; no sábado e no domingo (níveis 6 e 7), 8×8. A dificuldade vem de menos pistas e deduções mais longas, nunca de chute.</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, que não contam nas estatísticas: escolha o <b>nível</b> (1 a 7) no botão ao lado de "Extra" e toque em ↻ para sortear outro.</p>
     <button class="btn-main" data-close>Jogar</button>
   </div>
@@ -314,6 +354,7 @@
   let history = [], finished = false, kind = "dia", dayNum = 0, DAILY = null, FREE = null, freeIdx = -1;
   let timer = null, startedAt = 0, elapsed = 0, bad = new Set();
   let fresh = new Set();      // casas mexidas na última jogada (os erros delas esperam a próxima)
+  let futuro = [], scrub = null;   // jogadas "à frente" depois de voltar pela barra (somem na próxima jogada)
   const U = 100, PAD = 14;
 
   function recomputeStats(st) {
@@ -337,7 +378,7 @@
     elapsed = saved?.elapsed || 0;
     finished = !!saved?.done;
     dicaUsada = !!saved?.dica;
-    history = []; fresh = new Set();
+    history = []; futuro = []; fresh = new Set();
     const now = new Date();
     $("dayInfo").innerHTML = kind === "dia"
       ? `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`
@@ -409,7 +450,8 @@
     W = N * U + 2 * PAD;
     const b = $("board");
     b.setAttribute("viewBox", `0 0 ${W} ${W}`);
-    b.innerHTML = `<defs><pattern id="hatch" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="hb" width="18" height="18"/><rect class="hl" width="5" height="18"/></pattern></defs>
+    b.innerHTML = `<defs><pattern id="hatch" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="hb" width="18" height="18"/><rect class="hl" width="5" height="18"/></pattern>
+      <pattern id="vazio" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="vz-a" width="14" height="14"/><rect class="vz-b" width="4" height="14"/></pattern></defs>
       <rect class="b-bg" width="${W}" height="${W}" rx="30"/><g id="gC"></g><g id="gD"></g><g id="gS"></g>`;
     gC = $("gC"); gD = $("gD"); gS = $("gS");
   }
@@ -459,8 +501,9 @@
     let sc = "", sd = "";
     for (let i = 0; i < C; i++) {
       const x = PAD + (i % N) * U, y = PAD + ((i / N) | 0) * U;
-      const cls = bad.has(i) ? "b-cell bad" : fixed[i] ? "b-cell fix" : "b-cell";
+      const cls = bad.has(i) ? "b-cell bad" : "b-cell" + (fixed[i] ? " fix" : "") + (cells[i] ? " v" + cells[i] : " vaz");   // v1 café · v2 leite · vaz vazia
       sc += `<rect class="${cls}" x="${x + 4}" y="${y + 4}" width="${U - 8}" height="${U - 8}" rx="16"/>`;
+      if (fixed[i] && !bad.has(i)) sc += `<rect class="fix-mark m${cells[i]}" x="${x + 9}" y="${y + 9}" width="${U - 18}" height="${U - 18}" rx="12"/>`;   // já vem preenchida
       if (cells[i]) sd += dropSVG(cells[i], x + U / 2, y + U / 2, 1, popAt.has(i) ? " pop" : "");
     }
     popAt = new Set();
@@ -468,8 +511,11 @@
     gS.innerHTML = signs.map((s, k) => signSVG(s, cf.badSigns.has(k))).join("");
     const free = C - fixed.filter(Boolean).length;
     const filled = cells.filter((v, i) => v && !fixed[i]).length;
-    $("progBar").style.width = (100 * filled / Math.max(1, free)) + "%";
-    $("progN").innerHTML = `<b>${filled}</b>/${free}`;
+    if (!scrub) {
+      $("progBar").style.width = $("progKnob").style.left = (100 * filled / Math.max(1, free)) + "%";
+      $("progN").innerHTML = `<b>${filled}</b>/${free}`;
+    }
+    document.querySelector(".prog").classList.toggle("sem-hist", finished || (!history.length && !futuro.length));
     $("undoBtn").disabled = finished || !history.length;
     $("clearBtn").disabled = finished || !filled;
     $("board").classList.toggle("won", finished);
@@ -533,7 +579,7 @@
   const endDrag = e => {
     if (!drag || (e && e.pointerId !== undefined && e.pointerId !== drag.id)) return;
     const d = drag; drag = null;
-    if (pack() !== d.before) { history.push(d.before); if (history.length > 300) history.shift(); }
+    if (pack() !== d.before) { history.push(d.before); futuro = []; if (history.length > 300) history.shift(); }
     checkWin();
     render(); persist();
   };
@@ -543,6 +589,7 @@
   const unpack = s => { for (let i = 0; i < C; i++) if (!fixed[i]) cells[i] = +s[i] || 0; };
   $("undoBtn").addEventListener("click", () => {
     if (!history.length || finished) return;
+    futuro.unshift(pack());
     unpack(history.pop());
     fresh = new Set();
     render(); persist();
@@ -551,11 +598,49 @@
   $("clearYes").addEventListener("click", () => {
     closeModal($("clearOverlay"));
     if (finished) return;
-    history.push(pack());
+    history.push(pack()); futuro = [];
     cells = fixed.slice();
     fresh = new Set();
     render(); persist();
   });
+
+  // ---------- barra arrastável: linha do tempo das jogadas ----------
+  // posições 0 … total: o começo, cada jogada feita e as "à frente" (depois de voltar).
+  // Arrastando, o tabuleiro mostra cada ponto; ao soltar, o ponto escolhido vira o atual.
+  function scrubTo(e) {
+    const bar = document.querySelector(".prog .bar").getBoundingClientRect();
+    const f = Math.min(1, Math.max(0, (e.clientX - bar.left) / bar.width));
+    const k = Math.round(f * scrub.total);
+    if (k !== scrub.k) {
+      scrub.k = k; unpack(scrub.linha[k]); fresh = new Set();
+      if (window.jogosHaptico) jogosHaptico();
+      render();
+    }
+    const pct = 100 * k / Math.max(1, scrub.total);
+    $("progBar").style.width = $("progKnob").style.left = pct + "%";
+    $("progN").innerHTML = `<small>jogada</small> <b>${k}</b>/${scrub.total}`;
+  }
+  const prog = document.querySelector(".prog");
+  prog.addEventListener("pointerdown", e => {
+    if (finished || !N || e.target.closest(".done-bar")) return;
+    if (!history.length && !futuro.length) return;
+    e.preventDefault();
+    const linha = [...history, pack(), ...futuro];
+    scrub = { id: e.pointerId, linha, total: linha.length - 1, k: history.length, inicio: history.length };
+    prog.classList.add("scrub");
+    try { prog.setPointerCapture(e.pointerId); } catch {}
+    scrubTo(e);
+  });
+  prog.addEventListener("pointermove", e => { if (scrub && e.pointerId === scrub.id) scrubTo(e); });
+  const fimScrub = e => {
+    if (!scrub || (e.pointerId !== undefined && e.pointerId !== scrub.id)) return;
+    const { linha, k } = scrub;
+    history = linha.slice(0, k); futuro = linha.slice(k + 1);
+    scrub = null; prog.classList.remove("scrub");
+    render(); persist(); startTimer();
+  };
+  prog.addEventListener("pointerup", fimScrub);
+  prog.addEventListener("pointercancel", fimScrub);
 
   // ---------- cronômetro ----------
   const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`; };
@@ -581,20 +666,46 @@
   setInterval(() => { if (timer) persist(); }, 5000);
 
 
-  // ---------- dica (comum/dica.js): limpa uma casa errada ou preenche uma certa ----------
+  // ---------- dica (comum/dica.js): corrige uma casa errada ou deduz a próxima, sempre com o motivo ----------
+  const NOMEV = v => (v === 1 ? "café" : "leite");
+  const ondeCasa = i => `Linha ${((i / N) | 0) + 1}, coluna ${(i % N) + 1}`;
+  // se v na casa i leva as deduções a um conflito, a casa é o contrário
+  function levaAConflito(M, base, i, v) {
+    const t = Uint8Array.from(base); t[i] = v;
+    for (let k = 0; k < 200; k++) {
+      if (M.conflicts(N, t, signs).size) return true;
+      const d = M.deducoes(N, t, signs, N / 2 + 1);
+      if (!d.length) return false;
+      for (const x of d) { if (t[x.i] && t[x.i] !== x.v) return true; t[x.i] = x.v; }
+    }
+    return false;
+  }
   async function pedirDica() {
     const M = await import("./motor.mjs");
     const sol = M.countSolutions(N, fixed, signs, 1)[0];
     if (!sol) return "";
-    history.push(pack());
-    dicaUsada = true;
+    const certo = Uint8Array.from(cells, (v, i) => (v && v === sol[i] ? v : 0));   // só o que está certo
     const e = cells.findIndex((v, i) => v && !fixed[i] && v !== sol[i]);
-    if (e >= 0) { cells[e] = 0; render(); persist(); return "Uma casa estava errada e foi limpa."; }
-    const i = cells.findIndex((v, k) => !v && !fixed[k]);
-    if (i < 0) { persist(); return ""; }
-    cells[i] = sol[i]; popAt.add(i);
+    history.push(pack()); futuro = [];
+    dicaUsada = true;
+    if (e >= 0) {
+      const errado = cells[e];
+      cells[e] = 0; popAt.add(e); fresh = new Set();
+      render(); persist();
+      const d = M.deducoes(N, certo, signs, N / 2 + 1).find(x => x.i === e && x.motivo);
+      const porque = d ? d.motivo : levaAConflito(M, certo, e, errado) ? `Com ${NOMEV(errado)} ali, as regras acabam se contradizendo mais adiante.` : `Seguindo as pistas, essa casa termina como ${NOMEV(sol[e])}.`;
+      return `${ondeCasa(e)}: tirei o ${NOMEV(errado)}, que estava errado. ${porque}`;
+    }
+    let p = M.passo(N, cells, signs, N);
+    if (!p) {                                   // nada sai direto: teste de hipótese, explicado
+      for (let i = 0; i < C && !p; i++) if (!cells[i]) for (const v of [1, 2]) if (levaAConflito(M, cells, i, v)) {
+        p = { i, v: 3 - v, motivo: `Se essa casa fosse ${NOMEV(v)}, as regras levariam a um conflito. Então é ${NOMEV(3 - v)}.` }; break;
+      }
+    }
+    if (!p) { const i = cells.findIndex((v, k) => !v); if (i < 0) { persist(); return ""; } p = { i, v: sol[i], motivo: `Na solução, essa casa é ${NOMEV(sol[i])}.` }; }
+    cells[p.i] = p.v; popAt.add(p.i); fresh = new Set();
     render(); checkWin(); persist();
-    return `Uma casa ganhou ${sol[i] === 1 ? "café" : "leite"}.`;
+    return `${ondeCasa(p.i)}: ${NOMEV(p.v)}. ${p.motivo}`;
   }
 
   // ---------- vitória ----------
@@ -688,9 +799,9 @@
   demo("demoB", true);
 })();
 </script>
-<script src="../comum/catalogo.js?v=122"></script>
-<script src="../comum/celebra.js?v=122"></script>
-<script src="../comum/recorde.js?v=122"></script>
-<script src="../comum/proximo.js?v=122" data-jogo="pingado"></script>
+<script src="../comum/catalogo.js?v=123"></script>
+<script src="../comum/celebra.js?v=123"></script>
+<script src="../comum/recorde.js?v=123"></script>
+<script src="../comum/proximo.js?v=123" data-jogo="pingado"></script>
 </body>
 </html>

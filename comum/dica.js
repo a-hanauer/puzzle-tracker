@@ -60,7 +60,7 @@
         let msg = "";
         try { msg = await opts.pedir(); } catch (e) { msg = "Não foi possível calcular a dica agora."; }
         atualiza();
-        if (msg) mostra(msg, 3200); else fecha();
+        if (msg) mostra(msg, Math.min(15000, 3500 + msg.length * 55)); else fecha();   // explicação: tempo de ler (ou toque fora para fechar)
       };
     });
     document.addEventListener("pointerdown", e => { if (!balao.hidden && !balao.contains(e.target) && e.target !== b && !b.contains(e.target)) fecha(); }, true);

@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Azulejo">
 <title>AZULEJO — uma parede de painéis</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=122"></script>
-<script src="../comum/cabecalho.js?v=122"></script>
-<script src="../comum/dica.js?v=122"></script>
+<script src="../comum/tema.js?v=123"></script>
+<script src="../comum/cabecalho.js?v=123"></script>
+<script src="../comum/dica.js?v=123"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -235,7 +235,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=122">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=123">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -683,6 +683,43 @@
 
 
   // ---------- dica (comum/dica.js): tira um azulejo errado ou coloca um certo ----------
+  // raciocínio "de gente" para a dica: opções de cada etiqueta, casas com um dono só
+  function raciocinioAzulejo(M, colocados) {
+    const all = M.candidates(N, clues), C2 = N * N;
+    const at = i => `linha ${((i / N) | 0) + 1}, coluna ${(i % N) + 1}`;
+    const igual = (p, q) => p.r0 === q.r0 && p.c0 === q.c0 && p.h === q.h && p.w === q.w;
+    const dono = new Int16Array(C2).fill(-1);
+    const feito = clues.map((cl, k) => colocados.find(p => all[k].some(q => igual(p, q) && q.cells.includes(cl.i))) || null);
+    feito.forEach((p, k) => { if (p) all[k].find(q => igual(p, q)).cells.forEach(i => (dono[i] = k)); });
+    let op = all.map((l, k) => feito[k] ? [] : l.filter(q => q.cells.every(i => dono[i] < 0)));
+    let nota = "";
+    for (let volta = 0; volta < 200; volta++) {
+      const k1 = op.findIndex((l, k) => !feito[k] && l.length === 1);
+      if (k1 >= 0) return { k: k1, q: op[k1][0], motivo: `A etiqueta da ${at(clues[k1].i)} só cabe de um jeito.` + (nota ? " " + nota : "") };
+      const reach = [...Array(C2)].map(() => []);
+      op.forEach((l, k) => l.forEach(q => q.cells.forEach(i => reach[i].push([k, q]))));
+      const unica = [...Array(C2).keys()].find(i => dono[i] < 0 && reach[i].length === 1);
+      if (unica !== undefined) { const [k, q] = reach[unica][0]; return { k, q, motivo: `A casa da ${at(unica)} só pode ser coberta por esse azulejo.` + (nota ? " " + nota : "") }; }
+      let mudou = false;
+      for (let i = 0; i < C2 && !mudou; i++) {
+        if (dono[i] >= 0) continue;
+        const ks = new Set(reach[i].map(x => x[0]));
+        if (ks.size !== 1) continue;
+        const k = [...ks][0], f = op[k].filter(q => q.cells.includes(i));
+        if (f.length < op[k].length) { op[k] = f; mudou = true; nota = `A casa da ${at(i)} só é alcançada pela etiqueta da ${at(clues[k].i)}, então o azulejo dela tem que cobri-la.`; }
+      }
+      for (let k = 0; k < op.length && !mudou; k++) {
+        if (op[k].length < 2) continue;
+        const certas = op[k][0].cells.filter(i => op[k].every(q => q.cells.includes(i)));
+        for (const i of certas) for (let k2 = 0; k2 < op.length; k2++) if (k2 !== k) {
+          const f = op[k2].filter(q => !q.cells.includes(i));
+          if (f.length < op[k2].length) { op[k2] = f; mudou = true; nota = `Todo jeito de montar o azulejo da etiqueta da ${at(clues[k].i)} ocupa a casa da ${at(i)}: nenhum outro azulejo pode usá-la.`; }
+        }
+      }
+      if (!mudou) return null;
+    }
+    return null;
+  }
   async function pedirDica() {
     const M = await import("./motor.mjs");
     const r = M.countSolutions(N, clues, 1, 3e6);
@@ -691,13 +728,30 @@
     history.push(packPatches());
     dicaUsada = true;
     const k = patches.findIndex(p => !sol.some(q => igual(p, q)));
-    if (k >= 0) { patches.splice(k, 1); render(); persist(); return "Um azulejo estava errado e foi retirado."; }
-    const q = sol.find(q => !patches.some(p => igual(p, q)));
-    if (!q) { persist(); return ""; }
-    patches.push({ r0: q.r0, c0: q.c0, h: q.h, w: q.w });
+    if (k >= 0) {
+      const tirado = patches.splice(k, 1)[0];
+      const certos = patches.filter(p => sol.some(q => igual(p, q)));
+      // com o azulejo errado no lugar: alguma etiqueta ou casa fica sem saída?
+      const all = M.candidates(N, clues), usadas = new Set();
+      for (const p of [...certos, tirado]) for (let rr = p.r0; rr < p.r0 + p.h; rr++) for (let cc = p.c0; cc < p.c0 + p.w; cc++) usadas.add(rr * N + cc);
+      const dono = k => [...certos, tirado].some(p => { const r = (clues[k].i / N) | 0, c = clues[k].i % N; return r >= p.r0 && r < p.r0 + p.h && c >= p.c0 && c < p.c0 + p.w; });
+      const vivas = all.map((l, k) => dono(k) ? [] : l.filter(q => q.cells.every(i => !usadas.has(i))));
+      const semJeito = clues.findIndex((cl, k) => !dono(k) && !vivas[k].length);
+      const semDono = [...Array(N * N).keys()].find(i => !usadas.has(i) && !vivas.some(l => l.some(q => q.cells.includes(i))));
+      const at = i => `linha ${((i / N) | 0) + 1}, coluna ${(i % N) + 1}`;
+      render(); persist();
+      return `Tirei o azulejo de ${tirado.h}×${tirado.w} que começava na linha ${tirado.r0 + 1}, coluna ${tirado.c0 + 1}. ` +
+        (semJeito >= 0 ? `Com ele, a etiqueta da ${at(clues[semJeito].i)} ficava sem jeito de caber.`
+          : semDono !== undefined ? `Com ele, a casa da ${at(semDono)} ficava sem nenhum azulejo possível.`
+          : "Ele não é o formato que fecha o tabuleiro: mais adiante, alguma etiqueta acabaria sem lugar.");
+    }
+    let p = raciocinioAzulejo(M, patches);
+    if (!p) { const q = sol.find(q => !patches.some(x => igual(x, q))); if (!q) { persist(); return ""; } p = { q, motivo: "Aqui não há uma dedução curta: esse é o azulejo da solução." }; }
+    patches.push({ r0: p.q.r0, c0: p.q.c0, h: p.q.h, w: p.q.w });
     checkWin(); render(); persist();
-    return "Um azulejo certo foi colocado.";
+    return `Coloquei um azulejo de ${p.q.h}×${p.q.w}. ${p.motivo}`;
   }
+
 
   // ---------- vitória ----------
   function checkWin() {
@@ -779,9 +833,9 @@
   demo("demoB", true);
 })();
 </script>
-<script src="../comum/catalogo.js?v=122"></script>
-<script src="../comum/celebra.js?v=122"></script>
-<script src="../comum/recorde.js?v=122"></script>
-<script src="../comum/proximo.js?v=122" data-jogo="retalhos"></script>
+<script src="../comum/catalogo.js?v=123"></script>
+<script src="../comum/celebra.js?v=123"></script>
+<script src="../comum/recorde.js?v=123"></script>
+<script src="../comum/proximo.js?v=123" data-jogo="retalhos"></script>
 </body>
 </html>

@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png?v=20">
-<script src="../comum/tema.js?v=122"></script>
-<script src="../comum/cabecalho.js?v=122"></script>
-<script src="../comum/dica.js?v=122"></script>
+<script src="../comum/tema.js?v=123"></script>
+<script src="../comum/cabecalho.js?v=123"></script>
+<script src="../comum/dica.js?v=123"></script>
 <link rel="apple-touch-icon" href="icon.png?v=20">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
     --muted: #6b7089;
     --faint: #a3a8bd;
     --line: #d9deec;
-    --board: #d8deee;         /* fundo do tabuleiro, visto entre as regiões */
+    --board: #f9fafc;         /* fundo do tabuleiro, visto entre as regiões: mais claro que a página, para as regiões se destacarem */
     --seam: rgba(255, 255, 255, .6);   /* divisão entre casas da mesma região */
     --sun: #f59e0b;
     --sun-edge: #b45309;
@@ -40,8 +40,8 @@
     --accent: #4f4fd0;
     --good: #3fa24c;
     /* regiões (claro): matizes bem separados e luminosidades alternadas, para vizinhas nunca se confundirem */
-    --r0: #f5c3bb; --r1: #f4e19c; --r2: #cbe5ad; --r3: #b7d5f2; --r4: #d6c9f5;
-    --r5: #f3c9e0; --r6: #afe0d2; --r7: #f6cda6; --r8: #dcdfe8; --r9: #ddd6a3;
+    --r0: #eea397; --r1: #e7c85e; --r2: #a9d27f; --r3: #8dbbea; --r4: #b9a3ee;
+    --r5: #e7a0c8; --r6: #82c9b5; --r7: #eeae76; --r8: #bcc2d6; --r9: #c9bd6e;
     --shadow: 0 1px 2px rgba(20,24,40,.06), 0 6px 18px rgba(20,24,40,.07);
     --on-accent: #fff;
   }
@@ -325,8 +325,8 @@
   html[data-theme="dark"][data-modo="S"], html[data-theme="dark"][data-modo="S"] body { --bg: #2a1e07; }
   html[data-theme="dark"][data-modo="M"], html[data-theme="dark"][data-modo="M"] body { --bg: #0a1438; }
   /* a interface toda (cabeçalho, botões, janelas) acompanha o modo: âmbar no sol, anil na lua */
-  html[data-modo="S"] { --surface: #fffaf0; --surface-2: #f4e9cf; --line: #ecdcb6; --muted: #86754f; --accent: #b86a00; --on-accent: #fff; --board: #e3c985; }
-  html[data-modo="M"] { --surface: #fbfcff; --surface-2: #e0e6fb; --line: #d0d9f4; --muted: #5f6a98; --accent: #4f4fd0; --on-accent: #fff; --board: #bcc5ef; }
+  html[data-modo="S"] { --surface: #fffaf0; --surface-2: #f4e9cf; --line: #ecdcb6; --muted: #86754f; --accent: #b86a00; --on-accent: #fff; --board: #fdf8ec; }
+  html[data-modo="M"] { --surface: #fbfcff; --surface-2: #e0e6fb; --line: #d0d9f4; --muted: #5f6a98; --accent: #4f4fd0; --on-accent: #fff; --board: #f6f8fe; }
   @media (prefers-color-scheme: dark) {
     html[data-modo="S"]:not([data-theme="light"]) { --surface: #3a2b10; --surface-2: #4a3716; --line: #52401b; --muted: #bba77c; --accent: #fbbf24; --on-accent: #2a1e07; --board: #1f1503; }
     html[data-modo="M"]:not([data-theme="light"]) { --surface: #16214f; --surface-2: #203063; --line: #2b3a72; --muted: #95a3d2; --accent: #a5b4fc; --on-accent: #0a1438; --board: #050d30; }
@@ -365,7 +365,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=122">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=123">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -986,18 +986,96 @@
     }
     return rec(0, -9, -9) ? sol : null;
   }
+  // ---------- raciocínio "de gente" (para a dica explicar o motivo) ----------
+  // Simula a partir das peças em base: onde cada símbolo ainda cabe, casas únicas,
+  // regiões presas a uma linha/coluna e casas que deixariam um grupo sem lugar.
+  const COR = ["vermelha", "amarela", "verde", "azul", "roxa", "rosa", "verde-água", "laranja", "cinza", "mostarda"];
+  const NM = { S: ["o sol", "um sol", "sol"], M: ["a lua", "uma lua", "lua"] };
+  const casaTxt = i => `linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}`;
+  function raciocinio(base) {
+    const pc = base.map(v => (v === "S" || v === "M" ? v : ""));
+    const grupos = [];
+    for (let k = 0; k < N; k++) {
+      grupos.push({ nome: `linha ${k + 1}`, t: "l", cs: [...Array(N)].map((_, c) => k * N + c) });
+      grupos.push({ nome: `coluna ${k + 1}`, t: "c", cs: [...Array(N)].map((_, r) => r * N + k) });
+      grupos.push({ nome: `região ${COR[k % COR.length]}`, t: "r", cs: [...Array(N * N).keys()].filter(i => regions[i] === k) });
+    }
+    const gruposDe = i => grupos.filter(g => g.cs.includes(i));
+    const viz = i => { const out = []; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const r = rowOf(i) + dr, c = colOf(i) + dc; if ((dr || dc) && r >= 0 && c >= 0 && r < N && c < N) out.push(r * N + c); } return out; };
+    const elim = { S: new Map(), M: new Map() };       // casa → motivo
+    const tem = (g, X) => g.cs.some(i => pc[i] === X);
+    const cabe = (X, i) => !pc[i] && !elim[X].has(i) && !viz(i).some(j => pc[j]) && !gruposDe(i).some(g => tem(g, X));
+    const res = { coloca: [], elim, contradicao: false };
+    let notas = [];
+    for (let volta = 0; volta < 4 * N * N; volta++) {
+      // 1. casa única num grupo
+      let achou = null;
+      for (const X of ["S", "M"]) for (const g of grupos) {
+        if (achou || tem(g, X)) continue;
+        const cs = g.cs.filter(i => cabe(X, i));
+        if (!cs.length) { res.contradicao = true; return res; }
+        if (cs.length === 1) achou = { i: cs[0], X, motivo: `Na ${g.nome}, ${NM[X][0]} só cabe aqui.` + (notas.length ? " " + notas[notas.length - 1] : "") };
+      }
+      if (achou) { res.coloca.push(achou); pc[achou.i] = achou.X; notas = []; if (pc.filter(Boolean).length === 2 * N) return res; continue; }
+      // 2. grupo preso dentro de outro: o resto do outro não pode ter o símbolo
+      let mudou = false;
+      for (const X of ["S", "M"]) for (const A of grupos) {
+        if (mudou || tem(A, X)) continue;
+        const cs = A.cs.filter(i => cabe(X, i));
+        for (const B of grupos) {
+          if (B === A || B.t === A.t || tem(B, X) || !cs.every(i => B.cs.includes(i))) continue;
+          const fora = B.cs.filter(i => !A.cs.includes(i) && cabe(X, i));
+          if (!fora.length) continue;
+          const m = `Na ${A.nome}, ${NM[X][0]} só pode ficar dentro da ${B.nome}; então o resto da ${B.nome} não pode ter ${NM[X][2]}.`;
+          fora.forEach(i => elim[X].set(i, m)); notas.push(m); mudou = true; break;
+        }
+      }
+      if (mudou) continue;
+      // 3. uma peça aqui deixaria algum grupo sem lugar
+      for (const X of ["S", "M"]) for (let i = 0; i < N * N && !mudou; i++) {
+        if (!cabe(X, i)) continue;
+        pc[i] = X;
+        let falha = null;
+        for (const Y of ["S", "M"]) for (const g of grupos) if (!falha && !tem(g, Y) && !g.cs.some(j => cabe(Y, j))) falha = [g, Y];
+        pc[i] = "";
+        if (falha) {
+          const m = `${NM[X][1][0].toUpperCase() + NM[X][1].slice(1)} na ${casaTxt(i)} deixaria a ${falha[0].nome} sem lugar para ${NM[falha[1]][0]}.`;
+          elim[X].set(i, m); notas.push(m); mudou = true;
+        }
+      }
+      if (!mudou) return res;                 // daqui em diante, só com chute
+    }
+    return res;
+  }
+
   async function pedirDica() {
     const sol = solucaoEclipse();
     if (!sol) return "";
     history.push(cells.join(""));
     dicaUsada = true;
     const errada = cells.findIndex((v, i) => (v === "S" || v === "M") && !givens.has(i) && sol[i] !== v);
-    if (errada >= 0) { cells[errada] = "."; render(errada); persist(); return `A peça da linha ${rowOf(errada) + 1}, coluna ${colOf(errada) + 1} estava errada e saiu.`; }
-    const i = sol.findIndex((v, k) => v && cells[k] !== v);
-    if (i < 0) { persist(); return ""; }
-    cells[i] = sol[i]; render(i); persist();
-    return `${sol[i] === "S" ? "Um sol entrou" : "Uma lua entrou"} na linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}.`;
+    if (errada >= 0) {
+      const X = cells[errada];
+      const certas = cells.map((v, i) => (v === "S" || v === "M") && sol[i] === v ? v : "");
+      const R = raciocinio(certas);
+      let porque = R.elim[X].get(errada);
+      if (!porque) {
+        const p = R.coloca.find(p => p.X === X && (rowOf(p.i) === rowOf(errada) || colOf(p.i) === colOf(errada) || regions[p.i] === regions[errada]));
+        const q = R.coloca.find(p => Math.abs(rowOf(p.i) - rowOf(errada)) <= 1 && Math.abs(colOf(p.i) - colOf(errada)) <= 1);
+        porque = p ? `${NM[X][0][0].toUpperCase() + NM[X][0].slice(1)} desse grupo tem que ficar na ${casaTxt(p.i)}: ${p.motivo}`
+          : q ? `Ela encostaria ${q.X === "S" ? "no sol" : "na lua"} que vai na ${casaTxt(q.i)}.`
+          : `Seguindo as regras, ali não cabe ${NM[X][2]}.`;
+      }
+      cells[errada] = "."; render(errada); persist();
+      return `Tirei ${NM[X][1]} da ${casaTxt(errada)}. ${porque}`;
+    }
+    const R = raciocinio(cells);
+    let p = R.coloca[0];
+    if (!p) { const i = sol.findIndex((v, k) => v && cells[k] !== v); if (i < 0) { persist(); return ""; } p = { i, X: sol[i], motivo: "Aqui não há uma dedução curta: essa é a casa da solução." }; }
+    cells[p.i] = p.X; render(p.i); persist();
+    return `${NM[p.X][1][0].toUpperCase() + NM[p.X][1].slice(1)} na ${casaTxt(p.i)}. ${p.motivo}`;
   }
+
 
   // ---------- vitória ----------
   function win() {
@@ -1066,9 +1144,9 @@
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 })();
 </script>
-<script src="../comum/catalogo.js?v=122"></script>
-<script src="../comum/celebra.js?v=122"></script>
-<script src="../comum/recorde.js?v=122"></script>
-<script src="../comum/proximo.js?v=122" data-jogo="eclipse"></script>
+<script src="../comum/catalogo.js?v=123"></script>
+<script src="../comum/celebra.js?v=123"></script>
+<script src="../comum/recorde.js?v=123"></script>
+<script src="../comum/proximo.js?v=123" data-jogo="eclipse"></script>
 </body>
 </html>

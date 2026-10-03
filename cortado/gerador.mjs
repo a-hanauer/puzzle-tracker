@@ -65,13 +65,13 @@ export const WEEK = [
   { n: 6, maxLevel: 2, extra: 0, styles: ["misto", "sinais", "casas"] },           // terça (nível 2)
   { n: 6, maxLevel: 2, extra: 0, lean: 1, styles: ["misto", "sinais"] },           // quarta (nível 3)
   { n: 6, maxLevel: 2, extra: 0, lean: 2, styles: ["misto", "sinais"] },           // quinta (nível 4)
-  { n: 8, maxLevel: 2, extra: 0, styles: ["misto", "sinais"] },                    // sexta (nível 5)
+  { n: 6, maxLevel: 2, extra: 0, lean: 2, styles: ["sinais", "misto"] },           // sexta (nível 5)
   { n: 8, maxLevel: 2, extra: 0, lean: 1, styles: ["misto", "sinais"] },           // sábado (nível 6)
   { n: 8, maxLevel: 2, extra: 0, lean: 2, styles: ["sinais", "misto"] },           // domingo (nível 7)
 ];
-// Nenhum dia passa do nível 2 do resolvedor: o nível 3 (testar um valor e seguir a
-// propagação até ver contradição) é chute para uma pessoa.
-// 6×6 nos níveis 1 a 4 e 8×8 nos níveis 5 a 7 (10×10 ficava cansativo).
+// Todo desafio sai só com as técnicas "de gente" do motor (deducoes): pares, meio, metade,
+// sinais, pares com = e ×, e linhas com poucas vazias. Nada de testar um valor e ver no que dá.
+// 6×6 de segunda a sexta (níveis 1 a 5) e 8×8 só no fim de semana (níveis 6 e 7).
 // Dentro de cada tamanho, a dificuldade vem de outro jeito: "lean" deixa o
 // gerador tirar mais pistas (quase nenhuma casa preenchida, menos sinais), e
 // o dia fica com os candidatos de maior esforço entre muitos sorteados.
@@ -118,7 +118,7 @@ export function makePuzzle(cfg, style) {
     shuffle(removed);
     for (let k = 0; k < cfg.extra && k < removed.length; k++) on.add(removed[k]);
     const [g, s] = build();
-    const logic = logicSolve(N, g, s, 3);
+    const logic = logicSolve(N, g, s, cfg.maxLevel);
     if (!logic || logic.stuck) continue;
     if (countSolutions(N, g, s, 2).length !== 1) continue;
     return {
@@ -151,7 +151,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const old = mantidos(dir, EPOCH);
   const need = new Array(7).fill(0);
   for (let k = old.length; k < DAYS; k++) need[dayIdx(new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k))]++;
-  const BAND = [[0, 0.4], [0.3, 0.7], [0.5, 0.9], [0.75, 1], [0.4, 0.8], [0.65, 0.95], [0.85, 1]];
+  const BAND = [[0, 0.4], [0.3, 0.7], [0.5, 0.9], [0.7, 0.95], [0.85, 1], [0.5, 0.85], [0.8, 1]];
   const MULT = [3, 3, 4, 6, 4, 6, 10];                        // candidatos por desafio do dia
   const pools = [];
   for (let w = 0; w < 7; w++) {
