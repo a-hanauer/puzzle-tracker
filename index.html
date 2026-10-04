@@ -108,19 +108,18 @@
   .dia-go .chev { display: block; }
   .dia-btn .chev { width: 14px; height: 14px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
   .dia-n { display: none; flex-shrink: 0; font-size: .95rem; font-stretch: 62.5%; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; padding-top: 1px; }
-  /* tudo feito */
-  .dia-btn.fim { padding: 10px 14px 10px 10px; background: var(--green); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 6px 18px rgba(63, 162, 76, .25); }
+  /* tudo feito: o cartão de sempre, com o verde só no check e no "Resumo do dia" */
+  .dia-btn.fim { padding: 10px 14px 10px 10px; }
   .dia-btn.fim .prog { display: none; }
   .dia-btn.fim .dia-row { padding: 0; }
   .dia-btn.fim .dia-t b { font-size: 1rem; }
-  .dia-btn.fim .dia-t small { color: inherit; opacity: .85; }
-  .dia-btn.fim .dia-n { display: block; }
+  .dia-btn.fim .dia-n { display: block; color: var(--green); text-transform: none; letter-spacing: 0; font-stretch: 100%; font-size: .9rem; }
   .dia-btn.fim > .dia-row > .chev { width: 18px; height: 18px; opacity: .85; }
-  .dia-ok { width: 36px; height: 36px; border-radius: 50%; background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .dia-ok { width: 36px; height: 36px; border-radius: 50%; background: color-mix(in srgb, var(--green) 16%, var(--surface)); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .dia-ok svg { width: 22px; height: 22px; fill: none; stroke: var(--green); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
   /* ao completar (ou abrir já completo): um brilho passa uma vez e o check aparece */
   .dia-btn.fim::after { content: ""; position: absolute; inset: 0; pointer-events: none; transform: translateX(-110%);
-    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, .35) 50%, transparent 80%); }
+    background: linear-gradient(100deg, transparent 20%, color-mix(in srgb, var(--green) 14%, transparent) 50%, transparent 80%); }
   .dia-btn.fim.celebrate::after { animation: prog-shine 1.1s ease .35s both; }
   .dia-btn.fim.celebrate .dia-ok svg { animation: pop .35s ease .3s both; }
   @keyframes prog-shine { to { transform: translateX(110%); } }
@@ -1257,7 +1256,7 @@ function renderDiaBtn(done, n, complete) {
   diaChave = chave;
   b.classList.toggle("fim", complete);
   if (complete) {
-    r.innerHTML = `<span class="dia-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12.6l4 4 8-8.6"/></svg></span><span class="dia-t"><b>Tudo feito</b><small>${total} de ${total} jogos</small></span><span class="dia-n">Ver resumo do dia</span>${CHEV_SVG}`;
+    r.innerHTML = `<span class="dia-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12.6l4 4 8-8.6"/></svg></span><span class="dia-t"><b>Tudo feito</b><small>${total} de ${total} jogos</small></span><span class="dia-n">Resumo do dia</span>${CHEV_SVG}`;
     b.dataset.jogo = "";
     return;
   }
