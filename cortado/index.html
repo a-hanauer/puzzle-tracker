@@ -183,7 +183,7 @@
     transition: background .5s ease;
   }
   .prog .bar { flex: 1; height: 8px; border-radius: 9px; background: var(--surface-2); overflow: hidden; }
-  .prog .bar { position: relative; overflow: visible; }
+  .prog .bar { position: relative; overflow: visible; margin: 0 6px; }   /* folga para a bolinha nas pontas */
   .prog .bar i { display: block; height: 100%; width: 0; border-radius: 9px; background: var(--accent); transition: width .2s ease; }
   /* a barra é a linha do tempo das jogadas: arrastar volta (ou avança de novo) até o ponto escolhido */
   .prog { touch-action: none; cursor: grab; }
@@ -304,7 +304,7 @@
       <figure><svg id="demoA" viewBox="0 0 428 428"></svg>desafio</figure>
       <figure><svg id="demoB" viewBox="0 0 428 428"></svg>resolvido</figure>
     </div>
-    <p>Toque numa casa para trocar: vazia → café → leite → vazia. Arraste o dedo para repetir a mesma troca em várias casas. As casas com um anel por dentro já vêm preenchidas; as vazias ficam listradas. O que quebra uma regra fica com listras vermelhas a partir da jogada seguinte. Para voltar várias jogadas de uma vez, <b>arraste a barra de progresso</b> até o ponto que quiser (e arraste de novo para a frente, se mudar de ideia).</p>
+    <p>Toque numa casa para trocar: vazia → café → leite → vazia. Arraste o dedo para repetir a mesma troca em várias casas. As casas com um anel por dentro já vêm preenchidas; as vazias ficam listradas. Quando algo quebra uma regra, a linha ou coluna inteira fica com listras vermelhas a partir da jogada seguinte (ou na hora, quando a casa preenchida é a última). Para voltar várias jogadas de uma vez, <b>arraste a barra de progresso</b> até o ponto que quiser (e arraste de novo para a frente, se mudar de ideia).</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (6×6) e <b>domingo é nível 7</b>. De segunda a sexta (níveis 1 a 5) o tabuleiro é 6×6; no sábado e no domingo (níveis 6 e 7), 8×8. A dificuldade vem de menos pistas e deduções mais longas, nunca de chute.</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, que não contam nas estatísticas: escolha o <b>nível</b> (1 a 7) no botão ao lado de "Extra" e toque em ↻ para sortear outro.</p>
     <button class="btn-main" data-close>Jogar</button>
@@ -476,19 +476,24 @@
     for (let r = 0; r < N; r++) lines.push([...Array(N)].map((_, c) => r * N + c));
     for (let c = 0; c < N; c++) lines.push([...Array(N)].map((_, r) => r * N + c));
     const why = new Set();
+    // erro marca a linha (ou coluna) inteira onde ele está
+    const marca = line => line.forEach(i => out.add(i));
     for (const line of lines) {
       for (let k = 0; k + 2 < N; k++) {
         const [a, b, c] = [line[k], line[k + 1], line[k + 2]];
-        if (cells[a] && cells[a] === cells[b] && cells[b] === cells[c] && !hide([a, b, c])) { out.add(a); out.add(b); out.add(c); why.add("tres"); }
+        if (cells[a] && cells[a] === cells[b] && cells[b] === cells[c] && !hide([a, b, c])) { marca(line); why.add("tres"); }
       }
       for (const v of [1, 2]) {
         const cs = line.filter(i => cells[i] === v);
-        if (cs.length > N / 2 && !hide(cs)) { cs.forEach(i => out.add(i)); why.add(v === 1 ? "cafe" : "leite"); }
+        if (cs.length > N / 2 && !hide(cs)) { marca(line); why.add(v === 1 ? "cafe" : "leite"); }
       }
     }
     signs.forEach((s, k) => {
       if (!cells[s.a] || !cells[s.b]) return;
-      if ((s.t === "=") !== (cells[s.a] === cells[s.b]) && !hide([s.a, s.b])) { out.add(s.a); out.add(s.b); badSigns.add(k); why.add(s.t === "=" ? "igual" : "dif"); }
+      if ((s.t === "=") !== (cells[s.a] === cells[s.b]) && !hide([s.a, s.b])) {
+        marca(s.b === s.a + 1 ? lines[(s.a / N) | 0] : lines[N + (s.a % N)]);
+        badSigns.add(k); why.add(s.t === "=" ? "igual" : "dif");
+      }
     });
     return { out, badSigns, why };
   }
@@ -496,7 +501,7 @@
   let popAt = new Set();
   function render() {
     if (dica) dica.atualiza();
-    const cf = conflicts(true);
+    const cf = conflicts(cells.some(v => !v));   // tabuleiro cheio: não há próxima jogada, então o erro aparece na hora
     bad = cf.out;
     let sc = "", sd = "";
     for (let i = 0; i < C; i++) {
