@@ -437,7 +437,7 @@
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
   </button>
 </div>
-<div class="tip" id="tip"><span id="tipAll" hidden><b>Visão geral</b>: sóis e luas juntos<br>toque = <i class="dt"></i> nada cabe, nas duas vistas · arraste marca vários</span><span id="tipPlay"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-orb"/></svg>&nbsp;→&nbsp;vazio<br>Pontos pequenos <i class="dt a"></i> são automáticos · arraste marca vários</span><span id="tipDone" hidden></span></div>
+<div class="tip" id="tip"><span id="tipAll" hidden><b>Visão geral</b>: sóis e luas juntos<br>toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use href="#i-orb"/></svg>&nbsp;→&nbsp;<svg><use href="#i-luna"/></svg>&nbsp;→&nbsp;vazio · o ponto vale nas duas vistas</span><span id="tipPlay"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-orb"/></svg>&nbsp;→&nbsp;vazio<br>Pontos pequenos <i class="dt a"></i> são automáticos · arraste marca vários</span><span id="tipDone" hidden></span></div>
 
 <!-- Como jogar -->
 <div class="overlay" id="helpOverlay">
@@ -457,6 +457,7 @@
     <ul>
       <li>No <b>modo sol</b>, toque numa casa para marcar um <b>ponto</b> ("sol não cabe aqui"), toque de novo para pôr o <b>sol</b> e mais uma vez para limpar. Arraste o dedo para marcar várias casas.</li>
       <li>As luas aparecem apagadas, só de referência. No <b>modo lua</b> é o mesmo, para as luas.</li>
+      <li>No meio da chave, o <b>eclipse</b> mostra sóis e luas juntos. Ali o toque faz ponto → sol → lua → vazio, e o ponto vale para as duas vistas (nem sol nem lua cabem).</li>
       <li>Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
       <li>O fundo da tela esquenta no modo sol e esfria no modo lua. As casas que você marcou com ponto perdem um pouquinho de cor, e um pouco mais quando você marcou que não cabe nem sol nem lua.</li>
     </ul>
@@ -863,9 +864,10 @@
   // toque: ponto (não cabe) → peça do modo → vazio, sempre nessa ordem.
   function tapValue(i) {
     const v = cells[i];
-    if (mode === "E") {                        // visão geral: marca (ou desmarca) as duas vistas de uma vez; peças não mudam
-      if (v === "S" || v === "M") return v;
-      return BITS[v] === 3 ? "." : "x";
+    if (mode === "E") {                        // visão geral: ponto (nas duas vistas) → sol → lua → vazio
+      if (v === "S") return "M";
+      if (v === "M") return ".";
+      return BITS[v] === 3 ? "S" : "x";
     }
     if (v === mode) return ".";
     if (v === other()) return v;              // a peça do outro modo não muda aqui
