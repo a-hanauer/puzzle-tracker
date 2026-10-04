@@ -76,6 +76,11 @@
   @keyframes cel-dir { to { transform: translateX(9px) rotate(3deg); } }
   @keyframes cel-faca { 0% { transform: translateY(-40px); opacity: 0; } 30% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(95px); opacity: 0; } }
 
+  /* Cordel: o barbante se estende e o folheto cai pendurado, balançando */
+  .celebra .cordel-folheto { transform-box: fill-box; transform-origin: 50% 0; animation: cel-pendura .9s cubic-bezier(.3, 1.3, .5, 1) .35s both; }
+  .celebra .cordel-sol { transform-box: fill-box; transform-origin: center; animation: cel-entra .37s cubic-bezier(.3, 1.4, .45, 1) 1.1s both; }
+  @keyframes cel-pendura { 0% { transform: translateY(-140px) rotate(-14deg); opacity: 0; } 35% { opacity: 1; } 60% { transform: rotate(7deg); } 80% { transform: rotate(-3deg); } 100% { transform: none; opacity: 1; } }
+
   @media (prefers-reduced-motion: reduce) {
     .celebra, .celebra * { animation-duration: .01s !important; animation-delay: 0s !important; }
     .celebra { animation: cel-sai .2s ease .8s forwards !important; }
@@ -95,6 +100,21 @@
             <path class="cafe-coracao" d="M0 25C-27 7 -30 -14 -15 -19C-7 -22 0 -16 0 -9C0 -16 7 -22 15 -19C30 -14 27 7 0 25Z" fill="#f6ecdc"/>
           </g>
         </g>
+      </g>`,
+
+    cordel: () => `
+      <path class="traco" d="M-96 -66Q0 -46 96 -66" fill="none" stroke="#6e5a44" stroke-width="3.5" stroke-linecap="round" style="--l:200;--t:.45s"/>
+      <g class="cordel-folheto">
+        <rect x="-50" y="-52" width="100" height="134" rx="5" fill="#f4ecdc"/>
+        <rect x="-38" y="-38" width="76" height="9" rx="2" fill="#141210"/>
+        <rect x="-38" y="-24" width="76" height="70" rx="3" fill="#141210"/>
+        <circle class="cordel-sol" cx="17" cy="-6" r="11" fill="#c8321e"/>
+        <path d="M-38 46V20L-22 8L-8 18L8 2L24 16L38 6V46Z" fill="#f4ecdc"/>
+        <path d="M-30 46V30h12v16Z M-26 30l2-6 2 6Z" fill="#141210"/>
+        <rect x="-38" y="54" width="54" height="6" rx="2" fill="#141210"/>
+        <rect x="-38" y="66" width="40" height="6" rx="2" fill="#141210"/>
+        <rect x="-7" y="-66" width="14" height="26" rx="4" fill="#9a6a43"/>
+        <rect x="-1.5" y="-64" width="3" height="22" rx="1.5" fill="#6e4a2c"/>
       </g>`,
 
     eclipse: () => `

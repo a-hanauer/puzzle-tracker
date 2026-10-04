@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="gh-carregando" data-fixa>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f6f1e6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121110" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cordel">
+<title>CORDEL — palavras de um tema, ligadas como num fio</title>
+<link rel="icon" type="image/png" href="icon.png?v=20">
+<script src="../comum/tema.js?v=124"></script>
+<script src="../comum/cabecalho.js?v=124"></script>
+<link rel="apple-touch-icon" href="icon.png?v=20">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
+<style>
+  /* xilogravura: papel claro, tinta preta; a palavra que cruza o tabuleiro em vermelho */
+  :root {
+    --bg: #f6f1e6;
+    --surface: #fffdf7;
+    --surface-2: #ece5d6;
+    --ink: #141210;
+    --muted: #6e675c;
+    --line: #e3dccd;
+    --tema: #141210;        /* palavra do tema achada */
+    --tema-ink: #fffdf7;
+    --chave: #c8321e;       /* palavra que cruza o tabuleiro */
+    --chave-ink: #fffdf7;
+    --sel: #d9d2c3;         /* caminho sendo traçado */
+    --dica: #c8321e;
+    --accent: #c8321e;
+    --on-accent: #fffdf7;
+    --shadow: 0 1px 2px rgba(40, 30, 20, .06), 0 6px 18px rgba(40, 30, 20, .07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121110; --surface: #1f1d1a; --surface-2: #2c2925; --ink: #f1e7d6; --muted: #a39a8b; --line: #2f2b26;
+      --tema: #f1e7d6; --tema-ink: #141210; --chave: #c8321e; --chave-ink: #fffdf7; --sel: #3a3631; --dica: #ef6b55;
+      --accent: #d9442e; --on-accent: #fffdf7; --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
+    }
+  }
+  :root[data-theme="dark"] {
+      --bg: #121110; --surface: #1f1d1a; --surface-2: #2c2925; --ink: #f1e7d6; --muted: #a39a8b; --line: #2f2b26;
+      --tema: #f1e7d6; --tema-ink: #141210; --chave: #c8321e; --chave-ink: #fffdf7; --sel: #3a3631; --dica: #ef6b55;
+      --accent: #d9442e; --on-accent: #fffdf7; --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body, a, button { touch-action: manipulation; }
+  html { height: 100%; background: var(--bg); -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0 auto; max-width: 520px;
+    background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
+    min-height: calc(100% + var(--sobra, 0px));
+    display: flex; flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none; user-select: none;
+  }
+
+  .tema { background: var(--surface); border-radius: 16px; padding: 9px 14px 10px; text-align: center; box-shadow: var(--shadow); }
+  .tema small { display: block; font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+  .tema span { display: block; font-size: 1.08rem; font-weight: 800; line-height: 1.25; }
+  .atual { text-align: center; height: 34px; text-overflow: ellipsis; line-height: 34px; font-weight: 800; letter-spacing: .14em; font-size: 1.22rem; margin: 6px 0 0; white-space: nowrap; overflow: hidden; }
+  .atual.msg { letter-spacing: .02em; font-size: .95rem; color: var(--muted); }
+  .atual.msg b { color: var(--ink); }
+  .atual.ok { color: var(--ink); }
+  .atual.chave { color: var(--chave); }
+
+  /* ---------- tabuleiro ---------- */
+  .stage { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px 0; }
+  .stage > .fim-subrow { align-self: stretch; }
+  .tab { position: relative; line-height: 0; flex-shrink: 0; touch-action: none; }
+  #board { display: block; overflow: visible; }
+  .lk { stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .lk.tema { stroke: var(--tema); } .lk.chave { stroke: var(--chave); } .lk.sel { stroke: var(--sel); }
+  .bola { fill: transparent; }
+  .bola.tema { fill: var(--tema); } .bola.chave { fill: var(--chave); } .bola.sel { fill: var(--sel); }
+  .bola.dica { fill: none; stroke: var(--dica); stroke-width: 3.5; stroke-dasharray: 6 6; }
+  .le { font-size: 40px; font-weight: 800; text-anchor: middle; dominant-baseline: central; fill: var(--ink); pointer-events: none; }
+  .le.tema { fill: var(--tema-ink); } .le.chave { fill: var(--chave-ink); }
+  .novo { animation: novo .35s cubic-bezier(.3, 1.5, .5, 1); transform-box: fill-box; transform-origin: center; }
+  @keyframes novo { from { transform: scale(.6); } to { transform: none; } }
+  .won .bola.tema, .won .bola.chave { animation: puff .45s cubic-bezier(.3, 1.6, .5, 1) both; transform-box: fill-box; transform-origin: center; }
+  @keyframes puff { 45% { transform: scale(1.15); } }
+  .tab.treme { animation: treme .3s ease; }
+  @keyframes treme { 25% { transform: translateX(-6px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
+  @media (prefers-reduced-motion: reduce) { .novo, .won .bola, .tab.treme { animation: none !important; } }
+
+  /* ---------- controles: dica (vira a faixa de fim) ---------- */
+  .controls { display: flex; gap: 10px; padding-top: 10px; }
+  .prog {
+    position: relative; overflow: hidden; flex: 1; height: 56px; border-radius: 16px;
+    background: var(--surface); box-shadow: var(--shadow); transition: background .5s ease;
+  }
+  #dicaBtn {
+    position: absolute; inset: 0; width: 100%; border: 0; background: none; color: var(--ink); font: inherit; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 800; font-size: .98rem; transition: opacity .25s ease;
+  }
+  #dicaBtn:disabled { color: var(--muted); }
+  #dicaBtn .pts { display: inline-flex; gap: 4px; }
+  #dicaBtn .pts s { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); opacity: .3; }
+  #dicaBtn .pts s.on { opacity: 1; background: var(--accent); }
+  #dicaBtn .q { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; background: var(--accent); color: var(--on-accent); font-size: .78rem; display: inline-grid; place-items: center; }
+  #dicaBtn .q[hidden] { display: none; }
+  .controls.done .prog { background: #141210; box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(20, 18, 16, .3); }
+  .controls.done #dicaBtn { opacity: 0; pointer-events: none; }
+  .done-bar {
+    position: absolute; inset: 0; display: flex; align-items: center; gap: 12px;
+    padding: 0 18px; margin: 0; border: 0; background: none; color: #fffdf7; font: inherit; text-align: left; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity .3s ease .15s;
+  }
+  .controls.done .done-bar { opacity: 1; pointer-events: auto; }
+  .done-bar .ic { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }
+  .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .done-bar .txt b { font-size: 1.32rem; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .done-bar .txt span { font-size: .78rem; font-weight: 600; color: rgba(255,253,247,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,253,247,.7); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .controls.play .done-bar .ic { animation: dobra .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
+  @keyframes dobra { from { transform: scale(.3) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .tip { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 10px; line-height: 1.45; min-height: 2.3em; }
+  .tip b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* ---------- janelas ---------- */
+  .overlay {
+    position: fixed; inset: 0; z-index: 10; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(15, 12, 10, .45); backdrop-filter: blur(3px);
+  }
+  .overlay.open { display: flex; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal { width: 100%; max-width: 400px; max-height: 88vh; overflow: auto; background: var(--surface); border-radius: 22px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .modal h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+  .modal .close { border: none; background: var(--surface-2); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; }
+  .modal p, .modal li { font-size: .92rem; line-height: 1.5; color: var(--ink); }
+  .modal ul { padding-left: 20px; margin: 8px 0; }
+  .modal li { margin: 4px 0; }
+  .modal .k { display: inline-block; padding: 0 7px; border-radius: 99px; background: var(--tema); color: var(--tema-ink); font-weight: 800; font-size: .82rem; }
+  .modal .k.r { background: var(--chave); color: var(--chave-ink); }
+  .modal .fonte { font-size: .74rem; color: var(--muted); }
+  .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--ink); color: var(--bg); font: inherit; font-weight: 700; font-size: .95rem; }
+  .palavras { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 2px 0 16px; }
+  .palavras span { padding: 4px 10px; border-radius: 99px; background: var(--tema); color: var(--tema-ink); font-weight: 700; font-size: .82rem; }
+  .palavras span.k { background: var(--chave); color: var(--chave-ink); }
+</style>
+<link rel="stylesheet" href="../comum/cabecalho.css?v=124">
+<style>
+  :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+</style>
+</head>
+<body>
+
+<header class="gh">
+  <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+  <a class="gh-brand" href="./" aria-label="Cordel — recarregar"><img src="icon.png?v=20" data-escuro="icon-escuro.png?v=20" alt=""><b>CORDEL</b></a>
+  <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
+  <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
+</header>
+
+<div class="gh-meta"><span class="gh-info" id="dayInfo"></span></div>
+
+<div class="tema"><small>Tema de hoje</small><span id="pista">…</span></div>
+<div class="atual" id="atual" aria-live="polite"></div>
+
+<div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro data-haptico><svg id="board" role="img" aria-label="Tabuleiro de letras"></svg></div></div>
+
+<div class="controls" id="controls">
+  <div class="prog">
+    <button id="dicaBtn" type="button" aria-label="Dica"><span>Dica</span><span class="pts" id="pts"><s></s><s></s><s></s></span><span class="q" id="dicaQ" hidden>1</span></button>
+    <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
+      <img class="ic" src="icon.png?v=20" data-escuro="icon-escuro.png?v=20" alt="">
+      <span class="txt"><b id="doneTitle">Cordel completo</b><span id="doneSub"></span></span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+<div class="tip" id="tip"></div>
+
+<!-- Como jogar -->
+<div class="overlay" id="helpOverlay">
+  <div class="modal">
+    <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
+    <p>Ache as palavras do <b>tema de hoje</b> escondidas no tabuleiro.</p>
+    <ul>
+      <li>Ligue letras <b>vizinhas</b> (para os lados, para cima, para baixo ou na diagonal): arraste o dedo, ou toque letra por letra e toque de novo na última para enviar.</li>
+      <li>As palavras do tema ficam <span class="k">pretas</span>. Elas usam <b>todas as letras</b> do tabuleiro, cada uma uma vez só.</li>
+      <li>Uma delas, a <span class="k r">palavra-chave</span>, resume o tema e atravessa o tabuleiro de um lado ao outro.</li>
+      <li>Cada <b>3 palavras</b> de 4 letras ou mais que não são do tema valem uma <b>dica</b>: ela marca as letras de uma palavra do tema.</li>
+      <li>Acentos e ç não aparecem no tabuleiro.</li>
+    </ul>
+    <p>Um tema novo por dia, à meia-noite.</p>
+    <p class="fonte">Lista de palavras: <a href="https://github.com/fserb/pt-br" target="_blank" rel="noopener">fserb/pt-br</a> (licença MIT).</p>
+    <button class="btn-main" data-close>Jogar</button>
+  </div>
+</div>
+
+<!-- Fim de jogo -->
+<div class="overlay" id="endOverlay">
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><img src="icon.png?v=20" data-escuro="icon-escuro.png?v=20" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,30,20,.15)"></div>
+    <h2 class="fim-title" id="endTitle">Cordel completo!</h2>
+    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
+    <p class="fim-sub" id="endSub"></p>
+    <div class="palavras" id="endWords"></div>
+    <div class="fim-count" id="nextBox">Próximo Cordel em <b id="countdown" data-contagem>--:--:--</b></div>
+    <div data-proximo hidden></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+  const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const LS = "cordel:";
+  const load = (k, d) => { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
+  const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
+
+  // ---------- estado ----------
+  const H = 8, W = 6, C = H * W, U = 100;
+  let P = null, dayNum = 0, letras = "", achadas = new Set(), extras = [], log = [], dicasUsadas = 0, alvo = -1;
+  let finished = false, timer = null, startedAt = 0, elapsed = 0;
+  let caminho = [], arrastou = false, toqueId = null, recente = new Set();
+  let DICIO = null;           // palavras válidas (carrega na primeira palavra fora do tema)
+
+  function recomputeStats(st) {
+    const days = Object.keys(st.times).map(Number).sort((a, b) => a - b);
+    let best = 0, run = 0, prev = -9;
+    for (const d of days) { run = d === prev + 1 ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+    st.played = days.length; st.best = best; st.streak = run; st.lastDay = days.at(-1) || 0;
+    return st;
+  }
+
+  function setup(puzzle, saved) {
+    P = puzzle; letras = P.g;
+    achadas = new Set(saved?.found || []);
+    extras = saved?.extras || [];
+    log = saved?.log || [];
+    dicasUsadas = saved?.dicas || 0;
+    alvo = saved?.alvo ?? -1;
+    elapsed = saved?.elapsed || 0;
+    finished = !!saved?.done;
+    const now = new Date();
+    $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · #${dayNum}`;
+    $("pista").textContent = P.t;
+    fit(); render(); showTime();
+  }
+  function persist() {
+    if (!P) return;
+    const prog = [achadas.size, P.w.length];
+    save("dia:" + dayNum, { pid: P.c, found: [...achadas], extras, log, dicas: dicasUsadas, alvo, elapsed: currentElapsed(), done: finished,
+      time: finished ? elapsed : null, started: achadas.size > 0 || extras.length > 0, prog, dica: dicasUsadas > 0 });
+  }
+
+  fetch("desafios.json").then(r => r.json()).then(data => {
+    dayNum = dayNumber(data.epoch);
+    const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
+    let saved = load("dia:" + dayNum, null);
+    if (saved && saved.pid !== puzzle.c) saved = null;
+    setup(puzzle, saved);
+    persist();
+    if (finished) { /* faixa de fim à mostra */ }
+    else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
+    else startTimer();
+  }).catch(() => { $("stage").innerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
+
+  async function dicionario() {
+    if (DICIO) return DICIO;
+    const txt = await fetch("palavras.txt").then(r => r.text());
+    // cada palavra começa com um caractere 0-9/A-Z: quantas letras ela repete da anterior
+    const set = new Set(); let prev = "", cur = null;
+    for (const ch of txt) {
+      if (ch >= "a" && ch <= "z") { cur += ch; continue; }
+      if (cur !== null) { set.add(cur); prev = cur; }
+      cur = prev.slice(0, parseInt(ch, 36));
+    }
+    if (cur) set.add(cur);
+    DICIO = set;
+    return set;
+  }
+  // começa a carregar logo, sem atrapalhar o tabuleiro
+  setTimeout(() => dicionario().catch(() => {}), 1200);
+
+  // ---------- desenho ----------
+  const xy = i => [U / 2 + (i % W) * U, U / 2 + ((i / W) | 0) * U];
+  function fit() {
+    const st = $("stage"), b = $("board");
+    if (!st || !b) return;
+    b.style.width = b.style.height = "0px";
+    const sub = st.querySelector(".fim-subrow:not([hidden])");
+    const hMax = st.clientHeight - 6 - (sub ? sub.offsetHeight + 10 : 0);
+    const w = Math.floor(Math.min(st.clientWidth, hMax * W / H, 380));
+    b.setAttribute("viewBox", `0 0 ${W * U} ${H * U}`);
+    b.style.width = w + "px"; b.style.height = Math.round(w * H / W) + "px";
+  }
+  window.addEventListener("resize", () => { if (P) fit(); });
+  if (window.visualViewport) visualViewport.addEventListener("resize", () => { if (P) fit(); });
+
+  const donoDe = () => { const d = new Array(C).fill(-1); for (const k of achadas) for (const c of P.w[k].p) d[c] = k; return d; };
+  function render() {
+    if (!P) return;
+    const dono = donoDe();
+    let lk = "", bl = "", tx = "";
+    const linha = (p, cls) => p.length > 1 ? `<polyline class="lk ${cls}" points="${p.map(i => xy(i).join(",")).join(" ")}"/>` : "";
+    for (const k of achadas) lk += linha(P.w[k].p, P.w[k].k ? "chave" : "tema");
+    lk += linha(caminho, "sel");
+    for (let i = 0; i < C; i++) {
+      const [x, y] = xy(i), k = dono[i];
+      const cls = k >= 0 ? (P.w[k].k ? "chave" : "tema") : caminho.includes(i) ? "sel" : "";
+      const nv = recente.has(i) ? " novo" : "";
+      bl += `<circle class="bola ${cls}${nv}" cx="${x}" cy="${y}" r="38"/>`;
+      if (alvo >= 0 && !achadas.has(alvo) && P.w[alvo].p.includes(i)) bl += `<circle class="bola dica" cx="${x}" cy="${y}" r="42"/>`;
+      tx += `<text class="le ${k >= 0 ? (P.w[k].k ? "chave" : "tema") : ""}" x="${x}" y="${y + 2}">${letras[i]}</text>`;
+    }
+    recente = new Set();
+    $("board").innerHTML = lk + bl + tx;
+    $("board").classList.toggle("won", finished);
+    // dica: bolinhas = palavras fora do tema desde a última dica ganha
+    const ganhas = Math.floor(extras.length / 3), livres = ganhas - dicasUsadas, resto = extras.length % 3;
+    document.querySelectorAll("#pts s").forEach((s, j) => s.classList.toggle("on", livres > 0 || j < resto));
+    $("dicaQ").hidden = livres < 2; $("dicaQ").textContent = livres;
+    const ativa = alvo >= 0 && !achadas.has(alvo);
+    $("dicaBtn").disabled = finished || livres < 1 || ativa;
+    $("dicaBtn").setAttribute("aria-label", ativa ? "Dica: ache a palavra marcada" : livres > 0 ? "Usar dica" : `Dica: ${3 - resto} palavras fora do tema para a próxima`);
+    $("controls").classList.toggle("done", finished);
+    if (!finished) $("controls").classList.remove("play");
+    $("doneBar").tabIndex = finished ? 0 : -1;
+    if (finished) {
+      $("doneTitle").textContent = fmt(elapsed);
+      $("doneSub").textContent = `Cordel completo${dicasUsadas ? ` · ${dicasUsadas} ${dicasUsadas === 1 ? "dica" : "dicas"}` : ""}`;
+    }
+    updateTip();
+  }
+  function updateTip() {
+    const t = $("tip");
+    if (finished) { t.innerHTML = `Próximo Cordel em <b data-contagem>${$("countdown").textContent}</b>`; return; }
+    const ativa = alvo >= 0 && !achadas.has(alvo);
+    t.innerHTML = `<b>${achadas.size}</b> de ${P.w.length} palavras do tema` +
+      (ativa ? "<br>As letras marcadas formam uma palavra do tema." : extras.length ? `<br>${extras.length} ${extras.length === 1 ? "palavra" : "palavras"} fora do tema` : "<br>Arraste por letras vizinhas para formar palavras.");
+  }
+
+  // ---------- mensagem em cima do tabuleiro ----------
+  let msgT = 0;
+  function mostraAtual() {
+    const el = $("atual");
+    clearTimeout(msgT);
+    el.className = "atual";
+    el.textContent = caminho.map(i => letras[i]).join("");
+  }
+  function aviso(html, cls = "msg", ms = 1500) {
+    const el = $("atual");
+    clearTimeout(msgT);
+    el.className = "atual " + cls; el.innerHTML = html;
+    msgT = setTimeout(() => { if (!caminho.length) { el.className = "atual"; el.textContent = ""; } }, ms);
+  }
+
+  // ---------- traçar ----------
+  // casa sob o dedo: só conta perto do centro (assim a diagonal não pega a vizinha por engano)
+  function casaEm(e, folga = .4) {
+    const r = $("board").getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width * W * U, y = (e.clientY - r.top) / r.height * H * U;
+    const c = Math.floor(x / U), l = Math.floor(y / U);
+    if (c < 0 || l < 0 || c >= W || l >= H) return -1;
+    const i = l * W + c, [cx, cy] = xy(i);
+    return Math.hypot(x - cx, y - cy) <= U * folga ? i : -1;
+  }
+  const vizinhas = (a, b) => { const r1 = (a / W) | 0, c1 = a % W, r2 = (b / W) | 0, c2 = b % W; return a !== b && Math.abs(r1 - r2) <= 1 && Math.abs(c1 - c2) <= 1; };
+  let usada = new Array(C).fill(-1);
+  const livre = i => usada[i] < 0;
+
+  $("tab").addEventListener("pointerdown", e => {
+    if (finished || !P) return;
+    const i = casaEm(e, .5);
+    if (i < 0 || !livre(i)) return;
+    e.preventDefault();
+    usada = donoDe();
+    toqueId = e.pointerId; arrastou = false;
+    try { e.target.setPointerCapture(e.pointerId); } catch {}
+    startTimer();
+    // toque: continua a palavra (vizinha), envia (a última de novo), corta (uma do meio) ou começa outra
+    const last = caminho[caminho.length - 1];
+    if (caminho.length && i === last) { toqueId = "enviar"; return; }
+    if (caminho.includes(i)) caminho = caminho.slice(0, caminho.indexOf(i) + 1);
+    else if (caminho.length && vizinhas(last, i)) caminho.push(i);
+    else caminho = [i];
+    if (window.jogosHaptico) jogosHaptico();
+    mostraAtual(); render();
+  });
+  $("tab").addEventListener("pointermove", e => {
+    if (toqueId === null || toqueId === "enviar" || e.pointerId !== toqueId) return;
+    const i = casaEm(e);
+    if (i < 0 || !livre(i)) return;
+    const last = caminho[caminho.length - 1];
+    if (i === last) return;
+    if (caminho.length > 1 && i === caminho[caminho.length - 2]) { caminho.pop(); arrastou = true; mostraAtual(); render(); return; }   // voltou: desfaz a última
+    if (caminho.includes(i) || !vizinhas(last, i)) return;
+    caminho.push(i); arrastou = true;
+    if (window.jogosHaptico) jogosHaptico();
+    mostraAtual(); render();
+  });
+  const solta = e => {
+    if (toqueId === null) return;
+    const enviar = toqueId === "enviar" || (arrastou && caminho.length > 1);
+    toqueId = null;
+    if (enviar) enviarPalavra();
+  };
+  window.addEventListener("pointerup", solta);
+  window.addEventListener("pointercancel", () => { toqueId = null; });
+
+  async function enviarPalavra() {
+    const cs = caminho.slice(), w = cs.map(i => letras[i]).join("");
+    caminho = [];
+    render();
+    if (w.length < 4) { aviso("Palavras têm <b>4 letras</b> ou mais"); treme(); persist(); return; }
+    const mesmas = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+    const k = P.w.findIndex((x, j) => !achadas.has(j) && x.w === w && mesmas(x.p, cs));
+    if (k >= 0) {
+      achadas.add(k); log.push(P.w[k].k ? "k" : "t");
+      P.w[k].p.forEach(i => recente.add(i));
+      if (window.jogosHaptico) jogosHaptico(true);
+      aviso(P.w[k].k ? `${P.w[k].o.toUpperCase()} · palavra-chave!` : P.w[k].o.toUpperCase(), P.w[k].k ? "chave" : "ok", 1800);
+      render(); checkWin(); persist();
+      return;
+    }
+    if (P.w.some((x, j) => achadas.has(j) && x.w === w)) { aviso("Essa você já achou"); persist(); return; }
+    if (extras.includes(w)) { aviso(`<b>${w}</b> já contou para a dica`); persist(); return; }
+    let ok = false;
+    try { ok = (await dicionario()).has(w.toLowerCase()); } catch {}
+    if (!ok) { aviso(`<b>${w}</b> não está na lista`); treme(); persist(); return; }
+    extras.push(w);
+    const ganhou = extras.length % 3 === 0;
+    aviso(ganhou ? `<b>${w}</b> · ganhou uma dica!` : `<b>${w}</b> · fora do tema`, "msg", 1700);
+    render(); persist();
+  }
+  function treme() { const t = $("tab"); t.classList.remove("treme"); void t.offsetWidth; t.classList.add("treme"); }
+
+  // ---------- dica: marca as letras de uma palavra do tema (a mais curta que falta; a chave por último) ----------
+  $("dicaBtn").addEventListener("click", () => {
+    const livres = Math.floor(extras.length / 3) - dicasUsadas;
+    if (finished || livres < 1 || (alvo >= 0 && !achadas.has(alvo))) return;
+    const faltam = P.w.map((x, j) => j).filter(j => !achadas.has(j));
+    faltam.sort((a, b) => (P.w[a].k ? 1 : 0) - (P.w[b].k ? 1 : 0) || P.w[a].w.length - P.w[b].w.length);
+    alvo = faltam[0]; dicasUsadas++; log.push("d");
+    aviso(`Dica: palavra de <b>${P.w[alvo].w.length} letras</b>`, "msg", 2600);
+    render(); persist();
+  });
+
+  // ---------- cronômetro ----------
+  const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`; };
+  const currentElapsed = () => elapsed + (timer ? (Date.now() - startedAt) / 1000 : 0);
+  function showTime() { $("timer").textContent = fmt(currentElapsed()); }
+  function startTimer() {
+    if (timer || finished || document.hidden || !P) return;
+    startedAt = Date.now();
+    timer = setInterval(showTime, 500);
+    showTime();
+  }
+  function stopTimer() {
+    if (!timer) return;
+    elapsed = currentElapsed();
+    clearInterval(timer); timer = null;
+    showTime();
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (!P) return;
+    if (document.hidden) { stopTimer(); persist(); }
+    else if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  });
+  setInterval(() => { if (timer) persist(); }, 5000);
+
+  // ---------- vitória ----------
+  function checkWin() {
+    if (finished || achadas.size < P.w.length) return;
+    stopTimer();
+    finished = true;
+    $("controls").classList.add("play");
+    elapsed = Math.round(elapsed);
+    showTime();
+    const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
+    if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
+    persist(); render();
+    celebrar("cordel", { alvo: $("stage"), esmaecer: $("board") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
+  }
+  const SIMB = { t: "⚫", k: "🔴", d: "💡" };
+  function showEnd() {
+    $("endTime").textContent = fmt(elapsed);
+    $("endSub").textContent = `#${dayNum} · ${P.t}` + (dicasUsadas ? ` · ${dicasUsadas} ${dicasUsadas === 1 ? "dica" : "dicas"}` : " · sem dicas");
+    $("endWords").innerHTML = P.w.map(x => `<span class="${x.k ? "k" : ""}">${x.o}</span>`).join("");
+    if (window.semanaFim) semanaFim($("endSub"), semanaTempos("cordel:", dayNum), "tempo");   // últimos 7 dias
+    openModal("endOverlay");
+  }
+  $("shareBtn").addEventListener("click", () => {
+    const linhas = []; for (let i = 0; i < log.length; i += 4) linhas.push(log.slice(i, i + 4).map(c => SIMB[c]).join(""));
+    const text = `CORDEL #${dayNum}\n“${P.t}”\n${linhas.join("\n")}\n⏱ ${fmt(elapsed)}\nhttps://a-hanauer.github.io/puzzle-tracker/cordel/`;
+    ghCompartilhar($("shareBtn"), text);
+  });
+  $("doneBar").addEventListener("click", () => { if (finished) showEnd(); });
+
+  // ---------- janelas ----------
+  function openModal(id) { $(id).classList.add("open"); stopTimer(); }
+  function closeModal(el) {
+    el.classList.remove("open");
+    if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  }
+  document.querySelectorAll(".overlay").forEach(o => {
+    o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); });
+  });
+  $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+})();
+</script>
+<script src="../comum/catalogo.js?v=124"></script>
+<script src="../comum/celebra.js?v=124"></script>
+<script src="../comum/recorde.js?v=124"></script>
+<script src="../comum/proximo.js?v=124" data-jogo="cordel" data-sem-livre></script>
+</body>
+</html>

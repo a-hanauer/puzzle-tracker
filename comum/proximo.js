@@ -21,6 +21,7 @@
 (function () {
   "use strict";
   const ATUAL = document.currentScript.dataset.jogo;
+  const SEM_LIVRE = document.currentScript.hasAttribute("data-sem-livre");   // jogo sem jogo livre (Cordel): sem "Jogar um extra"
   const KEY = "jogosDoDia.v1";
   const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -229,7 +230,7 @@
       el.hidden = !acabou;
       el.innerHTML = "";
       if (!acabou) return;
-      el.append(atalhoExtra());
+      if (!SEM_LIVRE) el.append(atalhoExtra());
       if (!livre) el.insertAdjacentHTML("beforeend", `<span class="cd">Próximo em <b data-contagem>--:--:--</b></span>`);
     });
     if (reajusta) window.dispatchEvent(new Event("resize"));   // o tabuleiro se reajusta já, antes de a tela ser desenhada
@@ -245,11 +246,13 @@
     document.querySelectorAll(".modal.fim .fim-foot").forEach(el => {
       el.innerHTML = "";
       el.insertAdjacentHTML("beforeend", `<a class="fim-btn fim-home" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia">${CASA}</a>`);
-      const outro = document.createElement("button");
-      outro.type = "button"; outro.className = "fim-btn fim-outro";
-      outro.innerHTML = `${REFRESH}<span>Jogar outro</span>`;
-      outro.addEventListener("click", jogarExtra);
-      el.append(outro);
+      if (!SEM_LIVRE) {
+        const outro = document.createElement("button");
+        outro.type = "button"; outro.className = "fim-btn fim-outro";
+        outro.innerHTML = `${REFRESH}<span>Jogar outro</span>`;
+        outro.addEventListener("click", jogarExtra);
+        el.append(outro);
+      }
       if (g) el.append(botaoProximo(g, s, "fim-btn fim-nxbtn"));
       el.hidden = false;
     });

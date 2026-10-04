@@ -30,6 +30,7 @@ const BASE_GAMES = [
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon-claro.png?v=20", iconDark: "eclipse/icon-escuro.png?v=20", iconFull: true, cor: ["#c6ccf1", "#161b3b", "#20243c", "#ebecf4"] },
   { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=20", iconDark: "novelo/icon-escuro.png?v=20", iconFull: true, cor: ["#f1c6c9", "#3b1619", "#3c2022", "#f4ebec"] },
   { id: "retalhos",   name: "Azulejo",    emoji: "🟦", desc: "Uma parede de painéis",         url: "azulejo/", icon: "azulejo/icon.png?v=20", iconDark: "azulejo/icon-escuro.png?v=20", iconFull: true, cor: ["#c6e5f1", "#16313b", "#20343c", "#ebf2f4"] },
+  { id: "cordel",     name: "Cordel",     emoji: "🧵", desc: "Palavras de um tema, ligadas",  url: "cordel/", icon: "cordel/icon.png?v=20", iconDark: "cordel/icon-escuro.png?v=20", iconFull: true, cor: ["#e2d4b8", "#141210", "#26231e", "#f1e7d6"] },
   { id: "pingado",    name: "Cortado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "cortado/", icon: "cortado/icon.png?v=20", iconDark: "cortado/icon-escuro.png?v=20", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
 ];
 
@@ -73,10 +74,12 @@ const LOCAL_PROGRESS = {
   novelo() { return progressoPorTempo("novelo"); },
   retalhos() { return progressoPorTempo("retalhos"); },
   pingado() { return progressoPorTempo("pingado"); },
+  // Cordel: desafio #1 = 04/10/2026; prog = [palavras achadas, total]
+  cordel() { return progressoPorTempo("cordel", [2026, 9, 4]); },
 };
-function progressoPorTempo(jogo) {
+function progressoPorTempo(jogo, ep = [2026, 8, 28]) {
   const today0 = new Date(); today0.setHours(0, 0, 0, 0);
-  const dayNum = Math.round((today0 - new Date(2026, 8, 28)) / 86400000) + 1;
+  const dayNum = Math.round((today0 - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1;
   const p = readJSON(`${jogo}:dia:${dayNum}`);
   if (!p || (!p.done && !p.started)) return null;
   const [tries, max] = Array.isArray(p.prog) ? p.prog : [0, 0];
