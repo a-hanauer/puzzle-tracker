@@ -245,7 +245,7 @@
     });
     document.querySelectorAll(".modal.fim .fim-foot").forEach(el => {
       el.innerHTML = "";
-      el.insertAdjacentHTML("beforeend", `<a class="fim-btn fim-home" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia">${CASA}</a>`);
+      el.insertAdjacentHTML("beforeend", `<a class="fim-btn fim-home" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia">${CASA}<span class="rot">Voltar aos Jogos do Dia</span></a>`);
       if (!SEM_LIVRE) {
         const outro = document.createElement("button");
         outro.type = "button"; outro.className = "fim-btn fim-outro";
