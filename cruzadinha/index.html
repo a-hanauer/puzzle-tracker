@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="gh-carregando" data-fixa>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f4f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121310" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cruzadinha">
+<title>CRUZADINHA — palavras cruzadas de bolso</title>
+<link rel="icon" type="image/png" href="icon.png?v=21">
+<script src="../comum/tema.js?v=129"></script>
+<script src="../comum/cabecalho.js?v=129"></script>
+<script src="../comum/dica.js?v=129"></script>
+<link rel="apple-touch-icon" href="icon.png?v=21">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
+<style>
+  /* papel de jornal; a palavra da vez em verde-limão (a cor do cartão no painel) */
+  :root {
+    --bg: #f4f3ec; --surface: #fffefa; --surface-2: #e8e7dc; --ink: #1f2016; --muted: #75766a; --line: #deddd0;
+    --casa: #fffefa; --preta: #23241c; --grade: #23241c; --palavra: #e2ecb8; --atual: #b9d066; --num: #4b4c40;
+    --tecla: #fffefa; --tecla-ink: #1f2016; --barra: #e2ecb8; --barra-ink: #2f3a12;
+    --accent: #6c8a1c; --on-accent: #fffefa; --errada: #c8321e;
+    --shadow: 0 1px 2px rgba(40, 40, 20, .07), 0 6px 18px rgba(40, 40, 20, .07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121310; --surface: #1f201b; --surface-2: #2b2c25; --ink: #eef0e2; --muted: #9a9c8c; --line: #2c2d26;
+      --casa: #2a2b24; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3d4524; --atual: #7d9433; --num: #b5b7a6;
+      --tecla: #2b2c25; --tecla-ink: #eef0e2; --barra: #2f3620; --barra-ink: #f1f4e6;
+      --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
+    }
+  }
+  :root[data-theme="dark"] {
+      --bg: #121310; --surface: #1f201b; --surface-2: #2b2c25; --ink: #eef0e2; --muted: #9a9c8c; --line: #2c2d26;
+      --casa: #2a2b24; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3d4524; --atual: #7d9433; --num: #b5b7a6;
+      --tecla: #2b2c25; --tecla-ink: #eef0e2; --barra: #2f3620; --barra-ink: #f1f4e6;
+      --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body, a, button { touch-action: manipulation; }
+  html { height: 100%; background: var(--bg); -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0 auto; max-width: 520px; background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
+    min-height: calc(100% + var(--sobra, 0px)); display: flex; flex-direction: column;
+    -webkit-font-smoothing: antialiased; -webkit-user-select: none; user-select: none;
+  }
+  .aviso { text-align: center; height: 24px; line-height: 24px; font-size: .9rem; font-weight: 700; color: var(--muted); margin: 0 0 4px; }
+  .aviso b { color: var(--ink); }
+
+  /* ---------- grade ---------- */
+  .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  .grade { width: var(--lado, 340px); height: var(--lado, 340px); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(0, 1fr)); gap: 2px;
+    padding: 2px; background: var(--grade); border-radius: 10px; overflow: hidden; }
+  .casa { position: relative; background: var(--casa); display: flex; align-items: center; justify-content: center; cursor: pointer;
+    font-weight: 700; font-size: calc(var(--lado, 340px) * .105); color: var(--ink); line-height: 1; transition: background .12s ease; }
+  .casa.preta { background: var(--preta); cursor: default; }
+  .casa.pal { background: var(--palavra); }
+  .casa.atual { background: var(--atual); }
+  .casa .n { position: absolute; left: 4px; top: 3px; font-size: calc(var(--lado, 340px) * .036); font-weight: 700; color: var(--num); line-height: 1; }
+  .casa.revelada { color: var(--accent); }
+  .casa:first-child { border-top-left-radius: 8px; } .casa:nth-child(5) { border-top-right-radius: 8px; }
+  .casa:nth-child(21) { border-bottom-left-radius: 8px; } .casa:nth-child(25) { border-bottom-right-radius: 8px; }
+  .casa.pula { animation: pula .3s ease; }
+  @keyframes pula { 40% { transform: scale(1.08); } }
+  .grade.treme { animation: treme .32s ease; }
+  @keyframes treme { 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
+  @media (prefers-reduced-motion: reduce) { .casa.pula, .grade.treme { animation: none !important; } }
+
+  /* ---------- pista da vez ---------- */
+  .pista { display: flex; align-items: stretch; gap: 0; margin: 12px 0 0; min-height: 58px; border-radius: 16px; background: var(--barra); color: var(--barra-ink); overflow: hidden; }
+  .pista button { flex: 0 0 44px; border: 0; background: none; color: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: .7; }
+  .pista button:active { opacity: 1; background: rgba(127,127,127,.15); }
+  .pista button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .pista .txt { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 2px; cursor: pointer; }
+  .pista .ref { flex-shrink: 0; font-weight: 800; font-size: .8rem; letter-spacing: .04em; opacity: .75; font-variant-numeric: tabular-nums; }
+  .pista .p { font-weight: 650; font-size: .98rem; line-height: 1.25; }
+
+  /* ---------- teclado ---------- */
+  .teclado { display: flex; flex-direction: column; gap: 7px; margin-top: 12px; }
+  .teclado .lin { display: flex; gap: 5px; justify-content: center; }
+  .tecla { flex: 1 1 0; min-width: 0; max-width: 42px; height: var(--tec, 50px); border: 0; border-radius: 8px; background: var(--tecla); color: var(--tecla-ink);
+    font: inherit; font-weight: 700; font-size: 1.12rem; cursor: pointer; box-shadow: 0 1px 0 rgba(0,0,0,.12); padding: 0; }
+  .tecla:active { transform: scale(.94); background: var(--surface-2); }
+  .tecla.larga { max-width: 64px; flex: 1.5 1 0; display: flex; align-items: center; justify-content: center; }
+  .tecla.larga svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- fim: o teclado vira a faixa de resultado ---------- */
+  .controls { display: none; padding-top: 12px; }
+  body.acabou .teclado, body.acabou .pista { display: none; }
+  body.acabou .controls { display: flex; }
+  .prog { position: relative; overflow: hidden; flex: 1; height: 64px; border-radius: 16px; background: #23241c; box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(30, 30, 20, .3); }
+  .done-bar { position: absolute; inset: 0; display: flex; align-items: center; gap: 12px; padding: 0 18px; margin: 0; border: 0; background: none;
+    color: #fffefa; font: inherit; text-align: left; cursor: pointer; }
+  .done-bar .ic { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }
+  .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .done-bar .txt b { font-size: 1.32rem; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .done-bar .txt span { font-size: .78rem; font-weight: 600; color: rgba(255,254,250,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,254,250,.7); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  body.play .done-bar .ic { animation: dobra .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
+  @keyframes dobra { from { transform: scale(.3) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .tip { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 10px; line-height: 1.45; display: none; }
+  body.acabou .tip { display: block; }
+  .tip b { color: var(--ink); }
+
+  /* ---------- janelas ---------- */
+  .overlay { position: fixed; inset: 0; z-index: 10; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(15, 15, 10, .45); backdrop-filter: blur(3px); }
+  .overlay.open { display: flex; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal { width: 100%; max-width: 400px; max-height: 88vh; overflow: auto; background: var(--surface); border-radius: 22px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .modal h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+  .modal .close { border: none; background: var(--surface-2); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; }
+  .modal p, .modal li { font-size: .92rem; line-height: 1.5; color: var(--ink); }
+  .modal ul { padding-left: 20px; margin: 8px 0; }
+  .modal li { margin: 4px 0; }
+  .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--ink); color: var(--bg); font: inherit; font-weight: 700; font-size: .95rem; margin-top: 6px; }
+  .resp { text-align: left; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 14px; margin: 2px 0 16px; font-size: .8rem; line-height: 1.3; }
+  .resp h3 { margin: 0 0 2px; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .resp div { margin-bottom: 4px; }
+  .resp b { font-weight: 800; letter-spacing: .04em; }
+  .resp span { color: var(--muted); }
+</style>
+<link rel="stylesheet" href="../comum/cabecalho.css?v=129">
+<style>
+  :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+  .gh .gh-brand b { letter-spacing: .02em; font-stretch: 75%; font-size: 1.15rem; }   /* nome comprido: cabe ao lado da dica */
+</style>
+</head>
+<body>
+
+<header class="gh">
+  <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+  <a class="gh-brand" href="./" aria-label="Cruzadinha — recarregar"><img src="icon.png?v=21" data-escuro="icon-escuro.png?v=21" alt=""><b>CRUZADINHA</b></a>
+  <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
+  <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
+</header>
+
+<div class="gh-meta"><span class="gh-info" id="dayInfo"></span></div>
+<div class="aviso" id="aviso" aria-live="polite"></div>
+
+<div class="stage" id="stage"><div class="grade" id="grade" data-tabuleiro></div></div>
+
+<div class="pista" id="pista">
+  <button id="ant" type="button" aria-label="Pista anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div class="txt" id="pistaTxt" role="button" aria-label="Trocar direção"><span class="ref" id="ref"></span><span class="p" id="pTxt"></span></div>
+  <button id="prox" type="button" aria-label="Próxima pista"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+</div>
+
+<div class="teclado" id="teclado"></div>
+
+<div class="controls" id="controls">
+  <div class="prog">
+    <button class="done-bar" id="doneBar" aria-label="Jogo completo: ver resultado">
+      <img class="ic" src="icon.png?v=21" data-escuro="icon-escuro.png?v=21" alt="">
+      <span class="txt"><b id="doneTitle">0:00</b><span id="doneSub">Cruzadinha completa</span></span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+<div class="tip" id="tip"></div>
+
+<!-- Como jogar -->
+<div class="overlay" id="helpOverlay">
+  <div class="modal">
+    <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
+    <p>Uma palavra cruzada de bolso: <b>5 × 5</b>, com palavras de 3 a 5 letras.</p>
+    <ul>
+      <li>Toque numa casa para escolher a palavra. Tocar de novo na mesma casa troca entre <b>horizontal</b> e <b>vertical</b>.</li>
+      <li>A pista da palavra marcada aparece em cima do teclado. As setas passam para a pista anterior ou a próxima; tocar na pista também troca a direção.</li>
+      <li>Sem acentos nem cedilha: <b>MÃE</b> entra como MAE, <b>AÇO</b> como ACO.</li>
+      <li>Quando a grade enche, o jogo confere. Se algo não bate, ele avisa — mas não diz onde.</li>
+      <li>A <b>dica</b> (a lâmpada) corrige as letras erradas da palavra marcada ou, se não houver, mostra uma letra dela. Uma por dia.</li>
+    </ul>
+    <p>Uma grade nova por dia. Corre contra o relógio, mas sem pressa.</p>
+    <button class="btn-main" data-close>Jogar</button>
+  </div>
+</div>
+
+<!-- Fim de jogo -->
+<div class="overlay" id="endOverlay">
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><img src="icon.png?v=21" data-escuro="icon-escuro.png?v=21" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,40,20,.15)"></div>
+    <h2 class="fim-title">Cruzadinha completa!</h2>
+    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
+    <p class="fim-sub" id="endSub"></p>
+    <div class="resp" id="endResp"></div>
+    <div class="fim-count" id="nextBox">Próxima Cruzadinha em <b id="countdown" data-contagem>--:--:--</b></div>
+    <div data-proximo hidden></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+  const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const LS = "cruzadinha:";
+  const load = (k, d) => { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
+  const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
+  const N = 5;
+
+  let P = null, dayNum = 0, letras = [], reveladas = new Set(), cur = 0, dir = "h", dicaUsada = false;
+  let finished = false, timer = null, startedAt = 0, elapsed = 0, avisouCheia = false, dica = null;
+  let palavras = [];          // [{d:"h"|"v", n, c:[casas], w, p}]
+
+  function recomputeStats(st) {
+    const days = Object.keys(st.times).map(Number).sort((a, b) => a - b);
+    let best = 0, run = 0, prev = -9;
+    for (const d of days) { run = d === prev + 1 ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+    st.played = days.length; st.best = best; st.streak = run; st.lastDay = days.at(-1) || 0;
+    return st;
+  }
+  const preta = i => P.g[i] === "#";
+  const palavraDe = (i, d) => palavras.find(w => w.d === d && w.c.includes(i));
+  const atual = () => palavraDe(cur, dir) || palavraDe(cur, dir === "h" ? "v" : "h");
+  const cheia = () => letras.every((l, i) => preta(i) || l);
+  const certa = () => letras.every((l, i) => preta(i) || l === P.g[i]);
+
+  function setup(puzzle, saved) {
+    P = puzzle;
+    palavras = [...P.h.map(x => ({ ...x, d: "h" })), ...P.v.map(x => ({ ...x, d: "v" }))];
+    letras = saved?.letras && saved.letras.length === N * N ? saved.letras : Array(N * N).fill("");
+    reveladas = new Set(saved?.reveladas || []);
+    dicaUsada = !!saved?.dica;
+    elapsed = saved?.elapsed || 0;
+    finished = !!saved?.done;
+    cur = palavras[0].c[0]; dir = "h";
+    const now = new Date();
+    $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · #${dayNum}`;
+    montaGrade(); render(); showTime();
+    if (dica) dica.atualiza();
+  }
+  function persist() {
+    if (!P) return;
+    const cheias = letras.filter((l, i) => l && !preta(i)).length, total = P.g.replace(/#/g, "").length;
+    save("dia:" + dayNum, { pid: P.g, letras, reveladas: [...reveladas], dica: dicaUsada, elapsed: currentElapsed(), done: finished,
+      time: finished ? elapsed : null, started: cheias > 0, prog: [finished ? total : cheias, total] });
+  }
+
+  fetch("desafios.json").then(r => r.json()).then(data => {
+    dayNum = dayNumber(data.epoch);
+    const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
+    let saved = load("dia:" + dayNum, null);
+    if (saved && saved.pid !== puzzle.g) saved = null;
+    setup(puzzle, saved);
+    persist();
+    if (finished) { document.body.classList.add("acabou"); render(); }
+    else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
+    else startTimer();
+  }).catch(() => { $("stage").innerHTML = '<p class="tip" style="display:block">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
+
+  // ---------- desenho ----------
+  function tamanho() {
+    const st = $("stage");
+    const lado = Math.floor(Math.min(st.clientWidth, st.clientHeight));
+    $("grade").style.setProperty("--lado", Math.max(220, Math.min(440, lado)) + "px");
+  }
+  window.addEventListener("resize", () => { if (P) tamanho(); });
+  function montaGrade() {
+    const num = {};
+    for (const w of palavras) num[w.c[0]] = w.n;
+    let h = "";
+    for (let i = 0; i < N * N; i++) h += preta(i) ? `<div class="casa preta"></div>` : `<div class="casa" data-i="${i}">${num[i] ? `<span class="n">${num[i]}</span>` : ""}<span class="l"></span></div>`;
+    $("grade").innerHTML = h;
+    tamanho();
+  }
+  function render(pulam) {
+    if (!P) return;
+    const w = atual(), naPal = new Set(finished ? [] : w.c);
+    $("grade").querySelectorAll(".casa[data-i]").forEach(el => {
+      const i = +el.dataset.i;
+      el.querySelector(".l").textContent = letras[i];
+      el.classList.toggle("pal", naPal.has(i));
+      el.classList.toggle("atual", !finished && i === cur);
+      el.classList.toggle("revelada", reveladas.has(i));
+      el.classList.remove("pula");
+      if (pulam && pulam.has(i)) { void el.offsetWidth; el.classList.add("pula"); }
+    });
+    $("ref").textContent = `${w.n}${w.d === "h" ? "H" : "V"}`;
+    $("pTxt").textContent = w.p;
+    $("pistaTxt").setAttribute("aria-label", `${w.n} ${w.d === "h" ? "horizontal" : "vertical"}: ${w.p}. Toque para trocar a direção.`);
+    if (finished) {
+      $("doneTitle").textContent = fmt(elapsed);
+      $("doneSub").textContent = `Cruzadinha completa${dicaUsada ? " · com dica" : ""}`;
+      $("tip").innerHTML = `Próxima Cruzadinha em <b data-contagem>${$("countdown").textContent}</b>`;
+    }
+  }
+
+  let avT = 0;
+  function aviso(html, ms = 1800) { const el = $("aviso"); clearTimeout(avT); el.innerHTML = html; avT = setTimeout(() => (el.innerHTML = ""), ms); }
+
+  // ---------- teclado ----------
+  const LINHAS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+  $("teclado").innerHTML = LINHAS.map((l, k) => `<div class="lin">${[...l].map(c => `<button class="tecla" type="button" data-k="${c}">${c}</button>`).join("")}${k === 2 ? `<button class="tecla larga" type="button" data-k="⌫" aria-label="Apagar"><svg viewBox="0 0 24 24"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg></button>` : ""}</div>`).join("");
+  $("teclado").addEventListener("click", e => {
+    const b = e.target.closest(".tecla");
+    if (!b) return;
+    const k = b.dataset.k;
+    setTimeout(() => (k === "⌫" ? apaga() : digita(k)), 0);   // depois do toque (vibração no iPhone)
+  });
+  document.addEventListener("keydown", e => {
+    if (!P || finished || document.querySelector(".overlay.open") || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/^[a-zA-Z]$/.test(e.key)) { digita(e.key.toUpperCase()); e.preventDefault(); }
+    else if (e.key === "Backspace") { apaga(); e.preventDefault(); }
+    else if (e.key === "ArrowRight" || e.key === "ArrowLeft") { anda(e.key === "ArrowRight" ? 1 : -1, "h"); e.preventDefault(); }
+    else if (e.key === "ArrowDown" || e.key === "ArrowUp") { anda(e.key === "ArrowDown" ? N : -N, "v"); e.preventDefault(); }
+    else if (e.key === "Tab" || e.key === "Enter") { pula(e.shiftKey ? -1 : 1); e.preventDefault(); }
+    else if (e.key === " ") { dir = dir === "h" ? "v" : "h"; if (!palavraDe(cur, dir)) dir = dir === "h" ? "v" : "h"; render(); e.preventDefault(); }
+  });
+  function anda(delta, d) {
+    if (dir !== d && palavraDe(cur, d)) { dir = d; render(); return; }
+    let i = cur + delta;
+    while (i >= 0 && i < N * N && (d === "h" ? Math.floor(i / N) === Math.floor(cur / N) : true) && preta(i)) i += delta;
+    if (i >= 0 && i < N * N && !preta(i) && (d === "v" || Math.floor(i / N) === Math.floor(cur / N))) { cur = i; render(); }
+  }
+
+  function digita(ch) {
+    if (!P || finished) return;
+    startTimer();
+    const w = atual(), k = w.c.indexOf(cur), vinhaCheia = w.c.every(i => letras[i]);
+    letras[cur] = ch; reveladas.delete(cur);
+    if (cheia()) { render(new Set([cur])); confere(); persist(); return; }
+    // palavra que já estava cheia (corrigindo): anda uma casa; senão, a próxima vazia; palavra completa: próxima pista
+    const vazia = i => !letras[i];
+    const depois = w.c.slice(k + 1).find(vazia), antes = w.c.slice(0, k).find(vazia);
+    if (vinhaCheia) { if (k < w.c.length - 1) cur = w.c[k + 1]; }
+    else if (depois != null) cur = depois;
+    else if (antes != null) cur = antes;
+    else pula(1, true);
+    render(new Set([w.c[k]])); persist();
+  }
+  function apaga() {
+    if (!P || finished) return;
+    const w = atual(), k = w.c.indexOf(cur);
+    if (letras[cur]) letras[cur] = "";
+    else if (k > 0) { cur = w.c[k - 1]; letras[cur] = ""; }
+    reveladas.delete(cur);
+    avisouCheia = false;
+    render(); persist();
+  }
+  // próxima (ou anterior) pista; vaiParaVazia: começa na primeira casa vazia dela
+  function pula(passo, vaiParaVazia) {
+    const w = atual(), ordem = [...palavras.filter(x => x.d === "h"), ...palavras.filter(x => x.d === "v")];
+    let j = ordem.indexOf(w);
+    for (let t = 0; t < ordem.length; t++) {
+      j = (j + passo + ordem.length) % ordem.length;
+      const x = ordem[j];
+      if (vaiParaVazia && x.c.every(i => letras[i])) continue;
+      dir = x.d; cur = (vaiParaVazia && x.c.find(i => !letras[i])) ?? x.c[0];
+      render(); return;
+    }
+  }
+  function confere() {
+    if (certa()) { ganhou(); return; }
+    if (avisouCheia) return;
+    avisouCheia = true;
+    if (window.jogosHaptico) jogosHaptico();
+    const g = $("grade"); g.classList.remove("treme"); void g.offsetWidth; g.classList.add("treme");
+    aviso("Quase! <b>Alguma letra</b> não bate.", 2600);
+  }
+
+  // ---------- tocar na grade ----------
+  $("grade").addEventListener("click", e => {
+    const el = e.target.closest(".casa[data-i]");
+    if (!el || finished) return;
+    const i = +el.dataset.i;
+    setTimeout(() => {
+      if (i === cur) { const o = dir === "h" ? "v" : "h"; if (palavraDe(i, o)) dir = o; }
+      else { cur = i; if (!palavraDe(i, dir)) dir = dir === "h" ? "v" : "h"; }
+      startTimer(); render();
+    }, 0);
+  });
+  $("pistaTxt").addEventListener("click", () => setTimeout(() => { const o = dir === "h" ? "v" : "h"; if (palavraDe(cur, o)) { dir = o; render(); } }, 0));
+  $("ant").addEventListener("click", () => setTimeout(() => pula(-1), 0));
+  $("prox").addEventListener("click", () => setTimeout(() => pula(1), 0));
+
+  // ---------- dica: corrige a palavra marcada, ou mostra uma letra dela ----------
+  function pedirDica() {
+    let w = atual();
+    const errada = i => letras[i] && letras[i] !== P.g[i];
+    // palavra marcada já certa e cheia: vai para uma com erro, ou com casa vazia
+    if (!w.c.some(i => errada(i) || !letras[i])) {
+      w = palavras.find(x => x.c.some(errada)) || palavras.find(x => x.c.some(i => !letras[i]));
+      dir = w.d; cur = w.c[0];
+    }
+    const nome = `${w.n} ${w.d === "h" ? "horizontal" : "vertical"}`;
+    const erradas = w.c.filter(errada);
+    let msg;
+    if (erradas.length) {
+      const eram = erradas.map(i => letras[i]);
+      for (const i of erradas) { letras[i] = P.g[i]; reveladas.add(i); }
+      msg = erradas.length === 1
+        ? `Em <b>${nome}</b>, o <b>${eram[0]}</b> estava errado: troquei por <b>${P.g[erradas[0]]}</b>.`
+        : `Em <b>${nome}</b>, ${erradas.length} letras estavam erradas: já troquei.`;
+    } else {
+      const vazias = w.c.filter(i => !letras[i]), alvo = vazias[Math.floor(vazias.length / 2)];
+      letras[alvo] = P.g[alvo]; reveladas.add(alvo);
+      msg = `<b>${nome}</b> está certa até aqui. Mostrei a ${w.c.indexOf(alvo) + 1}ª letra: <b>${P.g[alvo]}</b>.`;
+    }
+    dicaUsada = true;
+    render(new Set(w.c)); persist();
+    if (cheia()) { avisouCheia = false; confere(); }
+    return msg;
+  }
+  dica = ghDica({ usada: () => dicaUsada, bloqueada: () => finished || !P, pedir: async () => pedirDica() });
+
+  // ---------- cronômetro ----------
+  const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`; };
+  const currentElapsed = () => elapsed + (timer ? (Date.now() - startedAt) / 1000 : 0);
+  function showTime() { $("timer").textContent = fmt(currentElapsed()); }
+  function startTimer() { if (timer || finished || document.hidden || !P) return; startedAt = Date.now(); timer = setInterval(showTime, 500); showTime(); }
+  function stopTimer() { if (!timer) return; elapsed = currentElapsed(); clearInterval(timer); timer = null; showTime(); }
+  document.addEventListener("visibilitychange", () => {
+    if (!P) return;
+    if (document.hidden) { stopTimer(); persist(); }
+    else if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  });
+  setInterval(() => { if (timer) persist(); }, 5000);
+
+  // ---------- fim ----------
+  function ganhou() {
+    if (finished) return;
+    stopTimer();
+    finished = true;
+    elapsed = Math.round(elapsed); showTime();
+    const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
+    if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
+    persist();
+    if (window.jogosHaptico) jogosHaptico(true);
+    render();
+    if (dica) dica.atualiza();
+    celebrar("cruzadinha", { alvo: $("stage"), esmaecer: $("grade") }).then(() => {   // comum/celebra.js
+      document.body.classList.add("acabou", "play"); render();
+      setTimeout(showEnd, 200);
+    });
+  }
+  function showEnd() {
+    $("endTime").textContent = fmt(elapsed);
+    $("endSub").textContent = `#${dayNum} · ${dicaUsada ? "com dica" : "sem dica"}`;
+    const col = (t, l) => `<div><h3>${t}</h3>${l.map(x => `<div><b>${x.n}. ${x.w}</b><br><span>${x.p}</span></div>`).join("")}</div>`;
+    $("endResp").innerHTML = col("Horizontais", P.h) + col("Verticais", P.v);
+    if (window.semanaFim) semanaFim($("endSub"), semanaTempos("cruzadinha:", dayNum), "tempo");   // últimos 7 dias
+    openModal("endOverlay");
+  }
+  $("shareBtn").addEventListener("click", () => {
+    const grade = [0, 1, 2, 3, 4].map(r => [...P.g.slice(r * N, r * N + N)].map(c => (c === "#" ? "⬛" : "🟩")).join("")).join("\n");
+    const text = `CRUZADINHA #${dayNum}\n${grade}\n⏱ ${fmt(elapsed)}${dicaUsada ? " · com dica" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/cruzadinha/`;
+    ghCompartilhar($("shareBtn"), text);
+  });
+  $("doneBar").addEventListener("click", () => { if (finished) showEnd(); });
+
+  // ---------- janelas ----------
+  function openModal(id) { $(id).classList.add("open"); stopTimer(); }
+  function closeModal(el) { el.classList.remove("open"); if (!finished && !document.querySelector(".overlay.open")) startTimer(); }
+  document.querySelectorAll(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); }));
+  $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+})();
+</script>
+<script src="../comum/catalogo.js?v=129"></script>
+<script src="../comum/celebra.js?v=129"></script>
+<script src="../comum/recorde.js?v=129"></script>
+<script src="../comum/proximo.js?v=129" data-jogo="cruzadinha" data-sem-livre data-feminino></script>
+</body>
+</html>

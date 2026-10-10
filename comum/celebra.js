@@ -121,6 +121,35 @@
       <path class="traco" d="M0 -70C-10 -82 10 -90 0 -102" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.25s;--t:.4s"/>
       <path class="traco" d="M26 -66C16 -78 36 -86 26 -98" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.35s;--t:.4s"/>`,
 
+    cruzadinha: () => `
+      <g class="entra"><rect x="-74" y="-74" width="148" height="148" rx="14" fill="#fbfaf3"/>
+        <rect x="-64" y="-64" width="128" height="128" rx="6" fill="#23241c"/></g>
+      <rect class="entra" x="-36" y="-61" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.20s"/>
+      <rect class="entra" x="-11" y="-61" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.25s"/>
+      <rect class="entra" x="14" y="-61" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.30s"/>
+      <rect class="entra" x="-61" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.20s"/>
+      <rect class="entra" x="-36" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.25s"/>
+      <rect class="entra" x="-11" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.30s"/>
+      <rect class="entra" x="14" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.35s"/>
+      <rect class="entra" x="39" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.40s"/>
+      <rect class="entra" x="-61" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.25s"/>
+      <rect class="entra" x="-36" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.30s"/>
+      <rect class="entra" x="-11" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.35s"/>
+      <rect class="entra" x="14" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.40s"/>
+      <rect class="entra" x="39" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.45s"/>
+      <rect class="entra" x="-61" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.30s"/>
+      <rect class="entra" x="-36" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.35s"/>
+      <rect class="entra" x="-11" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.40s"/>
+      <rect class="entra" x="14" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.45s"/>
+      <rect class="entra" x="39" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.50s"/>
+      <rect class="entra" x="-36" y="39" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.40s"/>
+      <rect class="entra" x="-11" y="39" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.45s"/>
+      <rect class="entra" x="14" y="39" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.50s"/>
+      <g class="entra" style="--d:1.05s"><g transform="translate(58 58) rotate(-45)">
+        <rect x="-9" y="-58" width="18" height="70" rx="3" fill="#f2c230"/><rect x="-9" y="-66" width="18" height="12" rx="3" fill="#e58b8b"/>
+        <rect x="-9" y="-56" width="18" height="5" fill="#b9b9b0"/>
+        <path d="M-9 12L0 32L9 12Z" fill="#f2dcb0"/><path d="M-3.2 25L0 32L3.2 25Z" fill="#23241c"/></g></g>`,
+
     cordel: () => `
       <path class="traco" d="M-96 -66Q0 -46 96 -66" fill="none" stroke="#6e5a44" stroke-width="3.5" stroke-linecap="round" style="--l:200;--t:.45s"/>
       <g class="cordel-folheto">

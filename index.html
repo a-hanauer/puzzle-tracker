@@ -12,10 +12,10 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=128"></script>
-<script src="comum/catalogo.js?v=128"></script>
-<script src="comum/celebra.js?v=128"></script>
-<script src="comum/recorde.js?v=128"></script>
+<script src="comum/tema.js?v=129"></script>
+<script src="comum/catalogo.js?v=129"></script>
+<script src="comum/celebra.js?v=129"></script>
+<script src="comum/recorde.js?v=129"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -287,6 +287,7 @@
   .app[data-g="pingado"]    { --tile-bg: #3c2b20; --tile-ink: #f4efeb; --tile-muted: rgba(244,239,235,.62); --tile-track: rgba(255,255,255,.18); }
   .app[data-g="panelinha"]  { --tile-bg: #362140; --tile-ink: #f3ebf6; --tile-muted: rgba(243,235,246,.62); --tile-track: rgba(255,255,255,.18); }
   .app[data-g="cordel"]     { --tile-bg: #2b2a28; --tile-ink: #f1e7d6; --tile-muted: rgba(241,231,214,.62); --tile-track: rgba(255,255,255,.18); }
+  .app[data-g="cruzadinha"] { --tile-bg: #2f3620; --tile-ink: #f1f4e6; --tile-muted: rgba(241,244,230,.62); --tile-track: rgba(255,255,255,.18); }
   @media (prefers-color-scheme: light) {
     :root:not([data-theme="dark"]) .app[data-g="sanduba"]    { --tile-bg: #f1e7c6; --tile-border: transparent; --tile-ink: #3b3316; --tile-muted: rgba(59,51,22,.62); --tile-track: rgba(59,51,22,.15); }
     :root:not([data-theme="dark"]) .app[data-g="quinhentos"] { --tile-bg: #c6f1da; --tile-border: transparent; --tile-ink: #163b28; --tile-muted: rgba(22,59,40,.62); --tile-track: rgba(22,59,40,.15); }
@@ -296,6 +297,7 @@
     :root:not([data-theme="dark"]) .app[data-g="pingado"]    { --tile-bg: #e9c3aa; --tile-border: transparent; --tile-ink: #3b2516; --tile-muted: rgba(59,37,22,.62); --tile-track: rgba(59,37,22,.15); }
     :root:not([data-theme="dark"]) .app[data-g="panelinha"]  { --tile-bg: #e3c5f1; --tile-border: transparent; --tile-ink: #3b1f47; --tile-muted: rgba(59,31,71,.62); --tile-track: rgba(59,31,71,.15); }
     :root:not([data-theme="dark"]) .app[data-g="cordel"]     { --tile-bg: #dcd9d2; --tile-border: transparent; --tile-ink: #141210; --tile-muted: rgba(20,18,16,.62); --tile-track: rgba(20,18,16,.15); }
+    :root:not([data-theme="dark"]) .app[data-g="cruzadinha"] { --tile-bg: #dfe9b8; --tile-border: transparent; --tile-ink: #2f3a12; --tile-muted: rgba(47,58,18,.62); --tile-track: rgba(47,58,18,.15); }
   }
   :root[data-theme="light"] .app[data-g="sanduba"]    { --tile-bg: #f1e7c6; --tile-border: transparent; --tile-ink: #3b3316; --tile-muted: rgba(59,51,22,.62); --tile-track: rgba(59,51,22,.15); }
   :root[data-theme="light"] .app[data-g="quinhentos"] { --tile-bg: #c6f1da; --tile-border: transparent; --tile-ink: #163b28; --tile-muted: rgba(22,59,40,.62); --tile-track: rgba(22,59,40,.15); }
@@ -305,6 +307,7 @@
   :root[data-theme="light"] .app[data-g="pingado"]    { --tile-bg: #e9c3aa; --tile-border: transparent; --tile-ink: #3b2516; --tile-muted: rgba(59,37,22,.62); --tile-track: rgba(59,37,22,.15); }
   :root[data-theme="light"] .app[data-g="panelinha"]  { --tile-bg: #e3c5f1; --tile-border: transparent; --tile-ink: #3b1f47; --tile-muted: rgba(59,31,71,.62); --tile-track: rgba(59,31,71,.15); }
   :root[data-theme="light"] .app[data-g="cordel"]     { --tile-bg: #dcd9d2; --tile-border: transparent; --tile-ink: #141210; --tile-muted: rgba(20,18,16,.62); --tile-track: rgba(20,18,16,.15); }
+  :root[data-theme="light"] .app[data-g="cruzadinha"] { --tile-bg: #dfe9b8; --tile-border: transparent; --tile-ink: #2f3a12; --tile-muted: rgba(47,58,18,.62); --tile-track: rgba(47,58,18,.15); }
 
   a.game {
     display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -957,7 +960,7 @@ const ST_ICON = {
 // jogos de lógica: nível = dia da semana (segunda = 1); número do desafio conta a partir da estreia de cada um
 const LOGICA = { eclipse: { pre: "eclipse:", ep: [2026, 8, 27] }, novelo: { pre: "novelo:", ep: [2026, 8, 28] }, retalhos: { pre: "retalhos:", ep: [2026, 8, 28] }, pingado: { pre: "pingado:", ep: [2026, 8, 28] }, panelinha: { pre: "panelinha:", ep: [2026, 9, 10] } };
 function recordeHoje(g, p) {
-  if (g.id === "cordel") return false;                 // Cordel: sem nível para comparar tempos
+  if (g.id === "cordel" || g.id === "cruzadinha") return false;   // sem nível para comparar tempos
   const lg = LOGICA[g.id];
   if (lg && window.recordeDoDia) {
     const t0 = new Date(); t0.setHours(0, 0, 0, 0);
@@ -970,6 +973,7 @@ function statusText(g, p, isDone) {
   if (!p) {                                             // ainda não jogado: o nível do dia
     if (isDone) return `<span class="pl">Feito</span>`;
     if (g.id === "cordel") return `<span class="pl leve">tema novo</span>`;
+    if (g.id === "cruzadinha") return `<span class="pl leve">grade nova</span>`;
     if (!LOGICA[g.id]) return `<span class="pl leve">normal</span>`;
     const n = (new Date().getDay() + 6) % 7 + 1;
     return `<span class="pl leve">nível ${n}<span class="nv" aria-hidden="true">${[...Array(7)].map((_, i) => `<i${i < n ? ' class="on"' : ""}></i>`).join("")}</span></span>`;
@@ -1428,7 +1432,7 @@ $("rsShare").addEventListener("click", () => setTimeout(async () => {    // setT
 /* ---------- Backup: exportar / importar ----------
    Junta tudo o que os Jogos do Dia guardam neste navegador (painel e jogos da casa)
    num código de texto. Importar substitui esses dados e recarrega. */
-const BK_PREFIXOS = ["jogosDoDia.", "eclipse:", "novelo:", "retalhos:", "pingado:", "cordel:", "panelinha:", "quinhentao:", "sanduba-"];
+const BK_PREFIXOS = ["jogosDoDia.", "eclipse:", "novelo:", "retalhos:", "pingado:", "cordel:", "panelinha:", "cruzadinha:", "quinhentao:", "sanduba-"];
 const ehNosso = k => BK_PREFIXOS.some(p => k.startsWith(p));
 const b64 = str => btoa(unescape(encodeURIComponent(str)));
 const deb64 = str => decodeURIComponent(escape(atob(str)));
@@ -1739,7 +1743,7 @@ function renderNative(t0) {
       ${dist}`;
   }
   // Eclipse, Novelo, Retalhos e Pingado: o desempenho é o tempo
-  const TIMED = [{ id: "eclipse", epoch: [2026, 8, 27] }, { id: "novelo", epoch: [2026, 8, 28] }, { id: "retalhos", epoch: [2026, 8, 28] }, { id: "pingado", epoch: [2026, 8, 28] }, { id: "cordel", epoch: [2026, 9, 4] }, { id: "panelinha", epoch: [2026, 9, 10] }];
+  const TIMED = [{ id: "eclipse", epoch: [2026, 8, 27] }, { id: "novelo", epoch: [2026, 8, 28] }, { id: "retalhos", epoch: [2026, 8, 28] }, { id: "pingado", epoch: [2026, 8, 28] }, { id: "cordel", epoch: [2026, 9, 4] }, { id: "panelinha", epoch: [2026, 9, 10] }, { id: "cruzadinha", epoch: [2026, 9, 10] }];
   const DIAS3 = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], DIAS_L = ["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"];
   const nvHoje = (t0.getDay() + 6) % 7;                    // nível = dia da semana (segunda = 1)
   for (const tg of TIMED) {
