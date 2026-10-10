@@ -228,7 +228,9 @@ export function deducoes(N, g, signs, K = 0, so1 = false) {
         if (!must) must = cand.slice(); else for (let k = 0; k < N; k++) if (must[k] !== cand[k]) must[k] = 0;
       }
       if (!n) return;
-      for (let k = 0; k < N; k++) if (must[k]) add(line[k], must[k], "poucas", `Na ${nomeLinha(N, li)} faltam só ${vazias} casas. Testando os jeitos de completá-la sem quebrar as regras, esta casa é ${NOME(must[k])} em todos.`);
+      const f1 = N / 2 - line.filter(i => g[i] === 1).length, f2 = N / 2 - line.filter(i => g[i] === 2).length;
+      const jeitos = n === 1 ? "só há um jeito de arrumá-las" : `só há ${n} jeitos de arrumá-las`;
+      for (let k = 0; k < N; k++) if (must[k]) add(line[k], must[k], "poucas", `Na ${nomeLinha(N, li)} faltam ${vazias} casas (${f1} de café e ${f2} de leite), e ${jeitos} sem formar três iguais nem desrespeitar um sinal. Em ${n === 1 ? "ele" : "todos"}, esta casa é ${NOME(must[k])}.`);
     }); },
   ];
   for (const t of tecs) { t(); if (so1 && out.length) break; }
@@ -236,7 +238,7 @@ export function deducoes(N, g, signs, K = 0, so1 = false) {
 }
 
 // próxima casa que dá para deduzir, com o motivo (para a dica); null se nada sai sem chute
-export function passo(N, g, signs, K = N) {
+export function passo(N, g, signs, K = N / 2 + 1) {   // mesmas técnicas do gerador
   const d = deducoes(N, g, signs, K, true);
   return d[0] || null;
 }
