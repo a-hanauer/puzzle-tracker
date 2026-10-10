@@ -122,33 +122,12 @@
       <path class="traco" d="M26 -66C16 -78 36 -86 26 -98" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.35s;--t:.4s"/>`,
 
     cruzadinha: () => `
-      <g class="entra"><rect x="-74" y="-74" width="148" height="148" rx="14" fill="#fbfaf3"/>
-        <rect x="-64" y="-64" width="128" height="128" rx="6" fill="#23241c"/></g>
-      <rect class="entra" x="-36" y="-61" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.20s"/>
-      <rect class="entra" x="-11" y="-61" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.25s"/>
-      <rect class="entra" x="14" y="-61" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.30s"/>
-      <rect class="entra" x="-61" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.20s"/>
-      <rect class="entra" x="-36" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.25s"/>
-      <rect class="entra" x="-11" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.30s"/>
-      <rect class="entra" x="14" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.35s"/>
-      <rect class="entra" x="39" y="-36" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.40s"/>
-      <rect class="entra" x="-61" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.25s"/>
-      <rect class="entra" x="-36" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.30s"/>
-      <rect class="entra" x="-11" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.35s"/>
-      <rect class="entra" x="14" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.40s"/>
-      <rect class="entra" x="39" y="-11" width="22" height="22" rx="2.5" fill="#b9d066" style="--d:0.45s"/>
-      <rect class="entra" x="-61" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.30s"/>
-      <rect class="entra" x="-36" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.35s"/>
-      <rect class="entra" x="-11" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.40s"/>
-      <rect class="entra" x="14" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.45s"/>
-      <rect class="entra" x="39" y="14" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.50s"/>
-      <rect class="entra" x="-36" y="39" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.40s"/>
-      <rect class="entra" x="-11" y="39" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.45s"/>
-      <rect class="entra" x="14" y="39" width="22" height="22" rx="2.5" fill="#fffefa" style="--d:0.50s"/>
-      <g class="entra" style="--d:1.05s"><g transform="translate(58 58) rotate(-45)">
-        <rect x="-9" y="-58" width="18" height="70" rx="3" fill="#f2c230"/><rect x="-9" y="-66" width="18" height="12" rx="3" fill="#e58b8b"/>
-        <rect x="-9" y="-56" width="18" height="5" fill="#b9b9b0"/>
-        <path d="M-9 12L0 32L9 12Z" fill="#f2dcb0"/><path d="M-3.2 25L0 32L3.2 25Z" fill="#23241c"/></g></g>`,
+      <g class="entra">
+      <circle r="76" fill="#fbf7ec"/>
+      <circle r="76" fill="none" stroke="#c48a55" stroke-width="11"/><circle r="70" fill="none" stroke="#a87040" stroke-width="2.5"/>
+      <rect x="-11" y="-98" width="22" height="16" rx="4" fill="#8a5a32"/><rect x="-4" y="-104" width="8" height="10" rx="2" fill="#6e4524"/>
+    </g><circle cx="-44" cy="-44" r="1.6" fill="#ddd4bf"/><circle cx="-22" cy="-44" r="1.6" fill="#ddd4bf"/><circle cx="22" cy="-44" r="1.6" fill="#ddd4bf"/><circle cx="44" cy="-44" r="1.6" fill="#ddd4bf"/><circle cx="-44" cy="-22" r="1.6" fill="#ddd4bf"/><circle cx="-22" cy="-22" r="1.6" fill="#ddd4bf"/><circle cx="22" cy="-22" r="1.6" fill="#ddd4bf"/><circle cx="44" cy="-22" r="1.6" fill="#ddd4bf"/><circle cx="-44" cy="22" r="1.6" fill="#ddd4bf"/><circle cx="-22" cy="22" r="1.6" fill="#ddd4bf"/><circle cx="22" cy="22" r="1.6" fill="#ddd4bf"/><circle cx="44" cy="22" r="1.6" fill="#ddd4bf"/><circle cx="-44" cy="44" r="1.6" fill="#ddd4bf"/><circle cx="-22" cy="44" r="1.6" fill="#ddd4bf"/><circle cx="22" cy="44" r="1.6" fill="#ddd4bf"/><circle cx="44" cy="44" r="1.6" fill="#ddd4bf"/><path class="traco" style="--l:24;--d:0.35s;--t:.18s" d="M-7.5 -7.5L7.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.44s;--t:.18s" d="M7.5 -7.5L-7.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.42s;--t:.18s" d="M-29.5 -7.5L-14.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.51s;--t:.18s" d="M-14.5 -7.5L-29.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.49s;--t:.18s" d="M14.5 -7.5L29.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.58s;--t:.18s" d="M29.5 -7.5L14.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.56s;--t:.18s" d="M-7.5 -29.5L7.5 -14.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.65s;--t:.18s" d="M7.5 -29.5L-7.5 -14.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.63s;--t:.18s" d="M-7.5 14.5L7.5 29.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.72s;--t:.18s" d="M7.5 14.5L-7.5 29.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.70s;--t:.18s" d="M-51.5 -7.5L-36.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.79s;--t:.18s" d="M-36.5 -7.5L-51.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.77s;--t:.18s" d="M36.5 -7.5L51.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.86s;--t:.18s" d="M51.5 -7.5L36.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.84s;--t:.18s" d="M-7.5 -51.5L7.5 -36.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.93s;--t:.18s" d="M7.5 -51.5L-7.5 -36.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.91s;--t:.18s" d="M-7.5 36.5L7.5 51.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:1.00s;--t:.18s" d="M7.5 36.5L-7.5 51.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" d="M44 0C62 18 58 46 82 58" fill="none" stroke="#6c8a1c" stroke-width="3" stroke-linecap="round" style="--l:80;--d:1.1s;--t:.3s"/>
+      <g class="entra" style="--d:1.35s"><g transform="translate(84 60) rotate(40)"><rect x="-2.5" y="-4" width="5" height="40" rx="2.5" fill="#cfd3d6"/><path d="M-2.5 34L0 46L2.5 34Z" fill="#cfd3d6"/><rect x="-1" y="0" width="2" height="7" rx="1" fill="#fbf7ec"/></g></g>`,
 
     cordel: () => `
       <path class="traco" d="M-96 -66Q0 -46 96 -66" fill="none" stroke="#6e5a44" stroke-width="3.5" stroke-linecap="round" style="--l:200;--t:.45s"/>

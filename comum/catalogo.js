@@ -32,7 +32,7 @@ const BASE_GAMES = [
   { id: "retalhos",   name: "Azulejo",    emoji: "🟦", desc: "Uma parede de painéis",         url: "azulejo/", icon: "azulejo/icon.png?v=20", iconDark: "azulejo/icon-escuro.png?v=20", iconFull: true, cor: ["#c6e5f1", "#16313b", "#20343c", "#ebf2f4"] },
   { id: "cordel",     name: "Cordel",     emoji: "🧵", desc: "Palavras de um tema, ligadas",  url: "cordel/", icon: "cordel/icon.png?v=21", iconDark: "cordel/icon-escuro.png?v=21", iconFull: true, cor: ["#dcd9d2", "#141210", "#2b2a28", "#f1e7d6"] },
   { id: "panelinha",  name: "Panelinha",  emoji: "🍲", desc: "Quatro grupos de quatro",       url: "panelinha/", icon: "panelinha/icon.png?v=21", iconDark: "panelinha/icon-escuro.png?v=21", iconFull: true, cor: ["#e3c5f1", "#3b1f47", "#362140", "#f3ebf6"] },
-  { id: "cruzadinha", name: "Cruzadinha", emoji: "✏️", desc: "Palavras cruzadas de bolso",    url: "cruzadinha/", icon: "cruzadinha/icon.png?v=21", iconDark: "cruzadinha/icon-escuro.png?v=21", iconFull: true, cor: ["#dfe9b8", "#2f3a12", "#2f3620", "#f1f4e6"] },
+  { id: "cruzadinha", name: "Ponto Cruz", emoji: "🪡", desc: "Palavras cruzadas de bolso",    url: "cruzadinha/", icon: "cruzadinha/icon.png?v=22", iconDark: "cruzadinha/icon-escuro.png?v=22", iconFull: true, cor: ["#dfe9b8", "#2f3a12", "#2f3620", "#f1f4e6"] },
   { id: "pingado",    name: "Cortado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "cortado/", icon: "cortado/icon.png?v=20", iconDark: "cortado/icon-escuro.png?v=20", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
 ];
 
@@ -78,7 +78,7 @@ const LOCAL_PROGRESS = {
   pingado() { return progressoPorTempo("pingado"); },
   // Cordel: desafio #1 = 04/10/2026; prog = [palavras achadas, total]
   cordel() { return progressoPorTempo("cordel", [2026, 9, 4]); },
-  // Cruzadinha: desafio #1 = 10/10/2026; prog = [casas preenchidas, total]
+  // Ponto Cruz (pasta e id "cruzadinha", o nome antigo): desafio #1 = 10/10/2026; prog = [casas preenchidas, total]
   cruzadinha() { return progressoPorTempo("cruzadinha", [2026, 9, 10]); },
   // Panelinha: desafio #1 = 10/10/2026; tries = grupos achados; perde com 4 erros
   panelinha() {

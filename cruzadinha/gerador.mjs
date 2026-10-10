@@ -1,4 +1,4 @@
-// Gerador da Cruzadinha: grades 5×5 com casas pretas simétricas, todas as casas brancas
+// Gerador do Ponto Cruz (pasta "cruzadinha", o nome antigo): grades 5×5 com casas pretas simétricas, todas as casas brancas
 // cruzadas (cada letra está numa palavra na horizontal e noutra na vertical), palavras de
 // 3 a 5 letras tiradas do banco com pista (pistas.mjs). Nenhuma palavra se repete na grade,
 // e uma palavra não volta na grade de outro dia por um bom tempo.
