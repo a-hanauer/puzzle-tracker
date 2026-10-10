@@ -30,8 +30,8 @@ const BASE_GAMES = [
   { id: "eclipse",    name: "Eclipse",    emoji: "🌗", desc: "Um sol e uma lua em cada linha", url: "eclipse/", icon: "eclipse/icon-claro.png?v=20", iconDark: "eclipse/icon-escuro.png?v=20", iconFull: true, cor: ["#c6ccf1", "#161b3b", "#20243c", "#ebecf4"] },
   { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=20", iconDark: "novelo/icon-escuro.png?v=20", iconFull: true, cor: ["#f1c6c9", "#3b1619", "#3c2022", "#f4ebec"] },
   { id: "retalhos",   name: "Azulejo",    emoji: "🟦", desc: "Uma parede de painéis",         url: "azulejo/", icon: "azulejo/icon.png?v=20", iconDark: "azulejo/icon-escuro.png?v=20", iconFull: true, cor: ["#c6e5f1", "#16313b", "#20343c", "#ebf2f4"] },
-  { id: "cordel",     name: "Cordel",     emoji: "🧵", desc: "Palavras de um tema, ligadas",  url: "cordel/", icon: "cordel/icon.png?v=20", iconDark: "cordel/icon-escuro.png?v=20", iconFull: true, cor: ["#e2d4b8", "#141210", "#26231e", "#f1e7d6"] },
-  { id: "panelinha",  name: "Panelinha",  emoji: "🍲", desc: "Quatro grupos de quatro",       url: "panelinha/", icon: "panelinha/icon.png?v=20", iconDark: "panelinha/icon-escuro.png?v=20", iconFull: true, cor: ["#f0cfc4", "#3b1a14", "#3c2420", "#f4ece9"] },
+  { id: "cordel",     name: "Cordel",     emoji: "🧵", desc: "Palavras de um tema, ligadas",  url: "cordel/", icon: "cordel/icon.png?v=21", iconDark: "cordel/icon-escuro.png?v=21", iconFull: true, cor: ["#dcd9d2", "#141210", "#2b2a28", "#f1e7d6"] },
+  { id: "panelinha",  name: "Panelinha",  emoji: "🍲", desc: "Quatro grupos de quatro",       url: "panelinha/", icon: "panelinha/icon.png?v=21", iconDark: "panelinha/icon-escuro.png?v=21", iconFull: true, cor: ["#e3c5f1", "#3b1f47", "#362140", "#f3ebf6"] },
   { id: "pingado",    name: "Cortado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "cortado/", icon: "cortado/icon.png?v=20", iconDark: "cortado/icon-escuro.png?v=20", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
 ];
 
