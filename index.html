@@ -78,7 +78,7 @@
 
   /* ---------- Cabeçalho ---------- */
   /* topo: marca pequena + ações; saudação com resumo do dia e anel pequeno */
-  header.top { padding: 2px 2px 0; }
+  header.top { padding: 2px 0 0; }   /* tudo na mesma margem da página (16 px) */
   .top-row { display: flex; align-items: center; justify-content: space-between; }
   /* títulos em Noto Sans extracondensada e fina (mesmo estilo do teclado dos jogos) */
   /* nome do produto: ícone + "Jogos do Dia" em destaque; a barra do dia vem logo abaixo */
@@ -87,7 +87,7 @@
   .app-mark h1 { margin: 0; font-size: 1.55rem; font-weight: 800; letter-spacing: -.02em; line-height: 1; color: var(--text); white-space: nowrap; }
   /* o dia num só elemento: em andamento = cartão com a barra (um trecho por jogo) + o próximo jogo;
      tudo feito = botão verde "Tudo feito · Resumo do dia" */
-  .dia-btn { display: block; width: calc(100% - 8px); margin: 14px 4px 0; padding: 12px 12px 10px; border: none; border-radius: 18px; cursor: pointer;
+  .dia-btn { display: block; width: 100%; margin: 14px 0 0; padding: 12px 12px 10px; border: none; border-radius: 18px; cursor: pointer;
     font: inherit; text-align: left; background: var(--surface); color: var(--text); box-shadow: var(--shadow); position: relative; overflow: hidden;
     -webkit-tap-highlight-color: transparent; }
   .dia-btn[hidden] { display: none; }
@@ -236,7 +236,7 @@
   /* categorias: jogos da casa (nativos) e outros jogos (sites externos) */
   .cat {
     display: flex; align-items: baseline; justify-content: space-between;
-    margin: 20px 4px 8px; font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+    margin: 20px 0 8px; font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
   }
   /* marcar/desmarcar todos os outros jogos, no lugar do contador */
   .cat-btn { display: none; height: 24px; margin: -4px 0; padding: 0 10px; border: 0; border-radius: 99px; cursor: pointer;
@@ -416,7 +416,7 @@
   }
   @keyframes up { from { transform: translateY(24px); opacity: .6; } to { transform: none; opacity: 1; } }
   .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; font-size: 1.1rem; }
-  .set-label { font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 4px 2px 8px; }
+  .set-label { font-size: .95rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 4px 0 8px; }
   .seg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); margin-bottom: 16px; }
   .seg2 button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 0; border: none; border-radius: 11px; background: none; color: var(--muted); font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; }
   .seg2 button[aria-checked="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
@@ -434,7 +434,7 @@
   .add-btn.bk-sec { background: var(--surface-2); color: var(--text); }
   .set-btn.danger { color: #e5484d; }
   .set-btn.confirm { background: #e5484d; border-color: #e5484d; color: #fff; }
-  .set-note { color: var(--muted); font-size: .78rem; margin: 10px 2px 0; line-height: 1.4; }
+  .set-note { color: var(--muted); font-size: .78rem; margin: 10px 0 0; line-height: 1.4; }
 
   /* adicionar / gerenciar jogos */
   .add-row {
