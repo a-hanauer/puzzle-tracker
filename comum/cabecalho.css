@@ -431,6 +431,9 @@ html.gh-carregando body { visibility: hidden; animation: gh-mostra 0s linear 1s 
 .fim-foot .fim-outro svg { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .fim-foot .fim-nxbtn { flex: 0 1 auto; margin-left: 0 !important; min-width: 0; }
 .fim-foot .fim-nxbtn .t b { overflow: hidden; text-overflow: ellipsis; }
+/* jogo sem "Jogar outro" (Cordel, Panelinha): o próximo jogo ocupa o resto da linha, seta na ponta */
+.fim-foot .fim-home + .fim-nxbtn { flex: 1 1 auto; }
+.fim-foot .fim-home + .fim-nxbtn > svg:last-child { margin-left: auto; }
 /* recorde (comum/recorde.js): selo verde com troféu logo abaixo da linha pequena da bandeja de fim */
 .fim-rec { display: flex; justify-content: center; margin: -6px 0 18px; }
 .rec-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 99px; font-size: .8rem; font-weight: 700; line-height: 1.2;
