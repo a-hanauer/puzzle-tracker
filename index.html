@@ -242,6 +242,7 @@
   .cat-btn { display: none; height: 24px; margin: -4px 0; padding: 0 10px; border: 0; border-radius: 99px; cursor: pointer;
     font: inherit; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--text); background: var(--surface-2); }
   .cat-btn:active { transform: scale(.96); }
+  .cat.cat-vazia { margin: 16px 0 0; }
   .cat-btn[hidden] { display: none; }
   .grid {
     list-style: none; padding: 0; margin: 0;
@@ -698,7 +699,7 @@
 </section>
 
 <div id="viewToday">
-<div class="cat" id="catNative"><span>Jogos da casa</span></div>
+<div class="cat cat-vazia" id="catNative" aria-hidden="true"></div>   <!-- sem título: os cartões dos jogos da casa vêm logo abaixo do dia -->
 <ul class="grid" id="gridNative"></ul>
 <div class="cat" id="catExternal"><span>Outros jogos</span></div>
 <ul class="list" id="gridExternal"></ul>
