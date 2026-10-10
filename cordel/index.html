@@ -207,7 +207,6 @@
     <h2 class="fim-title" id="endTitle">Cordel completo!</h2>
     <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="endSub"></p>
-    <div class="palavras" id="endWords"></div>
     <div class="fim-count" id="nextBox">Próximo Cordel em <b id="countdown" data-contagem>--:--:--</b></div>
     <div data-proximo hidden></div>
   </div>
@@ -494,7 +493,6 @@
   function showEnd() {
     $("endTime").textContent = fmt(elapsed);
     $("endSub").textContent = `#${dayNum} · ${P.t}` + (dicasUsadas ? ` · ${dicasUsadas} ${dicasUsadas === 1 ? "dica" : "dicas"}` : " · sem dicas");
-    $("endWords").innerHTML = P.w.map(x => `<span class="pa${x.k ? " pk" : ""}">${x.k ? x.o.toUpperCase() : x.o}</span>`).join("");
     if (window.semanaFim) semanaFim($("endSub"), semanaTempos("cordel:", dayNum), "tempo");   // últimos 7 dias
     openModal("endOverlay");
   }
