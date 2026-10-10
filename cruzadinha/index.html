@@ -21,24 +21,27 @@
   /* papel de jornal; a palavra da vez em verde-limão (a cor do cartão no painel) */
   :root {
     --bg: #f4f3ec; --surface: #fffefa; --surface-2: #e8e7dc; --ink: #1f2016; --muted: #75766a; --line: #deddd0;
-    --casa: #fffefa; --preta: #23241c; --grade: #23241c; --palavra: #e2ecb8; --atual: #b9d066; --num: #4b4c40;
-    --tecla: #fffefa; --tecla-ink: #1f2016; --barra: #e2ecb8; --barra-ink: #2f3a12;
+    --casa: #fbf7ec; --preta: #23241c; --grade: #23241c; --palavra: #e6eec4; --atual: #c3d77e; --num: #4b4c40; --fio: #2f3a12;
+    --tecla: #fbf7ec; --tecla-ink: #2f3a12; --barra: #e6eec4; --barra-ink: #2f3a12;
+    --furo: rgba(70, 60, 30, .10); --madeira: #c48a55; --madeira-2: #a87040; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%2334352a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
     --accent: #6c8a1c; --on-accent: #fffefa; --errada: #c8321e;
     --shadow: 0 1px 2px rgba(40, 40, 20, .07), 0 6px 18px rgba(40, 40, 20, .07);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #121310; --surface: #1f201b; --surface-2: #2b2c25; --ink: #eef0e2; --muted: #9a9c8c; --line: #2c2d26;
-      --casa: #2a2b24; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3d4524; --atual: #7d9433; --num: #b5b7a6;
-      --tecla: #2b2c25; --tecla-ink: #eef0e2; --barra: #2f3620; --barra-ink: #f1f4e6;
+      --casa: #2c2d25; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3f4726; --atual: #72872f; --num: #b5b7a6; --fio: #f1f4e6;
+      --tecla: #2b2c25; --tecla-ink: #eef0e2; --barra: #3f4726; --barra-ink: #f1f4e6;
+      --furo: rgba(255, 255, 240, .06); --madeira: #8a5e38; --madeira-2: #6e4726; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%238f927a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
       --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
     }
   }
   :root[data-theme="dark"] {
       --bg: #121310; --surface: #1f201b; --surface-2: #2b2c25; --ink: #eef0e2; --muted: #9a9c8c; --line: #2c2d26;
-      --casa: #2a2b24; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3d4524; --atual: #7d9433; --num: #b5b7a6;
-      --tecla: #2b2c25; --tecla-ink: #eef0e2; --barra: #2f3620; --barra-ink: #f1f4e6;
+      --casa: #2c2d25; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3f4726; --atual: #72872f; --num: #b5b7a6; --fio: #f1f4e6;
+      --tecla: #2b2c25; --tecla-ink: #eef0e2; --barra: #3f4726; --barra-ink: #f1f4e6;
+      --furo: rgba(255, 255, 240, .06); --madeira: #8a5e38; --madeira-2: #6e4726; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%238f927a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
       --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
   }
@@ -66,8 +69,17 @@
   .casa.atual { background: var(--atual); }
   .casa .n { position: absolute; left: 4px; top: 3px; font-size: calc(var(--lado, 340px) * .036); font-weight: 700; color: var(--num); line-height: 1; }
   .casa.revelada { color: var(--accent); }
-  .casa:first-child { border-top-left-radius: 8px; } .casa:nth-child(5) { border-top-right-radius: 8px; }
-  .casa:nth-child(21) { border-bottom-left-radius: 8px; } .casa:nth-child(25) { border-bottom-right-radius: 8px; }
+  /* bordado: tecido de talagarça (furinhos), grade num bastidor de madeira, casas pretas cheias de pontos-cruz */
+  body { background-image: radial-gradient(var(--furo) 1px, transparent 1.4px); background-size: 7px 7px; }
+  .grade { background: var(--madeira); padding: 7px; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--madeira-2), 0 6px 16px rgba(60, 40, 20, .18); }
+  .casa { background-color: var(--casa); background-image: radial-gradient(var(--furo) 1.1px, transparent 1.5px); background-size: 9px 9px; background-position: 4px 4px; color: var(--fio); }
+  .casa.pal { background-color: var(--palavra); }
+  .casa.atual { background-color: var(--atual); }
+  .casa.preta { background-color: var(--casa); background-image: var(--ponto-preto); background-size: 33.4% 33.4%; background-position: 0 0; }
+  .pista { background-image: linear-gradient(90deg, var(--barra-ink) 55%, transparent 0), linear-gradient(90deg, var(--barra-ink) 55%, transparent 0);
+    background-size: 12px 1.5px; background-repeat: repeat-x; background-position: 0 6px, 0 calc(100% - 6px); }
+  .pista .ref, .pista button { opacity: .65; }
+  .tecla { box-shadow: 0 1px 0 rgba(60, 40, 20, .18); }
   .casa.pula { animation: pula .3s ease; }
   @keyframes pula { 40% { transform: scale(1.08); } }
   .grade.treme { animation: treme .32s ease; }
@@ -75,7 +87,7 @@
   @media (prefers-reduced-motion: reduce) { .casa.pula, .grade.treme { animation: none !important; } }
 
   /* ---------- pista da vez ---------- */
-  .pista { display: flex; align-items: stretch; gap: 0; margin: 12px 0 0; min-height: 58px; border-radius: 16px; background: var(--barra); color: var(--barra-ink); overflow: hidden; }
+  .pista { display: flex; align-items: stretch; gap: 0; margin: 12px 0 0; min-height: 58px; border-radius: 16px; background-color: var(--barra); color: var(--barra-ink); overflow: hidden; }
   .pista button { flex: 0 0 44px; border: 0; background: none; color: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: .7; }
   .pista button:active { opacity: 1; background: rgba(127,127,127,.15); }
   .pista button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
