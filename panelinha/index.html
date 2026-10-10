@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="gh-carregando" data-fixa>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f5efe6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141210" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Panelinha">
+<title>PANELINHA — quatro grupos de quatro</title>
+<link rel="icon" type="image/png" href="icon.png?v=20">
+<script src="../comum/tema.js?v=126"></script>
+<script src="../comum/cabecalho.js?v=126"></script>
+<link rel="apple-touch-icon" href="icon.png?v=20">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
+<style>
+  /* panela esmaltada: peças cor de louça, grupos nas quatro cores (amarelo · verde · azul · roxo) */
+  :root {
+    --bg: #f5efe6; --surface: #fffaf2; --surface-2: #ebe2d4; --ink: #2b2622; --muted: #7d7166; --line: #e5dccd;
+    --peca: #ece3d3; --peca-ink: #2b2622; --sel: #3a332d; --sel-ink: #fffaf2;
+    --g0: #f3d36b; --g1: #a9d48f; --g2: #9cc4ee; --g3: #c9adf0; --g-ink: #2b2622;
+    --accent: #c8463a; --on-accent: #fffaf2; --bad: #d64545;
+    --shadow: 0 1px 2px rgba(60, 40, 20, .06), 0 6px 18px rgba(60, 40, 20, .07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141210; --surface: #221e1a; --surface-2: #2e2924; --ink: #f2e9dd; --muted: #a39686; --line: #302a24;
+      --peca: #2c2722; --peca-ink: #f2e9dd; --sel: #e9dfd1; --sel-ink: #1d1916;
+      --g0: #c9a63a; --g1: #6fa257; --g2: #5a8cc4; --g3: #9378c9; --g-ink: #fffaf2;
+      --accent: #e0644f; --on-accent: #1d1916; --bad: #ff6b6b;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
+    }
+  }
+  :root[data-theme="dark"] {
+      --bg: #141210; --surface: #221e1a; --surface-2: #2e2924; --ink: #f2e9dd; --muted: #a39686; --line: #302a24;
+      --peca: #2c2722; --peca-ink: #f2e9dd; --sel: #e9dfd1; --sel-ink: #1d1916;
+      --g0: #c9a63a; --g1: #6fa257; --g2: #5a8cc4; --g3: #9378c9; --g-ink: #fffaf2;
+      --accent: #e0644f; --on-accent: #1d1916; --bad: #ff6b6b;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body, a, button { touch-action: manipulation; }
+  html { height: 100%; background: var(--bg); -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0 auto; max-width: 520px; background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
+    min-height: calc(100% + var(--sobra, 0px)); display: flex; flex-direction: column;
+    -webkit-font-smoothing: antialiased; -webkit-user-select: none; user-select: none;
+  }
+  .aviso { text-align: center; height: 26px; line-height: 26px; font-size: .9rem; font-weight: 700; color: var(--muted); margin: 2px 0 4px; }
+  .aviso b { color: var(--ink); }
+
+  /* ---------- tabuleiro: grupos achados em cima, peças embaixo ---------- */
+  .stage { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; align-items: stretch; justify-content: center; }
+  .tab { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .grupo { grid-column: 1 / -1; height: var(--alt, 72px); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 4px 10px; text-align: center; color: var(--g-ink); animation: entra .35s cubic-bezier(.3, 1.3, .5, 1); }
+  .grupo b { font-size: .95rem; font-weight: 800; letter-spacing: .02em; line-height: 1.15; }
+  .grupo span { font-size: .78rem; font-weight: 600; opacity: .85; line-height: 1.3; margin-top: 2px; }
+  .grupo.c0 { background: var(--g0); } .grupo.c1 { background: var(--g1); } .grupo.c2 { background: var(--g2); } .grupo.c3 { background: var(--g3); }
+  .grupo.revelado { opacity: .9; }
+  @keyframes entra { from { transform: scale(.94); opacity: .3; } to { transform: none; opacity: 1; } }
+  .peca { height: var(--alt, 72px); border: 0; border-radius: 14px; background: var(--peca); color: var(--peca-ink); cursor: pointer;
+    font: inherit; font-weight: 800; text-transform: uppercase; letter-spacing: .01em; line-height: 1.1; padding: 2px 4px;
+    display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; white-space: nowrap;
+    transition: background .15s ease, color .15s ease, transform .12s ease; }
+  .peca:active { transform: scale(.95); }
+  .peca.sel { background: var(--sel); color: var(--sel-ink); }
+  .peca.duas { white-space: normal; }   /* duas palavras: quebra no espaço, nunca no meio */
+  .peca.pula { animation: pula .35s ease; }
+  @keyframes pula { 40% { transform: translateY(-8px); } }
+  .tab.treme { animation: treme .32s ease; }
+  @keyframes treme { 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
+  @media (prefers-reduced-motion: reduce) { .grupo, .peca.pula, .tab.treme { animation: none !important; } }
+  .erros { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 0; font-size: .82rem; color: var(--muted); font-weight: 600; }
+  .erros i { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); transition: opacity .3s, transform .3s; }
+  .erros i.foi { opacity: .15; transform: scale(.7); }
+
+  /* ---------- controles (viram a faixa de fim) ---------- */
+  .controls { display: flex; gap: 10px; padding-top: 12px; }
+  .prog { position: relative; overflow: hidden; flex: 1; height: 56px; border-radius: 16px; display: flex; gap: 8px; transition: background .5s ease; }
+  .prog > .bt { flex: 1; height: 100%; border: 0; border-radius: 16px; background: var(--surface); color: var(--ink); box-shadow: var(--shadow);
+    font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; transition: opacity .25s ease; }
+  .prog > .bt:disabled { opacity: .45; }
+  .prog > .bt.vai { background: var(--ink); color: var(--bg); }
+  .controls.done .prog { background: #2b2622; box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(40, 30, 20, .3); }
+  .controls.done .prog > .bt { opacity: 0; pointer-events: none; }
+  .done-bar { position: absolute; inset: 0; display: flex; align-items: center; gap: 12px; padding: 0 18px; margin: 0; border: 0; background: none;
+    color: #fffaf2; font: inherit; text-align: left; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s ease .15s; }
+  .controls.done .done-bar { opacity: 1; pointer-events: auto; }
+  .done-bar .ic { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }
+  .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .done-bar .txt b { font-size: 1.32rem; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .done-bar .txt span { font-size: .78rem; font-weight: 600; color: rgba(255,250,242,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,250,242,.7); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .controls.play .done-bar .ic { animation: dobra .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
+  @keyframes dobra { from { transform: scale(.3) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .tip { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 10px; line-height: 1.45; min-height: 2.3em; }
+  .tip b { color: var(--ink); }
+
+  /* ---------- janelas ---------- */
+  .overlay { position: fixed; inset: 0; z-index: 10; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(20, 15, 10, .45); backdrop-filter: blur(3px); }
+  .overlay.open { display: flex; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal { width: 100%; max-width: 400px; max-height: 88vh; overflow: auto; background: var(--surface); border-radius: 22px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .modal h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+  .modal .close { border: none; background: var(--surface-2); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; }
+  .modal p, .modal li { font-size: .92rem; line-height: 1.5; color: var(--ink); }
+  .modal ul { padding-left: 20px; margin: 8px 0; }
+  .modal li { margin: 4px 0; }
+  .cores { display: flex; gap: 6px; margin: 10px 0; }
+  .cores span { flex: 1; padding: 6px 4px; border-radius: 10px; text-align: center; font-size: .74rem; font-weight: 800; color: var(--g-ink); }
+  .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--ink); color: var(--bg); font: inherit; font-weight: 700; font-size: .95rem; }
+  .resp { display: flex; flex-direction: column; gap: 6px; margin: 2px 0 16px; }
+  .resp div { border-radius: 12px; padding: 7px 10px; text-align: center; color: var(--g-ink); }
+  .resp b { display: block; font-size: .84rem; font-weight: 800; }
+  .resp span { font-size: .76rem; font-weight: 600; opacity: .85; }
+</style>
+<link rel="stylesheet" href="../comum/cabecalho.css?v=126">
+<style>
+  :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+</style>
+</head>
+<body>
+
+<header class="gh">
+  <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+  <a class="gh-brand" href="./" aria-label="Panelinha — recarregar"><img src="icon.png?v=20" data-escuro="icon-escuro.png?v=20" alt=""><b>PANELINHA</b></a>
+  <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
+  <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
+</header>
+
+<div class="gh-meta"><span class="gh-info" id="dayInfo"></span></div>
+<div class="aviso" id="aviso" aria-live="polite"></div>
+
+<div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro></div></div>
+<div class="erros" id="erros" aria-live="polite"><span>Erros restantes</span><i></i><i></i><i></i><i></i></div>
+
+<div class="controls" id="controls">
+  <div class="prog">
+    <button class="bt" id="mistura" type="button">Misturar</button>
+    <button class="bt" id="limpa" type="button">Desmarcar</button>
+    <button class="bt vai" id="envia" type="button">Enviar</button>
+    <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
+      <img class="ic" src="icon.png?v=20" data-escuro="icon-escuro.png?v=20" alt="">
+      <span class="txt"><b id="doneTitle">Panelinha completa</b><span id="doneSub"></span></span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+<div class="tip" id="tip"></div>
+
+<!-- Como jogar -->
+<div class="overlay" id="helpOverlay">
+  <div class="modal">
+    <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
+    <p>São 16 palavras. Ache os <b>4 grupos de 4</b> que têm algo em comum.</p>
+    <ul>
+      <li>Toque em 4 palavras e em <b>Enviar</b>.</li>
+      <li>Cuidado com as armadilhas: algumas palavras parecem caber em mais de um grupo, mas só existe um jeito de dividir tudo.</li>
+      <li>Você pode errar <b>4 vezes</b>. Quando 3 das 4 estão certas, o jogo avisa: <b>falta uma!</b></li>
+      <li>Os grupos vão do mais óbvio ao mais traiçoeiro:</li>
+    </ul>
+    <div class="cores"><span style="background:var(--g0)">fácil</span><span style="background:var(--g1)">médio</span><span style="background:var(--g2)">difícil</span><span style="background:var(--g3)">traiçoeiro</span></div>
+    <p>Um desafio novo por dia. Na segunda as armadilhas são poucas; no domingo, mais espertas.</p>
+    <button class="btn-main" data-close>Jogar</button>
+  </div>
+</div>
+
+<!-- Fim de jogo -->
+<div class="overlay" id="endOverlay">
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><img src="icon.png?v=20" data-escuro="icon-escuro.png?v=20" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,40,20,.15)"></div>
+    <h2 class="fim-title" id="endTitle">Panelinha completa!</h2>
+    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
+    <p class="fim-sub" id="endSub"></p>
+    <div class="resp" id="endResp"></div>
+    <div class="fim-count" id="nextBox">Próxima Panelinha em <b id="countdown" data-contagem>--:--:--</b></div>
+    <div data-proximo hidden></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+  const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const LS = "panelinha:";
+  const load = (k, d) => { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
+  const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
+  const MAX_ERROS = 4, EMOJI = ["🟨", "🟩", "🟦", "🟪"];
+
+  let P = null, dayNum = 0, ordem = [], achados = [], tentativas = [], erros = 0, sel = new Set();
+  let finished = false, won = false, timer = null, startedAt = 0, elapsed = 0;
+
+  function recomputeStats(st) {
+    const days = Object.keys(st.times).map(Number).sort((a, b) => a - b);
+    let best = 0, run = 0, prev = -9;
+    for (const d of days) { run = d === prev + 1 ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+    st.played = days.length; st.best = best; st.streak = run; st.lastDay = days.at(-1) || 0;
+    return st;
+  }
+  // embaralha com semente (a ordem inicial é a mesma para todo mundo no dia)
+  function embaralha(a, s) {
+    let x = s >>> 0; const r = () => ((x = (x * 1664525 + 1013904223) >>> 0) / 4294967296);
+    a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a;
+  }
+  const grupoDe = w => P.g.findIndex(g => g.w.includes(w));
+  const pid = () => P.g.map(g => g.n).join("|");
+
+  function setup(puzzle, saved) {
+    P = puzzle;
+    const todas = P.g.flatMap(g => g.w);
+    ordem = saved?.ordem && saved.ordem.length === 16 ? saved.ordem : embaralha(todas, dayNum * 7919 + 13);
+    achados = saved?.achados || [];
+    tentativas = saved?.tentativas || [];
+    erros = saved?.erros || 0;
+    elapsed = saved?.elapsed || 0;
+    finished = !!saved?.done; won = !!saved?.won;
+    const now = new Date();
+    $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`;
+    render(); showTime();
+  }
+  function persist() {
+    if (!P) return;
+    save("dia:" + dayNum, { pid: pid(), ordem, achados, tentativas, erros, elapsed: currentElapsed(), done: finished, won,
+      time: won ? elapsed : null, started: tentativas.length > 0, prog: [achados.length, 4] });
+  }
+
+  fetch("desafios.json").then(r => r.json()).then(data => {
+    dayNum = dayNumber(data.epoch);
+    const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
+    let saved = load("dia:" + dayNum, null);
+    if (saved && saved.pid !== puzzle.g.map(g => g.n).join("|")) saved = null;
+    setup(puzzle, saved);
+    persist();
+    if (finished) { /* faixa de fim */ }
+    else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
+    else startTimer();
+  }).catch(() => { $("stage").innerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
+
+  // ---------- desenho ----------
+  function altura() {
+    const st = $("stage");
+    const linhas = 4;
+    const h = Math.floor((st.clientHeight - 8 * (linhas - 1)) / linhas);
+    $("tab").style.setProperty("--alt", Math.max(54, Math.min(84, h)) + "px");
+  }
+  window.addEventListener("resize", () => { if (P) altura(); });
+  const tamFonte = w => { const n = w.replace(/\s/g, "").length; return n <= 5 ? "1.02rem" : n <= 7 ? ".92rem" : n <= 9 ? ".8rem" : n <= 11 ? ".7rem" : ".62rem"; };
+  function render(pulam) {
+    if (!P) return;
+    const t = $("tab");
+    const visiveis = finished ? [...achados, ...[0, 1, 2, 3].filter(g => !achados.includes(g))] : achados;
+    let h = "";
+    for (const gi of visiveis) {
+      const g = P.g[gi];
+      h += `<div class="grupo c${g.c}${!achados.includes(gi) ? " revelado" : ""}"><b>${g.n.toUpperCase()}</b><span>${g.w.join(", ")}</span></div>`;
+    }
+    if (!finished) for (const w of ordem) {
+      if (achados.includes(grupoDe(w))) continue;
+      h += `<button class="peca${sel.has(w) ? " sel" : ""}${pulam && pulam.has(w) ? " pula" : ""}${/\s/.test(w) ? " duas" : ""}" type="button" data-w="${w}" style="font-size:${tamFonte(w)}" aria-pressed="${sel.has(w)}">${w}</button>`;
+    }
+    t.innerHTML = h;
+    altura();
+    // palavra comprida: diminui a letra até caber inteira na peça
+    t.querySelectorAll(".peca").forEach(el => {
+      let px = parseFloat(getComputedStyle(el).fontSize);
+      while ((el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight) && px > 9) { px -= .5; el.style.fontSize = px + "px"; }
+    });
+    document.querySelectorAll("#erros i").forEach((el, k) => el.classList.toggle("foi", k >= MAX_ERROS - erros));
+    $("erros").style.visibility = finished ? "hidden" : "";
+    $("envia").disabled = sel.size !== 4 || finished;
+    $("limpa").disabled = !sel.size || finished;
+    $("controls").classList.toggle("done", finished);
+    if (!finished) $("controls").classList.remove("play");
+    $("doneBar").tabIndex = finished ? 0 : -1;
+    if (finished) {
+      $("doneTitle").textContent = won ? fmt(elapsed) : `${achados.length} de 4`;
+      $("doneSub").textContent = won ? `Panelinha completa · ${erros ? `${erros} ${erros === 1 ? "erro" : "erros"}` : "sem erros"}` : "Não foi dessa vez";
+    }
+    $("tip").innerHTML = finished ? `Próxima Panelinha em <b data-contagem>${$("countdown").textContent}</b>` : achados.length ? `<b>${achados.length}</b> de 4 grupos` : "Toque em 4 palavras que combinam e envie.";
+  }
+
+  let avT = 0;
+  function aviso(html, ms = 1600) { const el = $("aviso"); clearTimeout(avT); el.innerHTML = html; avT = setTimeout(() => (el.innerHTML = ""), ms); }
+
+  // ---------- jogar ----------
+  $("tab").addEventListener("click", e => {
+    const b = e.target.closest(".peca");
+    if (!b || finished) return;
+    const w = b.dataset.w;
+    setTimeout(() => {                                   // depois do toque: o label da vibração (iPhone) não some no meio
+      if (sel.has(w)) sel.delete(w); else if (sel.size < 4) sel.add(w); else return;
+      startTimer(); render();
+    }, 0);
+  });
+  $("limpa").addEventListener("click", () => setTimeout(() => { sel.clear(); render(); }, 0));
+  $("mistura").addEventListener("click", () => setTimeout(() => { ordem = embaralha(ordem, Date.now()); render(); persist(); }, 0));
+  $("envia").addEventListener("click", () => setTimeout(enviar, 0));
+
+  function enviar() {
+    if (sel.size !== 4 || finished) return;
+    const palpite = [...sel].sort();
+    if (tentativas.some(t => t.slice().sort().join() === palpite.join())) { aviso("Você já tentou esse grupo"); return; }
+    tentativas.push(palpite);
+    const gs = palpite.map(grupoDe), conta = {};
+    gs.forEach(g => (conta[g] = (conta[g] || 0) + 1));
+    const maior = Math.max(...Object.values(conta));
+    if (maior === 4) {
+      const gi = gs[0];
+      achados.push(gi); sel.clear();
+      if (window.jogosHaptico) jogosHaptico(true);
+      aviso(`<b>${P.g[gi].n}</b>`, 2000);
+      render(); checkFim(); persist();
+      return;
+    }
+    erros++;
+    if (window.jogosHaptico) jogosHaptico();
+    const t = $("tab"); t.classList.remove("treme"); void t.offsetWidth; t.classList.add("treme");
+    aviso(maior === 3 ? "<b>Falta uma!</b>" : erros >= MAX_ERROS ? "Acabaram as chances" : "Não é um grupo");
+    if (erros >= MAX_ERROS) { sel.clear(); render(); checkFim(); persist(); return; }
+    render(new Set(sel)); persist();
+  }
+
+  // ---------- cronômetro ----------
+  const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`; };
+  const currentElapsed = () => elapsed + (timer ? (Date.now() - startedAt) / 1000 : 0);
+  function showTime() { $("timer").textContent = fmt(currentElapsed()); }
+  function startTimer() { if (timer || finished || document.hidden || !P) return; startedAt = Date.now(); timer = setInterval(showTime, 500); showTime(); }
+  function stopTimer() { if (!timer) return; elapsed = currentElapsed(); clearInterval(timer); timer = null; showTime(); }
+  document.addEventListener("visibilitychange", () => {
+    if (!P) return;
+    if (document.hidden) { stopTimer(); persist(); }
+    else if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  });
+  setInterval(() => { if (timer) persist(); }, 5000);
+
+  // ---------- fim ----------
+  function checkFim() {
+    const ganhou = achados.length === 4, perdeu = erros >= MAX_ERROS;
+    if (finished || (!ganhou && !perdeu)) return;
+    stopTimer();
+    finished = true; won = ganhou;
+    $("controls").classList.add("play");
+    elapsed = Math.round(elapsed); showTime();
+    if (won) {
+      const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
+      if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
+    }
+    persist(); render();
+    if (won) celebrar("panelinha", { alvo: $("stage"), esmaecer: $("tab") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
+    else setTimeout(showEnd, 900);
+  }
+  function showEnd() {
+    $("endTitle").textContent = won ? "Panelinha completa!" : "Não foi dessa vez";
+    $("endTime").textContent = won ? fmt(elapsed) : `${achados.length} de 4`;
+    $("endSub").textContent = `#${dayNum} · nível ${P.l}/7 · ` + (won ? (erros ? `${erros} ${erros === 1 ? "erro" : "erros"}` : "sem erros") : "grupos que faltaram abaixo");
+    $("endResp").innerHTML = P.g.map(g => `<div style="background:var(--g${g.c})"><b>${g.n}</b><span>${g.w.join(", ")}</span></div>`).join("");
+    if (window.semanaFim) semanaFim($("endSub"), semanaTempos("panelinha:", dayNum), "tempo");   // últimos 7 dias (tempos das vitórias)
+    openModal("endOverlay");
+  }
+  $("shareBtn").addEventListener("click", () => {
+    const linhas = tentativas.map(t => t.map(w => EMOJI[P.g[grupoDe(w)].c]).join(""));
+    const text = `PANELINHA #${dayNum} · nível ${P.l}/7\n${linhas.join("\n")}\n${won ? `⏱ ${fmt(elapsed)}` : "não foi dessa vez"}\nhttps://a-hanauer.github.io/puzzle-tracker/panelinha/`;
+    ghCompartilhar($("shareBtn"), text);
+  });
+  $("doneBar").addEventListener("click", () => { if (finished) showEnd(); });
+
+  // ---------- janelas ----------
+  function openModal(id) { $(id).classList.add("open"); stopTimer(); }
+  function closeModal(el) { el.classList.remove("open"); if (!finished && !document.querySelector(".overlay.open")) startTimer(); }
+  document.querySelectorAll(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); }));
+  $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+})();
+</script>
+<script src="../comum/catalogo.js?v=126"></script>
+<script src="../comum/celebra.js?v=126"></script>
+<script src="../comum/recorde.js?v=126"></script>
+<script src="../comum/proximo.js?v=126" data-jogo="panelinha" data-sem-livre data-feminino></script>
+</body>
+</html>

@@ -17,6 +17,8 @@ import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { TEMAS } from "./temas.mjs";
+import { BANCO } from "../comum/banco.mjs";   // categorias com pista e palavra-chave também viram temas
+const DO_BANCO = BANCO.filter(c => c[4]).map(([, , , ws, [pista, chave]]) => [pista, chave, ws]);
 import { mantidos } from "../comum/selecao.mjs";
 
 export const H = 8, W = 6, C = H * W;
@@ -150,7 +152,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const dir = dirname(fileURLToPath(import.meta.url));
   const old = mantidos(dir, EPOCH);
   const usados = new Set(old.map(p => p.c));
-  const fila = shuffle(TEMAS.filter(t => !usados.has(norm(t[1]))));
+  const fila = shuffle([...TEMAS, ...DO_BANCO].filter(t => !usados.has(norm(t[1]))));
   const out = [...old];
   const t0 = Date.now();
   for (const tema of fila) {

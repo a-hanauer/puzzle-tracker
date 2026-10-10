@@ -76,6 +76,10 @@
   @keyframes cel-dir { to { transform: translateX(9px) rotate(3deg); } }
   @keyframes cel-faca { 0% { transform: translateY(-40px); opacity: 0; } 30% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(95px); opacity: 0; } }
 
+  /* Panelinha: a panela aparece, a tampa pula e o vapor sobe */
+  .celebra .panela-tampa { transform-box: fill-box; transform-origin: 50% 100%; animation: cel-tampa .7s cubic-bezier(.3, 1.4, .5, 1) .55s both; }
+  @keyframes cel-tampa { 0% { transform: translateY(-60px) rotate(-12deg); opacity: 0; } 40% { opacity: 1; } 65% { transform: translateY(-12px) rotate(4deg); } 100% { transform: none; opacity: 1; } }
+
   /* Cordel: o barbante se estende e o folheto cai pendurado, balançando */
   .celebra .cordel-folheto { transform-box: fill-box; transform-origin: 50% 0; animation: cel-pendura .9s cubic-bezier(.3, 1.3, .5, 1) .35s both; }
   .celebra .cordel-sol { transform-box: fill-box; transform-origin: center; animation: cel-entra .37s cubic-bezier(.3, 1.4, .45, 1) 1.1s both; }
@@ -101,6 +105,21 @@
           </g>
         </g>
       </g>`,
+
+    panelinha: () => `
+      <g class="entra">
+        <rect x="-82" y="-4" width="22" height="12" rx="6" fill="#7a5446"/><rect x="60" y="-4" width="22" height="12" rx="6" fill="#7a5446"/>
+        <path d="M-64 -16H64V36A26 26 0 0 1 38 62H-38A26 26 0 0 1 -64 36Z" fill="#c8463a"/>
+        <rect x="-68" y="-22" width="136" height="12" rx="6" fill="#f6ede3"/>
+        <circle cx="-34" cy="14" r="6" fill="#f6ede3"/><circle cx="-6" cy="32" r="6" fill="#f6ede3"/><circle cx="24" cy="10" r="6" fill="#f6ede3"/><circle cx="42" cy="38" r="6" fill="#f6ede3"/><circle cx="-44" cy="44" r="5" fill="#f6ede3"/>
+      </g>
+      <g class="panela-tampa">
+        <path d="M-60 -24C-56 -50 56 -50 60 -24Z" fill="#b23b30"/>
+        <rect x="-12" y="-58" width="24" height="12" rx="6" fill="#7a5446"/>
+      </g>
+      <path class="traco" d="M-26 -66C-36 -78 -16 -86 -26 -98" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.15s;--t:.4s"/>
+      <path class="traco" d="M0 -70C-10 -82 10 -90 0 -102" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.25s;--t:.4s"/>
+      <path class="traco" d="M26 -66C16 -78 36 -86 26 -98" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.35s;--t:.4s"/>`,
 
     cordel: () => `
       <path class="traco" d="M-96 -66Q0 -46 96 -66" fill="none" stroke="#6e5a44" stroke-width="3.5" stroke-linecap="round" style="--l:200;--t:.45s"/>

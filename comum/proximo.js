@@ -21,7 +21,8 @@
 (function () {
   "use strict";
   const ATUAL = document.currentScript.dataset.jogo;
-  const SEM_LIVRE = document.currentScript.hasAttribute("data-sem-livre");   // jogo sem jogo livre (Cordel): sem "Jogar um extra"
+  const SEM_LIVRE = document.currentScript.hasAttribute("data-sem-livre");
+  const PROXIMO = document.currentScript.hasAttribute("data-feminino") ? "Próxima" : "Próximo";   // "Próxima Panelinha"   // jogo sem jogo livre (Cordel): sem "Jogar um extra"
   const KEY = "jogosDoDia.v1";
   const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -218,7 +219,7 @@
     const dia = document.querySelector(".gh-dia");
     if (dia) dia.hidden = !livre;
 
-    const contagem = `<span class="cd">Próximo ${esc(NOME)} em <b data-contagem>--:--:--</b></span>`;
+    const contagem = `<span class="cd">${PROXIMO} ${esc(NOME)} em <b data-contagem>--:--:--</b></span>`;
     // faixa de fim: próximo jogo à direita (se houver) e a linha de baixo
     document.querySelectorAll(".fim-nx").forEach(el => {
       el.innerHTML = "";
