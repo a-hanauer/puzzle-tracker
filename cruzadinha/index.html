@@ -190,7 +190,7 @@
       <li>Quando a grade enche, o jogo confere. Se algo não bate, ele avisa — mas não diz onde.</li>
       <li>A <b>dica</b> (a lâmpada) corrige as letras erradas da palavra marcada ou, se não houver, mostra uma letra dela. Uma por dia.</li>
     </ul>
-    <p>Uma grade nova por dia. Corre contra o relógio, mas sem pressa.</p>
+    <p>Uma grade nova por dia. Na segunda as pistas são diretas; ao longo da semana ficam mais espertas, e no fim de semana a grade tem menos casas pretas.</p>
     <button class="btn-main" data-close>Jogar</button>
   </div>
 </div>
@@ -248,7 +248,7 @@
     finished = !!saved?.done;
     cur = palavras[0].c[0]; dir = "h";
     const now = new Date();
-    $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · #${dayNum}`;
+    $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l || (now.getDay() + 6) % 7 + 1}/7`;
     montaGrade(); render(); showTime();
     if (dica) dica.atualiza();
   }
@@ -458,7 +458,7 @@
   }
   function showEnd() {
     $("endTime").textContent = fmt(elapsed);
-    $("endSub").textContent = `#${dayNum} · ${dicaUsada ? "com dica" : "sem dica"}`;
+    $("endSub").textContent = `#${dayNum} · nível ${P.l || (new Date().getDay() + 6) % 7 + 1}/7 · ${dicaUsada ? "com dica" : "sem dica"}`;
     if (window.semanaFim) semanaFim($("endSub"), semanaTempos("cruzadinha:", dayNum), "tempo");   // últimos 7 dias
     openModal("endOverlay");
   }

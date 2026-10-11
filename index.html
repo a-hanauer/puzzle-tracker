@@ -958,9 +958,9 @@ const ST_ICON = {
   dica: '<svg class="si" viewBox="0 0 24 24" fill="currentColor" aria-label="com dica"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zM9 20h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/></svg>',
 };
 // jogos de lógica: nível = dia da semana (segunda = 1); número do desafio conta a partir da estreia de cada um
-const LOGICA = { eclipse: { pre: "eclipse:", ep: [2026, 8, 27] }, novelo: { pre: "novelo:", ep: [2026, 8, 28] }, retalhos: { pre: "retalhos:", ep: [2026, 8, 28] }, pingado: { pre: "pingado:", ep: [2026, 8, 28] }, panelinha: { pre: "panelinha:", ep: [2026, 9, 10] } };
+const LOGICA = { eclipse: { pre: "eclipse:", ep: [2026, 8, 27] }, novelo: { pre: "novelo:", ep: [2026, 8, 28] }, retalhos: { pre: "retalhos:", ep: [2026, 8, 28] }, pingado: { pre: "pingado:", ep: [2026, 8, 28] }, panelinha: { pre: "panelinha:", ep: [2026, 9, 10] }, cruzadinha: { pre: "cruzadinha:", ep: [2026, 9, 10] } };
 function recordeHoje(g, p) {
-  if (g.id === "cordel" || g.id === "cruzadinha") return false;   // sem nível para comparar tempos
+  if (g.id === "cordel") return false;                 // Cordel: sem nível para comparar tempos
   const lg = LOGICA[g.id];
   if (lg && window.recordeDoDia) {
     const t0 = new Date(); t0.setHours(0, 0, 0, 0);
@@ -973,7 +973,6 @@ function statusText(g, p, isDone) {
   if (!p) {                                             // ainda não jogado: o nível do dia
     if (isDone) return `<span class="pl">Feito</span>`;
     if (g.id === "cordel") return `<span class="pl leve">tema novo</span>`;
-    if (g.id === "cruzadinha") return `<span class="pl leve">grade nova</span>`;
     if (!LOGICA[g.id]) return `<span class="pl leve">normal</span>`;
     const n = (new Date().getDay() + 6) % 7 + 1;
     return `<span class="pl leve">nível ${n}<span class="nv" aria-hidden="true">${[...Array(7)].map((_, i) => `<i${i < n ? ' class="on"' : ""}></i>`).join("")}</span></span>`;
