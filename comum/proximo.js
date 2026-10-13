@@ -9,8 +9,12 @@
      · na bandeja de resultado, o mesmo atalho junto do resultado e, no pé,
        a contagem (esquerda) e o próximo jogo (direita).
    Sem jogo pendente, o botão do próximo jogo não aparece.
+   Só o desafio do dia fica à vista. O jogo livre (partidas extras) é um modo de
+   teste escondido: segurar o dedo ~1 s na linha da data (.gh-meta) liga ou desliga.
    A chave "Jogo livre" de cada jogo continua na página, escondida: é ela que
-   este arquivo aciona. No jogo livre, o botão "‹ Desafio do dia" volta.
+   este arquivo aciona. Nos jogos sem jogo livre (Cordel, Panelinha, Ponto Cruz),
+   o toque longo manda o evento "gh-teste" e o próprio jogo abre um desafio sorteado.
+   No jogo livre, o botão "‹ Desafio do dia" volta.
    O próximo é o primeiro jogo ainda não feito hoje, na ordem do painel
    (jogos da casa, depois os outros). Um jogo externo aberto por aqui, como no
    painel, só fica feito quando o painel registra o tempo jogado, na volta.
@@ -231,7 +235,7 @@
       el.hidden = !acabou;
       el.innerHTML = "";
       if (!acabou) return;
-      if (!SEM_LIVRE) el.append(atalhoExtra());
+      if (!SEM_LIVRE && livre) el.append(atalhoExtra());          // só no modo de teste
       if (!livre) el.insertAdjacentHTML("beforeend", `<span class="cd">Próximo em <b data-contagem>--:--:--</b></span>`);
     });
     if (reajusta) window.dispatchEvent(new Event("resize"));   // o tabuleiro se reajusta já, antes de a tela ser desenhada
@@ -247,7 +251,7 @@
     document.querySelectorAll(".modal.fim .fim-foot").forEach(el => {
       el.innerHTML = "";
       el.insertAdjacentHTML("beforeend", `<a class="fim-btn fim-home" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia">${CASA}<span class="rot">Voltar aos Jogos do Dia</span></a>`);
-      if (!SEM_LIVRE) {
+      if (!SEM_LIVRE && livre) {
         const outro = document.createElement("button");
         outro.type = "button"; outro.className = "fim-btn fim-outro";
         outro.innerHTML = `${REFRESH}<span>Jogar outro</span>`;
@@ -271,6 +275,27 @@
   document.addEventListener("gh-contagem", contagem);        // peças recém-criadas
   document.addEventListener("gh-fim", () => atualizar(true));  // faixa de fim dos jogos de palavras (comum/cabecalho.js)
   document.addEventListener("DOMContentLoaded", contagem);
+
+  // modo de teste escondido: toque longo na linha da data
+  (function () {
+    let t = 0, x0 = 0, y0 = 0;
+    const cancela = () => { clearTimeout(t); t = 0; };
+    document.addEventListener("pointerdown", e => {
+      const meta = e.target.closest && e.target.closest(".gh-meta");
+      if (!meta || e.target.closest("button, a, input, label")) return;
+      x0 = e.clientX; y0 = e.clientY; cancela();
+      t = setTimeout(() => {
+        t = 0;
+        if (window.jogosHaptico) jogosHaptico(true);
+        fechaJanelas();
+        if (SEM_LIVRE) document.dispatchEvent(new Event("gh-teste"));
+        else chave.set(!chave.on());
+      }, 900);
+    });
+    document.addEventListener("pointermove", e => { if (t && Math.hypot(e.clientX - x0, e.clientY - y0) > 10) cancela(); });
+    ["pointerup", "pointercancel", "scroll"].forEach(ev => document.addEventListener(ev, cancela, true));
+    document.addEventListener("contextmenu", e => { if (e.target.closest && e.target.closest(".gh-meta")) e.preventDefault(); });
+  })();
 
   // os jogos gravam o progresso no navegador; basta conferir de tempos em tempos
   const tick = () => atualizar(false);

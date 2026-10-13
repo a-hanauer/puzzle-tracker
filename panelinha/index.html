@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="Panelinha">
 <title>PANELINHA — quatro grupos de quatro</title>
 <link rel="icon" type="image/png" href="icon.png?v=21">
-<script src="../comum/tema.js?v=130"></script>
-<script src="../comum/cabecalho.js?v=130"></script>
+<script src="../comum/tema.js?v=131"></script>
+<script src="../comum/cabecalho.js?v=131"></script>
 <link rel="apple-touch-icon" href="icon.png?v=21">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -128,7 +128,7 @@
   .resp b { display: block; font-size: .84rem; font-weight: 800; }
   .resp span { font-size: .76rem; font-weight: 600; opacity: .85; }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=130">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=131">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -170,7 +170,7 @@
     <ul>
       <li>Toque em 4 palavras e em <b>Enviar</b>.</li>
       <li>Cuidado com as armadilhas: algumas palavras parecem caber em mais de um grupo, mas só existe um jeito de dividir tudo.</li>
-      <li>Você pode errar <b>4 vezes</b>. Quando 3 das 4 estão certas, o jogo avisa: <b>falta uma!</b></li>
+      <li>Você pode errar <b>4 vezes</b>. Quando 3 das 4 estão certas, o jogo avisa que <b>só uma está fora</b>.</li>
       <li>Os grupos vão do mais óbvio ao mais traiçoeiro:</li>
     </ul>
     <div class="cores"><span style="background:var(--g0)">fácil</span><span style="background:var(--g1)">médio</span><span style="background:var(--g2)">difícil</span><span style="background:var(--g3)">traiçoeiro</span></div>
@@ -196,6 +196,7 @@
 (function () {
   "use strict";
   const $ = id => document.getElementById(id);
+  let DADOS = null, teste = false;     // teste: desafio sorteado pelo toque longo na data (comum/proximo.js), não grava nada
   const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
   const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
   const LS = "panelinha:";
@@ -237,12 +238,13 @@
     render(); showTime();
   }
   function persist() {
-    if (!P) return;
+    if (!P || teste) return;
     save("dia:" + dayNum, { pid: pid(), ordem, achados, tentativas, erros, elapsed: currentElapsed(), done: finished, won,
       time: won ? elapsed : null, started: tentativas.length > 0, prog: [achados.length, 4] });
   }
 
   fetch("desafios.json").then(r => r.json()).then(data => {
+    DADOS = data;
     dayNum = dayNumber(data.epoch);
     const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
     let saved = load("dia:" + dayNum, null);
@@ -333,7 +335,7 @@
     erros++;
     if (window.jogosHaptico) jogosHaptico();
     const t = $("tab"); t.classList.remove("treme"); void t.offsetWidth; t.classList.add("treme");
-    aviso(maior === 3 ? "<b>Falta uma!</b>" : erros >= MAX_ERROS ? "Acabaram as chances" : "Não é um grupo");
+    aviso(maior === 3 ? "<b>Quase!</b> Só uma palavra está fora do grupo" : erros >= MAX_ERROS ? "Acabaram as chances" : "Não é um grupo", maior === 3 ? 2800 : 1800);
     if (erros >= MAX_ERROS) { sel.clear(); render(); checkFim(); persist(); return; }
     render(new Set(sel)); persist();
   }
@@ -361,7 +363,7 @@
     elapsed = Math.round(elapsed); showTime();
     if (won) {
       const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
-      if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
+      if (!teste && st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
     }
     persist(); render();
     if (won) celebrar("panelinha", { alvo: $("stage"), esmaecer: $("tab") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
@@ -386,11 +388,24 @@
   function closeModal(el) { el.classList.remove("open"); if (!finished && !document.querySelector(".overlay.open")) startTimer(); }
   document.querySelectorAll(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); }));
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+
+  // modo de teste: outro desafio do banco, sem gravar progresso nem estatística
+  document.addEventListener("gh-teste", () => {
+    if (!DADOS) return;
+    teste = true; stopTimer();
+    document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open"));
+    const hoje = (dayNum - 1) % DADOS.puzzles.length;
+    let k; do { k = Math.floor(Math.random() * DADOS.puzzles.length); } while (DADOS.puzzles.length > 1 && k === hoje);
+    sel.clear(); $("controls").classList.remove("play");
+    setup(DADOS.puzzles[k], null);
+    $("dayInfo").textContent = `Teste · #${k + 1} · segure para outro`;
+    startTimer();
+  });
 })();
 </script>
-<script src="../comum/catalogo.js?v=130"></script>
-<script src="../comum/celebra.js?v=130"></script>
-<script src="../comum/recorde.js?v=130"></script>
-<script src="../comum/proximo.js?v=130" data-jogo="panelinha" data-sem-livre data-feminino></script>
+<script src="../comum/catalogo.js?v=131"></script>
+<script src="../comum/celebra.js?v=131"></script>
+<script src="../comum/recorde.js?v=131"></script>
+<script src="../comum/proximo.js?v=131" data-jogo="panelinha" data-sem-livre data-feminino></script>
 </body>
 </html>

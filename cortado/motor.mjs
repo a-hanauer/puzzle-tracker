@@ -155,8 +155,10 @@ function propagate(N, g, sm, L, level, st) {
 //   sinal     — sinal com uma casa já preenchida
 //   parIgual  — duas vazias ligadas por "=": encostadas num X (seriam três) ou quando só cabe mais um X
 //   contaX    — pares ligados por "×" levam um de cada: às vezes isso fecha a conta do resto
-//   poucas    — linha com poucas vazias (até K): todas as formas de completar concordam numa casa
-// Só passa disso o desafio que precisaria de chute: o gerador descarta.
+//   poucas    — linha com até 3 vazias: todas as formas de completar concordam numa casa
+//   umPasso   — olhar uma jogada à frente: se esta casa fosse X, a consequência imediata
+//               (uma rodada das técnicas acima) quebraria uma regra; então é o contrário
+// Nada além disso (nada de imaginar várias jogadas à frente): o gerador descarta o resto.
 const NOME = v => (v === 1 ? "café" : "leite");
 const nomeLinha = (N, li) => (li < N ? `linha ${li + 1}` : `coluna ${li - N + 1}`);
 
@@ -212,7 +214,7 @@ export function deducoes(N, g, signs, K = 0, so1 = false) {
     // poucas
     () => { if (!K) return; const V = validLines(N); L.forEach((line, li) => {
       const vazias = line.filter(i => !g[i]).length;
-      if (!vazias || vazias > K) return;
+      if (!vazias || vazias > Math.min(K, 3)) return;          // poucas de verdade: dá para ver de cabeça
       const pos = new Map(line.map((i, k) => [i, k]));
       const inner = [];
       for (let k = 0; k < N; k++) for (const [j, t] of sm[line[k]]) if (pos.has(j) && pos.get(j) > k) inner.push([k, pos.get(j), t]);
@@ -232,9 +234,45 @@ export function deducoes(N, g, signs, K = 0, so1 = false) {
       const jeitos = n === 1 ? "só há um jeito de arrumá-las" : `só há ${n} jeitos de arrumá-las`;
       for (let k = 0; k < N; k++) if (must[k]) add(line[k], must[k], "poucas", `Na ${nomeLinha(N, li)} faltam ${vazias} casas (${f1} de café e ${f2} de leite), e ${jeitos} sem formar três iguais nem desrespeitar um sinal. Em ${n === 1 ? "ele" : "todos"}, esta casa é ${NOME(must[k])}.`);
     }); },
+    // umPasso: hipótese numa casa + uma rodada das técnicas simples → contradição
+    () => { if (!K) return; for (let i = 0; i < N * N; i++) {
+      if (g[i]) continue;
+      for (const v of [1, 2]) {
+        const h = Uint8Array.from(g); h[i] = v;
+        const ruim = motivoRuim(N, h, signs, i);
+        if (ruim) { add(i, other(v), "umPasso", `Se esta casa fosse ${NOME(v)}, ${ruim}. Então é ${NOME(other(v))}.`); break; }
+        const d = deducoes(N, h, signs, 0);
+        const h2 = Uint8Array.from(h); let choque = null;
+        for (const x of d) { if (h2[x.i] && h2[x.i] !== x.v) { choque = x; break; } h2[x.i] = x.v; }
+        let msg = null;
+        if (choque) msg = `a casa ${casaNome(N, choque.i)} teria que ser café e leite ao mesmo tempo`;
+        else {
+          const r = d.find(x => motivoRuim(N, h2, signs, x.i));
+          if (r) msg = `a casa ${casaNome(N, r.i)} teria que ser ${NOME(r.v)}, e aí ${motivoRuim(N, h2, signs, r.i)}`;
+        }
+        if (msg) { add(i, other(v), "umPasso", `Olhando uma jogada à frente: se esta casa fosse ${NOME(v)}, ${msg}. Então ela é ${NOME(other(v))}.`); break; }
+      }
+      if (so1 && out.length) return;
+    } },
   ];
   for (const t of tecs) { t(); if (so1 && out.length) break; }
   return out;
+}
+
+const casaNome = (N, i) => `da linha ${Math.floor(i / N) + 1}, coluna ${i % N + 1}`;
+// o que está errado num tabuleiro (perto da casa i), em palavras; null se nada
+function motivoRuim(N, g, signs, i) {
+  const L = linesOf(N);
+  for (const [li, line] of L.entries()) {
+    if (i != null && !line.includes(i)) continue;
+    for (let k = 0; k + 2 < N; k++) { const [a, b, c] = [line[k], line[k + 1], line[k + 2]]; if (g[a] && g[a] === g[b] && g[b] === g[c]) return `a ${nomeLinha(N, li)} ficaria com três de ${NOME(g[a])} seguidos`; }
+    for (const v of [1, 2]) if (line.filter(j => g[j] === v).length > N / 2) return `a ${nomeLinha(N, li)} ficaria com mais de ${N / 2} de ${NOME(v)}`;
+  }
+  for (const s of signs) {
+    if (i != null && s.a !== i && s.b !== i) continue;
+    if (g[s.a] && g[s.b] && (s.t === "=") !== (g[s.a] === g[s.b])) return s.t === "=" ? `o sinal = ligaria café com leite` : `o sinal × ligaria duas casas iguais`;
+  }
+  return null;
 }
 
 // próxima casa que dá para deduzir, com o motivo (para a dica); null se nada sai sem chute
@@ -244,11 +282,11 @@ export function passo(N, g, signs, K = N / 2 + 1) {   // mesmas técnicas do ger
 }
 
 // Resolvedor sem chute: aplica as deduções até completar. maxLevel 1 = sem "poucas";
-// 2 = "poucas" em linhas com até N/2 + 1 vazias. Devolve { level, score, g } ou { stuck } ou null.
+// 2 = também "poucas" (até 3 vazias) e "umPasso" (uma jogada à frente). Devolve { level, score, g } ou { stuck } ou null.
 export function logicSolve(N, givens, signs, maxLevel = 2) {
   const g = Uint8Array.from(givens);
   const K = maxLevel >= 2 ? N / 2 + 1 : 0;
-  const stats = { rounds: 0, l2: 0, cx: 0, pi: 0 };
+  const stats = { rounds: 0, l2: 0, cx: 0, pi: 0, up: 0 };
   let level = 1;
   for (let guard = 0; guard < 1000; guard++) {
     if (conflicts(N, g, signs).size) return null;
@@ -260,11 +298,11 @@ export function logicSolve(N, givens, signs, maxLevel = 2) {
     for (const x of d) {
       if (g[x.i] && g[x.i] !== x.v) return null;
       g[x.i] = x.v;
-      if (x.tec === "contaX") stats.cx++; if (x.tec === "parIgual") stats.pi++;
+      if (x.tec === "contaX") stats.cx++; if (x.tec === "parIgual") stats.pi++; if (x.tec === "umPasso") stats.up++;
     }
   }
   if (!g.every(Boolean) || conflicts(N, g, signs).size) return null;
-  return { level, stats, score: stats.rounds + 6 * stats.l2 + 2 * stats.cx + stats.pi, g };
+  return { level, stats, score: stats.rounds + 6 * stats.l2 + 2 * stats.cx + stats.pi + 3 * stats.up, g };
 }
 
 // conta soluções (até limit), com propagação do nível 1

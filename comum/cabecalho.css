@@ -61,7 +61,7 @@ header.gh {
   /* dia · nível · Jogo livre: Noto Sans extracondensada e fina, como os títulos */
   font-size: .98rem; font-stretch: 62.5%; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--gh-muted);
 }
-.gh-meta { position: relative; }
+.gh-meta { position: relative; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .gh-meta .gh-info { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* jogo livre: "Extra · [NÍVEL 4 ▾] [↻]" */
 .gh-meta .gh-info.gh-nivel { display: flex; align-items: center; gap: 8px; overflow: visible; }

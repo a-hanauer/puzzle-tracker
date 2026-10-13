@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Ponto Cruz">
 <title>PONTO CRUZ — palavras cruzadas de bolso</title>
 <link rel="icon" type="image/png" href="icon.png?v=22">
-<script src="../comum/tema.js?v=130"></script>
-<script src="../comum/cabecalho.js?v=130"></script>
-<script src="../comum/dica.js?v=130"></script>
+<script src="../comum/tema.js?v=131"></script>
+<script src="../comum/cabecalho.js?v=131"></script>
+<script src="../comum/dica.js?v=131"></script>
 <link rel="apple-touch-icon" href="icon.png?v=22">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,7 +139,7 @@
   .resp b { font-weight: 800; letter-spacing: .04em; }
   .resp span { color: var(--muted); }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=130">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=131">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
   .gh .gh-brand b { letter-spacing: .02em; font-stretch: 75%; font-size: 1.15rem; }   /* nome comprido: cabe ao lado da dica */
@@ -212,6 +212,7 @@
 (function () {
   "use strict";
   const $ = id => document.getElementById(id);
+  let DADOS = null, teste = false;     // teste: desafio sorteado pelo toque longo na data (comum/proximo.js), não grava nada
   const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
   const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
   const LS = "cruzadinha:";
@@ -253,13 +254,14 @@
     if (dica) dica.atualiza();
   }
   function persist() {
-    if (!P) return;
+    if (!P || teste) return;
     const cheias = letras.filter((l, i) => l && !preta(i)).length, total = P.g.replace(/#/g, "").length;
     save("dia:" + dayNum, { pid: P.g, letras, reveladas: [...reveladas], dica: dicaUsada, elapsed: currentElapsed(), done: finished,
       time: finished ? elapsed : null, started: cheias > 0, prog: [finished ? total : cheias, total] });
   }
 
   fetch("desafios.json").then(r => r.json()).then(data => {
+    DADOS = data;
     dayNum = dayNumber(data.epoch);
     const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
     let saved = load("dia:" + dayNum, null);
@@ -446,7 +448,7 @@
     finished = true;
     elapsed = Math.round(elapsed); showTime();
     const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
-    if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
+    if (!teste && st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
     persist();
     if (window.jogosHaptico) jogosHaptico(true);
     render();
@@ -474,11 +476,24 @@
   function closeModal(el) { el.classList.remove("open"); if (!finished && !document.querySelector(".overlay.open")) startTimer(); }
   document.querySelectorAll(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); }));
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+
+  // modo de teste: outro desafio do banco, sem gravar progresso nem estatística
+  document.addEventListener("gh-teste", () => {
+    if (!DADOS) return;
+    teste = true; stopTimer();
+    document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open"));
+    const hoje = (dayNum - 1) % DADOS.puzzles.length;
+    let k; do { k = Math.floor(Math.random() * DADOS.puzzles.length); } while (DADOS.puzzles.length > 1 && k === hoje);
+    document.body.classList.remove("acabou", "play"); avisouCheia = false;
+    setup(DADOS.puzzles[k], null);
+    $("dayInfo").textContent = `Teste · #${k + 1} · segure para outro`;
+    startTimer();
+  });
 })();
 </script>
-<script src="../comum/catalogo.js?v=130"></script>
-<script src="../comum/celebra.js?v=130"></script>
-<script src="../comum/recorde.js?v=130"></script>
-<script src="../comum/proximo.js?v=130" data-jogo="cruzadinha" data-sem-livre></script>
+<script src="../comum/catalogo.js?v=131"></script>
+<script src="../comum/celebra.js?v=131"></script>
+<script src="../comum/recorde.js?v=131"></script>
+<script src="../comum/proximo.js?v=131" data-jogo="cruzadinha" data-sem-livre></script>
 </body>
 </html>

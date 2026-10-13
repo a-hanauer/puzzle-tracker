@@ -11,9 +11,9 @@
 <meta name="apple-mobile-web-app-title" content="5PILA">
 <link rel="icon" type="image/png" href="icon-claro.png?v=20">
 <link rel="apple-touch-icon" href="icon-claro.png?v=20">
-<script src="../comum/tema.js?v=130"></script>
-<script src="../comum/cabecalho.js?v=130"></script>
-<script src="../comum/dica.js?v=130"></script>
+<script src="../comum/tema.js?v=131"></script>
+<script src="../comum/cabecalho.js?v=131"></script>
+<script src="../comum/dica.js?v=131"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -357,7 +357,7 @@ header{
 #btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=130">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=131">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--accent-ink); --gh-fim-ink: var(--accent-ink); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -514,6 +514,10 @@ header{
   var WORDSET = {};
   for(var wi=0; wi<ANSWER_WORDS.length; wi++){ WORDSET[ANSWER_WORDS[wi]] = true; }
   for(var wj=0; wj<EXTRA_GUESS_WORDS.length; wj++){ WORDSET[EXTRA_GUESS_WORDS[wj]] = true; }
+  // palavras ofensivas (palavrões, xingamentos, ofensas): não valem como palpite nem como resposta
+  var OFENSIVAS = "porra merda bosta foder fodam fodas fodeu fodes fodem fodia fodao fodas cagao cuzao cuzoes viado viada bicha bixa putas putos putao vadia vadio corno broxa tesao tesuda piroca xoxota xereca buceta cacete caralho punheta boquete boiola crioulo macaca rapariga quenga piranha safada safado otario otaria babaca escroto escrota arrombado traveco sapatao retardado retardada mongol".split(" ");
+  OFENSIVAS.forEach(function(w){ delete WORDSET[w]; });
+  var OFENSIVA = {}; OFENSIVAS.forEach(function(w){ OFENSIVA[w] = true; });
 
   function uniqueLetters(w){ return new Set(w.split('')).size === w.length; }
   var RARE = {k:1,w:1,y:1};
@@ -521,7 +525,7 @@ header{
 
   // POOLS: só daqui sai a palavra do dia — restrições rígidas aplicadas.
   var POOLS = {
-    padrao: ANSWER_WORDS.filter(function(w){ return uniqueLetters(w) && !hasRare(w); })
+    padrao: ANSWER_WORDS.filter(function(w){ return uniqueLetters(w) && !hasRare(w) && !OFENSIVA[w]; })
   };
 
   /* ============ ESTADO ============ */
@@ -579,6 +583,16 @@ header{
   var REMOVIDAS = {};
   "alive andre arche corba cover crush dario decho dolce drone estil groja julia logia mario pedro poser sofia voila xicra zibro".split(" ").forEach(function(w){ REMOVIDAS[w] = true; });
   var BOAS = POOLS.padrao.filter(function(w){ return !REMOVIDAS[w]; });
+  // a partir de 14/10/2026: a palavra do dia segue uma ordem embaralhada (fixa) das boas, uma por dia,
+  // sem repetir até a lista acabar. O sorteio antigo (hash da data) dava palavras parecidas em dias seguidos,
+  // porque datas vizinhas viravam números vizinhos. Os dias anteriores continuam como saíram.
+  var ORDEM_INICIO = new Date(2026, 9, 14);
+  var ORDEM = (function(){
+    var a = BOAS.slice(), x = 20261014 >>> 0;
+    var r = function(){ x = (x + 0x6D2B79F5) >>> 0; var t = Math.imul(x ^ (x >>> 15), 1 | x); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(r() * (i + 1)); var tmp = a[i]; a[i] = a[j]; a[j] = tmp; }
+    return a;
+  })();
   function dayNumberFor(pool){
     var days = Math.floor((startOfDay(new Date()).getTime() - EPOCH) / 86400000);
     return days + 1;
@@ -602,6 +616,11 @@ header{
       if(startOfDay(new Date()) >= CURADORIA_INICIO && REMOVIDAS[secret]){
         secretIdx = hashStr('quinhentao2:'+dateKey(startOfDay(new Date()))) % BOAS.length;
         secret = BOAS[secretIdx];
+      }
+      var hoje0 = startOfDay(new Date());
+      if(hoje0 >= ORDEM_INICIO){
+        var k = Math.round((hoje0 - ORDEM_INICIO) / 86400000);
+        secret = ORDEM[k % ORDEM.length];
       }
     }
 
@@ -1414,9 +1433,9 @@ header{
     fn => { new MutationObserver(fn).observe(document.getElementById("mode-switch"), { attributes: true, attributeFilter: ["class"] }); window.addEventListener("quinhentos-livre", fn); },
     window.quinhentosLivre);
 </script>
-<script src="../comum/catalogo.js?v=130"></script>
-<script src="../comum/celebra.js?v=130"></script>
-<script src="../comum/recorde.js?v=130"></script>
-<script src="../comum/proximo.js?v=130" data-jogo="quinhentos"></script>
+<script src="../comum/catalogo.js?v=131"></script>
+<script src="../comum/celebra.js?v=131"></script>
+<script src="../comum/recorde.js?v=131"></script>
+<script src="../comum/proximo.js?v=131" data-jogo="quinhentos"></script>
 </body>
 </html>
