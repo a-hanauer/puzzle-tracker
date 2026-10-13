@@ -211,6 +211,23 @@ header{
 .cnt.empty .count-cell + .count-cell{box-shadow:none;}
 .count-cell.cy{color:var(--present);}
 .count-cell.cr{color:var(--danger);}
+/* caixa registradora: os três números viram um valor em pilas — certas , lugar errado e não existem
+   (0,23 = nenhuma certa, 2 no lugar errado, 3 que não existem); acertar tudo é 5,00. Cada valor numa
+   plaquinha creme em relevo, como as que sobem na registradora antiga. */
+.cnt:not(.empty){background:linear-gradient(#f7f1e3,#ece2cc);border:0;border-radius:8px;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.12),0 2px 0 #b9a77f,0 3px 6px rgba(60,40,10,.18);}
+.cnt:not(.empty) .count-cell{font-family:"Courier New",ui-monospace,monospace;font-stretch:100%;font-weight:800;}
+.cnt:not(.empty) .count-cell + .count-cell{box-shadow:none;}
+.cnt:not(.empty){justify-content:center;}
+.cnt:not(.empty) .count-cell{flex:0 0 auto;}
+.cnt:not(.empty) .count-cell.cg::after{content:",";color:#5c4a28;font-weight:800;margin-right:1px;}
+.cnt:not(.empty) .count-cell.cg{color:#23804f;} .cnt:not(.empty) .count-cell.cy{color:#a46d00;} .cnt:not(.empty) .count-cell.cr{color:#b53a26;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .cnt:not(.empty){background:linear-gradient(#e9e0c8,#d6c9a6);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),0 2px 0 #8a7a55;} }
+:root[data-theme="dark"] .cnt:not(.empty){background:linear-gradient(#e9e0c8,#d6c9a6);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),0 2px 0 #8a7a55;}
+.legend .pilas{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 9px;border-radius:7px;flex-shrink:0;
+  background:linear-gradient(#f7f1e3,#ece2cc);box-shadow:inset 0 -2px 0 rgba(0,0,0,.12),0 1px 0 #b9a77f;
+  font-family:"Courier New",ui-monospace,monospace;font-weight:800;font-size:16px;color:#5c4a28;}
+.legend .pilas .g{color:#23804f}.legend .pilas .y{color:#a46d00}.legend .pilas .r{color:#b53a26}
 /* legenda do Como jogar: o mesmo número, numa cápsula pequena */
 .legend .count-cell{border-radius:9px;background:var(--panel);border:1.5px solid var(--line);font-size:18px !important;}
 .row.pop .tile.filled,.row.pop .cnt{animation:pop .28s ease;}
@@ -416,7 +433,8 @@ header{
   <div class="modal">
     <h2>Como jogar<button class="close" data-close="overlay-help">✕</button></h2>
     <p>Adivinhe a palavra secreta de <b>5 letras</b> em até <b>8 tentativas</b>.</p>
-    <p>Depois de cada palpite, o jogo <b>não</b> mostra quais letras estão certas — só a <b>quantidade</b> de cada tipo, nas 3 colunas ao lado do palpite:</p>
+    <p>Depois de cada palpite, o jogo <b>não</b> mostra quais letras estão certas — só a <b>quantidade</b> de cada tipo, como um valor na caixa registradora ao lado do palpite:</p>
+    <div class="legend"><div class="row2"><span class="pilas"><span class="g">1</span>,<span class="y">2</span><span class="r">2</span></span><span>1 certa · 2 no lugar errado · 2 que não existem. Acertar a palavra é fechar a conta em <b>5,00</b>: 5 pilas!</span></div></div>
     <div class="legend">
       <div class="row2"><div class="count-cell cg" style="width:32px;height:32px;font-size:14px;flex-shrink:0;">2</div><span>Quantas letras estão na posição certa</span></div>
       <div class="row2"><div class="count-cell cy" style="width:32px;height:32px;font-size:14px;flex-shrink:0;">1</div><span>Quantas letras existem, mas na posição errada</span></div>
@@ -1287,7 +1305,8 @@ header{
     var emojiMap = {correct:'🟩', present:'🟨', absent:'⬛'};
     var lines = ['5PILA #'+state.dayNum+(state.won?' '+state.guesses.length+'/8':' X/8')+(state.dica?' 💡':'')];
     for(var i=0;i<state.statuses.length;i++){
-      lines.push(state.statuses[i].map(function(s){return emojiMap[s];}).join(''));
+      var tl = state.tallies[i];
+      lines.push(state.statuses[i].map(function(s){return emojiMap[s];}).join('') + (tl ? ' ' + tl.g + ',' + tl.y + tl.r : ''));
     }
     lines.push('https://a-hanauer.github.io/puzzle-tracker/5pila/');
     return lines.join('\n');
