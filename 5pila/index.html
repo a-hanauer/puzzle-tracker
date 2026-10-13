@@ -214,20 +214,22 @@ header{
 /* caixa registradora: os três números viram um valor em pilas — certas , lugar errado e não existem
    (0,23 = nenhuma certa, 2 no lugar errado, 3 que não existem); acertar tudo é 5,00. Cada valor numa
    plaquinha creme em relevo, como as que sobem na registradora antiga. */
-.cnt:not(.empty){background:none;border:0;box-shadow:none;gap:4px;overflow:visible;}
-.cnt:not(.empty) .count-cell{flex:1;position:relative;border-radius:6px;background:linear-gradient(#f7f1e3,#ece2cc);
-  box-shadow:inset 0 -3px 0 rgba(0,0,0,.12),0 2px 0 #b9a77f,0 3px 5px rgba(60,40,10,.16);
-  font-family:"Courier New",ui-monospace,monospace;font-stretch:100%;font-weight:800;}
-.cnt:not(.empty) .count-cell + .count-cell{box-shadow:inset 0 -3px 0 rgba(0,0,0,.12),0 2px 0 #b9a77f,0 3px 5px rgba(60,40,10,.16);}
-/* a vírgula fica no vão entre a primeira plaquinha e a segunda */
-.cnt:not(.empty) .count-cell.cg::after{content:",";position:absolute;right:-5.5px;bottom:1px;font-size:.8em;color:var(--ink);font-weight:900;}
-.cnt:not(.empty) .count-cell.cg{color:#23804f;} .cnt:not(.empty) .count-cell.cy{color:#a46d00;} .cnt:not(.empty) .count-cell.cr{color:#b53a26;}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .cnt:not(.empty) .count-cell{background:linear-gradient(#e9e0c8,#d6c9a6);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),0 2px 0 #8a7a55;} }
-:root[data-theme="dark"] .cnt:not(.empty) .count-cell{background:linear-gradient(#e9e0c8,#d6c9a6);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),0 2px 0 #8a7a55;}
-.legend .pilas{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 9px;border-radius:7px;flex-shrink:0;
-  background:linear-gradient(#f7f1e3,#ece2cc);box-shadow:inset 0 -2px 0 rgba(0,0,0,.12),0 1px 0 #b9a77f;
-  font-family:"Courier New",ui-monospace,monospace;font-weight:800;font-size:16px;color:#5c4a28;}
-.legend .pilas .g{color:#23804f}.legend .pilas .y{color:#a46d00}.legend .pilas .r{color:#b53a26}
+/* visor da registradora antiga: janela escura no painel de metal, um tambor por número e a
+   vírgula num tamborzinho próprio entre o primeiro e o segundo (como no visor 00,00) */
+.cnt:not(.empty){border:0;border-radius:7px;padding:3px;gap:2px;overflow:hidden;
+  background:#1b1a17;box-shadow:0 0 0 2.5px #d9d2c1,0 0 0 3.5px #b8b09c,inset 0 2px 5px rgba(0,0,0,.6);}
+.cnt:not(.empty) .count-cell,.cnt:not(.empty) .virg{border-radius:3px;
+  background:linear-gradient(#141311,#34322d 30%,#3b3833 50%,#34322d 70%,#141311);box-shadow:none;
+  font-family:"Courier New",ui-monospace,monospace;font-stretch:100%;font-weight:700;}
+.cnt:not(.empty) .count-cell + .count-cell{box-shadow:none;}
+.cnt .virg{display:none;}
+.cnt:not(.empty) .virg{display:flex;flex:0 0 9px;align-items:flex-end;justify-content:center;padding-bottom:5px;
+  color:#efe4c4;font-size:clamp(18px,5vw,22px);line-height:.6;}
+.cnt:not(.empty) .count-cell.cg{color:#8fe3ad;} .cnt:not(.empty) .count-cell.cy{color:#f4c95a;} .cnt:not(.empty) .count-cell.cr{color:#ff9a84;}
+.legend .pilas{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 8px;border-radius:6px;flex-shrink:0;
+  background:#1b1a17;box-shadow:0 0 0 2px #d9d2c1,inset 0 2px 4px rgba(0,0,0,.6);
+  font-family:"Courier New",ui-monospace,monospace;font-weight:700;font-size:16px;color:#efe4c4;}
+.legend .pilas .g{color:#8fe3ad}.legend .pilas .y{color:#f4c95a}.legend .pilas .r{color:#ff9a84}
 /* legenda do Como jogar: o mesmo número, numa cápsula pequena */
 .legend .count-cell{border-radius:9px;background:var(--panel);border:1.5px solid var(--line);font-size:18px !important;}
 .row.pop .tile.filled,.row.pop .cnt{animation:pop .28s ease;}
@@ -743,6 +745,7 @@ header{
         cell.className = 'count-cell c'+type;
         cell.id = 'count-'+r+'-'+type;
         cnt.appendChild(cell);
+        if(type === 'g'){ var v = document.createElement('div'); v.className = 'virg'; v.textContent = ','; cnt.appendChild(v); }   // a vírgula do visor
       });
       row.appendChild(cnt);
       boardEl.appendChild(row);
