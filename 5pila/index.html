@@ -225,6 +225,8 @@ header{
 .cnt .virg{display:none;}
 .cnt:not(.empty) .virg{display:flex;flex:0 0 9px;align-items:flex-end;justify-content:center;padding-bottom:5px;
   color:#efe4c4;font-size:clamp(18px,5vw,22px);line-height:.6;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .cnt:not(.empty){box-shadow:0 0 0 2.5px #3a3832,0 0 0 3.5px #2a2925,inset 0 2px 5px rgba(0,0,0,.6);} }
+:root[data-theme="dark"] .cnt:not(.empty){box-shadow:0 0 0 2.5px #3a3832,0 0 0 3.5px #2a2925,inset 0 2px 5px rgba(0,0,0,.6);}
 .cnt:not(.empty) .count-cell.cg{color:#8fe3ad;} .cnt:not(.empty) .count-cell.cy{color:#f4c95a;} .cnt:not(.empty) .count-cell.cr{color:#ff9a84;}
 .legend .pilas{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 8px;border-radius:6px;flex-shrink:0;
   background:#1b1a17;box-shadow:0 0 0 2px #d9d2c1,inset 0 2px 4px rgba(0,0,0,.6);
