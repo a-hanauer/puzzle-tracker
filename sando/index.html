@@ -645,6 +645,12 @@
   var SECRET_REMOVED_2 = Object.create(null);
   "tuíte".split(" ").forEach(function(w){ SECRET_REMOVED_2[w] = true; });
   var GOOD_SECRET_INDICES_2 = GOOD_SECRET_INDICES.filter(function(i){ return !SECRET_REMOVED_2[DICT[i]]; });
+  // Terceira curadoria (a partir de 14/10/2026): o recheio do dia sai só de palavras do dia a dia.
+  // Fora: as raras e técnicas (óbice, égide, liame…) e as que podem ofender. Daqui em diante o dia
+  // sorteia direto da lista boa; os dias anteriores não mudam.
+  var SECRET_REMOVED_3 = Object.create(null);
+  "adido advir afixo algoz alçar antro apara aquém ardil arfar atroz audaz avaro aviar babão banzo banzé baobá bardo beabá bedel bioma bisão boçal bosta bicha brabo brita bucho bufão bugre bulbo burgo burla cabal calão carão casto celta censo cerne cerol cetro chaga chulo cidra cisma cisão clava clero coeso coifa coito combo coque corja corso coser cosmo cotar covil coxia cozer crase crina crivo cromo cunha cunho cárie cânon círio cível cúria derme dique dogma dopar dorso douto draga ducto débil dérbi dúbio ereto espia estio faina fauno fecal felpa feral feraz fetal feudo filão findo finta fisco fruir fugaz féria galgo gamão ganir ganja garbo gazua gerir germe glosa glote gnomo grado grená grota guisa horda horto iaque judeu labor laico lapso latão laudo lavra lenho lepra liame limbo linfa lítio logro lombo madre magno malta matiz mercê mirra monta mouro moção mútuo negro nitro ninfa ornar otite paiol pajem parca parco parvo pasmo penca penta pinto porre praxe prior probo pífio quiçá quota rango ranço rapar rapto refil régio retro revel reúso rifar rinha rombo rusga ruela róseo sachê sacro salmo salve sanar sedar segar seara seita seixo senda senil sepse septo sigma signo silvo sinhá sulco supra sépia símio sírio tacha taipa talha talhe talho talão tarso tasca tenaz tenro tento tição toada torpe torso tosar travo trela trema treva tropo trova trupe turba tíbio urdir urgir usura varão velar venal verve vivaz vulgo vênia xaxim xiita xisto xucro zorra zunir ágape álamo ático átimo átono átrio áureo âmago ébrio égide ígneo ímpio óbice óxido úmero cação ceifa chita".split(" ").forEach(function(w){ SECRET_REMOVED_3[w] = true; });
+  var GOOD_SECRET_INDICES_3 = GOOD_SECRET_INDICES_2.filter(function(i){ return !SECRET_REMOVED_3[DICT[i]]; });
 
   var WIN_ICON  = '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 3.6h9v5.2a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 5.2H4.8a3 3 0 0 0 3 3.4M16.5 5.2h2.7a3 3 0 0 1-3 3.4"/><path d="M12 13.3v3.3M8.4 20.4h7.2M9.6 16.6h4.8l1.2 3.8H8.4z"/></g></svg>';
   var LOSE_ICON = '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M8.6 15.6a4.6 4.6 0 0 1 6.8 0"/><path d="M9.2 9.6h.01M14.8 9.6h.01" stroke-width="2.6"/></g></svg>';
@@ -685,6 +691,7 @@
   // a curadoria vale a partir de 27/09/2026 (o dia 26 ja estava em andamento)
   var CURATION_START_DAY = dayNumber(new Date(2026,8,27));
   var CURATION_2_START_DAY = dayNumber(new Date(2026,9,1));
+  var CURATION_3_START_DAY = dayNumber(new Date(2026,9,14));
   function dailyIndex(){
     var diffDays = dayNumber(new Date());
     var pick = mix32(diffDays + 1000000) % SECRET_INDICES.length;
@@ -696,6 +703,9 @@
     if(diffDays >= CURATION_2_START_DAY && SECRET_REMOVED_2[DICT[i]]){
       i = GOOD_SECRET_INDICES_2[mix32(diffDays + 3000000) % GOOD_SECRET_INDICES_2.length];
     }
+    if(diffDays >= CURATION_3_START_DAY){
+      i = GOOD_SECRET_INDICES_3[mix32(diffDays + 4000000) % GOOD_SECRET_INDICES_3.length];
+    }
     return i;
   }
   function dateKey(){
@@ -705,7 +715,7 @@
 
   function newGame(mode){
     MAX_GUESSES = mode === 'daily' ? 14 : TRIES_LIVRE[nivelLivre()];
-    var secretIdx = mode === 'daily' ? dailyIndex() : GOOD_SECRET_INDICES_2[Math.floor(Math.random()*GOOD_SECRET_INDICES_2.length)];
+    var secretIdx = mode === 'daily' ? dailyIndex() : GOOD_SECRET_INDICES_3[Math.floor(Math.random()*GOOD_SECRET_INDICES_3.length)];
     state = {
       mode: mode, secret: DICT[secretIdx], secretIdx: secretIdx,
       guesses: [], guessedSet: {}, low: null, high: null,
