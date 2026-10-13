@@ -141,7 +141,7 @@
     document.querySelectorAll(".gh .gh-next").forEach(el => el.remove());
     const meta = document.querySelector(".gh-meta");
     if (meta && !meta.querySelector(".gh-dia")) {
-      meta.insertAdjacentHTML("beforeend", `<button type="button" class="gh-dia" hidden>${VOLTA}Desafio do dia</button>`);
+      meta.insertAdjacentHTML("beforeend", `<button type="button" class="gh-dia" hidden aria-label="Voltar ao desafio do dia">${VOLTA}Hoje</button>`);
       meta.querySelector(".gh-dia").addEventListener("click", () => { fechaJanelas(); chave.set(false); });
     }
     const c = document.getElementById("controls");
