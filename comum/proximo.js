@@ -128,6 +128,7 @@
     const ler = k => { const v = localStorage.getItem(k); if (v == null) return null; try { return JSON.parse(v); } catch { return v; } };
     let v = null;
     try { v = ler(`${ATUAL}:nivel-livre`) ?? ler(`${ATUAL}-nivel-livre`) ?? (ATUAL === "quinhentos" ? ler("quinhentao:nivel-livre") : null); } catch {}
+    if (ATUAL === "cordel") return "tema sorteado";
     if (typeof v === "number") return `nível ${v}`;
     const NOMES = { facil: "fácil", normal: "normal", dificil: "difícil" };
     if (NOMES[v]) return NOMES[v];
