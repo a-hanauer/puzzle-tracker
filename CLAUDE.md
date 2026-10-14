@@ -30,3 +30,11 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Conversa em português.
 - Mudança visual: mostrar prévia (390×844, claro e escuro) com opções e esperar a escolha.
 - Desafios dos jogos de lógica: nunca exigir chute; os já publicados (até hoje) não mudam.
+
+## Conteúdo dos jogos de palavras
+
+- Público: gente com boa formação. Preferir conhecimentos gerais densos (história, artes, ciência,
+  literatura, música, geografia, mitologia) a temas infantis; bichos, expressões e gramática só de vez em quando.
+- `comum/acervo.mjs`: categorias da Panelinha e temas do Cordel (campo `c`). Área (`a`) para o rodízio;
+  família (`f`) para não pôr dois grupos parecidos no mesmo dia.
+- `cruzadinha/pistas.txt` (Ponto Cruz): `PALAVRA|fácil|média|difícil`; a semana sobe o nível das pistas.

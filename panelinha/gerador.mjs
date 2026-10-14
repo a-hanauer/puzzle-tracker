@@ -14,7 +14,7 @@ import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { BANCO } from "../comum/banco.mjs";
-import { TEMAS } from "../cordel/temas.mjs";
+import { ACERVO } from "../comum/acervo.mjs";
 import { mantidos } from "../comum/selecao.mjs";
 
 export const EPOCH = [2026, 9, 10];            // #1 = sábado, 10/10/2026
@@ -26,10 +26,15 @@ export const chave = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^
 // cabe numa peça: até 2 palavras e 12 letras
 const cabeNaPeca = t => t.split(/\s+/).length <= 2 && t.replace(/[\s-]/g, "").length <= 12 && t.length <= 13;
 
-// todas as categorias: banco + temas do Cordel (estes como grupos diretos)
+// área de cada categoria do banco antigo (o acervo já traz a sua)
+const BICHOS = /bicho|animais|aves|insetos|peixes|mamíferos/i;
+const areaDoBanco = (nome, tipo) =>
+  tipo === "expressao" ? "expressao" : tipo === "trocadilho" ? "jogo" : BICHOS.test(nome) ? "bichos" : tipo === "cultura" ? "brasil" : "cotidiano";
+// todas as categorias: o acervo de conhecimentos gerais (out/2026) + o banco antigo, que agora
+// entra com moderação (veja AREA_PAUSA). Os temas antigos do Cordel (infantis) saíram.
 const CATS = [
-  ...BANCO.map(([nome, tipo, nivel, ws]) => ({ nome, tipo, nivel, ws })),
-  ...TEMAS.map(([pista, , ws]) => ({ nome: pista, tipo: "direto", nivel: 1, ws, cordel: true })),
+  ...ACERVO.map(x => ({ nome: x.n, tipo: x.a === "jogo" || x.a === "lingua" ? "trocadilho" : "direto", nivel: x.l, ws: x.w, area: x.a, fam: x.f, acervo: true })),
+  ...BANCO.map(([nome, tipo, nivel, ws]) => ({ nome, tipo, nivel, ws, area: areaDoBanco(nome, tipo) })),
 ].map((c, id) => {
   const vistos = new Map();
   for (const w of c.ws) { const k = chave(w); if (k.length >= 2 && !vistos.has(k)) vistos.set(k, w); }
@@ -43,11 +48,20 @@ const comum = (a, b) => [...a.mapa.keys()].filter(k => b.mapa.has(k)).length;
 // duas categorias do mesmo jeito de agrupar com muitas palavras em comum (frutas × frutas) confundem
 // além do que o banco sabe: não vão juntas. Expressão e trocadilho dividem palavras de propósito.
 const brigam = (a, b) => {
-  if (a.nome === b.nome) return true;
+  if (a.nome === b.nome || (a.fam && a.fam === b.fam)) return true;   // da mesma família (dois grupos de capitais, duas "escondem…"): nunca no mesmo dia
   const n = comum(a, b);
   const jogo = t => t === "expressao" || t === "trocadilho";
   if (jogo(a.tipo) || jogo(b.tipo)) return false;
   return a.tipo === "direto" && b.tipo === "direto" ? n >= 1 : n >= 2;   // dois grupos diretos com algo em comum: assunto parecido demais
+};
+
+// rodízio de assuntos: as áreas do dia são todas diferentes, e as que cansam rápido (bichos,
+// expressões, coisas do cotidiano) só voltam depois de alguns dias. As do acervo não repetem
+// a área do dia anterior.
+const AREA_PAUSA = { bichos: 6, expressao: 4, cotidiano: 2, brasil: 2 };
+const areaLivre = (c, areasRecentes) => {
+  const pausa = AREA_PAUSA[c.area] ?? 1;
+  return !areasRecentes.slice(-pausa).some(dia => dia.includes(c.area));
 };
 
 // quantas divisões das 16 palavras em 4 grupos existem (até 2)
@@ -84,10 +98,11 @@ export function montarDia(w, recentes) {
   return null;
 }
 function tentar(cfg, recentes) {
-  for (let tent = 0; tent < 30000; tent++) {
+  for (let tent = 0; tent < 12000; tent++) {
     const cats = [];
     for (const niveis of cfg.cores) {
-      const cand = CATS.filter(c => niveis.includes(c.nivel) && !(c.nivel === 4 ? recentes.roxo : recentes.todas).has(c.nome) && !cats.some(x => brigam(x, c)));
+      const cand = CATS.filter(c => niveis.includes(c.nivel) && !(c.nivel === 4 ? recentes.roxo : recentes.todas).has(c.nome) && !cats.some(x => brigam(x, c))
+        && !cats.some(x => x.area === c.area) && areaLivre(c, recentes.areas) && (c.acervo || rand() < .35));   // o banco antigo entra de vez em quando
       if (!cand.length) break;
       // para ter armadilhas, prefere categorias que dividem palavras com as já escolhidas
       const liga = cand.filter(c => cats.some(x => comum(x, c) > 0));
@@ -114,7 +129,7 @@ function tentar(cfg, recentes) {
     if (divisoes(cats, todas) !== 1) continue;
     return {
       g: cats.map((c, i) => ({ n: c.nome, c: i, w: grupos[i].map(k => c.mapa.get(k).toUpperCase()) })),
-      a: nArm,
+      a: nArm, ar: cats.map(c => c.area),
     };
   }
   return null;
@@ -127,13 +142,20 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const old = mantidos(dir, EPOCH);
   const out = [...old];
   const hist = old.flatMap(p => p.g.map(x => x.n));
+  const areaDe = new Map(CATS.map(c => [c.nome, c.area]));
+  const areas = old.map(p => p.g.map(x => areaDe.get(x.n) || "cotidiano"));
   for (let k = old.length; k < DIAS; k++) {
     const w = (new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k).getDay() + 6) % 7;
-    // uma categoria não volta em ~14 dias; as roxas (poucas) podem voltar depois de ~9, com outras palavras
-    const recentes = { todas: new Set(hist.slice(-4 * 14)), roxo: new Set(hist.slice(-4 * 9)) };
-    const p = montarDia(w, recentes);
+    // uma categoria não volta em ~3 semanas (roxas, que são menos, em ~10 dias); se não fecha, a pausa encurta
+    let p = null;
+    for (const [dias, roxo, comArea] of [[21, 10, 1], [12, 7, 1], [6, 4, 1], [6, 4, 0], [3, 2, 0]]) {
+      p = montarDia(w, { todas: new Set(hist.slice(-4 * dias)), roxo: new Set(hist.slice(-4 * roxo)), areas: comArea ? areas : [] });
+      if (p && !comArea) console.log(`dia ${k + 1}: sem o rodízio de áreas`);
+      if (p) break;
+    }
     if (!p) throw new Error(`não consegui montar o dia ${k + 1}`);
     hist.push(...p.g.map(x => x.n));
+    areas.push(p.ar); delete p.ar;
     out.push({ ...p, l: w + 1 });
   }
   writeFileSync(join(dir, "desafios.json"), JSON.stringify({ epoch: EPOCH, puzzles: out }));

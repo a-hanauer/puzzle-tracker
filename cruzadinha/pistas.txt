@@ -685,7 +685,7 @@ PISO|Chão|Salário mínimo da categoria|Andar do prédio
 PLUMA|Pena leve|Peso-___, no boxe|Leveza
 POÇO|Buraco de água|Desejos, nele se joga moeda|Fundo do ___
 POTE|Recipiente|O de ouro fica no fim do arco-íris|"Com muita sede ao ___"
-POTRO|Filhote de cavalo|Potranca|Cavalo novo
+POTRO|Filhote de cavalo|Cavalo jovem, ainda sem doma|Filho da égua, antes da primeira sela
 POVO|Gente|"O ___ unido jamais será vencido"|Nação
 PRESA|Bicho caçado|Dente de cobra|Vítima
 PROLE|Os filhos|Descendência|Filhos, em latim
@@ -1038,3 +1038,112 @@ UNIÃO|Junção|"A ___ faz a força"|Governo federal
 URUBU|Ave preta|Mascote do Flamengo|Limpa a natureza
 VOGAL|A, E, I, O, U|Letra que soa sozinha|"Uma ___": o "a" é a primeira
 ZANGA|Raiva|Birra|Mau humor
+
+# ---- quarta leva (out/2026): cultura geral mais densa — artes, letras, ciência, mundo ----
+ÍSIS||Deusa egípcia, irmã e esposa de Osíris|Mãe de Hórus, venerada até em Roma
+HÓRUS||Deus egípcio com cabeça de falcão|Seu olho virou amuleto de proteção
+ATENA|Deusa grega da sabedoria|Nasceu armada da cabeça de Zeus|Padroeira da cidade do Partenon
+GAIA|A Terra, na mitologia grega|Mãe dos Titãs|Nome da hipótese da Terra como organismo vivo
+REIA||Titã, mãe de Zeus|Escondeu Zeus de Cronos numa caverna de Creta
+MIDAS|Rei do toque de ouro|Ganhou orelhas de burro de Apolo|Tudo o que tocava virava ouro, até a comida
+TITÃ|Gigante da mitologia grega|Maior lua de Saturno|Cronos era um deles
+BACH|Compositor de "Tocata e Fuga"|Johann Sebastian, do barroco alemão|Autor das Variações Goldberg
+LISZT||Pianista húngaro virtuose|Compôs as Rapsódias Húngaras
+VERDI|Compositor de "Aida"|Autor de "La Traviata"|O "Va, pensiero" de Nabucco é dele
+RAVEL||Compositor do "Bolero"|Francês de "Pavana para uma infanta defunta"
+ELGAR||Compositor inglês de "Pompa e Circunstância"|Autor das "Variações Enigma"
+BIZET||Compositor de "Carmen"|Francês que morreu meses após a estreia de sua ópera mais famosa
+HAYDN||O "pai da sinfonia"|Austríaco, mestre de Beethoven por um tempo
+MONET|Pintor das ninfeias|Seu "Impressão, nascer do sol" deu nome a um movimento|Pintou a catedral de Rouen dezenas de vezes
+MANET||Pintor de "Olympia"|Seu "Almoço na relva" escandalizou Paris
+DEGAS||Pintor das bailarinas|Esculpiu a "Pequena bailarina de 14 anos"
+GOYA||Pintor de "Os fuzilamentos de 3 de maio"|Espanhol das "Pinturas negras"
+DALÍ|Pintor dos relógios derretidos|Surrealista do bigode famoso|Pintou "A persistência da memória"
+MIRÓ||Pintor catalão de formas e cores puras|Surrealista de Barcelona, amigo de Picasso
+KLEE||Pintor suíço da Bauhaus|"Angelus Novus", que Benjamin comprou, é dele
+MUNCH|Pintor de "O Grito"|Norueguês expressionista|Pintou "Madona" e "Melancolia"
+KAHLO|Frida, pintora mexicana|Autorretrato com sobrancelhas unidas|Casou duas vezes com Diego Rivera
+VOLPI||Pintor das bandeirinhas|Alfredo, italiano naturalizado brasileiro
+BOSCH||Pintor de "O Jardim das Delícias"|Holandês dos monstros fantásticos
+DANTE|Autor da "Divina Comédia"|Poeta florentino guiado por Virgílio|Exilado de Florença, apaixonado por Beatriz
+POE|Autor de "O Corvo"|Edgar Allan, do conto policial|Criou o detetive Dupin
+KAFKA|Autor de "A Metamorfose"|Gregor Samsa é criação dele|Pediu que queimassem sua obra
+CAMUS||Autor de "O Estrangeiro"|Escreveu "O mito de Sísifo"
+LORCA||Poeta de "Bodas de Sangue"|Federico García, morto na Guerra Civil Espanhola
+ASSIS|Machado de ___|Sobrenome do autor de "Dom Casmurro"|São Francisco de ___
+BILAC|Olavo, o poeta das estrelas|"Ora (direis) ouvir estrelas!" é dele|Escreveu a letra do Hino à Bandeira
+GOGOL||Autor de "O Capote"|Escreveu "Almas Mortas"
+TWAIN||Mark, de Tom Sawyer|Pseudônimo do autor de "Huckleberry Finn"
+JOYCE||Autor de "Ulisses"|Irlandês do Bloomsday, 16 de junho
+WOOLF||Virginia, de "Mrs. Dalloway"|Escreveu "Um teto todo seu"
+BYRON||Lorde poeta romântico inglês|Pai de Ada Lovelace
+KEATS||Poeta da "Ode a uma urna grega"|Romântico inglês que morreu em Roma aos 25
+YEATS||Poeta irlandês, Nobel de 1923|"A Segunda Vinda" é poema dele
+WILDE||Oscar, de "Dorian Gray"|"Posso resistir a tudo, menos à tentação"
+HUGO|Victor ___, de "Os Miseráveis"|Autor de "O Corcunda de Notre-Dame"|Francês exilado em Guernsey
+ZOLA||Autor de "Germinal"|Escreveu o "J'accuse!" no caso Dreyfus
+DUMAS||Autor de "Os Três Mosqueteiros"|Escreveu "O Conde de Monte Cristo"
+VERNE|Júlio, de "Vinte Mil Léguas Submarinas"|Autor de "A Volta ao Mundo em 80 Dias"|Imaginou o submarino Náutilus
+HESSE||Autor de "Sidarta"|Escreveu "O Lobo da Estepe"
+MANN||Thomas, de "A Montanha Mágica"|Autor de "Morte em Veneza"
+KANT|Filósofo de Königsberg|Autor da "Crítica da Razão Pura"|Criou o imperativo categórico
+HEGEL||Filósofo da dialética alemã|Tese, antítese e síntese, na versão escolar
+MARX|Autor de "O Capital"|Escreveu o Manifesto com Engels|Barbudo de Trier enterrado em Londres
+HUME||Filósofo escocês do empirismo|Duvidou da causalidade e acordou Kant do "sono dogmático"
+LOCKE||Filósofo da tábula rasa|Inglês do "Segundo Tratado sobre o Governo"
+MILL||John Stuart, do utilitarismo|Escreveu "Sobre a Liberdade"
+RAWLS||Filósofo da "Teoria da Justiça"|Criou o "véu da ignorância"
+KUHN||Filósofo das revoluções científicas|Popularizou "mudança de paradigma"
+ZENÃO||Filósofo dos paradoxos de Aquiles e a tartaruga|Fundador do estoicismo, o de Cítio
+TALES||Filósofo de Mileto|Previu um eclipse e disse que tudo é água
+BOHR||Físico do modelo atômico de 1913|Dinamarquês, rival amigável de Einstein
+CURIE|Marie, duas vezes Nobel|Descobriu o polônio e o rádio|Única pessoa com Nobel em duas ciências diferentes
+DIRAC||Físico que previu a antimatéria|Inglês famoso por falar pouquíssimo
+EULER||Matemático suíço do número e|Fez a identidade e^iπ + 1 = 0
+GAUSS||O "príncipe dos matemáticos"|Somou 1 a 100 de cabeça quando menino, diz a lenda
+FERMI||Físico do primeiro reator nuclear|O paradoxo dele pergunta "cadê os ETs?"
+OHM|Unidade de resistência elétrica|Símbolo Ω|Georg Simon, físico alemão
+WATT|Unidade de potência|James, da máquina a vapor|Lâmpada de 60 ___
+TESLA|Unidade de campo magnético|Inventor rival de Edison|Nikola, da corrente alternada
+HERTZ|Unidade de frequência|Ciclos por segundo|Heinrich, que provou as ondas de rádio
+JOULE|Unidade de energia|James Prescott, do calor e trabalho|Equivale a um newton vezes um metro
+QUARK|Partícula dentro do próton|Tem sabores: up, down, strange…|Nome tirado de um verso de Joyce
+FÓTON|Partícula de luz|Quantum da luz|Não tem massa e viaja a 300 mil km/s
+MÚON||Primo pesado do elétron|Partícula que chega do céu nos raios cósmicos
+LASER|Luz concentrada|Sigla de amplificação de luz por emissão estimulada|Apontador que deixa o gato maluco
+SONAR|Radar debaixo d'água|Morcegos e golfinhos têm um natural|Ecolocalização do submarino
+ALELO||Versão de um gene|Mendel cruzava ervilhas com eles
+DACAR||Capital do Senegal|Ponto final do antigo rali Paris-___
+ACRA||Capital de Gana|Fica no Golfo da Guiné
+RIGA||Capital da Letônia|Maior cidade dos países bálticos
+SEUL|Capital da Coreia do Sul|Cidade do K-pop|Sediou as Olimpíadas de 1988
+DOHA||Capital do Catar|Cidade-sede da Copa de 2022
+BAKU||Capital do Azerbaijão|Cidade às margens do Cáspio, com GP de F1
+RENO|Rio que passa por Colônia|Rio da Lorelei|Separa França e Alemanha num trecho
+VOLGA||Maior rio da Europa|Deságua no Mar Cáspio
+TEJO|Rio de Lisboa|Nasce na Espanha, onde se chama Tajo|"O ___ é mais belo que o rio da minha aldeia" (Pessoa)
+URAL||Montes que dividem Europa e Ásia|Rio e cordilheira russos
+FUJI|Monte sagrado do Japão|Vulcão das gravuras de Hokusai|Pico mais alto do Japão
+GOBI||Deserto da Mongólia|Onde acharam os primeiros ovos de dinossauro
+MALI||País de Tombuctu|Terra do imperador Mansa Musa
+CHADE||País africano do lago de mesmo nome|Fica entre Líbia e Nigéria
+NÍGER||Rio da África Ocidental|País de Niamey
+LAOS||País do Mekong, entre Tailândia e Vietnã|Capital: Vientiane
+OMÃ||Sultanato da Península Arábica|Capital: Mascate
+INCAS|Povo de Machu Picchu|Império de Cusco|Contavam com nós em cordões, os quipus
+MAIAS|Povo de Chichén Itzá|Criadores de um famoso calendário|Usavam o zero antes dos europeus
+TUDOR||Dinastia de Henrique VIII|Elizabeth I foi a última dela
+MING||Dinastia chinesa dos vasos azuis e brancos|Construiu boa parte da Muralha que se vê hoje
+CODA|Final de uma música|Seção que encerra a peça|Filme vencedor do Oscar de 2022
+FUGA|Escapada|Forma musical de Bach|Ponto de ___: a perspectiva do desenho
+SWING|Balanço do jazz|Era das big bands|Benny Goodman era o rei dele
+NOIR|Gênero policial sombrio|Filme ___: preto e branco, femme fatale e detetive|Chandler e Hammett escreviam assim
+GAMA|Terceira letra grega|Raios ___: os mais energéticos|Vasco da ___
+BETA|Segunda letra grega|Versão de teste|Caroteno da cenoura
+ALFA|Primeira letra grega|___ Romeo, carro italiano|Partícula ___: núcleo de hélio
+DELTA|Quarta letra grega|Foz do Nilo|Asa ___, do Concorde
+SIGMA|Letra do somatório|Desvio-padrão, na estatística|Seis ___: método de qualidade
+ETA||Sétima letra grega|"___ ferro!", espanto mineiro
+ZETA||Sexta letra grega|Catherine ___-Jones
+TAU||Letra grega da cruz em T|Partícula pesada da família do elétron
+PSI||Letra grega da psicologia|Símbolo da função de onda

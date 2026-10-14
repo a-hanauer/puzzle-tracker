@@ -29,13 +29,13 @@ export const PADROES = {
   duas: [[0, 24]],
 };
 // por nível: grades possíveis e chance de cada nível de pista [fácil, média, difícil]
-export const NIVEL = {
-  1: { grades: ["seis", "quatro"], pista: [1, 0, 0] },
-  2: { grades: ["seis", "quatro"], pista: [.85, .15, 0] },
-  3: { grades: ["quatro"], pista: [.45, .55, 0] },
-  4: { grades: ["quatro"], pista: [.2, .7, .1] },
-  5: { grades: ["quatro"], pista: [0, .6, .4] },
-  6: { grades: ["quatro", "duas"], pista: [0, .3, .7] },
+export const NIVEL = {   // out/2026: mais difícil desde a segunda (o público pede desafio)
+  1: { grades: ["seis", "quatro"], pista: [.6, .4, 0] },
+  2: { grades: ["seis", "quatro"], pista: [.4, .5, .1] },
+  3: { grades: ["quatro"], pista: [.2, .55, .25] },
+  4: { grades: ["quatro"], pista: [.1, .5, .4] },
+  5: { grades: ["quatro"], pista: [0, .4, .6] },
+  6: { grades: ["quatro", "duas"], pista: [0, .2, .8] },
   7: { grades: ["duas", "quatro"], pista: [0, .1, .9] },
 };
 

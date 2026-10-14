@@ -101,7 +101,6 @@ export const BANCO = [
   ["Palíndromos", "trocadilho", 4, ["arara", "ovo", "radar", "reviver", "osso", "asa", "rever", "ralar", "reter", "salas", "matam", "anilina", "omissíssimo"]],
   ["Têm uma fruta escondida", "trocadilho", 4, ["chuva", "esperança", "namorado", "pescoço", "aracaju", "viúva", "véspera", "temperatura", "imperador", "fumaça", "clima", "luvas"]],
   ["Coisas que têm dentes", "trocadilho", 4, ["pente", "serrote", "zíper", "engrenagem", "alho", "garfo", "serra", "chave", "ancinho", "rastelo"]],
-  ["Jogos do Dia", "cultura", 4, ["sando", "cordel", "novelo", "eclipse", "azulejo", "cortado", "panelinha", "termo", "spotle"]],
   ["Apelidos de craques", "cultura", 2, ["pelé", "zico", "kaká", "romário", "garrincha", "tostão", "sócrates", "cafu", "falcão", "didi", "neymar", "ronaldinho", "rivaldo", "bebeto"]],
   ["Jeitos de dizer dinheiro", "cultura", 3, ["grana", "bufunfa", "pila", "tutu", "verba", "cascalho", "pataca", "conto", "gaita", "dindim", "faz-me-rir", "trocado"]],
   ["Jeitos de chamar alguém de bobo", "cultura", 3, ["tanso", "bocó", "pateta", "mané", "palerma", "banana", "abobado", "tonto", "otário", "lesado", "pamonha", "anta"]],
