@@ -16,6 +16,7 @@ import { dirname, join } from "node:path";
 import { BANCO } from "../comum/banco.mjs";
 import { ACERVO } from "../comum/acervo.mjs";
 import { mantidos } from "../comum/selecao.mjs";
+import { confere } from "./confere-categorias.mjs";
 
 export const EPOCH = [2026, 9, 10];            // #1 = sábado, 10/10/2026
 let seed = 20261010;
@@ -33,7 +34,7 @@ const areaDoBanco = (nome, tipo) =>
 // todas as categorias: o acervo de conhecimentos gerais (out/2026) + o banco antigo, que agora
 // entra com moderação (veja AREA_PAUSA). Os temas antigos do Cordel (infantis) saíram.
 const CATS = [
-  ...ACERVO.map(x => ({ nome: x.n, tipo: x.a === "jogo" || x.a === "lingua" ? "trocadilho" : "direto", nivel: x.l, ws: x.w, area: x.a, fam: x.f, acervo: true })),
+  ...ACERVO.map(x => ({ nome: x.n, tipo: x.a === "jogo" || x.a === "lingua" ? "trocadilho" : x.a === "expressao" ? "expressao" : "direto", nivel: x.l, ws: x.w, area: x.a, fam: x.f, acervo: true })),
   ...BANCO.map(([nome, tipo, nivel, ws]) => ({ nome, tipo, nivel, ws, area: areaDoBanco(nome, tipo) })),
 ].map((c, id) => {
   const vistos = new Map();
@@ -50,6 +51,7 @@ const comum = (a, b) => [...a.mapa.keys()].filter(k => b.mapa.has(k)).length;
 const brigam = (a, b) => {
   if (a.nome === b.nome || (a.fam && a.fam === b.fam)) return true;   // da mesma família (dois grupos de capitais, duas "escondem…"): nunca no mesmo dia
   const n = comum(a, b);
+  if (n >= 3) return true;                                  // muitas palavras em comum (Planetas × Planetas que são deuses): confunde
   const jogo = t => t === "expressao" || t === "trocadilho";
   if (jogo(a.tipo) || jogo(b.tipo)) return false;
   return a.tipo === "direto" && b.tipo === "direto" ? n >= 1 : n >= 2;   // dois grupos diretos com algo em comum: assunto parecido demais
@@ -58,7 +60,7 @@ const brigam = (a, b) => {
 // rodízio de assuntos: as áreas do dia são todas diferentes, e as que cansam rápido (bichos,
 // expressões, coisas do cotidiano) só voltam depois de alguns dias. As do acervo não repetem
 // a área do dia anterior.
-const AREA_PAUSA = { bichos: 6, expressao: 4, cotidiano: 2, brasil: 2 };
+const AREA_PAUSA = { bichos: 6, expressao: 4, cotidiano: 2, brasil: 2, natureza: 2, religiao: 2 };
 const areaLivre = (c, areasRecentes) => {
   const pausa = AREA_PAUSA[c.area] ?? 1;
   return !areasRecentes.slice(-pausa).some(dia => dia.includes(c.area));
@@ -136,6 +138,8 @@ function tentar(cfg, recentes) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const erros = confere();                                    // categorias fora das regras: não gera
+  if (erros.length) { console.error(erros.join("\n")); process.exit(1); }
   const DIAS = +(process.argv[2] || 365);
   if (process.argv[3]) seed = +process.argv[3];
   const dir = dirname(fileURLToPath(import.meta.url));

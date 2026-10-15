@@ -50,3 +50,6 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Pistas sempre em português do Brasil, pensadas em português: nada de ditado, título ou trocadilho que só
   funciona em inglês. A lacuna `___` vale a palavra inteira (nunca `___s`). `cruzadinha/confere-pistas.mjs`
   confere as regras, e o gerador não roda se o banco estiver fora delas.
+- Panelinha: `panelinha/confere-categorias.mjs` (o gerador roda antes). Listas de palavras o mais completas
+  possível: uma palavra que cabe em dois grupos e não está nas duas listas vira resposta dupla sem o gerador
+  saber. Pegadinhas (roxo) conferidas letra por letra.
