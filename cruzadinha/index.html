@@ -280,7 +280,7 @@
   function tamanho() {
     const st = $("stage");
     const lado = Math.floor(Math.min(st.clientWidth, st.clientHeight));
-    $("grade").style.setProperty("--lado", Math.max(220, Math.min(440, lado)) + "px");
+    $("grade").style.setProperty("--lado", Math.max(160, Math.min(440, lado)) + "px");
   }
   window.addEventListener("resize", () => { if (P) tamanho(); });
   function montaGrade() {
