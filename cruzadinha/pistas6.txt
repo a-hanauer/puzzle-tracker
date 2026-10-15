@@ -3,7 +3,6 @@
 ABAFAR|Tampar para não sair o vapor|___ o caso: esconder o escândalo|Sufocar a chama sem água
 ABALAR|Sacudir|Deixar emocionalmente abatido|O terremoto faz com os alicerces
 ABANAR|Mexer o leque|___ o rabo, como o cachorro feliz|Refrescar com movimento de mão
-ABORTO|Interrupção da gravidez|Projeto que não vingou|Missão espacial cancelada no meio, em inglês "abort"
 ABRAÇO|Gesto de carinho com os braços|"___ de urso": apertado|O que se manda no fim da carta
 ABRIGO|Lugar para se proteger|Casaco de inverno, no Sul|___ antiaéreo
 ABSIDE||Fundo semicircular da igreja|Onde fica o altar-mor na planta basilical
@@ -17,8 +16,8 @@ AFINAL|Enfim|"___, quem manda aqui?"|No fim das contas
 AGENDA|Caderno dos compromissos|Pauta de uma reunião|___ 2030, da ONU
 AGOSTO|Mês do Dia dos Pais|Mês do cachorro louco, diz o ditado|Oitavo mês, homenagem a um imperador romano
 AGULHA|Usada para costurar|___ no palheiro|Ponteiro da bússola
-ALEGRE|Feliz|Porto ___|Jovial, contente
-ALIADO|Parceiro na luta|Os ___s venceram a Segunda Guerra|Quem joga do mesmo lado
+ALEGRE|Feliz|Porto ___|Bem-humorado
+ALIADO|Parceiro na luta|Quem joga do mesmo lado|País do lado vencedor da Segunda Guerra
 ALMOÇO|Refeição do meio-dia|"Não existe ___ grátis"|Ajantarado de domingo
 ALTURA|Medida de baixo para cima|Estar à ___: ser capaz|Tom agudo ou grave de um som
 ANEMIA|Falta de ferro no sangue|Deixa a pessoa pálida e cansada|Baixa de hemoglobina
@@ -40,7 +39,7 @@ BAIANO|Quem nasce na Bahia|Gentílico de Salvador e arredores|Caetano, Gil e Gal
 BAINHA|Dobra da barra da calça|Estojo da espada|Guarda o punhal
 BALADA|Festa noturna|Canção lenta e romântica|Poema narrativo medieval
 BALCÃO|Onde o atendente fica na loja|Varanda saliente do prédio|Galeria alta do teatro
-BANANA|Fruta amarela do cacho|Pessoa mole, sem atitude|República das ___s
+BANANA|Fruta amarela do cacho|Pessoa mole, sem atitude|Prata, nanica ou da terra
 BARATA|Inseto que assusta|Não é cara: é ___|Kafka transformou Gregor Samsa num inseto parecido
 BARRIL|Tonel de madeira|Medida de petróleo|Chope vem nele
 BATATA|Vira purê e frita|"___ quente": problema que ninguém quer|Inglesa, doce ou baroa
@@ -60,7 +59,7 @@ BRINDE|Saudação com taças|Presente promocional|"Tim-tim!"
 CABANA|Casinha simples de madeira|"A ___ do Pai Tomás"|Choupana
 CABELO|Cresce na cabeça|___ de anjo: macarrão fino|Fio capilar
 CABIDE|Onde se pendura roupa|"___ de emprego": cargo arranjado|Gancho do armário
-CADEIA|Prisão|Sequência encadeada|___ alimentar
+CADEIA|Prisão|___ alimentar|___ de montanhas
 CÂMBIO|Troca de moeda|Alavanca de marchas do carro|"___, desligo!": fim de transmissão
 CAMELO|Bicho de duas corcovas|"Navio do deserto"|O dromedário tem uma só corcova; ele, duas
 CAMISA|Peça de botões|___ 10: o craque|Vestir a ___: se dedicar ao time
@@ -68,7 +67,7 @@ CANECA|Copo com alça|___ de chope|Presente de lembrança com foto
 CANETA|Escreve com tinta|Drible entre as pernas|Esferográfica, tinteiro ou nanquim
 CANHÃO|Arma de artilharia|Bala de ___|Gol de ___: chute fortíssimo
 CANTOR|Quem canta|Tenor ou barítono|Pássaro ___: o que gorjeia bonito
-CAPELA|Igreja pequena|A Sistina é a mais famosa|"A ___": a cappella, só vozes
+CAPELA|Igreja pequena|A Sistina é a mais famosa|Cantar "à ___": só vozes
 CARETA|Cara feia|Conservador, na gíria|Máscara de folguedo popular
 CARIRI|Região do sul do Ceará|Terra do Padre Cícero|Povo indígena do Nordeste
 CARTAZ|Anúncio na parede|Filme em ___: em exibição|Pôster
@@ -79,7 +78,7 @@ CAVALO|Animal de montaria|Peça de xadrez que pula|___ de Troia
 CEBOLA|Faz chorar na cozinha|Base do refogado|Bulbo em camadas
 CEREJA|Fruta vermelha pequena|A ___ do bolo: o toque final|Florada do Japão
 CHAPÉU|Vai na cabeça|Drible por cima do adversário|Panamá, de palha
-CHARME|Encanto|"Fazer ___"|Atrativo sedutor
+CHARME|Encanto|"Fazer ___": fazer-se de difícil|Baile ___, do subúrbio carioca
 CHEIRO|Odor|___-verde: salsa e cebolinha|O nariz sente
 CHICLE|Goma de mascar|Seringueira dá látex parecido|Látex do sapotizeiro
 CHOCAR|Bater de frente|Escandalizar|O que a galinha faz no ovo
@@ -143,7 +142,7 @@ ESPIGA|Milho na palha|Cacho de trigo|Constelação de Virgem tem a estrela ___
 ESPUMA|Bolhas brancas|A do mar, onde nasceu Afrodite|Colchão de ___
 ESTADO|Unidade da federação|Condição: "___ de espírito"|O ___ sou eu (Luís XIV)
 ESTILO|Jeito próprio|Moda|"Livre", na natação
-ESTOJO|Guarda lápis e canetas|Caixinha de joias|Case
+ESTOJO|Guarda lápis e canetas|Caixinha de joias|Caixa de instrumento musical
 ESTUDO|Ato de estudar|Peça musical para treinar técnica|Pesquisa científica
 ETERNO|Que não acaba|Cidade ___: Roma|Amor ___
 EUROPA|Continente de Paris|Lua de Júpiter|Princesa raptada por Zeus em forma de touro
@@ -159,7 +158,7 @@ FLECHA|Disparada pelo arco|Seta|A de Cupido
 FLORES|Rosa, cravo e margarida|Ilha da Indonésia|Ilha mais a oeste dos Açores
 FORMAR|Dar forma|Concluir a faculdade|___ fila
 FRANJA|Cabelo na testa|Borda com fios|Periferia de um grupo
-FRESCO|Recém-feito|Pão ___|Arejado, ameno
+FRESCO|Recém-feito|Pão ___|Afrescalhado, na gíria
 FRITAR|Cozinhar no óleo quente|___ batata|Deixar alguém ___: desgastar até cair
 FUMAÇA|Sai da chaminé|Onde há ___, há fogo|Fumo
 FUTURO|O que vem depois|Tempo verbal do "será"|"De volta para o ___"
@@ -169,7 +168,7 @@ GARÇOM|Serve as mesas|"___, a conta!"|Atende no restaurante
 GAVETA|Puxa-se da cômoda|Engavetar: deixar parado|"Na ___": arquivado
 GÊMEOS|Nascidos juntos|Signo de maio e junho|Castor e Pólux
 GÊNERO|Tipo, espécie|Masculino ou feminino|Literário: épico, lírico, dramático
-GENTIL|Educado, amável|Delicado|Cavalheiro
+GENTIL|Educado, amável|Delicado|"___ senhora", tratamento antigo
 GIRAFA|Bicho de pescoço longo|Mais alto animal terrestre|Da savana africana, com manchas
 GLÓRIA|Fama|Bairro do Rio|"___ a Deus nas alturas"
 GOIABA|Fruta vermelha por dentro|Doce de ___ com queijo: Romeu e Julieta|Bicho de ___
@@ -190,7 +189,7 @@ JANTAR|Refeição da noite|Comer à noite|Ceia
 JARDIM|Lugar de plantas e flores|___ de infância|___ Botânico do Rio
 JOELHO|Articulação da perna|Dobrar o ___: rezar ou se render|Rótula fica nele
 JOGADA|Lance do jogo|Esperteza: "que ___!"|Movimento de xadrez
-JORNAL|Notícias impressas|Telejornal|Diário
+JORNAL|Notícias impressas|O "Nacional" foi o primeiro da TV brasileira|Diário
 LANCHE|Comida rápida da tarde|Merenda|"Hora do ___"
 LARGAR|Soltar|Abandonar|___ o osso: desistir
 LEGUME|Cenoura, abóbora, chuchu|Vai na sopa|Hortaliça
@@ -205,7 +204,7 @@ MACACO|Primata que gosta de banana|Ferramenta para trocar pneu|"Cada ___ no seu 
 MALHAR|Fazer exercício|Bater o ferro: "___ enquanto está quente"|Falar mal de alguém
 MANDAR|Dar ordens|Enviar|"Quem ___ aqui sou eu"
 MANEJO|Cuidado com o rebanho|Manuseio|Técnica de ___ florestal
-MANGUE|Ecossistema de lama e caranguejo|___beat, do Recife de Chico Science|Vegetação de beira de rio e mar
+MANGUE|Ecossistema de lama e caranguejo|___ beat, o movimento de Chico Science|Vegetação de beira de rio e mar
 MANSÃO|Casa enorme|Casa do bilionário|Palacete
 MARCHA|Passo militar|___ nupcial|Engatar a ___: o câmbio do carro
 MARFIM|Material das presas do elefante|Branco amarelado|Costa do ___, país africano
@@ -217,7 +216,7 @@ MESTRE|Professor|___ de cerimônias|Título de quem fez mestrado
 METADE|Meio|Cada uma das duas partes iguais|"Minha ___ da laranja"
 MÉTODO|Jeito organizado de fazer|___ científico|"Discurso do ___", de Descartes
 MILHÃO|Mil vezes mil|Prêmio do show de perguntas|Seis zeros
-MINUTO|Sessenta segundos|"Só um ___!"|Ata de reunião, em inglês
+MINUTO|Sessenta segundos|"Só um ___!"|"___ de silêncio", em homenagem
 MISSÃO|Tarefa importante|___ impossível|Redução jesuítica: São Miguel das ___
 MODELO|Exemplo|Quem desfila na passarela|___ de carro
 MOINHO|Gira com o vento|Quixote lutou contra eles|Mói o trigo
@@ -248,7 +247,7 @@ PALETA|Tábua de cores do pintor|Conjunto de cores de um artista|Corte de carne 
 PALMAS|Aplauso|Capital do Tocantins|Folhas de palmeira no Domingo de Ramos
 PANELA|Vai ao fogo|Grupinho fechado|___ de pressão
 PARADA|Ponto de ônibus|Desfile de rua|Lista das mais tocadas
-PAREDE|Muro da casa|Encostar na ___|"As ___s têm ouvidos"
+PAREDE|Muro da casa|"Encostar na ___": pressionar|A Muralha, por outro nome
 PARQUE|Área verde da cidade|___ de diversões|Ibirapuera, em São Paulo
 PASTEL|Salgado frito de feira|Tom suave de cor|Bolo de massa folhada português: ___ de Belém
 PATROA|Chefe da casa|Dona do negócio|"A ___ não deixa", diz o marido
@@ -259,7 +258,7 @@ PEIXES|Signo de março|Cardume|Último signo do zodíaco
 PELADA|Futebol de amigos|Racha no fim de semana|Jogo improvisado no campinho
 PENSAR|Raciocinar|"Penso, logo existo" é sobre isso|Refletir
 PEPINO|Legume da salada|Problema: "que ___!"|Conserva de picles
-PERDÃO|Desculpa|Pedir ___|Indulto
+PERDÃO|Desculpa|Pedir ___|"___ se eu errei", na canção
 PERFIL|Lado do rosto|Rede social tem um|Silhueta de lado
 PERIGO|Risco|"___: alta tensão"|Ameaça
 PÉROLA|Joia da ostra|Bodas de ___: 30 anos|Gafe engraçada: "que ___!"
@@ -276,7 +275,7 @@ PORÇÃO|Parte|Comida de boteco para dividir|Quinhão
 PORTÃO|Entrada da casa|___ de embarque|Grade de entrada
 POSTAL|Cartão de viagem|Código ___: o CEP|Vale ___
 PRÊMIO|Recompensa|O Nobel é um|Bolada da loteria
-PRENDA|Presente|Moça gaúcha do CTG|Habilidade: "tem muitas ___s"
+PRENDA|Presente|Moça gaúcha do CTG|Dote, habilidade doméstica
 PRESSA|Urgência|"A ___ é inimiga da perfeição"|Correria
 PRIMOS|Filhos dos tios|Números divisíveis só por 1 e por si|2, 3, 5, 7, 11…
 PROVAR|Experimentar|Demonstrar com fatos|___ a roupa
@@ -295,7 +294,7 @@ RASTRO|Marca deixada|Pista|Esteira do navio
 RECADO|Mensagem|"Dar o ___": fazer o que tinha de fazer|Bilhete
 RECIFE|Capital de Pernambuco|Banco de corais|"Veneza brasileira"
 REGIÃO|Área|Sudeste é uma|Zona, território
-RENDER|Dar lucro|Entregar-se: ___-se|Durar bastante
+RENDER|Dar lucro|Entregar-se: ___-se ao inimigo|Durar bastante
 RIACHO|Rio pequeno|Córrego|Arroio, no Sul
 RODELA|Fatia redonda|___ de limão|Arruela
 ROLETA|Jogo de cassino|Catraca do ônibus|___ russa
@@ -324,7 +323,7 @@ SONHAR|Ter sonhos dormindo|Imaginar|"___ não custa nada"
 SUBIDA|Ladeira para cima|Aumento de preço|Ascensão
 TABELA|Quadro de dados|___ periódica|Classificação do campeonato
 TALHER|Garfo, faca ou colher|Prataria da mesa|Faqueiro guarda
-TAMBOR|Instrumento de bater|Rufar dos ___es|Cilindro da máquina de lavar
+TAMBOR|Instrumento de bater|Cilindro da máquina de lavar|Rufa no desfile militar
 TAPETE|Cobre o chão|"Varrer para debaixo do ___"|O ___ vermelho do Oscar
 TARIFA|Preço do serviço|___ de ônibus|Imposto de importação
 TÁTICA|Estratégia|Esquema do técnico|Jogada pensada
@@ -332,7 +331,7 @@ TEATRO|Lugar das peças|Municipal é um|Drama encenado
 TECIDO|Pano|Conjunto de células|Malha, seda ou linho
 TEMPLO|Casa de culto|___ de Salomão|Igreja, sinagoga ou mesquita
 TENSÃO|Voltagem|Nervosismo|Pré-menstrual, em sigla TPM
-TIGELA|Cumbuca|Pote fundo|Bowl
+TIGELA|Cumbuca|Pote fundo|Onde se serve o açaí
 TIJOLO|Bloco de barro|Ergue a parede|___ de rapadura
 TÍTULO|Nome do livro|Taça do campeonato|___ de eleitor
 TOALHA|Seca o corpo|Jogar a ___: desistir|___ de mesa
@@ -424,7 +423,7 @@ CUIABÁ|Capital de Mato Grosso|Cidade mais quente do Brasil, dizem|Centro geodé
 MACEIÓ|Capital de Alagoas|Praia de Pajuçara|Terra de piscinas naturais
 OLINDA|Cidade histórica de Pernambuco|Bonecos gigantes do carnaval|Patrimônio da Humanidade ao lado do Recife
 PARATY|Cidade histórica do Rio|Festa literária, a Flip|Caminho do Ouro
-CANELA|Especiaria em casca|Cidade da Serra Gaúcha|"Esticar as ___s": morrer
+CANELA|Especiaria em casca|Cidade da Serra Gaúcha|Parte da frente da perna
 VENEZA|Cidade das gôndolas|Bienal de arte|"O Mercador de ___"
 TOLEDO|Cidade das espadas, na Espanha|Pintada por El Greco|Ex-capital castelhana
 BRUGES|Cidade belga dos canais|"Veneza do Norte"|Renda e chocolate flamengos
@@ -448,16 +447,16 @@ SAVANA|Campo com árvores esparsas|Paisagem africana|Cerrado é uma
 TUNDRA|Vegetação gelada do Ártico|Musgos e líquens|Solo congelado, o permafrost
 CÂNION|Vale profundo|Grand ___|Itaimbezinho, no RS
 LAGUNA|Lagoa junto ao mar|Cidade catarinense de Anita Garibaldi|Lagoa dos Patos é uma
-MONÇÃO|Vento das chuvas da Ásia|Estação chuvosa da Índia|Bandeirantes desciam rios nas ___ões
+MONÇÃO|Vento das chuvas da Ásia|Estação chuvosa da Índia|Expedição fluvial dos bandeirantes até Cuiabá
 VIKING|Navegador nórdico|Usava drakkar|Chegou à América antes de Colombo
 ASTECA|Povo de Tenochtitlán|Império conquistado por Cortés|Povo de Montezuma
-TIRANO|Governante cruel|Déspota|O ___ de Siracusa, na tragédia grega
+TIRANO|Governante cruel|Déspota|"Édipo ___", título original da tragédia de Sófocles
 SENADO|Câmara alta|Plenário de Brasília com cúpula virada para baixo|Cúria, em Roma
 PLEBEU|Homem do povo|O contrário de nobre|Romano sem privilégios
 CÔNSUL|Representante diplomático|Magistrado romano|Napoleão foi primeiro ___
 LEGIÃO|Tropa romana|Muitos: "uma ___ de fãs"|___ Urbana, banda
 FEUDAL|Da Idade Média|Sistema ___|Senhor ___
-ABADIA|Mosteiro grande|___ de Westminster|"Downton ___"
+ABADIA|Mosteiro grande|___ de Westminster|Chefiada por um abade
 GÓTICO|Estilo das catedrais de vitrais|Romance de terror|Letra ___, a das bíblias antigas
 ROCOCÓ|Estilo cheio de curvas e dourado|Depois do barroco|Excesso de enfeites
 SONATA|Peça para piano|___ ao luar|Forma em três movimentos
@@ -529,7 +528,7 @@ CEVADA|Grão da cerveja|Malte vem dela|Café de ___
 WASABI|Raiz picante verde|Acompanha o sushi|Raiz-forte japonesa
 SÁLVIA|Erva aromática|Combina com nhoque e manteiga|Erva sagrada dos romanos, "a que salva"
 RISOTO|Arroz cremoso italiano|Leva arbóreo|Alla milanese, com açafrão
-NHOQUE|Massa de batata|Dia 29, para dar sorte|Gnocchi
+NHOQUE|Massa de batata|Prato do dia 29, para dar sorte|Vai bem com molho de sálvia e manteiga
 FONDUE|Queijo derretido na panela|Prato suíço|De chocolate, com frutas
 QUICHE|Torta salgada francesa|___ lorraine|Leva ovos e creme
 PAELLA|Prato de arroz espanhol|Valenciana, com frutos do mar|Leva açafrão
@@ -551,10 +550,10 @@ TROFÉU|Prêmio do campeão|Taça|Glória
 GRENAL|Clássico gaúcho|Grêmio x Inter|O maior clássico do Sul
 FLAFLU|Clássico carioca|Flamengo x Fluminense|"O ___ começou 40 minutos antes do nada", Nelson Rodrigues
 # Leva 6 — palavras do dia a dia
-ABERTO|O contrário de fechado|"Livro ___": pessoa transparente|Torneio de tênis sem convite: US ___
+ABERTO|O contrário de fechado|"Livro ___": pessoa transparente|Torneio de tênis sem convite, como o de Roland Garros
 ACORDO|Trato|"De ___": concordo|Tratado entre países
 ADORAR|Gostar muito|Venerar um deus|Idolatrar
-AFETAR|Atingir|Comover|Fingir: modos ___ados
+AFETAR|Atingir|Comover|Fingir, simular
 AJUDAR|Dar uma mão|Socorrer|Colaborar
 ALERTA|Aviso de perigo|Estado de atenção|"Fique ___!"
 ALUGAR|Pagar para usar|___ um carro|Locar
@@ -566,7 +565,7 @@ ANIMAL|Bicho|"Que ___!": que incrível, na gíria|Reino que inclui o homem
 ANTIGO|Velho, de outros tempos|Grécia ___|Ex: "meu ___ chefe"
 APOSTA|Palpite com dinheiro|Bolão da Mega|Risco calculado
 ARANHA|Tece a teia|Homem-___|Oito patas
-ARRAIA|Peixe achatado|Festa junina: ___|Pipa, em alguns lugares
+ARRAIA|Peixe achatado|Pipa, em vários lugares do Brasil|Raia, por outro nome
 ATAQUE|Ofensiva|Linha de frente do time|___ cardíaco
 ATENTO|Prestando atenção|Ligado|Vigilante
 AVANÇO|Progresso|Ir para a frente|Inovação
@@ -576,7 +575,7 @@ BALEIA|Maior mamífero do planeta|Moby Dick é uma|Jubarte é uma
 BARATO|Custa pouco|"Que ___!": que legal, gíria dos anos 70|Em conta
 BÊNÇÃO|Graça divina|"A ___, vó"|Bendição
 BÍBLIA|Livro sagrado cristão|Antigo e Novo Testamento|Livro de referência de um ofício
-BICUDO|De bico grande|Pássaro canoro|Emburrado: "de bico"
+BICUDO|De bico grande|Pássaro canoro|Emburrado, de cara fechada
 BOIADA|Manada de bois|Passa na estrada|"Deixar a ___ passar": afrouxar regras
 BONECO|Brinquedo em forma de gente|___ de Olinda|Esboço de livro
 BOTECO|Bar simples|Pé-sujo|Comida de ___: torresmo e pastel
@@ -598,7 +597,7 @@ CARECA|Sem cabelo|"___ de saber": cansado de saber|Calvo
 CARONA|Viagem de graça no carro|Pegar ___|Bico de passageiro
 CARTEL|Acordo de empresas para controlar preços|___ de Medellín|Monopólio combinado
 CATIVO|Preso|Encantado|Assento ___ no estádio
-CAUSAR|Provocar|Dar origem|"Chegou causando"
+CAUSAR|Provocar|Dar origem|"Chegou causando", na gíria: chamou atenção
 CENTRO|Meio|Onde fica a praça da Matriz|Partido moderado
 CHEGAR|Alcançar o destino|"Chega!": basta|Aportar
 CHIADO|Barulho de rádio fora de estação|Bairro de Lisboa|Sotaque carioca do "s"
@@ -611,24 +610,24 @@ COBAIA|Porquinho-da-índia|Quem serve de teste|Usada em laboratório
 COBIÇA|Ambição|Desejo do que é do outro|Avareza, um dos pecados
 COLEGA|Companheiro de turma|Do mesmo trabalho|Parceiro de ofício
 COLETE|Peça sem mangas|___ salva-vidas|Vai sob o paletó
-COLINA|Morro baixo|Elevação suave|Outeiro
+COLINA|Morro baixo|Elevação suave|Roma tem sete
 COLUNA|Pilar|Espinha dorsal|Seção do jornal
 COMIDA|O que se come|Refeição|"___ di buteco"
 CONDOR|Ave dos Andes|Maior ave voadora|Símbolo de Chile e Bolívia
-CÔNEGO|Padre de catedral|Clérigo|___ Fidélis, personagem
+CÔNEGO|Padre de catedral|Clérigo do cabido|"O ___", conto de Machado de Assis
 COPIAR|Reproduzir|Colar na prova|Imitar
 COZIDO|Feito na panela com água|Prato português de carnes e legumes|___ à portuguesa
 CREDOR|Quem tem a receber|Cobrador da dívida|O contrário de devedor
 CRUZAR|Atravessar|Fazer cruzamento|___ os dedos: torcer
-CUIDAR|Tomar conta|Zelar|Tratar
+CUIDAR|Tomar conta|Zelar|"___ da própria vida"
 DÁDIVA|Presente|Dom|Graça recebida
 DEBATE|Discussão|Na TV, entre candidatos|Polêmica
 DECOTE|Abertura da roupa no colo|Em V ou canoa|Recorte do vestido
 DEGRAU|Passo da escada|Etapa|Nível
 DEITAR|Ir para a cama|Pôr na horizontal|Recostar
 DEMAIS|Em excesso|"Bom ___!": ótimo|Além da conta
-DEPOIS|Mais tarde|Em seguida|Posteriormente
-DESDÉM|Desprezo|Pouco caso|Soberba
+DEPOIS|Mais tarde|Em seguida|"___ da tempestade vem a bonança"
+DESDÉM|Desprezo|Pouco caso|"Quem desdenha quer comprar": o ___ de quem cobiça
 DIÁRIO|Caderno íntimo|Jornal|De todo dia
 DIRETO|Sem rodeios|Voo sem escala|Ao vivo: transmissão ___
 DIVINO|De Deus|Maravilhoso|Festa do ___, em Paraty
@@ -672,7 +671,7 @@ GASTAR|Usar dinheiro|Desgastar|Esbanjar
 GELADO|Muito frio|Sorvete, em Portugal|"Chope ___"
 GIRINO|Filhote de sapo|Larva de rã|Tem rabo e vive na água
 GRAMPO|Prendedor de papel|De cabelo|Escuta telefônica
-GRANDE|Enorme|Gran: "___ Sertão: Veredas"|Graúdo
+GRANDE|Enorme|Rio ___ do Sul|Graúdo
 GRÁTIS|De graça|Sem pagar|Gratuito
 GRITAR|Berrar|Falar alto|Bradar
 GROSSO|Espesso|Mal-educado|Calibre ___
@@ -697,9 +696,9 @@ LÍRICO|Poético|Cantor de ópera|Gênero da poesia
 LISTAR|Fazer lista|Enumerar|Relacionar
 MADURO|Pronto para comer|Adulto|Ponderado
 MÁGICO|Ilusionista|Encantado|Tira coelho da cartola
-MALUCO|Doido|Insano|Pirado
-MANCHA|Nódoa|Pinta|Sujeira
-MARIDO|Esposo|Cônjuge|Consorte
+MALUCO|Doido|"O Menino ___", de Ziraldo|Pirado
+MANCHA|Nódoa|Pinta|A do leopardo
+MARIDO|Esposo|Cônjuge|"___ de aluguel": faz-tudo doméstico
 MARUJO|Marinheiro|Tripulante|Homem do mar
 MELHOR|Mais bom|O ___ do mundo|Superior
 MENSAL|Uma vez por mês|Mesada é|Salário pago por mês
@@ -734,7 +733,7 @@ POUPAR|Economizar|Preservar|Livrar
 PRANTO|Choro|Lamento|Lágrimas
 PRÉDIO|Edifício|Construção|Arranha-céu
 PRISÃO|Cadeia|Cárcere|___ de ventre
-PUXADO|Cansativo|Cômodo anexo, nos fundos|Olhos ___s
+PUXADO|Cansativo|Cômodo anexo, nos fundos|Olho ___, como o de gato
 RACHAR|Quebrar ao meio|Dividir a conta|"___ de rir"
 RANCHO|Casa rústica|Fazenda|Ranchinho de beira de estrada
 RASGAR|Romper|___ seda: elogiar muito|Dilacerar
@@ -745,7 +744,7 @@ REINAR|Governar como rei|Predominar|Imperar
 RETIRO|Refúgio|Recolhimento espiritual|Lugar sossegado
 RISADA|Gargalhada|Riso alto|Gaitada
 RONCAR|Fazer barulho dormindo|O motor faz ao acelerar|Ressonar
-ROSADO|Cor-de-rosa|Rosé|Corado
+ROSADO|Cor-de-rosa|Vinho rosé|Corado
 ROUBAR|Furtar com violência|Tomar à força|"___ a cena"
 RUGIDO|Voz do leão|Estrondo|Urro
 SACADA|Varanda|Ideia esperta|"Boa ___!"
@@ -754,8 +753,8 @@ SALVAR|Livrar do perigo|Gravar o arquivo|Resgatar
 SAPECA|Travesso|Levado|Arteiro
 SÁTIRO|Ser mitológico meio bode|Companheiro de Dionísio|Fauno grego
 SERENO|Calmo|Orvalho da noite|Tranquilo
-SIRENE|Alarme|Da ambulância|Sereia, em francês
-SOFRER|Padecer|Passar dificuldade|Penar
+SIRENE|Alarme|Da ambulância|Toca na fábrica na troca de turno
+SOFRER|Padecer|Passar dificuldade|"Os Sofrimentos do Jovem Werther" falam disso
 SOPRAR|Assoprar|___ as velinhas|Dizer a resposta baixinho
 TALVEZ|Quem sabe|Possivelmente|Pode ser
 TAREFA|Trabalho a fazer|Dever de casa|Missão
@@ -775,7 +774,7 @@ VERNIZ|Dá brilho na madeira|Esmalte|Aparência superficial
 VIGIAR|Ficar de olho|Guardar|Espreitar
 VIRGEM|Signo de setembro|Intocado|Mata ___
 VOADOR|Que voa|Disco ___|Peixe-___
-VOLTAR|Retornar|Regressar|Dar meia-volta
+VOLTAR|Retornar|Regressar|"___ à vaca fria": retomar o assunto
 ZELOSO|Cuidadoso|Dedicado|Diligente
 # Leva 7
 ABELHA|Faz o mel|Rainha da colmeia|Zangão é o macho dela
@@ -787,7 +786,7 @@ ALDEIA|Povoado pequeno|___ indígena|"A ___ global", de McLuhan
 ALFACE|Folha da salada|Americana ou crespa|Verdura de sanduíche
 ALTIVO|Orgulhoso|De cabeça erguida|Soberbo
 ALVURA|Brancura|Pureza|Brilho da neve
-ANDINO|Dos Andes|Condor ___|Altiplano
+ANDINO|Dos Andes|Condor ___|Do altiplano
 ANSEIO|Desejo forte|Aspiração|Ânsia
 ARROIO|Riacho, no Sul|Córrego|"___ dos Ratos", cidade gaúcha
 BALAIO|Cesto de palha|Dá nome a revolta maranhense (1838)|"___ de gato": confusão
@@ -801,7 +800,7 @@ CANTIL|Garrafa do soldado|Leva água na trilha|Odre metálico
 CEREAL|Grão|Sucrilhos é um|Trigo, milho, arroz
 CHACAL|Cão selvagem|Animal de Anúbis|Assassino profissional
 CINZEL|Ferramenta do escultor|Talhadeira|Esculpe o mármore
-COMPRA|Aquisição|Ir às ___s|Feira do mês
+COMPRA|Aquisição|Feira do mês|"Fazer a ___ do mês"
 COSMOS|Universo|Série de Carl Sagan|Flor ornamental
 CRAQUE|Jogador fora de série|Fera|Bola na rede
 DOÇURA|Gentileza|Sabor doce|Ternura
@@ -813,15 +812,15 @@ ESCUNA|Barco a vela|Veleiro de dois mastros|Navio pirata clássico
 ESTOPA|Fibra de pano velho|"Saco de ___": chato|Limpa graxa
 FERVOR|Entusiasmo|Ardor|Devoção
 FIVELA|Prende o cinto|Presilha|Fecho de sandália
-FLORAL|De flores|Estampa ___|Perfume ___
+FLORAL|De flores|Estampa ___|Remédio de Bach
 FRALDA|Roupinha do bebê|Troca de ___|Sopé da montanha
-FRETAR|Alugar transporte|Avião ___ado|Contratar carga
+FRETAR|Alugar transporte|Contratar carga|Alugar um ônibus para a excursão
 GALOPE|Corrida do cavalo|A todo ___|Ritmo rápido
 GATUNO|Ladrão|Larápio|Punguista
 GEMADA|Ovo batido com açúcar|Remédio caseiro da vó|Bebida para a voz
 GÊNESE|Origem|Gênesis, livro|Nascimento de algo
-GLOBAL|Mundial|Aquecimento ___|Total
-GRAÚDO|Grande|Importante: "gente ___a"|Volumoso
+GLOBAL|Mundial|Aquecimento ___|"Aldeia ___", de McLuhan
+GRAÚDO|Grande|Importante: "peixe ___"|Volumoso
 GRÊMIO|Tricolor gaúcho|___ estudantil|Associação
 HÁLITO|Bafo|Ar que sai da boca|Mau ___
 IGUANA|Lagarto verde|Réptil de estimação|Lagarto das Galápagos
@@ -838,7 +837,7 @@ LATIDO|Voz do cão|Au-au|Ladrar
 LESADO|Prejudicado|Bobo, na gíria|Ferido
 LOTADO|Cheio|Superlotado|Sem vaga
 LOUVOR|Elogio|Canto de ___|Glorificação
-MALOCA|Habitação indígena|Casa coletiva|Barraco
+MALOCA|Habitação indígena|Casa coletiva|"Saudosa ___", de Adoniran Barbosa
 MANADA|Rebanho de bois|Efeito ___|Bando
 MARACA|Chocalho|Instrumento indígena|Chocalho ritual do pajé
 MEDUSA|Górgona de cabelos de cobra|Água-viva|Perseu cortou sua cabeça
@@ -852,7 +851,7 @@ NÉCTAR|Bebida dos deuses|Suco das flores|O beija-flor bebe
 NOVATO|Iniciante|Calouro|Estreante
 OLARIA|Fábrica de tijolos|Bairro e clube do Rio|Cerâmica
 PATETA|Bobo|Amigo do Mickey|Tolo
-PENEDO|Rochedo|Penhasco|Cidade alagoana
+PENEDO|Rochedo|Penhasco|Cidade alagoana à beira do São Francisco
 PERITO|Especialista|Técnico da polícia|Expert
 PICOLÉ|Sorvete no palito|Dá dor de cabeça se for rápido|Chupe-chupe
 PITADA|Pouquinho de sal|Um tiquinho|Toque de humor
@@ -875,7 +874,7 @@ URTIGA|Planta que coça|Pele ardida|Erva urticante
 VALSAR|Dançar valsa|Rodopiar|Girar no salão
 VELADO|Escondido|Vigiado de noite|Disfarçado
 VENTRE|Barriga|Útero|Bendito o fruto do vosso ___
-VEREDA|Caminho estreito|Grande Sertão: ___s|Trilha de buritis
+VEREDA|Caminho estreito|Trilha de buritis|Atalho no sertão de Guimarães Rosa
 VÍBORA|Cobra venenosa|Pessoa maldosa|Serpente
 VIÇOSO|Exuberante|Verdejante|Cheio de vida
 VITELA|Carne de bezerro|Bife tenro|Novilho
@@ -889,7 +888,7 @@ ALGEMA|Prende os pulsos|Pulseira de policial|Grilheta dos pulsos
 ALÍVIO|Descanso da dor|Desafogo|Lenitivo
 ALTEZA|Tratamento de príncipe|Vossa ___ Real|Título de infante
 AMÔNIA|Gás de cheiro forte|NH₃|Composto de nitrogênio e hidrogênio
-AMPARO|Proteção|Arrimo|Esteio
+AMPARO|Proteção|Arrimo|Cidade paulista do Circuito das Águas
 ANCIÃO|Idoso|Velho sábio|Patriarca da tribo
 ANELAR|Em forma de anel|Dedo ___|Desejar ardentemente
 ANGORÁ|Gato de pelo longo|Lã de coelho fina|Antigo nome de Ancara
@@ -957,7 +956,7 @@ INFAME|Vil|Torpe|Sem honra
 JAZIDA|Depósito de minério|Mina|Veio de ouro
 JOCOSO|Engraçado|Brincalhão|Galhofeiro
 LACAIO|Criado|Serviçal de libré|Pajem bajulador
-LIVRAR|Soltar|Salvar|Libertar
+LIVRAR|Soltar|Salvar|"Deus me ___!"
 MANTRA|Frase repetida na meditação|"Om", por exemplo|Fórmula sagrada védica
 MÁRTIR|Morre pela fé|Santo sacrificado|Tiradentes, para a República
 MELADO|Calda de cana|Lambuzado|Mel de engenho
@@ -979,7 +978,7 @@ ZÊNITE|Ponto acima da cabeça|Ápice|Oposto do nadir
 # lote 9
 ABADES|Chefes de mosteiro|Superiores beneditinos|Priores maiores
 ACÁCIA|Árvore de flores amarelas|Mimosa|Símbolo maçônico
-ACUSAR|Culpar|Denunciar|Imputar crime
+ACUSAR|Culpar|Denunciar|"Eu acuso!", de Zola
 ADEGAS|Guardam vinho|Caves|Porões de vinho
 AFAGAR|Acariciar|Fazer carinho|Lisonjear
 ALHEIO|De outro|Distraído|Que não é seu
@@ -997,12 +996,12 @@ BRUXAS|Feiticeiras|Voam de vassoura|Caçadas em Salem, 1692
 BÚFALA|Fêmea do búfalo|Seu leite vira muçarela|Rebanho da ilha de Marajó
 CABALA|Mística judaica|Tradição esotérica hebraica|Conluio secreto
 CADUCO|Senil|Que perdeu validade|Folha que cai no outono
-CERVOS|Veados|Têm galhada|Alces e renas são da família
+CERVOS|Têm galhada|Alces e renas são da família|Habitam o Pantanal: ___-do-pantanal
 CIGANO|Povo nômade|Rom|Boêmio, para os franceses
 CLAMOR|Grito|Protesto em massa|Brado
 CLAVES|Sinais da pauta|Sol, fá e dó|Indicam a altura das notas
-COBRAS|Serpentes|Najas|Ofídios
-CORVOS|Aves negras|"Nunca mais", em Poe|Aves de Odin
+COBRAS|Serpentes|Najas|"___ Fumantes": apelido da FEB na Itália
+CORVOS|Aves negras|Aves de Odin: Hugin e Munin|Pintados por Van Gogh num trigal
 COUVES|Verduras da feijoada|Hortaliças|Brassicas
 CRÂNIO|Caixa óssea da cabeça|Gênio, na gíria|Hamlet segura um
 CREDOS|Crenças|Orações de fé|Profissões de fé
@@ -1016,12 +1015,12 @@ DRUIDA|Sacerdote celta|Panoramix é um|Mago gaulês
 DUCADO|Terra de duque|Moeda de ouro veneziana|Luxemburgo é um grão-___
 ELIXIR|Poção mágica|Remédio milagroso|"O ___ do amor", ópera de Donizetti
 ESTAFA|Cansaço extremo|Esgotamento|Fadiga
-ÉTNICO|Da etnia|Racial, cultural|Folclórico
+ÉTNICO|Da etnia|Cultural|Folclórico
 FARDOS|Cargas|Pesos|Fardo de feno
 FELTRO|Tecido prensado|Chapéu de ___|Lã compactada
 FÉRTIL|Fecundo|Produtivo|Terra roxa é
 FILTRO|Coador|Purificador de água|Instagram tem vários
-FIRMES|Estáveis|Seguros|Inabaláveis
+FIRMES|Estáveis|Seguros|"___ e fortes"
 FLORIM|Moeda florentina|Antiga moeda holandesa|Gulden
 FORNOS|Assam pães|Fogões têm|Fornalhas
 FRESTA|Abertura estreita|Greta|Fenda na porta
@@ -1052,7 +1051,7 @@ LÍRIOS|Flores brancas|Lis|Flor-de-lis
 LISURA|Honestidade|Correção|Franqueza
 LONTRA|Mamífero aquático|Ariranha é parente|Mustelídeo de rio
 LOUROS|Glórias|Folhas aromáticas|Coroa dos vencedores gregos
-LUSTRO|Brilho|Polimento|Cinco anos
+LUSTRO|Brilho|Polimento|Período de cinco anos
 MACIÇO|Compacto|Montanhoso|Sólido, sem ocos
 MAGMAS|Rochas derretidas|Lavas subterrâneas|Fundem-se no manto
 MANGAS|Frutas tropicais|Partes da camisa|Histórias em quadrinhos japonesas
@@ -1087,7 +1086,7 @@ PAPADO|Reino do papa|Pontificado|Cargo de Pedro
 PARIAS|Excluídos|Marginalizados|Sem casta, na Índia
 PAVÕES|Aves vaidosas|Exibem cauda|Argos deu seus olhos
 PERSAS|Gatos de pelo longo|Povo de Ciro|Iranianos antigos
-PIANOS|Teclados|Instrumentos de cauda|Steinways
+PIANOS|Teclados|Instrumentos de cauda|Steinway e Bösendorfer fabricam
 PINHOS|Árvores de cone|Coníferas|Pinheiros
 PISTÃO|Êmbolo|Peça do motor|Válvula do trompete
 POLVOS|Oito braços|Cefalópodes|Lançam tinta
@@ -1106,9 +1105,9 @@ SALINA|Produz sal|Mossoró tem várias|Tanque de evaporação marinha
 SALMOS|Cânticos de Davi|Livro bíblico de 150|Hinos hebraicos
 SANTOS|Canonizados|Time de Pelé|Porto paulista
 SEITAS|Grupos religiosos|Cultos|Dissidências
-SELVAS|Florestas densas|Matas|Junglas
+SELVAS|Florestas densas|Matas|Matas fechadas da Amazônia
 SENSOR|Detecta movimento|Captador|Dispositivo de leitura
-SERRAS|Montanhas|Serrotes|Cordilheiras
+SERRAS|Montanhas|Serrotes|A do Mar e a da Mantiqueira
 SIGNOS|Zodíacos|Símbolos|Significantes, em Saussure
 SÍTIOS|Chácaras|Cercos militares|Sites, em Portugal
 SOLDOS|Pagamentos de soldado|Salários|Moeda romana
@@ -1139,3 +1138,29 @@ VOGAIS|A, e, i, o, u|Sons abertos|Letras sonoras
 VULGAR|Comum|Grosseiro|Latim ___
 ZANGAS|Raivas|Birras|Amuos
 ZUMBIS|Mortos-vivos|Assombram filmes de Romero|Mortos reanimados do vodu haitiano
+# lote 10 (out/2026): mitologia, orixás, literatura, música e história do Brasil
+JABUTI|Tartaruga terrestre|Prêmio literário brasileiro|"___ não sobe em árvore": alguém o pôs lá
+LOBATO|Monteiro, do Sítio|Criador da Emília|Fundou a Companhia Editora Nacional
+VIEIRA|Padre do "Sermão da Sexagésima"|Antônio, jesuíta do barroco|Pregou aos peixes, em São Luís
+NASSAR|Raduan, de "Lavoura Arcaica"|Escritor que trocou a literatura pela fazenda|Prêmio Camões de 2016
+CAZUZA|Cantor de "Ideologia"|Vocalista do Barão Vermelho|Cantou "O tempo não para"
+RENATO|Russo, da Legião Urbana|Aragão, o Didi|Teixeira, de "Romaria"
+DJAVAN|Cantor de "Oceano"|Alagoano de "Flor de Lis"|"Sina" e "Açaí" são dele
+FAGNER|Raimundo, cearense|Cantor de "Revelação"|"Canteiros" é dele
+LENINE|Pernambucano de "Paciência"|Cantor de "Jack Soul Brasileiro"|Nome em homenagem ao revolucionário russo
+ADONIS|Belo amado de Afrodite|Morto por um javali|Flor que nasceu do seu sangue: a anêmona
+HEITOR|Príncipe troiano|Filho de Príamo|Morto por Aquiles diante das muralhas
+PRÍAMO|Rei de Troia|Pai de Heitor e Páris|Pediu o corpo do filho a Aquiles
+ATAÍDE|Mestre pintor de Mariana|Pintou o forro da São Francisco de Ouro Preto|Manuel da Costa, do barroco mineiro
+NAZARÉ|Cidade de Jesus|Círio de ___, em Belém|Bairro de Belém da festa de outubro
+PIXOTE|Filme de Hector Babenco|Menino de rua do cinema|Criança pequena, na gíria
+SABINO|Fernando, de "O Encontro Marcado"|Sobrenome do líder da Sabinada|Mineiro de "O Grande Mentecapto"
+VARGAS|Getúlio, do Estado Novo|"Saio da vida para entrar na história"|Fundador da Petrobras
+ISABEL|Princesa da Lei Áurea|Rainha católica da Espanha|Mulher de Zacarias, mãe de João Batista
+RONDON|Marechal dos telégrafos|Pacificador do sertão|"Morrer se preciso for, matar nunca"
+LATTES|César, do méson pi|Plataforma de currículos do CNPq|Físico curitibano
+PRÓTON|Partícula positiva do núcleo|Tem carga +1|Feito de dois quarks up e um down
+NETUNO|Deus romano do mar|Oitavo planeta|Descoberto pela matemática, em 1846
+PLUTÃO|Planeta-anão desde 2006|Deus romano do submundo|Cão do Mickey
+ANÚBIS|Deus egípcio com cabeça de chacal|Guia dos mortos|Pesava o coração contra a pena
+OSÍRIS|Deus egípcio dos mortos|Marido de Ísis|Despedaçado por Set

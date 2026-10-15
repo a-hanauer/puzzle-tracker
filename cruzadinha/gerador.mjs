@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { PISTAS } from "./pistas.mjs";
 import { mantidos } from "../comum/selecao.mjs";
+import { confere } from "./confere-pistas.mjs";
 
 export const EPOCH = [2026, 9, 10];            // #1 = sábado, 10/10/2026
 let N = 6;                                     // 5×5 até 14/10/2026; 6×6 daí em diante
@@ -149,6 +150,8 @@ function montar(pretas, r, nivel, recentes) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const erros = confere();                                         // banco de pistas fora das regras: não gera
+  if (erros.length) { console.error(erros.join("\n")); process.exit(1); }
   const args = process.argv.slice(2).filter(a => !a.startsWith("--"));
   const DIAS = +(args[0] || 365);
   if (args[1]) seed = +args[1];

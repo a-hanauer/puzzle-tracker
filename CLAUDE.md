@@ -47,3 +47,6 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Ponto Cruz: `cruzadinha/pistas.txt` (3–5 letras) e `pistas6.txt` (6 letras), `PALAVRA|fácil|média|difícil`;
   a semana sobe o nível das pistas. Grade 6×6 desde 15/10/2026 (10 casas pretas na semana, 8 no fim de semana);
   o que limita grades mais abertas é o banco de palavras curtas.
+- Pistas sempre em português do Brasil, pensadas em português: nada de ditado, título ou trocadilho que só
+  funciona em inglês. A lacuna `___` vale a palavra inteira (nunca `___s`). `cruzadinha/confere-pistas.mjs`
+  confere as regras, e o gerador não roda se o banco estiver fora delas.
