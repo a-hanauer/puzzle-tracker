@@ -11,7 +11,7 @@
 // Uso:  node cruzadinha/gerador.mjs [dias] [semente]
 // Os desafios que já saíram (até hoje) não mudam.
 
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { PISTAS } from "./pistas.mjs";
@@ -107,7 +107,7 @@ export function preencher(pretas, voc, limite = 30000, uso = new Map()) {
       let sc = 0;
       for (const o of cruza[melhor]) { if (cheio(o)) { const ow = o.cs.map(c => g[c]).join(""); if (!voc.has(ow) || ow === w) { sc = -1; break; } continue; } const k = conta(bits(o)); if (!k) { sc = -1; break; } sc += Math.log(k); }
       s.cs.forEach((c, j) => (g[c] = antes[j]));
-      if (sc >= 0) nota.push([w, sc + rand() * 1.5 - (uso.get(w) || 0) * 0.3]);
+      if (sc >= 0) nota.push([w, sc + rand() * 1.5 - Math.log1p(uso.get(w) || 0) * 0.8]);
     }
     nota.sort((a, b) => b[1] - a[1]);
     for (const [w] of nota.slice(0, 12)) {
@@ -153,7 +153,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const DIAS = +(args[0] || 365);
   if (args[1]) seed = +args[1];
   const dir = dirname(fileURLToPath(import.meta.url));
-  const old = mantidos(dir, EPOCH);
+  // MANTER=n: mantém os n primeiros do arquivo atual (quando já saiu uma parte adiantada)
+  const old = process.env.MANTER ? JSON.parse(readFileSync(join(dir, "desafios.json"), "utf8")).puzzles.slice(0, +process.env.MANTER) : mantidos(dir, EPOCH);
   const out = [...old];
   const TODAS = new Set(PISTAS.keys());
   const FACEIS = new Set([...PISTAS].filter(([, p]) => p[0]).map(([w]) => w));
