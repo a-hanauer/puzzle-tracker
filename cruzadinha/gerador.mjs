@@ -160,6 +160,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const FACEIS = new Set([...PISTAS].filter(([, p]) => p[0]).map(([w]) => w));
   // quanto tempo uma palavra fica sem voltar, pelo tamanho (as de 3 letras são poucas)
   const PAUSA = { 3: 4, 4: 7, 5: 14, 6: 30 };
+  const TETO = { 3: 6, 4: 4, 5: 3, 6: 2 };                    // máximo de vezes em 90 dias
   const recentes = (k, f) => new Set(out.slice(Math.max(0, k - 45)).flatMap((p, i, a) => [...p.h, ...p.v].map(x => x.w).filter(w => a.length - i <= PAUSA[w.length] * f)));
   let falhas = 0;
   const uso = new Map();
@@ -168,6 +169,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const data = new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k);
     const nivel = (data.getDay() + 6) % 7 + 1;                 // segunda = 1 … domingo = 7
     const pistasRecentes = new Set(out.slice(-90).flatMap(p => [...p.h, ...p.v].map(x => x.p)));
+    const janela = new Map();
+    for (const p of out.slice(-90)) for (const x of [...p.h, ...p.v]) janela.set(x.w, (janela.get(x.w) || 0) + 1);
     let feito = null;
     for (let t = 0; t < 900 && !feito; t++) {
       const f = t < 60 ? 1 : t < 140 ? 0.5 : t < 220 ? 0.25 : 0;            // se não fecha, a pausa encurta
@@ -176,8 +179,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       const tipo = t < 300 ? tipos[Math.floor(rand() * tipos.length)] : "dez";
       const pretas = PADROES[tipo][Math.floor(rand() * PADROES[tipo].length)];
       const evitar = recentes(k, f);
+      // e nenhuma palavra muito repetida nos últimos 90 dias (a não ser em último caso)
+      if (t < 300) for (const [w, n] of janela) if (n >= TETO[w.length]) evitar.add(w);
       const voc = new Set([...(nivel <= 2 ? FACEIS : TODAS)].filter(w => !evitar.has(w)));
-      const r = preencher(pretas, voc, tipo === "oito" ? 2500 : 800, t < 600 ? uso : undefined);
+      const r = preencher(pretas, voc, tipo === "oito" ? 2500 : 800);
       if (r) feito = montar(pretas, r, nivel, pistasRecentes); else falhas++;
     }
     if (!feito) throw new Error(`não consegui montar o dia ${k + 1}`);

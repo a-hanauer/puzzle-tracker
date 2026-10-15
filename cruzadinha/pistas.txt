@@ -1147,3 +1147,390 @@ ETA||Sétima letra grega|"___ ferro!", espanto mineiro
 ZETA||Sexta letra grega|Catherine ___-Jones
 TAU||Letra grega da cruz em T|Partícula pesada da família do elétron
 PSI||Letra grega da psicologia|Símbolo da função de onda
+# lote 5 (out/2026, para a 6×6: palavras de 4 letras)
+ACHA|Pedaço de lenha|Encontra|Considera, opina
+AFIM|Parente por casamento|Semelhante|Com o fim de, em locução
+AGRO|Agronegócio|Do campo, em prefixo|"___ é tech, ___ é pop"
+AIPO|Salsão|Hortaliça de talo|Vai no Waldorf com maçã e nozes
+ALAR|Das asas|Pôr asas|Erguer ao alto
+ALAS|Corredores|Facções do partido|Divisões da escola de samba
+ALBA|Aurora|Madrugada|Canção trovadoresca do amanhecer
+ALCE|Cervo grande do norte|Animal da Escandinávia|Erga
+ALES|Cervejas inglesas|Tipo de cerveja|Cervejas de alta fermentação
+ALGA|Planta do mar|Vive na água|Spirulina é uma
+ALIA|Junta|Une|Associa
+ALPE|Montanha alta|Cume nevado|Monte, como os de Heidi
+AMEI|Gostei muito|"___!": curti|Passado de amar
+AMOS|Patrões|Senhores|Profeta menor bíblico
+ANCA|Quadril|Quarto traseiro do cavalo|Ilharga
+ANUA|Concorda com a cabeça|Consente|Aquiesce
+APOS|Depois de|Em seguida a|Posterior a
+ARAS|Altares|Altares pagãos|Pedras de sacrifício
+ARIL|Envoltório da semente|Casca da noz-moscada|Macis é um
+ASAS|Voam com elas|Aviões têm duas|Ícaro colou as suas com cera
+ASCO|Nojo|Repugnância|Bolsa dos fungos
+ASSA|Cozinha no forno|Faz churrasco|Tosta
+ATAR|Amarrar|Prender|Dar um nó
+ATAS|Registros de reunião|Frutas-do-conde|Pinhas, no Nordeste
+ATRA|Escura|Negra, em latim|Bílis negra: ___ bile
+AVAL|Garantia|Apoio|Fiança em título
+AVAS|Avós|Avós, no plural|Ancestrais
+AVIA|Prepara a receita|Despacha|Apronta, na farmácia
+AVOS|Pais dos pais|Partes de fração|Doze ___ (1/12)
+BABA|Saliva|Bolo de rum|Iaiá de doce
+BAIA|Lugar do cavalo|Enseada|Estábulo individual
+BATA|Blusa larga|Roupa de hospital|Jaleco
+BECO|Viela|Rua sem saída|Ruela
+BETE|Apelido de Elizabete|"___ Balanço", filme de 1984|"___, a feia", novela
+BOIA|Flutuador|Comida, na gíria|Salva-vidas redondo
+BOTO|Golfinho da Amazônia|Encantado do rio|Lenda amazônica do sedutor
+BREU|Escuridão|Piche|Trevas
+BULA|Instruções do remédio|Documento papal|Selo do papa
+CACO|Pedaço de louça|Fragmento|Improviso do ator
+CAIS|Porto|Desembarcadouro|Ancoradouro
+CALO|Endurecimento da pele|Fico quieto|Pisar no ___
+CANO|Tubo|Furo, na gíria|Dar o ___: faltar
+CAPO|Peça do violão|Prende as cordas no braço|Chefe mafioso
+CEIA|Jantar de Natal|Última ___|Refeição da noite
+CELA|Quarto de prisão|Quarto de monge|Célula, em latim
+CERO|Peixe|Zero, em espanhol|Nada, em castelhano
+CHAO|Piso|Solo|Terra firme
+CHIP|Microcircuito|Peça do celular|Pastilha de silício
+CIRO|Rei persa|Fundador do império aquemênida|O Grande, libertou os judeus da Babilônia
+CITA|Menciona|Dá a fonte|Intima
+COAR|Passar no filtro|Filtrar o café|Peneirar
+COCA|Refrigerante|Arbusto andino|Folha mascada nos Andes
+CONE|Forma de sorvete|Sinaliza a pista|Sólido de base circular
+COPA|Torneio de futebol|Topo da árvore|Naipe do baralho espanhol
+CORO|Grupo de cantores|Refrão em uníssono|Comentava a ação na tragédia grega
+COSA|Coisa, em italiano|___ Nostra|Máfia siciliana: ___ Nostra
+COTA|Parcela|Porção|Reserva de vagas
+COVA|Buraco|Sepultura|Covinha no rosto
+CRER|Acreditar|Ter fé|Dar crédito
+CUME|Topo|Pico|Cimo
+DATA|Dia marcado|Dia do mês|Efeméride
+DEUS|Ser supremo|Divindade|Criador
+DIVA|Grande cantora|Estrela|Prima-dona
+DOAR|Dar|Presentear|Ceder sem cobrar
+DOGE|Chefe de Veneza|Magistrado de Gênova|Palácio do ___
+DOLO|Fraude|Intenção criminosa|Má-fé, no direito
+DOTE|Bens da noiva|Talento|Dom natural
+DUAS|Um par|Uma mais uma|Dupla feminina
+DUCE|Mussolini|Líder fascista|Chefe, em italiano
+DURO|Rígido|Sem dinheiro|Moeda espanhola antiga
+EDIL|Vereador|Magistrado romano|Cuidava dos templos em Roma
+ENTE|Ser|Existente|Querido: ___ querido
+ERAS|Épocas|Períodos geológicos|Idades
+ESSE|Aquele perto de ti|Letra S|O tal
+EXPO|Exposição|Feira|___ Milão 2015
+FACE|Rosto|Lado|Cara
+FADO|Destino|Canção portuguesa|Amália o cantava
+FAMA|Celebridade|Renome|Glória
+FASE|Etapa|Período|Lunar: cheia, nova…
+FEIO|Sem beleza|Desagradável|Mal-encarado
+FENO|Capim seco|Comida de cavalo|Palha forrageira
+FIAR|Fazer fio|Vender a prazo|Dar crédito
+FIEL|Leal|Devoto|Ponteiro da balança
+FINS|Objetivos|Términos|Os ___ justificam os meios
+FOCO|Centro|Ponto de luz|Lente o ajusta
+FOFA|Macia|Graciosa|Fofura feminina
+FORO|Tribunal|Jurisdição|___ privilegiado
+FUSO|Peça da roca|___ horário|Bela Adormecida se furou nele
+GAIO|Alegre|Pássaro|Pássaro europeu
+GAZE|Tecido de curativo|Atadura|Tecido leve e ralo
+GEMA|Pedra preciosa|Amarelo do ovo|Joia
+GIRO|Volta|Rotação|Passeio
+GOLA|Colarinho|___ rulê|Parte da camisa
+GOMA|Cola|Amido|Tapioca crua
+GRAU|Nível|Diploma|Unidade de temperatura
+GRUA|Guindaste|Fêmea do grou|Equipamento de cinema
+GUIA|Cicerone|Mapa|Meio-fio
+HALO|Auréola|Círculo de luz|Anel em torno do Sol
+IDEM|O mesmo|Igualmente|Abreviado: id.
+INCA|Povo de Machu Picchu|Império andino|Atahualpa era um
+IRAO|Ex-Pérsia|País de Teerã|República islâmica desde 1979
+ISTO|Este objeto|Esta coisa|Pronome demonstrativo
+JADE|Pedra verde|Gema chinesa|Nefrita
+JATO|Avião rápido|Esguicho|Propulsão a ___
+JAVA|Ilha indonésia|Linguagem de programação|Café, nos EUA
+JOIA|Adorno precioso|Coisa ótima|Bijuteria cara
+JUCA|Nome masculino|___ Chaves, menestrel|___ Kfouri, jornalista
+JURA|Promete|Serra franco-suíça|Faz juramento
+LAJE|Placa de concreto|Teto plano|Pedra lisa
+LAPA|Gruta|Bairro boêmio do Rio|Abrigo de pedra
+LARA|Nome feminino|Croft, de Tomb Raider|"Tema de ___", Doutor Jivago
+LAVA|Rocha derretida|Limpa com água|Sai do vulcão
+LEDO|Alegre|"___ engano"|___ Ivo, poeta alagoano
+LEGO|Bloco de montar|Brinquedo dinamarquês|Leigo, em antigo
+LEMA|Divisa|Mote|"Ordem e Progresso" é um
+LENA|Rio siberiano|Nome feminino|Rio de Iakutsk
+LIGA|Une|Campeonato|Aliança
+LOCA|Louca, em espanhol|Toca|Esconderijo de peixe
+LODO|Lama|Limo|Barro
+LONA|Tecido de barraca|Ringue|Tela grossa
+LUAR|Luz da lua|Noite clara|Claro de ___
+LUPA|Lente de aumento|Lente de detetive|Sherlock usa
+LUSO|Português|Lusitano|De Portugal
+MAGO|Feiticeiro|Mágico|Rei do presépio
+MAIO|Mês das noivas|Quinto mês|Mês de Maria
+MANA|Irmã|Alimento do céu, sem acento|Força mística polinésia
+MANO|Irmão|Parceiro|Cara, na gíria
+MAXI|Grande|Saia longa|Prefixo de grandeza
+MECA|Cidade santa|Peregrinação islâmica|Lugar de culto
+MEIO|Centro|Metade|Ambiente
+MELA|Estraga|Lambuza|Gruda
+MICO|Macaco pequeno|Vexame|___-leão-dourado
+MIMO|Agrado|Presente|Mímica antiga
+MINA|Jazida|Garota, na gíria|Explosivo enterrado
+MIRA|Pontaria|Alvo|Olha
+MITO|Lenda|Herói, na gíria|Narrativa sagrada
+MOCA|Garota (sem cedilha)|Café do Iêmen|Porto do café arábica
+MOFO|Bolor|Fungo|Penicilina vem de um
+MOLE|Macio|Fraco|Unidade de quantidade de matéria
+MONO|Macaco|Um só canal de som|Prefixo de único
+MOTE|Lema|Tema do poema|Glosa parte dele
+MUDA|Calada|Planta nova|Troca de pelo
+MULA|Animal de carga|Teimosa|Híbrido de jumento e égua
+MUSA|Inspiração|Deusa das artes|Calíope é uma
+NABO|Raiz|Inepto|Rabanete grande
+NATA|Creme do leite|A elite|Fina flor
+NEGA|Recusa|Desmente|Morena, no carinho
+NETO|Filho do filho|Descendente|Livre de descontos
+NEXO|Conexão|Sentido|Lógica
+NODO|Nó|Ponto de órbita|Nódulo
+NORA|Esposa do filho|Roda d'água|Personagem de Ibsen
+NOVA|Recente|Estrela que brilha de repente|Bossa ___
+NUCA|Parte de trás do pescoço|Cachaço|Cerviz
+OCRE|Amarelo-terra|Pigmento|Terra corante
+ODES|Poemas líricos|Cantos de Píndaro|Poemas de Horácio
+PACA|Roedor|Muito, na gíria|Roedor de carne apreciada
+PAGA|Salário|Quita|Remuneração
+PALA|Viseira|Poncho leve gaúcho|Aba do boné
+PAPO|Conversa|Bucho de ave|___-furado
+PARA|Rumo a|Estado de Belém (sem acento)|Detém
+PATA|Pé de animal|Fêmea do pato|Pisada
+PECA|Parte (sem cedilha)|Obra de teatro|Comete erro, ao rezar
+PEGA|Agarra|Pássaro|Encrenca
+PEIA|Corda de prender|Obstáculo|Embaraço
+PIRA|Fogueira|Chama olímpica fica nela|Fogueira funerária
+POMO|Fruto|___ da discórdia|Maçã de Páris
+POPA|Traseira do barco|Ré|Oposto da proa
+PROA|Frente do navio|Bico do barco|Oposto da popa
+PUMA|Felino americano|Suçuarana|Onça-parda
+PUXA|Arrasta|"___ vida!"|Reboca
+RALO|Escoadouro|Pouco espesso|Ralado
+RAPA|Raspa|Pião de quatro faces|Jogo do ___
+REGA|Molha as plantas|Irrigação|Aguar
+RENA|Cervo do Papai Noel|Caribu|Puxa o trenó
+RETA|Linha direta|Trecho sem curva|___ final
+REZA|Oração|Prece|Ladainha
+RIMA|Som igual no fim do verso|Verso a verso|Consonância
+RIXA|Briga|Rivalidade|Contenda
+ROCA|Instrumento de fiar|Rocha|Fiandeira usa
+ROER|Morder aos poucos|O que o rato faz|___ as unhas
+RUGA|Prega da pele|Dobra|Vinco
+RUMO|Direção|Caminho|Norte
+SACA|Saco grande|Entende|___ de café
+SELA|Assento do cavalo|Fecha|Arreio
+SENO|Função trigonométrica|Seio|Cateto oposto sobre hipotenusa
+SINA|Destino|Sorte|Fado
+SITE|Página da web|Endereço na internet|Portal
+SOAR|Ressoar|Parecer|Bater, como o sino
+SOJA|Grão de exportação|Leguminosa|Molho shoyu vem dela
+SORO|Líquido da veia|Parte do leite|Antídoto contra veneno
+SUAR|Transpirar|Esforçar-se|Exsudar
+SUMO|Suco|Luta japonesa|Supremo
+TABA|Aldeia indígena|Choça|Moradia tupi
+TALA|Imobiliza fratura|Ripa|Peça de engessar dedo
+TALO|Caule|Haste|Pedúnculo
+TAPA|Bofetada|Petisco espanhol|___-olho
+TARO|Cartas de adivinhar|Inhame|Arcano maior
+TEMA|Assunto|Melodia principal|Motivo
+TINA|Banheira|Barril|___ Turner
+TIRA|Faixa|Policial, na gíria|Quadrinho de jornal
+TOGA|Veste romana|Beca de juiz|Roupa de formatura
+TOLA|Boba|Ingênua|Parva
+TORA|Tronco|Lei judaica|Pentateuco hebraico
+TOSA|Corte de pelo|Tosquia|Tosquia de ovelhas
+TRIO|Três|___ elétrico|Conjunto de três músicos
+TUBA|Metal grave|Instrumento de sopro|Bombardino é parente
+TUFO|Chumaço|Moita|Rocha vulcânica porosa
+URRO|Rugido|Berro|Bramido
+VIGA|Trave|Barrote|Suporte do teto
+VIVA|Hurra|Com vida|Salve
+VOGA|Moda|Rema|Em ___: em alta
+XALE|Manta de ombros|Mantilha|Echarpe
+ZONA|Região|Bagunça|___ Franca de Manaus
+# lote 6 (out/2026, para a 6×6: palavras de 5 letras)
+ABADE|Chefe de mosteiro|Superior beneditino|Prior-mor da abadia
+ABETO|Árvore de Natal|Conífera europeia|Pinheiro-da-floresta-negra
+ABRIL|Quarto mês|Mês de Tiradentes|Mês da Revolução dos Cravos
+ACENO|Gesto de mão|Tchau de longe|Sinal com a cabeça
+AGITO|Badalação|Movimento|Festa animada
+ALVOR|Alvorada|Brancura|Primeira luz da manhã
+AMBAR|Resina fóssil|Cor de mel|Prende mosquitos pré-históricos
+ANSIA|Aflição|Desejo intenso|Angústia
+ARCOS|Curvas|Lapa tem os seus|Arquinhos de violino
+ARIES|Signo de março|Carneiro do zodíaco|Primeiro signo
+ARMAR|Equipar|Montar|Tramar
+ASSIM|Desse modo|Dessa maneira|Tal qual
+AUDIO|Som|Faixa sonora|Mensagem de voz
+AVELA|Noz pequena|Fruto do Nutella|Fruto da aveleira
+AVIAO|Voa|Aeronave|14-bis
+AZEDO|Ácido|Mal-humorado|Fermentado
+BAMBU|Caule de panda|Taquara|Gramínea gigante
+BLOCO|Grupo do carnaval|Caderno|Pedaço sólido
+BOATO|Rumor|Fofoca|Fake news
+BOINA|Gorro sem aba|Chapéu de Che|Chapéu basco
+BORDA|Margem|Beira|Orla
+BOSSA|Charme|___ Nova|Corcova
+BREJO|Pântano|Banhado|Atoleiro
+CAÇAR|Perseguir presas|Buscar|Ir à montaria
+CACAU|Fruto do chocolate|Cultivo de Ilhéus|Jorge Amado escreveu sobre
+CALVO|Careca|Sem cabelo|Calvície
+CANAL|Estreito|Emissora|Panamá tem um
+CARGA|Peso|Frete|Munição
+CASCO|Unha do cavalo|Barril|Parte do navio
+CAUDA|Rabo|Rastro do cometa|Vestido de noiva tem
+CAULE|Tronco|Haste|Talo
+CERCO|Sítio|Assédio|Troia sofreu um
+CESTA|Cesto|Ponto do basquete|Cabaz
+COFRE|Caixa-forte|Burra|Arca
+COMBO|Pacote|Lanche com batata|Sequência de golpes
+CONDE|Nobre|Título|Monte Cristo era um
+COUVE|Verdura|Acompanha feijoada|Brassica
+COXIA|Bastidor|Lado do palco|Corredor de teatro
+CRINA|Pelo do pescoço do cavalo|Juba|Melena
+CURVA|Volta|Desvio|Arco
+DARDO|Flecha curta|Lançado no atletismo|Seta
+DENSO|Espesso|Compacto|Fechado
+DESDE|A partir de|Contando de|___ que
+DIABO|Demônio|Capeta|Satanás
+DIGNO|Merecedor|Honrado|Íntegro
+DISCO|Vinil|Círculo|Lançamento olímpico
+DOMAR|Amansar|Domesticar|Subjugar
+DRAMA|Gênero teatral|Tragédia|Exagero
+DUPLO|Em dobro|Dobrado|Sósia
+EBANO|Madeira negra|Pau-preto|Teclas pretas do piano
+EDEMA|Inchaço|Retenção|Tumefação
+ELFOS|Seres de Tolkien|Duendes|Legolas é um
+EMAIL|Correio eletrônico|Mensagem digital|Arroba nele
+ENTRE|Passe|No meio de|Convite à porta
+EXAME|Prova|Teste|Consulta médica
+EXODO|Saída em massa|Segundo livro da Bíblia|Fuga do Egito
+FAIXA|Tira|Pista|Música do disco
+FAUNA|Animais|Bichos de um lugar|Par da flora
+FELPA|Pelo|Penugem|Fiapo
+FENDA|Rachadura|Abertura|Greta
+FIBRA|Filamento|Coragem|Ótica
+FICHA|Cartão|Registro|Caiu a ___
+FIRMA|Empresa|Assinatura|Estável
+FLORA|Vegetação|Plantas|Deusa das flores
+FONTE|Nascente|Chafariz|Origem
+FOSSO|Vala|Valeta do castelo|Abismo
+FRADE|Monge|Religioso|Frei
+FREIO|Breque|Trava|Rédea
+FURIA|Raiva|Ira|Erínia
+FUSCA|Carro da Volkswagen|Besouro|Carro do povo
+GARRA|Unha de fera|Determinação|Pinça
+GEADA|Orvalho congelado|Frio do Sul|Branco no pasto
+GENRO|Marido da filha|Parente afim|Esposo da filha
+GESSO|Gipsita|Molde|Imobiliza o braço
+GIBAO|Casaco de couro|Veste de vaqueiro|Roupa do sertanejo
+GOLPE|Pancada|Fraude|Quartelada
+GRADE|Cerca|Grelha|Prisão
+GRAXA|Lubrificante|Pomada de sapato|Unto
+GRILO|Inseto que canta|Preocupação|___ Falante
+GRUTA|Caverna|Lapa|Furna
+GUIZO|Chocalho|Sininho|Cascavel tem
+HASTE|Vara|Mastro|Talo
+HEROI|Valente|Protagonista|Semideus
+HIENA|Carniceira|Ri na savana|Malhada africana
+HORTA|Canteiro de verduras|Onde crescem alfaces|Quintal de hortaliças
+HUMOR|Graça|Disposição de espírito|Os quatro de Hipócrates
+ILESO|Sem ferimento|Intacto|Incólume
+IMPAR|Não par|Único, sem igual|Três, cinco, sete
+INDIO|Indígena|Elemento químico|Nativo
+INFRA|Abaixo|Prefixo de inferior|___vermelho
+IOGUE|Pratica ioga|Asceta indiano|Meditador
+IRMAO|Mano|Frade|Confrade
+JAULA|Cela de bicho|Prisão|Gaiola de fera
+JEITO|Modo|Habilidade|Dar um ___
+JUSTO|Correto|Apertado|Imparcial
+LAUDO|Parecer|Relatório técnico|Diagnóstico escrito
+LENDA|Mito|Fábula|Saga
+LIMBO|Esquecimento|Borda|Lugar das almas no catolicismo antigo
+LINCE|Felino|Vista de ___|Gato-cerval
+LITRO|Unidade de volume|Mil mililitros|Decímetro cúbico
+LUCRO|Ganho|Proveito|Receita menos custo
+LUNAR|Da lua|Eclipse ___|Selenita
+MACIO|Suave|Fofo|Mole
+MAGIA|Bruxaria|Encanto|Feitiço
+MANTO|Capa|Mantel|Camada terrestre
+MARCO|Mês|Baliza|Moeda alemã antiga
+MEDIR|Avaliar|Mensurar|Aferir
+MEIGO|Carinhoso|Doce|Terno
+MELAO|Fruta|Meloa|Cucurbitácea doce
+METAL|Ferro, ouro|Elemento brilhante|Rock pesado
+MIOLO|Recheio|Cérebro|Interior do pão
+MISSA|Culto católico|Eucaristia|Réquiem é uma
+MONGE|Religioso|Frade|Ermitão
+MORTE|Fim|Óbito|Ceifadora
+MURAL|Painel|Afresco|Rivera pintava
+MUSEU|Galeria|Acervo|Louvre é um
+NAIPE|Copas, ouros|Grupo|Cordas e metais, na orquestra
+NAVAL|Do mar|Marítimo|Batalha ___
+NEGRO|Escuro|Preto|Mar ___
+NERVO|Tendão|Força|Feixe neural
+NOBRE|Fidalgo|Digno|Aristocrata
+OBESO|Gordo|Muito acima do peso|Corpulento
+OBVIO|Evidente|Claro|Patente
+OSTRA|Molusco|Pérola nasce nela|Marisco
+PAINA|Fibra de algodão-bravo|Enchimento|Fofura de travesseiro
+PARDO|Marrom|Escuro|Pardacento
+PATIO|Quintal|Terreiro|Área interna
+PAUSA|Intervalo|Silêncio na partitura|Descanso
+PEITO|Tórax|Seio|Coragem
+PENTE|Arruma o cabelo|Carregador de arma|Passar o ___-fino
+PISCA|Fecha e abre o olho|Seta do carro|Luz intermitente
+PODER|Força|Conseguir|Autoridade
+POETA|Vate|Bardo|Trovador
+POLVO|Oito braços|Cefalópode|Lança tinta
+POSTO|Cargo|Bomba de gasolina|Colocado
+PRADO|Campo|Pasto|Museu de Madri
+PRAGA|Peste|Maldição|Capital tcheca
+PRECO|Valor|Custo|Taxa
+PROSA|Conversa|Texto corrido|Papo
+PUNHO|Mão fechada|Pulso|Cabo
+RATAO|Rato grande|Ratazana|Roedor
+RECEM|Recentemente|Novo|___-nascido
+REDOR|Ao ___|Em volta|Circuito
+REGRA|Norma|Lei|Régua
+REINO|Monarquia|Domínio|Animal, vegetal ou mineral
+ROLHA|Tampa de cortiça|Tampa do vinho|Sacar a ___
+ROMBO|Furo|Prejuízo|Losango
+RURAL|Do campo|Agrícola|Campestre
+SABIA|Ave do Brasil|Canção de Gonçalves Dias|Pássaro símbolo nacional
+SEITA|Grupo religioso|Facção|Culto
+SIGLA|Abreviação|Iniciais|Acrônimo
+SOLAR|Do sol|Casarão|Energia ___
+SOPRO|Bafo|Vento|Instrumento de ___
+SUAVE|Brando|Leve|Macio
+SURDO|Não ouve|Tambor grave|Beethoven, no fim
+TENDA|Barraca|Loja pequena|Abrigo de beduíno
+TESTE|Prova|Exame|Ensaio
+TIRAR|Remover|Sacar|Extrair
+TOCHA|Archote|Facho|Chama olímpica viaja nela
+TOSCO|Rústico|Grosseiro|Rude
+TREVO|Planta de três folhas|Sorte|Entroncamento
+TROPA|Exército|Bando|"___ de Elite", filme
+TURBO|Potente|Motor turbinado|Turbina
+VAGAO|Carro de trem|Vagonete|Carro-leito do trem
+VAPOR|Gás|Navio a ___|Fumaça d'água
+VARAL|Corda de roupa|Estendal|Secador ao sol
+VEADO|Cervo|Cervídeo|Bambi
+VENDA|Comércio|Faixa nos olhos|Loja
+VERBO|Palavra|Ação gramatical|"No princípio era o ___"
+VIUVO|Perdeu a esposa|Enviuvado|Sem cônjuge
+VIVER|Existir|Morar|"___ e não ter a vergonha de ser feliz"
+VULTO|Sombra|Figura|Personalidade
