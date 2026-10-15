@@ -60,14 +60,14 @@
 
   /* ---------- grade ---------- */
   .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
-  .grade { width: var(--lado, 340px); height: var(--lado, 340px); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(0, 1fr)); gap: 2px;
+  .grade { width: var(--lado, 340px); height: var(--lado, 340px); display: grid; grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr)); grid-template-rows: repeat(var(--n, 6), minmax(0, 1fr)); gap: 2px;
     padding: 2px; background: var(--grade); border-radius: 10px; overflow: hidden; }
   .casa { position: relative; background: var(--casa); display: flex; align-items: center; justify-content: center; cursor: pointer;
-    font-weight: 700; font-size: calc(var(--lado, 340px) * .105); color: var(--ink); line-height: 1; transition: background .12s ease; }
+    font-weight: 700; font-size: calc(var(--lado, 340px) / var(--n, 6) * .52); color: var(--ink); line-height: 1; transition: background .12s ease; }
   .casa.preta { background: var(--preta); cursor: default; }
   .casa.pal { background: var(--palavra); }
   .casa.atual { background: var(--atual); }
-  .casa .n { position: absolute; left: 4px; top: 3px; font-size: calc(var(--lado, 340px) * .036); font-weight: 700; color: var(--num); line-height: 1; }
+  .casa .n { position: absolute; left: 4px; top: 3px; font-size: calc(var(--lado, 340px) / var(--n, 6) * .18); font-weight: 700; color: var(--num); line-height: 1; }
   .casa.revelada { color: var(--accent); }
   /* bordado: tecido de talagarça (furinhos), grade num bastidor de madeira, casas pretas cheias de pontos-cruz */
   body { background-image: radial-gradient(var(--furo) 1px, transparent 1.4px); background-size: 7px 7px; }
@@ -182,7 +182,7 @@
 <div class="overlay" id="helpOverlay">
   <div class="modal">
     <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
-    <p>Uma palavra cruzada de bolso: <b>5 × 5</b>, com palavras de 3 a 5 letras.</p>
+    <p>Uma palavra cruzada de bolso: <b>6 × 6</b>, com palavras de 3 a 6 letras.</p>
     <ul>
       <li>Toque numa casa para escolher a palavra. Tocar de novo na mesma casa troca entre <b>horizontal</b> e <b>vertical</b>.</li>
       <li>A pista da palavra marcada aparece em cima do teclado. As setas passam para a pista anterior ou a próxima; tocar na pista também troca a direção.</li>
@@ -221,7 +221,7 @@
   const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
   const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
   const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
-  const N = 5;
+  let N = 6;                  // 6×6 (os desafios até 14/10/2026 eram 5×5): sai do tamanho da grade
 
   let P = null, dayNum = 0, letras = [], reveladas = new Set(), cur = 0, dir = "h", dicaUsada = false;
   let finished = false, timer = null, startedAt = 0, elapsed = 0, avisouCheia = false, dica = null;
@@ -242,6 +242,8 @@
 
   function setup(puzzle, saved) {
     P = puzzle;
+    N = Math.round(Math.sqrt(P.g.length));
+    $("grade").style.setProperty("--n", N);
     palavras = [...P.h.map(x => ({ ...x, d: "h" })), ...P.v.map(x => ({ ...x, d: "v" }))];
     letras = saved?.letras && saved.letras.length === N * N ? saved.letras : Array(N * N).fill("");
     reveladas = new Set(saved?.reveladas || []);
@@ -466,7 +468,7 @@
     openModal("endOverlay");
   }
   $("shareBtn").addEventListener("click", () => {
-    const grade = [0, 1, 2, 3, 4].map(r => [...P.g.slice(r * N, r * N + N)].map(c => (c === "#" ? "⬛" : "🟩")).join("")).join("\n");
+    const grade = [...Array(N).keys()].map(r => [...P.g.slice(r * N, r * N + N)].map(c => (c === "#" ? "⬛" : "🟩")).join("")).join("\n");
     const text = `PONTO CRUZ #${dayNum}\n${grade}\n⏱ ${fmt(elapsed)}${dicaUsada ? " · com dica" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/cruzadinha/`;
     ghCompartilhar($("shareBtn"), text);
   });

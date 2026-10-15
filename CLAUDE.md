@@ -37,4 +37,6 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   literatura, música, geografia, mitologia) a temas infantis; bichos, expressões e gramática só de vez em quando.
 - `comum/acervo.mjs`: categorias da Panelinha e temas do Cordel (campo `c`). Área (`a`) para o rodízio;
   família (`f`) para não pôr dois grupos parecidos no mesmo dia.
-- `cruzadinha/pistas.txt` (Ponto Cruz): `PALAVRA|fácil|média|difícil`; a semana sobe o nível das pistas.
+- Ponto Cruz: `cruzadinha/pistas.txt` (3–5 letras) e `pistas6.txt` (6 letras), `PALAVRA|fácil|média|difícil`;
+  a semana sobe o nível das pistas. Grade 6×6 desde 15/10/2026 (10 casas pretas na semana, 8 no fim de semana);
+  o que limita grades mais abertas é o banco de palavras curtas.
