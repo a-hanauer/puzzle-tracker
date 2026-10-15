@@ -145,7 +145,7 @@
   }
   .cell > svg { position: relative; z-index: 1; width: 76%; height: 76%; pointer-events: none; overflow: visible; }
   .cell > svg.dot { fill: var(--dot); }
-  .cell > svg.dot.auto { transform: scale(.64); opacity: .6; }   /* ponto colocado automaticamente */
+  .cell > svg.dot.auto { transform: scale(.7); opacity: .75; }   /* ponto colocado automaticamente */
   .cell > svg.sun { filter: drop-shadow(0 0 3px var(--sun-glow)); }
   .cell > svg.moon { filter: drop-shadow(0 0 3px var(--moon-glow)); }
   .cell.given::after {                                    /* peça revelada: anel fino em volta */
@@ -302,9 +302,9 @@
 
   /* ================= modos sol / lua ================= */
   /* marca de "não cabe" com a cor do modo */
-  :root { --mark-s: #b36a00; --mark-m: #3434a8; --veil: rgba(255,255,255,.62); --veil-x: rgba(120,126,150,.42); }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --mark-s: #fbbf24; --mark-m: #b9c4ff; --veil: rgba(5,8,15,.6); --veil-x: rgba(150,160,200,.35); } }
-  :root[data-theme="dark"] { --mark-s: #fbbf24; --mark-m: #b9c4ff; --veil: rgba(5,8,15,.6); --veil-x: rgba(150,160,200,.35); }
+  :root { --mark-s: #b36a00; --mark-m: #3434a8; --veil: rgb(28, 30, 52); --veil-x: rgba(120,126,150,.42); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --mark-s: #fbbf24; --mark-m: #b9c4ff; --veil: rgb(0, 0, 4); --veil-x: rgba(150,160,200,.35); } }
+  :root[data-theme="dark"] { --mark-s: #fbbf24; --mark-m: #b9c4ff; --veil: rgb(0, 0, 4); --veil-x: rgba(150,160,200,.35); }
   html[data-modo="S"] { --mark: var(--mark-s); }
   html[data-modo="M"] { --mark: var(--mark-m); }
   html, body, .board { transition: background-color .35s ease; }
@@ -312,7 +312,7 @@
      os seus brilham forte; os automáticos são menores e brilham fraco */
   .cell > svg.dot { fill: var(--mark, var(--dot)); opacity: .95;
     filter: drop-shadow(0 0 1.5px var(--mark, var(--dot))) drop-shadow(0 0 4px var(--mark, var(--dot))); }
-  .cell > svg.dot.auto { opacity: .5; filter: drop-shadow(0 0 1.5px var(--mark, var(--dot))); }
+  .cell > svg.dot.auto { opacity: .75; filter: drop-shadow(0 0 1.5px var(--mark, var(--dot))); }
   .cell > svg.dim { opacity: .4; }
 
   /* dia e noite: o fundo da página esquenta no modo sol e esfria no modo lua */
@@ -334,13 +334,17 @@
   html[data-theme="dark"][data-modo="S"] { --surface: #3a2b10; --surface-2: #4a3716; --line: #52401b; --muted: #bba77c; --accent: #fbbf24; --on-accent: #2a1e07; --board: #1f1503; }
   html[data-theme="dark"][data-modo="M"] { --surface: #16214f; --surface-2: #203063; --line: #2b3a72; --muted: #95a3d2; --accent: #a5b4fc; --on-accent: #0a1438; --board: #050d30; }
   .gh-pill, .gh-btn, .controls button, .seg, .modal { transition: background-color .35s ease, color .35s ease; }
-  /* foco sutil, só a partir das suas anotações: casa com ponto do modo atual perde
-     um pouquinho de cor; marcada para os dois (nem sol nem lua), um pouco mais */
-  .cell.fora::before, .cell.nada::before {
+  /* casas onde a peça do modo não cabe ficam veladas, para as livres saltarem aos olhos:
+     as deduzidas pelo jogo (ponto automático), as suas e, mais forte, as que não aceitam nem sol nem lua */
+  :root { --veu-auto: .11; --veu-fora: .14; --veu-nada: .22; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --veu-auto: .28; --veu-fora: .34; --veu-nada: .46; } }
+  :root[data-theme="dark"] { --veu-auto: .28; --veu-fora: .34; --veu-nada: .46; }
+  .cell.fora::before, .cell.nada::before, .cell.xauto::before {
     content: ""; position: absolute; inset: 0; background: var(--veil); pointer-events: none;
-    opacity: .08; transition: opacity .25s ease;
+    opacity: var(--veu-fora); transition: opacity .25s ease;
   }
-  .cell.nada::before { opacity: .15; }
+  .cell.xauto::before { opacity: var(--veu-auto); }
+  .cell.nada::before { opacity: var(--veu-nada); }
 
   /* ================= tabuleiro concluído ================= */
   .ceu { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0;
@@ -459,7 +463,7 @@
       <li>As luas aparecem apagadas, só de referência. No <b>modo lua</b> é o mesmo, para as luas.</li>
       <li>No meio da chave, o <b>eclipse</b> mostra sóis e luas juntos. Ali o toque faz ponto → sol → lua → vazio, e o ponto vale para as duas vistas (nem sol nem lua cabem).</li>
       <li>Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
-      <li>O fundo da tela esquenta no modo sol e esfria no modo lua. As casas que você marcou com ponto perdem um pouquinho de cor, e um pouco mais quando você marcou que não cabe nem sol nem lua.</li>
+      <li>O fundo da tela esquenta no modo sol e esfria no modo lua. As casas com ponto (seu ou automático) ficam um pouco mais escuras, e um pouco mais quando nem sol nem lua cabem; assim as livres aparecem melhor.</li>
     </ul>
     <p>Conflitos aparecem destacados com listras vermelhas.</p>
     <p>Todo desafio tem uma única solução e pode ser resolvido só com lógica. Tem desafio novo todo dia, e a dificuldade sobe ao longo da semana: <b>segunda é nível 1</b>, o mais fácil, e <b>domingo é nível 7</b>, o mais difícil. O tabuleiro cresce junto: 8×8 no começo da semana, 9×9 no meio e 10×10 no fim de semana.</p>
@@ -783,6 +787,7 @@
       const vazia = cells[i] !== "S" && cells[i] !== "M", bl = BITS[cells[i]] || 0;
       el.classList.toggle("nada", !finished && vazia && bl === 3);            // você marcou que nem sol nem lua cabem
       el.classList.toggle("fora", !finished && mode !== "E" && vazia && !!(bl & modeBit()));  // você marcou que a peça do modo não cabe
+      el.classList.toggle("xauto", !finished && vazia && v === "Xa");          // o jogo deduziu que não cabe (ponto automático)
       el.setAttribute("aria-label", `linha ${rowOf(i) + 1}, coluna ${colOf(i) + 1}: ${nameOf(v)}${givens.has(i) ? " (revelada)" : ""}`);
       if (cells[i] === "S") s++; if (cells[i] === "M") m++;
     }
