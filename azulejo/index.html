@@ -41,6 +41,14 @@
     --glaze: #fbfcfe; --cob: #1f4fa3; --cob-soft: #a9bfe6;
     --ac0: #1f4fa3; --ac1: #d9a02f; --ac2: #2f7d62; --ac3: #4f86d6; --ac4: #d9a02f; --ac5: #2f7d62;
     --frame: #1f4fa3;
+    /* seis famílias de azulejo, cada uma com fundo, desenho e detalhe próprios (para os painéis vizinhos não se confundirem):
+       0 clássico (cobalto no branco) · 1 invertido (branco no cobalto) · 2 amarelo · 3 verde · 4 manganês · 5 azul-céu */
+    --g0: #fbfcfe; --m0: #1f4fa3; --a0: #d9a02f;
+    --g1: #1f4fa3; --m1: #f4f7fc; --a1: #f0c75e;
+    --g2: #f3d98b; --m2: #1d3f86; --a2: #fbfcfe;
+    --g3: #f4f0e2; --m3: #2b7a5c; --a3: #d9a02f;
+    --g4: #f6eee6; --m4: #6e3a5e; --a4: #1f4fa3;
+    --g5: #cfe0f6; --m5: #17397a; --a5: #fbfcfe;
     --ok: #2f7d62;
     --accent: #1f4fa3;
     --on-accent: #fff;
@@ -70,6 +78,12 @@
       --glaze: #e9eef8; --cob: #1f4fa3; --cob-soft: #a9bfe6;
       --ac0: #1f4fa3; --ac1: #d9a02f; --ac2: #2f7d62; --ac3: #4f86d6; --ac4: #d9a02f; --ac5: #2f7d62;
       --frame: #7fa6ec;
+      --g0: #e9eef8; --m0: #1f4fa3; --a0: #d9a02f;
+      --g1: #2a5bb0; --m1: #e9eef8; --a1: #f0c75e;
+      --g2: #dcc274; --m2: #1d3f86; --a2: #eef2f8;
+      --g3: #e3dfcf; --m3: #2b7a5c; --a3: #c99428;
+      --g4: #e6ddd3; --m4: #6e3a5e; --a4: #1f4fa3;
+      --g5: #bccfe9; --m5: #17397a; --a5: #eef2f8;
       --ok: #5fb38f;
       --accent: #7fa6ec;
       --on-accent: #0f141b;
@@ -99,6 +113,12 @@
       --glaze: #e9eef8; --cob: #1f4fa3; --cob-soft: #a9bfe6;
       --ac0: #1f4fa3; --ac1: #d9a02f; --ac2: #2f7d62; --ac3: #4f86d6; --ac4: #d9a02f; --ac5: #2f7d62;
       --frame: #7fa6ec;
+      --g0: #e9eef8; --m0: #1f4fa3; --a0: #d9a02f;
+      --g1: #2a5bb0; --m1: #e9eef8; --a1: #f0c75e;
+      --g2: #dcc274; --m2: #1d3f86; --a2: #eef2f8;
+      --g3: #e3dfcf; --m3: #2b7a5c; --a3: #c99428;
+      --g4: #e6ddd3; --m4: #6e3a5e; --a4: #1f4fa3;
+      --g5: #bccfe9; --m5: #17397a; --a5: #eef2f8;
       --ok: #5fb38f;
       --accent: #7fa6ec;
       --on-accent: #0f141b;
@@ -142,8 +162,8 @@
   .f4 { fill: color-mix(in srgb, var(--f4) var(--fab-mix), var(--cell)); } .f5 { fill: color-mix(in srgb, var(--f5) var(--fab-mix), var(--cell)); }
   .fo { fill: var(--fab-o); }
   /* azulejos */
-  .az-bg { fill: var(--glaze); } .az-m { fill: var(--cob); } .az-g { fill: var(--glaze); } .az-j { fill: none; stroke: var(--cob-soft); stroke-width: 1.5; }
-  .az-a0 { fill: var(--ac0); } .az-a1 { fill: var(--ac1); } .az-a2 { fill: var(--ac2); } .az-a3 { fill: var(--ac3); } .az-a4 { fill: var(--ac4); } .az-a5 { fill: var(--ac5); }
+  .az-bg, .az-g { fill: var(--g); } .az-m { fill: var(--m); } .az-j { fill: none; stroke: var(--m); stroke-opacity: .22; stroke-width: 1.5; }
+  .az-a0, .az-a1, .az-a2, .az-a3, .az-a4, .az-a5 { fill: var(--a); }
   .az-frame { fill: none; stroke: var(--frame); stroke-width: 6; }
   /* etiqueta dentro de um painel certo: azul-marinho com contorno branco, para saltar do desenho */
   .tg.on .tg-sh { fill: #16275a; stroke: #fbfcfe; stroke-width: 4; paint-order: stroke; } .tg.on .tg-n { fill: #fff; }
@@ -442,8 +462,8 @@
 
   // ---------- desenho ----------
   // azulejos: cada painel tem um desenho, repetido casa a casa e alinhado ao tabuleiro
-  // (flor, losango, estrela, rosácea, leque e cruz), em azul-cobalto com um detalhe
-  // em mostarda, verde ou azul-claro
+  // (flor, losango, estrela, rosácea, leque e cruz), cada um numa família de cores
+  // própria (veja --g/--m/--a): clássico, invertido, amarelo, verde, manganês e azul-céu
   function motif(k) {
     const M = 'class="az-m"', A = `class="az-a${k}"`;
     switch (k % 6) {
@@ -458,7 +478,7 @@
   function fabricDefs(prefix) {
     let s = "";
     for (let k = 0; k < 6; k++)
-      s += `<pattern id="${prefix}${k}" x="${PAD}" y="${PAD}" width="${U}" height="${U}" patternUnits="userSpaceOnUse"><rect class="az-bg" width="100" height="100"/>${motif(k)}<rect class="az-j" x=".5" y=".5" width="99" height="99"/></pattern>`;
+      s += `<pattern id="${prefix}${k}" x="${PAD}" y="${PAD}" width="${U}" height="${U}" patternUnits="userSpaceOnUse"><g style="--g:var(--g${k});--m:var(--m${k});--a:var(--a${k})"><rect class="az-bg" width="100" height="100"/>${motif(k)}<rect class="az-j" x=".5" y=".5" width="99" height="99"/></g></pattern>`;
     return s;
   }
   let gP, gT, gV, W = 0;
@@ -494,7 +514,7 @@
       return `<g class="patch"><rect class="${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="12"/><rect class="p-st${stc}" x="${x + 8}" y="${y + 8}" width="${w - 16}" height="${h - 16}" rx="8"/></g>`;
     }
     return `<g class="patch" style="animation-delay:${k * 45}ms"><rect style="fill:url(#fab${clues[st.s].c})" x="${x}" y="${y}" width="${w}" height="${h}" rx="12"/>
-      <rect class="az-frame" x="${x + 3}" y="${y + 3}" width="${w - 6}" height="${h - 6}" rx="10"/></g>`;
+      <rect class="az-frame fr${clues[st.s].c}" x="${x + 3}" y="${y + 3}" width="${w - 6}" height="${h - 6}" rx="10"/></g>`;
   }
   // tamanho do desenho da etiqueta, em unidades da casa (1 casa = 100)
   const TAG = { q: [62, 62], l: [86, 48], a: [48, 86] };
