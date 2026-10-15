@@ -19,6 +19,13 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   conferir em 320–430 px que `document.documentElement.scrollWidth === innerWidth`.
 - **Área segura**: respeitar `env(safe-area-inset-*)` em cima (notch) e embaixo (barra de gestos).
 
+## Consistência visual (muito importante)
+
+- Reaproveitar sempre os componentes comuns em vez de desenhar de novo em cada jogo:
+  cabeçalho (`comum/cabecalho.css/js`), dica (`comum/dica.js`), fim de jogo, e o **teclado**
+  (`comum/teclado.js` → `ghTeclado`, estilo `.gh-kb` em `cabecalho.css`, o mesmo do 5PILA e do Sando).
+  Cada jogo só troca as cores (`--kb-bg`, `--kb-ink`, `--kb-dim`).
+
 ## Publicar
 
 1. Subir a versão do cache em `sw.js` (`const CACHE = "jogos-do-dia-vN"`).

@@ -10,9 +10,10 @@
 <meta name="apple-mobile-web-app-title" content="Ponto Cruz">
 <title>PONTO CRUZ — palavras cruzadas de bolso</title>
 <link rel="icon" type="image/png" href="icon.png?v=22">
-<script src="../comum/tema.js?v=133"></script>
-<script src="../comum/cabecalho.js?v=133"></script>
-<script src="../comum/dica.js?v=133"></script>
+<script src="../comum/tema.js?v=134"></script>
+<script src="../comum/cabecalho.js?v=134"></script>
+<script src="../comum/dica.js?v=134"></script>
+<script src="../comum/teclado.js?v=134"></script>
 <link rel="apple-touch-icon" href="icon.png?v=22">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,7 +23,7 @@
   :root {
     --bg: #f4f3ec; --surface: #fffefa; --surface-2: #e8e7dc; --ink: #1f2016; --muted: #75766a; --line: #deddd0;
     --casa: #fbf7ec; --preta: #23241c; --grade: #23241c; --palavra: #e6eec4; --atual: #c3d77e; --num: #4b4c40; --fio: #2f3a12;
-    --tecla: #fbf7ec; --tecla-ink: #2f3a12; --barra: #e6eec4; --barra-ink: #2f3a12;
+    --kb-bg: #e6e2d4; --kb-ink: #23241c; --kb-dim: #6f7062; --barra: #e6eec4; --barra-ink: #2f3a12;
     --furo: rgba(70, 60, 30, .10); --madeira: #c48a55; --madeira-2: #a87040; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%2334352a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
     --accent: #6c8a1c; --on-accent: #fffefa; --errada: #c8321e;
     --shadow: 0 1px 2px rgba(40, 40, 20, .07), 0 6px 18px rgba(40, 40, 20, .07);
@@ -31,7 +32,7 @@
     :root:not([data-theme="light"]) {
       --bg: #121310; --surface: #1f201b; --surface-2: #2b2c25; --ink: #eef0e2; --muted: #9a9c8c; --line: #2c2d26;
       --casa: #2c2d25; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3f4726; --atual: #72872f; --num: #b5b7a6; --fio: #f1f4e6;
-      --tecla: #2b2c25; --tecla-ink: #eef0e2; --barra: #3f4726; --barra-ink: #f1f4e6;
+      --kb-bg: #2b2c25; --kb-ink: #eef0e2; --kb-dim: #9a9c8c; --barra: #3f4726; --barra-ink: #f1f4e6;
       --furo: rgba(255, 255, 240, .06); --madeira: #8a5e38; --madeira-2: #6e4726; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%238f927a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
       --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
@@ -40,7 +41,7 @@
   :root[data-theme="dark"] {
       --bg: #121310; --surface: #1f201b; --surface-2: #2b2c25; --ink: #eef0e2; --muted: #9a9c8c; --line: #2c2d26;
       --casa: #2c2d25; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3f4726; --atual: #72872f; --num: #b5b7a6; --fio: #f1f4e6;
-      --tecla: #2b2c25; --tecla-ink: #eef0e2; --barra: #3f4726; --barra-ink: #f1f4e6;
+      --kb-bg: #2b2c25; --kb-ink: #eef0e2; --kb-dim: #9a9c8c; --barra: #3f4726; --barra-ink: #f1f4e6;
       --furo: rgba(255, 255, 240, .06); --madeira: #8a5e38; --madeira-2: #6e4726; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%238f927a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
       --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
@@ -79,7 +80,6 @@
   .pista { background-image: linear-gradient(90deg, var(--barra-ink) 55%, transparent 0), linear-gradient(90deg, var(--barra-ink) 55%, transparent 0);
     background-size: 12px 1.5px; background-repeat: repeat-x; background-position: 0 6px, 0 calc(100% - 6px); }
   .pista .ref, .pista button { opacity: .65; }
-  .tecla { box-shadow: 0 1px 0 rgba(60, 40, 20, .18); }
   .casa.pula { animation: pula .3s ease; }
   @keyframes pula { 40% { transform: scale(1.08); } }
   .grade.treme { animation: treme .32s ease; }
@@ -96,13 +96,7 @@
   .pista .p { font-weight: 650; font-size: .98rem; line-height: 1.25; }
 
   /* ---------- teclado ---------- */
-  .teclado { display: flex; flex-direction: column; gap: 7px; margin-top: 12px; }
-  .teclado .lin { display: flex; gap: 5px; justify-content: center; }
-  .tecla { flex: 1 1 0; min-width: 0; max-width: 42px; height: var(--tec, 50px); border: 0; border-radius: 8px; background: var(--tecla); color: var(--tecla-ink);
-    font: inherit; font-weight: 700; font-size: 1.12rem; cursor: pointer; box-shadow: 0 1px 0 rgba(0,0,0,.12); padding: 0; }
-  .tecla:active { transform: scale(.94); background: var(--surface-2); }
-  .tecla.larga { max-width: 64px; flex: 1.5 1 0; display: flex; align-items: center; justify-content: center; }
-  .tecla.larga svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .teclado { margin-top: 12px; }   /* teclado padrão: comum/teclado.js + comum/cabecalho.css */
 
   /* ---------- fim: o teclado vira a faixa de resultado ---------- */
   .controls { display: none; padding-top: 12px; }
@@ -139,7 +133,7 @@
   .resp b { font-weight: 800; letter-spacing: .04em; }
   .resp span { color: var(--muted); }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=133">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=134">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
   .gh .gh-brand b { letter-spacing: .02em; font-stretch: 75%; font-size: 1.15rem; }   /* nome comprido: cabe ao lado da dica */
@@ -317,14 +311,7 @@
   function aviso(html, ms = 1800) { const el = $("aviso"); clearTimeout(avT); el.innerHTML = html; avT = setTimeout(() => (el.innerHTML = ""), ms); }
 
   // ---------- teclado ----------
-  const LINHAS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
-  $("teclado").innerHTML = LINHAS.map((l, k) => `<div class="lin">${[...l].map(c => `<button class="tecla" type="button" data-k="${c}">${c}</button>`).join("")}${k === 2 ? `<button class="tecla larga" type="button" data-k="⌫" aria-label="Apagar"><svg viewBox="0 0 24 24"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg></button>` : ""}</div>`).join("");
-  $("teclado").addEventListener("click", e => {
-    const b = e.target.closest(".tecla");
-    if (!b) return;
-    const k = b.dataset.k;
-    setTimeout(() => (k === "⌫" ? apaga() : digita(k)), 0);   // depois do toque (vibração no iPhone)
-  });
+  ghTeclado($("teclado"), { aoTocar: k => setTimeout(() => (k === "⌫" ? apaga() : digita(k)), 0) });   // depois do toque (vibração no iPhone)
   document.addEventListener("keydown", e => {
     if (!P || finished || document.querySelector(".overlay.open") || e.metaKey || e.ctrlKey || e.altKey) return;
     if (/^[a-zA-Z]$/.test(e.key)) { digita(e.key.toUpperCase()); e.preventDefault(); }
@@ -516,9 +503,9 @@
   $("againBtn").addEventListener("click", () => sorteia());
 })();
 </script>
-<script src="../comum/catalogo.js?v=133"></script>
-<script src="../comum/celebra.js?v=133"></script>
-<script src="../comum/recorde.js?v=133"></script>
-<script src="../comum/proximo.js?v=133" data-jogo="cruzadinha"></script>
+<script src="../comum/catalogo.js?v=134"></script>
+<script src="../comum/celebra.js?v=134"></script>
+<script src="../comum/recorde.js?v=134"></script>
+<script src="../comum/proximo.js?v=134" data-jogo="cruzadinha"></script>
 </body>
 </html>

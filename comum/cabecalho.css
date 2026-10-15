@@ -258,6 +258,26 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
   --kb-enter-fs: 15px;
 }
 
+/* Teclado pronto (comum/teclado.js, ghTeclado): o mesmo do 5PILA e do Sando — QWERTY, ⌫ no fim da
+   2ª fileira, ENTER (se houver) no fim da 3ª. Jogo novo com teclado usa este; cada jogo só troca as cores. */
+:where(:root) { --kb-bg: #e6e2d8; --kb-ink: #1a1a17; --kb-dim: #77736a; }   /* :where: o jogo sobrescreve sem brigar */
+@media (prefers-color-scheme: dark) { :where(:root:not([data-theme="light"])) { --kb-bg: #2b2e38; --kb-ink: #f2f0ea; --kb-dim: #9a9890; } }
+:where(:root[data-theme="dark"]) { --kb-bg: #2b2e38; --kb-ink: #f2f0ea; --kb-dim: #9a9890; }
+.gh-kb { display: flex; flex-direction: column; gap: var(--kb-row-gap); user-select: none; -webkit-user-select: none; }
+.gh-kb-row { display: flex; gap: var(--kb-gap); justify-content: center; width: 100%; }
+.gh-kb-key {
+  flex: 0 1 calc((100% - 9 * var(--kb-gap)) / 10);   /* toda tecla de letra tem a mesma largura, em qualquer fileira */
+  min-width: 0; max-width: var(--kb-max); height: var(--kb-h); padding: 0;
+  border-radius: var(--kb-r); border: 1px solid transparent; background: var(--kb-bg); color: var(--kb-ink);
+  font-family: var(--kb-font); font-stretch: var(--kb-stretch); font-weight: var(--kb-weight); font-size: var(--kb-fs);
+  text-transform: uppercase; display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: transform .08s ease, background .12s ease; -webkit-tap-highlight-color: transparent;
+}
+.gh-kb-key:active { transform: translateY(1px); }
+.gh-kb-key.back { color: var(--kb-dim); }
+.gh-kb-key.back svg { width: 22px; height: 22px; }
+.gh-kb-key.enter { flex: var(--kb-enter) 1 0; max-width: var(--kb-enter-max); background: var(--kb-ink); color: var(--kb-bg); font-size: var(--kb-enter-fs); letter-spacing: .8px; }
+
 /* Compartilhar: um ícone discreto ao lado do resultado do dia (no lugar do botão grande).
    O resultado continua centralizado: um espaço invisível do mesmo tamanho fica do outro lado.
    Ao copiar (sem a folha de compartilhar do sistema), o ícone vira um ✓ por um instante. */
