@@ -47,8 +47,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Ponto Cruz (pasta `cruzadinha`): desde 16/10/2026 é um **sudoku 6×6 de dados** (blocos 2×3), faces do dado em
   ponto-cruz, uma cor de linha por dado (`--d1`…`--d6`; vermelho só para erro, em moldura tracejada); as reveladas
   ganham um quadradinho de tecido tingido e ponto mais grosso; anotações em mini dados.
-  `cruzadinha/gerador.mjs`: solução única e só lógica; a semana tira casas e pede técnicas mais longas
-  (1 candidato único/bloco · 2 linha/coluna · 3 pares e apontar). As palavras cruzadas antigas foram descartadas.
+  `cruzadinha/gerador.mjs`: solução única e só lógica, com um resolvedor "de gente". Pouca anotação: de segunda a
+  sexta quase tudo sai olhando (a dificuldade vem de menos casas e de casas mais escondidas, com poucas à vista por vez);
+  sábado pede um lance à frente ("apontar"), domingo dois (no máximo). Nada mais longo que isso.
+  As palavras cruzadas antigas foram descartadas.
 - Panelinha: `panelinha/confere-categorias.mjs` (o gerador roda antes). Listas de palavras o mais completas
   possível: uma palavra que cabe em dois grupos e não está nas duas listas vira resposta dupla sem o gerador
   saber. Pegadinhas (roxo) conferidas letra por letra.
