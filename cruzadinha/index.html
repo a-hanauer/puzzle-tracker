@@ -176,7 +176,7 @@
       <li>Toque numa casa e depois num dado para bordar. Tocar no mesmo dado de novo tira.</li>
       <li><b>Anotar</b> liga o rascunho: os dados viram marquinhas pequenas na casa. Quando você borda um dado, as marquinhas dele somem da linha, da coluna e do bloco.</li>
       <li>Dado repetido numa linha, coluna ou bloco fica com o tecido riscado e uma moldura tracejada.</li>
-      <li>A <b>dica</b> (a lâmpada) borda uma casa que já dá para descobrir, ou corrige uma errada. Uma por dia.</li>
+      <li>A <b>dica</b> (a lâmpada) borda a próxima casa que já dá para descobrir e explica o raciocínio, ou tira um dado errado. Uma por dia.</li>
     </ul>
     <p>Todo desafio tem uma única solução e sai só com lógica, sem chute. Na segunda vêm muitas casas bordadas; ao longo da semana, menos, e as que faltam ficam mais escondidas. Até sexta quase tudo sai só olhando, sem precisar anotar; no sábado e no domingo, é preciso ver um ou dois lances à frente.</p>
     <button class="btn-main" data-close>Jogar</button>
@@ -429,23 +429,101 @@
     }
   });
 
-  // ---------- dica: corrige uma casa errada; senão, borda a casa vazia com menos opções ----------
+  // ---------- dica: corrige uma casa errada; senão, borda a casa que dá para deduzir AGORA e explica por quê ----------
+  // Usa o mesmo raciocínio do gerador (cruzadinha/gerador.mjs, resolvedor "de gente"), só com o que está bordado
+  // (as anotações não contam): primeiro uma casa que sai direto; se não houver, a que sai com um lance à frente
+  // ("apontar" ou um par); no máximo dois lances. Nunca "porque sim".
+  const NOME_U = k => k < 6 ? `linha ${k + 1}` : k < 12 ? `coluna ${k - 5}` :
+    `bloco ${["de cima", "do meio", "de baixo"][(k - 12) >> 1]}, à ${(k - 12) & 1 ? "direita" : "esquerda"}`;
+  const NA_U = k => (k < 12 ? "na " : "no ") + NOME_U(k);
+  const ONDE = i => `linha ${(i / N | 0) + 1}, coluna ${i % N + 1}`;
+  const bitsDe = m => [1, 2, 3, 4, 5, 6].filter(d => m & (1 << d));
+  function candDe(v) {
+    const c = v.map(x => (x ? 0 : 0b1111110));
+    v.forEach((x, i) => { if (x) for (const j of VIZ[i]) c[j] &= ~(1 << x); });
+    return c;
+  }
+  // casas que saem direto: { i, d, tipo (1 bloco · 2 linha/coluna · 3 casa), k (unidade) }
+  function diretasDe(v, c) {
+    const out = [];
+    for (const t of [1, 2]) for (let k = 0; k < 18; k++) {
+      if ((k >= 12) !== (t === 1)) continue;
+      for (let d = 1; d <= 6; d++) {
+        if (UNI[k].some(i => v[i] === d)) continue;
+        const l = UNI[k].filter(i => c[i] & (1 << d));
+        if (l.length === 1) out.push({ i: l[0], d, tipo: t, k });
+      }
+    }
+    for (let i = 0; i < 36; i++) if (!v[i] && bitsDe(c[i]).length === 1) out.push({ i, d: bitsDe(c[i])[0], tipo: 3 });
+    return out;
+  }
+  function cortesDe(v, c) {
+    const out = [];
+    const add = (tira, txt) => { if (tira.length) out.push({ tira, txt }); };
+    for (let k = 12; k < 18; k++) for (let d = 1; d <= 6; d++) {
+      const l = UNI[k].filter(i => !v[i] && c[i] & (1 << d)); if (l.length < 2) continue;
+      for (let o = 0; o < 12; o++) if (l.every(i => UNI[o].includes(i)))
+        add(UNI[o].filter(i => !l.includes(i) && !v[i] && c[i] & (1 << d)).map(i => [i, d]),
+          `${NA_U(k)[0].toUpperCase() + NA_U(k).slice(1)}, o <b>${d}</b> só pode ficar ${NA_U(o)}; então ele não vai no resto ${o < 6 ? "dessa linha" : "dessa coluna"}.`);
+    }
+    for (let o = 0; o < 12; o++) for (let d = 1; d <= 6; d++) {
+      const l = UNI[o].filter(i => !v[i] && c[i] & (1 << d)); if (l.length < 2) continue;
+      for (let k = 12; k < 18; k++) if (l.every(i => UNI[k].includes(i)))
+        add(UNI[k].filter(i => !l.includes(i) && !v[i] && c[i] & (1 << d)).map(i => [i, d]),
+          `${NA_U(o)[0].toUpperCase() + NA_U(o).slice(1)}, o <b>${d}</b> só pode ficar ${NA_U(k)}; então ele não vai no resto desse bloco.`);
+    }
+    for (let k = 0; k < 18; k++) {
+      const vaz = UNI[k].filter(i => !v[i]);
+      for (let a = 0; a < vaz.length; a++) for (let b = a + 1; b < vaz.length; b++) {
+        const m = c[vaz[a]]; if (m !== c[vaz[b]] || bitsDe(m).length !== 2) continue;
+        const tira = []; for (const i of vaz) if (i !== vaz[a] && i !== vaz[b]) for (const d of bitsDe(c[i] & m)) tira.push([i, d]);
+        const [x, y] = bitsDe(m);
+        add(tira, `${NA_U(k)[0].toUpperCase() + NA_U(k).slice(1)}, as casas (${ONDE(vaz[a])}) e (${ONDE(vaz[b])}) só aceitam <b>${x}</b> e <b>${y}</b>; então os outros lugares ${k < 12 ? "dela" : "dele"} não têm ${x} nem ${y}.`);
+      }
+    }
+    return out;
+  }
+  const corta = (c, ct) => { const n = c.slice(); for (const [i, d] of ct.tira) n[i] &= ~(1 << d); return n; };
+  function explica(v, c, p) {
+    if (p.tipo === 3) {
+      const vistos = [1, 2, 3, 4, 5, 6].filter(d => d !== p.d);
+      return `A casa da ${ONDE(p.i)} já tem ${vistos.slice(0, -1).join(", ")} e ${vistos.at(-1)} por perto (na linha, na coluna, no bloco ou já descartados): só sobra o <b>${p.d}</b>.`;
+    }
+    return `${NA_U(p.k)[0].toUpperCase() + NA_U(p.k).slice(1)}, o <b>${p.d}</b> só cabe na casa da ${ONDE(p.i)}: as outras já estão bordadas ou veem um ${p.d}.`;
+  }
+  const melhor = l => l.sort((a, b) => a.tipo - b.tipo)[0];
+  function proximoPasso(v) {
+    const c = candDe(v);
+    let l = diretasDe(v, c);
+    if (l.length) { const p = melhor(l); return { ...p, txt: explica(v, c, p) }; }
+    const cs = cortesDe(v, c);
+    for (const ct of cs) { const c1 = corta(c, ct); l = diretasDe(v, c1); if (l.length) { const p = melhor(l); return { ...p, txt: `${ct.txt} ${explica(v, c1, p)}` }; } }
+    for (const ct of cs) {
+      const c1 = corta(c, ct);
+      for (const ct2 of cortesDe(v, c1)) { const c2 = corta(c1, ct2); l = diretasDe(v, c2); if (l.length) { const p = melhor(l); return { ...p, txt: `${ct.txt} ${ct2.txt} ${explica(v, c2, p)}` }; } }
+    }
+    return null;
+  }
   function pedirDica() {
+    // um dado que repete na linha, coluna ou bloco, ou que não é o da solução, é corrigido primeiro
     const errada = val.findIndex((v, i) => v && !dadas[i] && v !== +P.s[i]);
     let msg, i;
     if (errada >= 0) {
       i = errada; const era = val[i];
-      guarda(); val[i] = +P.s[i]; notas[i] = 0;
-      msg = `Na linha ${(i / N | 0) + 1}, coluna ${i % N + 1}, o <b>${era}</b> estava errado: troquei pelo <b>${val[i]}</b>.`;
-    } else {
-      const opcoes = k => [1, 2, 3, 4, 5, 6].filter(n => !VIZ[k].some(j => val[j] === n)).length;
-      const vazias = val.map((v, k) => (v ? -1 : k)).filter(k => k >= 0).sort((a, b) => opcoes(a) - opcoes(b));
-      i = vazias[0]; if (i == null) return "O tabuleiro já está completo.";
-      const so = opcoes(i) === 1;
-      guarda(); val[i] = +P.s[i]; notas[i] = 0;
-      for (const j of VIZ[i]) notas[j] &= ~(1 << val[i]);
-      msg = `Bordei a casa da linha ${(i / N | 0) + 1}, coluna ${i % N + 1}: ${so ? "só cabia" : "é"} o <b>${val[i]}</b>.`;
+      const igual = VIZ[i].find(j => val[j] === era);
+      guarda(); val[i] = 0; notas[i] = 0;
+      msg = igual != null
+        ? `O <b>${era}</b> da ${ONDE(i)} repete com o da ${ONDE(igual)}: tirei.`
+        : `O <b>${era}</b> da ${ONDE(i)} não é o dado dessa casa e mais adiante travaria o tabuleiro: tirei.`;
+      dicaUsada = true; cur = i; render(); persist();
+      return msg;
     }
+    const p = proximoPasso(val);
+    if (!p) return "Não achei uma casa que saia só com lógica agora.";
+    i = p.i;
+    guarda(); val[i] = p.d; notas[i] = 0;
+    for (const j of VIZ[i]) notas[j] &= ~(1 << p.d);
+    msg = p.txt;
     reveladas.add(i); dicaUsada = true; cur = i;
     render(new Set([i])); persist();
     if (cheia()) confere();
