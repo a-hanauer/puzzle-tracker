@@ -49,7 +49,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   ganham um quadradinho de tecido tingido e ponto mais grosso; anotações em mini dados.
   `cruzadinha/gerador.mjs`: solução única e só lógica, com um resolvedor "de gente". Pouca anotação: de segunda a
   sexta quase tudo sai olhando (a dificuldade vem de menos casas e de casas mais escondidas, com poucas à vista por vez);
-  sábado pede um lance à frente ("apontar"), domingo dois (no máximo). Nada mais longo que isso.
+  sábado pede um lance à frente ("apontar"), domingo dois (no máximo). Nada mais longo que isso, e sem memória:
+  o resolvedor refaz as possibilidades a cada casa (o lance vale só para achar a próxima casa, como quem não anota).
   As palavras cruzadas antigas foram descartadas.
 - Panelinha: `panelinha/confere-categorias.mjs` (o gerador roda antes). Listas de palavras o mais completas
   possível: uma palavra que cabe em dois grupos e não está nas duas listas vira resposta dupla sem o gerador

@@ -112,33 +112,35 @@ const corta = (st, c) => { const n = copia(st); for (const [i, d] of c.tira) n.c
 // resolve até a profundidade pedida (0 = só casas diretas; 1 = um lance à frente; 2 = dois)
 // devolve { ok, passos, tipos: [_, t1, t2, t3], larg: [...], l1, l2, e (esforço) }
 export function resolve(grade, maxProf = 2) {
+  // Sem memória: a cada casa bordada, as possibilidades são refeitas só a partir do que está no tabuleiro.
+  // Um "lance à frente" vale só para achar a próxima casa; depois é esquecido (como faz quem não anota).
   let st = inicio(grade);
   const r = { ok: false, passos: 0, tipos: [0, 0, 0, 0], larg: [], l1: 0, l2: 0, e: 0 };
+  const coloca = (m, extra) => {
+    let melhor = null;
+    for (const [i, o] of m) if (!melhor || o.tipo < melhor[1].tipo) melhor = [i, o];
+    r.passos++; r.tipos[melhor[1].tipo]++; r.larg.push(m.size);
+    r.e += [0, 1, 1.6, 2.2][melhor[1].tipo] / Math.sqrt(m.size) + extra;   // esforço: casa difícil de achar pesa mais
+    const v = st.v.slice(); v[melhor[0]] = melhor[1].d; st = inicio(v);
+  };
   for (;;) {
     if (st.v.every(Boolean)) { r.ok = true; return r; }
     if (st.v.some((x, i) => !x && !st.cand[i])) return r;
     const m = diretas(st);
-    if (m.size) {
-      let melhor = null;
-      for (const [i, o] of m) if (!melhor || o.tipo < melhor[1].tipo) melhor = [i, o];
-      r.passos++; r.tipos[melhor[1].tipo]++; r.larg.push(m.size);
-      r.e += [0, 1, 1.6, 2.2][melhor[1].tipo] / Math.sqrt(m.size);   // esforço: casa difícil de achar pesa mais
-      poe(st, melhor[0], melhor[1].d);
-      continue;
-    }
+    if (m.size) { coloca(m, 0); continue; }
     if (maxProf < 1) return r;
     const cs = cortes(st);
-    let prox = null;
-    for (const c of cs) if (c.peso === 1) { const n = corta(st, c); if (diretas(n).size) { prox = n; break; } }
-    if (prox) { r.l1++; r.e += 4; st = prox; continue; }
+    let achou = null;
+    for (const c of cs) if (c.peso === 1) { const n = diretas(corta(st, c)); if (n.size) { achou = n; break; } }
+    if (achou) { r.l1++; coloca(achou, 4); continue; }
     if (maxProf < 2) return r;
     for (const c of cs) {
-      if (c.peso === 2) { const n = corta(st, c); if (diretas(n).size) { prox = n; break; } continue; }
+      if (c.peso === 2) { const n = diretas(corta(st, c)); if (n.size) { achou = n; break; } continue; }
       const n1 = corta(st, c);
-      for (const c2 of cortes(n1)) if (c2.peso === 1) { const n = corta(n1, c2); if (diretas(n).size) { prox = n; break; } }
-      if (prox) break;
+      for (const c2 of cortes(n1)) if (c2.peso === 1) { const n = diretas(corta(n1, c2)); if (n.size) { achou = n; break; } }
+      if (achou) break;
     }
-    if (prox) { r.l2++; r.e += 9; st = prox; continue; }
+    if (achou) { r.l2++; coloca(achou, 9); continue; }
     return r;
   }
 }
