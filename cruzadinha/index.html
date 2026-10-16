@@ -8,18 +8,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Ponto Cruz">
-<title>PONTO CRUZ — palavras cruzadas de bolso</title>
+<title>PONTO CRUZ — sudoku de dados bordados</title>
 <link rel="icon" type="image/png" href="icon.png?v=22">
-<script src="../comum/tema.js?v=134"></script>
-<script src="../comum/cabecalho.js?v=134"></script>
-<script src="../comum/dica.js?v=134"></script>
-<script src="../comum/teclado.js?v=134"></script>
+<script src="../comum/tema.js?v=135"></script>
+<script src="../comum/cabecalho.js?v=135"></script>
+<script src="../comum/dica.js?v=135"></script>
 <link rel="apple-touch-icon" href="icon.png?v=22">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <style>
-  /* papel de jornal; a palavra da vez em verde-limão (a cor do cartão no painel) */
+  /* tecido de talagarça num bastidor de madeira; linha escura para o que vem pronto, verde para o que você borda */
   :root {
     --bg: #f4f3ec; --surface: #fffefa; --surface-2: #e8e7dc; --ink: #1f2016; --muted: #75766a; --line: #deddd0;
     --casa: #fbf7ec; --preta: #23241c; --grade: #23241c; --palavra: #e6eec4; --atual: #c3d77e; --num: #4b4c40; --fio: #2f3a12;
@@ -59,48 +58,33 @@
   .aviso { text-align: center; height: 24px; line-height: 24px; font-size: .9rem; font-weight: 700; color: var(--muted); margin: 0 0 4px; }
   .aviso b { color: var(--ink); }
 
-  /* ---------- grade ---------- */
-  .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
-  .grade { width: var(--lado, 340px); height: var(--lado, 340px); display: grid; grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr)); grid-template-rows: repeat(var(--n, 6), minmax(0, 1fr)); gap: 2px;
-    padding: 2px; background: var(--grade); border-radius: 10px; overflow: hidden; }
-  .casa { position: relative; background: var(--casa); display: flex; align-items: center; justify-content: center; cursor: pointer;
-    font-weight: 700; font-size: calc(var(--lado, 340px) / var(--n, 6) * .52); color: var(--ink); line-height: 1; transition: background .12s ease; }
-  .casa.preta { background: var(--preta); cursor: default; }
-  .casa.pal { background: var(--palavra); }
-  .casa.atual { background: var(--atual); }
-  .casa .n { position: absolute; left: 4px; top: 3px; font-size: calc(var(--lado, 340px) / var(--n, 6) * .18); font-weight: 700; color: var(--num); line-height: 1; }
-  .casa.revelada { color: var(--accent); }
-  /* bordado: tecido de talagarça (furinhos), grade num bastidor de madeira, casas pretas cheias de pontos-cruz */
   body { background-image: radial-gradient(var(--furo) 1px, transparent 1.4px); background-size: 7px 7px; }
-  .grade { background: var(--madeira); padding: 7px; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--madeira-2), 0 6px 16px rgba(60, 40, 20, .18); }
-  .casa { background-color: var(--casa); background-image: radial-gradient(var(--furo) 1.1px, transparent 1.5px); background-size: 9px 9px; background-position: 4px 4px; color: var(--fio); }
-  .casa.pal { background-color: var(--palavra); }
-  .casa.atual { background-color: var(--atual); }
-  .casa.preta { background-color: var(--casa); background-image: var(--ponto-preto); background-size: 33.4% 33.4%; background-position: 0 0; }
-  .pista { background-image: linear-gradient(90deg, var(--barra-ink) 55%, transparent 0), linear-gradient(90deg, var(--barra-ink) 55%, transparent 0);
-    background-size: 12px 1.5px; background-repeat: repeat-x; background-position: 0 6px, 0 calc(100% - 6px); }
-  .pista .ref, .pista button { opacity: .65; }
-  .casa.pula { animation: pula .3s ease; }
-  @keyframes pula { 40% { transform: scale(1.08); } }
-  .grade.treme { animation: treme .32s ease; }
+  /* ---------- tabuleiro (SVG) ---------- */
+  .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  #tab { display: block; overflow: visible; touch-action: manipulation; }
+  #tab .casa { cursor: pointer; }
+  #tab.treme { animation: treme .32s ease; }
   @keyframes treme { 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
-  @media (prefers-reduced-motion: reduce) { .casa.pula, .grade.treme { animation: none !important; } }
+  #tab .pula { animation: pula .28s ease; transform-box: fill-box; transform-origin: center; }
+  @keyframes pula { 40% { transform: scale(1.18); } }
+  @media (prefers-reduced-motion: reduce) { #tab.treme, #tab .pula { animation: none !important; } }
 
-  /* ---------- pista da vez ---------- */
-  .pista { display: flex; align-items: stretch; gap: 0; margin: 12px 0 0; min-height: 58px; border-radius: 16px; background-color: var(--barra); color: var(--barra-ink); overflow: hidden; }
-  .pista button { flex: 0 0 44px; border: 0; background: none; color: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: .7; }
-  .pista button:active { opacity: 1; background: rgba(127,127,127,.15); }
-  .pista button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-  .pista .txt { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 2px; cursor: pointer; }
-  .pista .ref { flex-shrink: 0; font-weight: 800; font-size: .8rem; letter-spacing: .04em; opacity: .75; font-variant-numeric: tabular-nums; }
-  .pista .p { font-weight: 650; font-size: .98rem; line-height: 1.25; }
-
-  /* ---------- teclado ---------- */
-  .teclado { margin-top: 12px; }   /* teclado padrão: comum/teclado.js + comum/cabecalho.css */
-
-  /* ---------- fim: o teclado vira a faixa de resultado ---------- */
+  /* ---------- ferramentas e dados ---------- */
+  .ferr { display: flex; justify-content: center; gap: 10px; margin: 12px 0 8px; }
+  .ferr button { border: 0; background: var(--kb-bg); color: var(--kb-ink); border-radius: 99px; height: 36px; padding: 0 15px; cursor: pointer;
+    font: 650 .84rem "Noto Sans", -apple-system, sans-serif; display: inline-flex; align-items: center; gap: 6px; }
+  .ferr button:disabled { opacity: .45; cursor: default; }
+  .ferr button.on { background: var(--accent); color: var(--on-accent); }
+  .ferr svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .dados { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 7px; margin: 0 0 4px; }
+  .dados button { border: 0; padding: 0; aspect-ratio: 1; max-height: 64px; border-radius: 12px; background: var(--kb-bg); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: transform .08s ease; }
+  .dados button:active { transform: translateY(1px); }
+  .dados button.cheio { opacity: .38; }             /* os seis desse dado já estão no tabuleiro */
+  .dados svg { width: 80%; height: 80%; overflow: visible; pointer-events: none; }
+  /* ---------- fim: os dados viram a faixa de resultado ---------- */
   .controls { display: none; padding-top: 12px; }
-  body.acabou .teclado, body.acabou .pista { display: none; }
+  body.acabou .ferr, body.acabou .dados { display: none; }
   body.acabou .controls { display: flex; }
   .prog { position: relative; overflow: hidden; flex: 1; height: 64px; border-radius: 16px; background: #23241c; box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(30, 30, 20, .3); }
   .done-bar { position: absolute; inset: 0; display: flex; align-items: center; gap: 12px; padding: 0 18px; margin: 0; border: 0; background: none;
@@ -133,10 +117,12 @@
   .resp b { font-weight: 800; letter-spacing: .04em; }
   .resp span { color: var(--muted); }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=134">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=135">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
   .gh .gh-brand b { letter-spacing: .02em; font-stretch: 75%; font-size: 1.15rem; }   /* nome comprido: cabe ao lado da dica */
+  .demo { display: flex; gap: 10px; justify-content: center; margin: 8px 0 4px; }
+  .demo svg { width: 46px; height: 46px; background: var(--casa); border-radius: 10px; box-shadow: inset 0 0 0 1.5px var(--line); }
 </style>
 </head>
 <body>
@@ -151,15 +137,14 @@
 <div class="gh-meta"><span class="gh-info" id="dayInfo"></span><label class="gh-free" hidden><input type="checkbox" id="livreChk" autocomplete="off"></label></div>
 <div class="aviso" id="aviso" aria-live="polite"></div>
 
-<div class="stage" id="stage"><div class="grade" id="grade" data-tabuleiro></div></div>
+<div class="stage" id="stage"><svg id="tab" data-tabuleiro role="grid" aria-label="Tabuleiro 6 por 6"></svg></div>
 
-<div class="pista" id="pista">
-  <button id="ant" type="button" aria-label="Pista anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-  <div class="txt" id="pistaTxt" role="button" aria-label="Trocar direção"><span class="ref" id="ref"></span><span class="p" id="pTxt"></span></div>
-  <button id="prox" type="button" aria-label="Próxima pista"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+<div class="ferr" id="ferr">
+  <button id="desfazBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Desfazer</button>
+  <button id="notaBtn" type="button" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Anotar</button>
+  <button id="apagaBtn" type="button"><svg viewBox="0 0 24 24"><path d="M8.4 4.8h11.2a2.4 2.4 0 0 1 2.4 2.4v9.6a2.4 2.4 0 0 1-2.4 2.4H8.4L1.9 12z"/><path d="M12.6 9.4l5 5.2M17.6 9.4l-5 5.2"/></svg>Apagar</button>
 </div>
-
-<div class="teclado" id="teclado"></div>
+<div class="dados" id="dados"></div>
 
 <div class="controls" id="controls">
   <div class="prog">
@@ -176,15 +161,16 @@
 <div class="overlay" id="helpOverlay">
   <div class="modal">
     <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
-    <p>Uma palavra cruzada de bolso: <b>6 × 6</b>, com palavras de 3 a 6 letras.</p>
+    <p>Um sudoku de bolso, bordado: no lugar dos números, as faces de um dado.</p>
+    <div class="demo" id="demo"></div>
     <ul>
-      <li>Toque numa casa para escolher a palavra. Tocar de novo na mesma casa troca entre <b>horizontal</b> e <b>vertical</b>.</li>
-      <li>A pista da palavra marcada aparece em cima do teclado. As setas passam para a pista anterior ou a próxima; tocar na pista também troca a direção.</li>
-      <li>Sem acentos nem cedilha: <b>MÃE</b> entra como MAE, <b>AÇO</b> como ACO.</li>
-      <li>Quando a grade enche, o jogo confere. Se algo não bate, ele avisa — mas não diz onde.</li>
-      <li>A <b>dica</b> (a lâmpada) corrige as letras erradas da palavra marcada ou, se não houver, mostra uma letra dela. Uma por dia.</li>
+      <li>Cada <b>linha</b>, cada <b>coluna</b> e cada <b>bloco</b> (os retângulos de 2 × 3 marcados com o ponto mais grosso) tem os seis dados, sem repetir.</li>
+      <li>Toque numa casa e depois num dado para bordar. Tocar no mesmo dado de novo tira.</li>
+      <li><b>Anotar</b> liga o rascunho: os dados viram marquinhas pequenas na casa. Quando você borda um dado, as marquinhas dele somem da linha, da coluna e do bloco.</li>
+      <li>Dado repetido numa linha, coluna ou bloco fica em vermelho.</li>
+      <li>A <b>dica</b> (a lâmpada) borda uma casa que já dá para descobrir, ou corrige uma errada. Uma por dia.</li>
     </ul>
-    <p>Uma grade nova por dia. Na segunda as pistas são diretas; ao longo da semana ficam mais espertas, e no fim de semana a grade tem menos casas pretas.</p>
+    <p>Todo desafio tem uma única solução e sai só com lógica, sem chute. Na segunda vêm muitas casas bordadas; ao longo da semana, menos — e as deduções ficam mais longas.</p>
     <button class="btn-main" data-close>Jogar</button>
   </div>
 </div>
@@ -215,11 +201,22 @@
   const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
   const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
   const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
-  let N = 6;                  // 6×6 (os desafios até 14/10/2026 eram 5×5): sai do tamanho da grade
+  const ehDados = p => p && typeof p.s === "string" && p.g.length === 36 && !p.h;   // até 16/10/2026 eram palavras cruzadas
 
-  let P = null, dayNum = 0, letras = [], reveladas = new Set(), cur = 0, dir = "h", dicaUsada = false;
-  let finished = false, timer = null, startedAt = 0, elapsed = 0, avisouCheia = false, dica = null;
-  let palavras = [];          // [{d:"h"|"v", n, c:[casas], w, p}]
+  // ---------- regras ----------
+  const N = 6, U = 100, PAD = 18;
+  const UNI = (() => {
+    const u = [];
+    for (let r = 0; r < N; r++) u.push([...Array(N).keys()].map(c => r * N + c));
+    for (let c = 0; c < N; c++) u.push([...Array(N).keys()].map(r => r * N + c));
+    for (let br = 0; br < 3; br++) for (let bc = 0; bc < 2; bc++) { const b = []; for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) b.push((br * 2 + r) * N + bc * 3 + c); u.push(b); }
+    return u;
+  })();
+  const VIZ = [...Array(N * N).keys()].map(i => [...new Set(UNI.filter(u => u.includes(i)).flat())].filter(j => j !== i));
+  const bloco = i => ((i / N | 0) >> 1) * 2 + ((i % N) / 3 | 0);
+
+  let P = null, dayNum = 0, val = [], notas = [], dadas = [], cur = -1, modoNota = false, history = [];
+  let finished = false, timer = null, startedAt = 0, elapsed = 0, dicaUsada = false, dica = null, reveladas = new Set();
 
   function recomputeStats(st) {
     const days = Object.keys(st.times).map(Number).sort((a, b) => a - b);
@@ -228,192 +225,207 @@
     st.played = days.length; st.best = best; st.streak = run; st.lastDay = days.at(-1) || 0;
     return st;
   }
-  const preta = i => P.g[i] === "#";
-  const palavraDe = (i, d) => palavras.find(w => w.d === d && w.c.includes(i));
-  const atual = () => palavraDe(cur, dir) || palavraDe(cur, dir === "h" ? "v" : "h");
-  const cheia = () => letras.every((l, i) => preta(i) || l);
-  const certa = () => letras.every((l, i) => preta(i) || l === P.g[i]);
+  const conflitos = () => {
+    const bad = new Set();
+    for (const u of UNI) for (let a = 0; a < u.length; a++) for (let b = a + 1; b < u.length; b++)
+      if (val[u[a]] && val[u[a]] === val[u[b]]) { bad.add(u[a]); bad.add(u[b]); }
+    return bad;
+  };
+  const cheia = () => val.every(Boolean);
+  const certa = () => val.every((v, i) => v === +P.s[i]);
 
   function setup(puzzle, saved) {
     P = puzzle;
-    N = Math.round(Math.sqrt(P.g.length));
-    $("grade").style.setProperty("--n", N);
-    palavras = [...P.h.map(x => ({ ...x, d: "h" })), ...P.v.map(x => ({ ...x, d: "v" }))];
-    letras = saved?.letras && saved.letras.length === N * N ? saved.letras : Array(N * N).fill("");
+    dadas = [...P.g].map(c => (c === "." ? 0 : +c));
+    val = saved?.val && saved.val.length === 36 ? saved.val.slice() : dadas.slice();
+    notas = saved?.notas && saved.notas.length === 36 ? saved.notas.slice() : Array(36).fill(0);
     reveladas = new Set(saved?.reveladas || []);
     dicaUsada = !!saved?.dica;
     elapsed = saved?.elapsed || 0;
     finished = !!saved?.done;
-    cur = palavras[0].c[0]; dir = "h";
+    history = []; modoNota = false; cur = dadas.findIndex(v => !v);
     const now = new Date();
     $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l || (now.getDay() + 6) % 7 + 1}/7`;
-    montaGrade(); render(); showTime();
+    tamanho(); render(); showTime();
     if (dica) dica.atualiza();
   }
   function persist() {
     if (!P || teste) return;
-    const cheias = letras.filter((l, i) => l && !preta(i)).length, total = P.g.replace(/#/g, "").length;
-    save("dia:" + dayNum, { pid: P.g, letras, reveladas: [...reveladas], dica: dicaUsada, elapsed: currentElapsed(), done: finished,
-      time: finished ? elapsed : null, started: cheias > 0, prog: [finished ? total : cheias, total] });
+    const total = dadas.filter(v => !v).length, feitas = val.filter((v, i) => v && !dadas[i]).length;
+    save("dia:" + dayNum, { pid: P.g, val, notas, reveladas: [...reveladas], dica: dicaUsada, elapsed: currentElapsed(), done: finished,
+      time: finished ? elapsed : null, started: feitas > 0, prog: [finished ? total : feitas, total] });
   }
 
   fetch("desafios.json").then(r => r.json()).then(data => {
     DADOS = data;
     dayNum = dayNumber(data.epoch);
     const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
+    if (!ehDados(puzzle)) { location.replace("palavras.html"); return; }   // o último dia de palavras cruzadas (16/10/2026)
     let saved = load("dia:" + dayNum, null);
     if (saved && saved.pid !== puzzle.g) saved = null;
     setup(puzzle, saved);
     persist();
     if (finished) { document.body.classList.add("acabou"); render(); }
-    else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
+    else if (!load("viu-regras-dados", false)) { openModal("helpOverlay"); save("viu-regras-dados", true); }
     else startTimer();
   }).catch(() => { $("stage").innerHTML = '<p class="tip" style="display:block">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
 
+  // ---------- bordado: faces do dado em ponto-cruz ----------
+  const PIPS = { 1: [[1, 1]], 2: [[0, 0], [2, 2]], 3: [[0, 0], [1, 1], [2, 2]], 4: [[0, 0], [2, 0], [0, 2], [2, 2]], 5: [[0, 0], [2, 0], [1, 1], [0, 2], [2, 2]], 6: [[0, 0], [0, 1], [0, 2], [2, 0], [2, 1], [2, 2]] };
+  const xis = (x, y, r, cls) => `<path class="${cls}" d="M${(x - r).toFixed(1)} ${(y - r).toFixed(1)}L${(x + r).toFixed(1)} ${(y + r).toFixed(1)}M${(x + r).toFixed(1)} ${(y - r).toFixed(1)}L${(x - r).toFixed(1)} ${(y + r).toFixed(1)}"/>`;
+  // face do dado centrada em (cx, cy); tam = lado da casa
+  function face(n, cx, cy, tam, cor, nota) {
+    const g = tam * .27, r = tam * .085, w = tam * .048;
+    let sob = "", top = "";
+    for (const [i, j] of PIPS[n]) { const x = cx + (i - 1) * g, y = cy + (j - 1) * g; if (!nota) sob += xis(x, y, r, "pt-sob"); top += xis(x, y, r, "pt"); }
+    return `<g class="face" style="--cor:${cor};--w:${w.toFixed(2)};--ws:${(w * 1.6).toFixed(2)}">${sob}${top}</g>`;
+  }
+
   // ---------- desenho ----------
+  const W = N * U + 2 * PAD;
   function tamanho() {
-    const st = $("stage");
-    const lado = Math.floor(Math.min(st.clientWidth, st.clientHeight));
-    $("grade").style.setProperty("--lado", Math.max(160, Math.min(440, lado)) + "px");
+    const st = $("stage"), t = $("tab");
+    t.style.width = t.style.height = "0px";
+    const lado = Math.max(200, Math.min(460, Math.floor(Math.min(st.clientWidth, st.clientHeight))));
+    t.style.width = t.style.height = lado + "px";
   }
   window.addEventListener("resize", () => { if (P) tamanho(); });
-  function montaGrade() {
-    const num = {};
-    for (const w of palavras) num[w.c[0]] = w.n;
-    let h = "";
-    for (let i = 0; i < N * N; i++) h += preta(i) ? `<div class="casa preta"></div>` : `<div class="casa" data-i="${i}">${num[i] ? `<span class="n">${num[i]}</span>` : ""}<span class="l"></span></div>`;
-    $("grade").innerHTML = h;
-    tamanho();
-  }
+  const cs = () => getComputedStyle(document.documentElement);
   function render(pulam) {
     if (!P) return;
-    const w = atual(), naPal = new Set(finished ? [] : w.c);
-    $("grade").querySelectorAll(".casa[data-i]").forEach(el => {
-      const i = +el.dataset.i;
-      el.querySelector(".l").textContent = letras[i];
-      el.classList.toggle("pal", naPal.has(i));
-      el.classList.toggle("atual", !finished && i === cur);
-      el.classList.toggle("revelada", reveladas.has(i));
-      el.classList.remove("pula");
-      if (pulam && pulam.has(i)) { void el.offsetWidth; el.classList.add("pula"); }
-    });
-    $("ref").textContent = `${w.n}${w.d === "h" ? "H" : "V"}`;
-    $("pTxt").textContent = w.p;
-    $("pistaTxt").setAttribute("aria-label", `${w.n} ${w.d === "h" ? "horizontal" : "vertical"}: ${w.p}. Toque para trocar a direção.`);
+    const c = cs(), v = n => c.getPropertyValue(n).trim();
+    const fio = v("--fio"), acc = v("--accent"), err = v("--errada"), muted = v("--muted");
+    const bad = conflitos(), sel = finished ? -1 : cur;
+    const rS = sel >= 0 ? (sel / N | 0) : -9, cS = sel >= 0 ? sel % N : -9, bS = sel >= 0 ? bloco(sel) : -9, vS = sel >= 0 ? val[sel] : 0;
+    let s = `<defs><pattern id="aida" width="10" height="10" patternUnits="userSpaceOnUse" x="${PAD}" y="${PAD}"><circle cx="5" cy="5" r="1.3" style="fill:var(--furo)"/></pattern>
+      <style>.pt{fill:none;stroke:var(--cor);stroke-width:calc(var(--w)*1px);stroke-linecap:round}.pt-sob{fill:none;stroke:rgba(0,0,0,.2);stroke-width:calc(var(--ws)*1px);stroke-linecap:round}</style></defs>`;
+    s += `<rect x="1" y="1" width="${W - 2}" height="${W - 2}" rx="26" style="fill:var(--madeira);stroke:var(--madeira-2)" stroke-width="4"/>`;
+    s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" rx="10" style="fill:var(--casa)"/>`;
+    for (let i = 0; i < 36; i++) {
+      const x = PAD + (i % N) * U, y = PAD + (i / N | 0) * U;
+      let f = "";
+      if (i === sel) f = "var(--atual)";
+      else if ((i / N | 0) === rS || i % N === cS || bloco(i) === bS) f = "var(--palavra)";
+      else if (vS && val[i] === vS) f = "var(--palavra)";
+      if (f) s += `<rect x="${x}" y="${y}" width="${U}" height="${U}" style="fill:${f}" opacity="${i === sel ? 1 : .8}"/>`;
+    }
+    s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" fill="url(#aida)"/>`;
+    let fino = "", grosso = "";
+    for (let k = 1; k < N; k++) {
+      const x = PAD + k * U, y = PAD + k * U;
+      if (k === 3) grosso += `M${x} ${PAD}V${PAD + N * U}`; else fino += `M${x} ${PAD}V${PAD + N * U}`;
+      if (k % 2 === 0) grosso += `M${PAD} ${y}H${PAD + N * U}`; else fino += `M${PAD} ${y}H${PAD + N * U}`;
+    }
+    s += `<path d="${fino}" fill="none" stroke="${fio}" stroke-opacity=".28" stroke-width="2" stroke-dasharray="7 6" stroke-linecap="round"/>`;
+    s += `<path d="${grosso}" fill="none" stroke="${fio}" stroke-width="5" stroke-dasharray="16 6" stroke-linecap="round" opacity=".85"/>`;
+    for (let i = 0; i < 36; i++) {
+      const x = PAD + (i % N) * U, y = PAD + (i / N | 0) * U;
+      let conteudo = "";
+      if (val[i]) {
+        const cor = dadas[i] ? fio : bad.has(i) ? err : acc;
+        conteudo = `<g${pulam && pulam.has(i) ? ' class="pula"' : ""}>${face(val[i], x + U / 2, y + U / 2, U, cor)}</g>`;
+      } else if (notas[i]) {
+        for (let m = 1; m <= 6; m++) if (notas[i] & (1 << m)) conteudo += face(m, x + 18 + ((m - 1) % 3) * 32, y + 30 + ((m - 1) / 3 | 0) * 40, 30, muted, true);
+      }
+      const nome = val[i] ? `${val[i]}${dadas[i] ? ", revelada" : ""}` : "vazia";
+      s += `<g class="casa" data-i="${i}" role="gridcell" aria-label="linha ${(i / N | 0) + 1}, coluna ${i % N + 1}: ${nome}"><rect x="${x}" y="${y}" width="${U}" height="${U}" fill="transparent"/>${conteudo}</g>`;
+    }
+    const t = $("tab"); t.setAttribute("viewBox", `0 0 ${W} ${W}`); t.innerHTML = s;
+    // botões
+    const usados = n => val.filter(x => x === n).length;
+    $("dados").querySelectorAll("button").forEach(b => b.classList.toggle("cheio", usados(+b.dataset.n) >= 6));
+    $("notaBtn").classList.toggle("on", modoNota); $("notaBtn").setAttribute("aria-pressed", String(modoNota));
+    $("desfazBtn").disabled = finished || !history.length;
     if (finished) {
       $("doneTitle").textContent = fmt(elapsed);
       $("doneSub").textContent = `Ponto Cruz completo${dicaUsada ? " · com dica" : ""}`;
       $("tip").innerHTML = `Próximo Ponto Cruz em <b data-contagem>${$("countdown").textContent}</b>`;
     }
   }
+  // os seis botões de dado (e os exemplos do Como jogar)
+  function botoes() {
+    const fio = cs().getPropertyValue("--fio").trim();
+    $("dados").innerHTML = [1, 2, 3, 4, 5, 6].map(n => `<button type="button" data-n="${n}" aria-label="Dado ${n}"><svg viewBox="0 0 100 100"><style>.pt{fill:none;stroke:var(--cor);stroke-width:calc(var(--w)*1px);stroke-linecap:round}.pt-sob{fill:none;stroke:rgba(0,0,0,.2);stroke-width:calc(var(--ws)*1px);stroke-linecap:round}</style>${face(n, 50, 50, 100, fio)}</svg></button>`).join("");
+    $("demo").innerHTML = [1, 2, 3, 4, 5, 6].map(n => `<svg viewBox="0 0 100 100"><style>.pt{fill:none;stroke:var(--cor);stroke-width:calc(var(--w)*1px);stroke-linecap:round}.pt-sob{fill:none;stroke:rgba(0,0,0,.2);stroke-width:calc(var(--ws)*1px);stroke-linecap:round}</style>${face(n, 50, 50, 100, fio)}</svg>`).join("");
+  }
+  botoes();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { botoes(); render(); });
 
   let avT = 0;
   function aviso(html, ms = 1800) { const el = $("aviso"); clearTimeout(avT); el.innerHTML = html; avT = setTimeout(() => (el.innerHTML = ""), ms); }
 
-  // ---------- teclado ----------
-  ghTeclado($("teclado"), { aoTocar: k => setTimeout(() => (k === "⌫" ? apaga() : digita(k)), 0) });   // depois do toque (vibração no iPhone)
-  document.addEventListener("keydown", e => {
-    if (!P || finished || document.querySelector(".overlay.open") || e.metaKey || e.ctrlKey || e.altKey) return;
-    if (/^[a-zA-Z]$/.test(e.key)) { digita(e.key.toUpperCase()); e.preventDefault(); }
-    else if (e.key === "Backspace") { apaga(); e.preventDefault(); }
-    else if (e.key === "ArrowRight" || e.key === "ArrowLeft") { anda(e.key === "ArrowRight" ? 1 : -1, "h"); e.preventDefault(); }
-    else if (e.key === "ArrowDown" || e.key === "ArrowUp") { anda(e.key === "ArrowDown" ? N : -N, "v"); e.preventDefault(); }
-    else if (e.key === "Tab" || e.key === "Enter") { pula(e.shiftKey ? -1 : 1); e.preventDefault(); }
-    else if (e.key === " ") { dir = dir === "h" ? "v" : "h"; if (!palavraDe(cur, dir)) dir = dir === "h" ? "v" : "h"; render(); e.preventDefault(); }
-  });
-  function anda(delta, d) {
-    if (dir !== d && palavraDe(cur, d)) { dir = d; render(); return; }
-    let i = cur + delta;
-    while (i >= 0 && i < N * N && (d === "h" ? Math.floor(i / N) === Math.floor(cur / N) : true) && preta(i)) i += delta;
-    if (i >= 0 && i < N * N && !preta(i) && (d === "v" || Math.floor(i / N) === Math.floor(cur / N))) { cur = i; render(); }
-  }
-
-  function digita(ch) {
-    if (!P || finished) return;
+  // ---------- jogar ----------
+  const foto = () => ({ val: val.slice(), notas: notas.slice() });
+  function guarda() { history.push(foto()); if (history.length > 200) history.shift(); }
+  function borda(n) {
+    if (!P || finished || cur < 0 || dadas[cur]) return;
     startTimer();
-    const w = atual(), k = w.c.indexOf(cur), vinhaCheia = w.c.every(i => letras[i]);
-    letras[cur] = ch; reveladas.delete(cur);
-    if (cheia()) { render(new Set([cur])); confere(); persist(); return; }
-    // palavra que já estava cheia (corrigindo): anda uma casa; senão, a próxima vazia; palavra completa: próxima pista
-    const vazia = i => !letras[i];
-    const depois = w.c.slice(k + 1).find(vazia), antes = w.c.slice(0, k).find(vazia);
-    if (vinhaCheia) { if (k < w.c.length - 1) cur = w.c[k + 1]; }
-    else if (depois != null) cur = depois;
-    else if (antes != null) cur = antes;
-    else pula(1, true);
-    render(new Set([w.c[k]])); persist();
+    guarda();
+    if (modoNota) { if (val[cur]) return void history.pop(); notas[cur] ^= 1 << n; render(); persist(); return; }
+    if (val[cur] === n) { val[cur] = 0; reveladas.delete(cur); render(); persist(); return; }
+    val[cur] = n; notas[cur] = 0; reveladas.delete(cur);
+    for (const j of VIZ[cur]) notas[j] &= ~(1 << n);                // tira a marquinha desse dado da linha, coluna e bloco
+    const bad = conflitos();
+    if (bad.has(cur) && window.jogosHaptico) jogosHaptico();
+    render(new Set([cur])); persist();
+    if (cheia()) confere();
   }
   function apaga() {
-    if (!P || finished) return;
-    const w = atual(), k = w.c.indexOf(cur);
-    if (letras[cur]) letras[cur] = "";
-    else if (k > 0) { cur = w.c[k - 1]; letras[cur] = ""; }
-    reveladas.delete(cur);
-    avisouCheia = false;
-    render(); persist();
+    if (!P || finished || cur < 0 || dadas[cur] || (!val[cur] && !notas[cur])) return;
+    guarda(); val[cur] = 0; notas[cur] = 0; reveladas.delete(cur); render(); persist();
   }
-  // próxima (ou anterior) pista; vaiParaVazia: começa na primeira casa vazia dela
-  function pula(passo, vaiParaVazia) {
-    const w = atual(), ordem = [...palavras.filter(x => x.d === "h"), ...palavras.filter(x => x.d === "v")];
-    let j = ordem.indexOf(w);
-    for (let t = 0; t < ordem.length; t++) {
-      j = (j + passo + ordem.length) % ordem.length;
-      const x = ordem[j];
-      if (vaiParaVazia && x.c.every(i => letras[i])) continue;
-      dir = x.d; cur = (vaiParaVazia && x.c.find(i => !letras[i])) ?? x.c[0];
-      render(); return;
-    }
+  function desfaz() {
+    if (finished || !history.length) return;
+    const f = history.pop(); val = f.val; notas = f.notas; render(); persist();
   }
   function confere() {
     if (certa()) { ganhou(); return; }
-    if (avisouCheia) return;
-    avisouCheia = true;
     if (window.jogosHaptico) jogosHaptico();
-    const g = $("grade"); g.classList.remove("treme"); void g.offsetWidth; g.classList.add("treme");
-    aviso("Quase! <b>Alguma letra</b> não bate.", 2600);
+    const t = $("tab"); t.classList.remove("treme"); void t.offsetWidth; t.classList.add("treme");
+    aviso("Quase! Tem <b>dado repetido</b> no tabuleiro.", 2600);
   }
-
-  // ---------- tocar na grade ----------
-  $("grade").addEventListener("click", e => {
-    const el = e.target.closest(".casa[data-i]");
-    if (!el || finished) return;
+  $("tab").addEventListener("click", e => {
+    const el = e.target.closest(".casa"); if (!el || finished) return;
     const i = +el.dataset.i;
-    setTimeout(() => {
-      if (i === cur) { const o = dir === "h" ? "v" : "h"; if (palavraDe(i, o)) dir = o; }
-      else { cur = i; if (!palavraDe(i, dir)) dir = dir === "h" ? "v" : "h"; }
-      startTimer(); render();
-    }, 0);
+    setTimeout(() => { cur = i; startTimer(); render(); }, 0);   // depois do toque (vibração no iPhone)
   });
-  $("pistaTxt").addEventListener("click", () => setTimeout(() => { const o = dir === "h" ? "v" : "h"; if (palavraDe(cur, o)) { dir = o; render(); } }, 0));
-  $("ant").addEventListener("click", () => setTimeout(() => pula(-1), 0));
-  $("prox").addEventListener("click", () => setTimeout(() => pula(1), 0));
+  $("dados").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setTimeout(() => borda(+b.dataset.n), 0); });
+  $("notaBtn").addEventListener("click", () => setTimeout(() => { modoNota = !modoNota; render(); }, 0));
+  $("apagaBtn").addEventListener("click", () => setTimeout(apaga, 0));
+  $("desfazBtn").addEventListener("click", () => setTimeout(desfaz, 0));
+  document.addEventListener("keydown", e => {
+    if (!P || finished || document.querySelector(".overlay.open") || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/^[1-6]$/.test(e.key)) { borda(+e.key); e.preventDefault(); }
+    else if (e.key === "Backspace" || e.key === "Delete" || e.key === "0") { apaga(); e.preventDefault(); }
+    else if (e.key === "n" || e.key === "N") { modoNota = !modoNota; render(); e.preventDefault(); }
+    else if (e.key === "z" || e.key === "Z") { desfaz(); e.preventDefault(); }
+    else if (/^Arrow/.test(e.key)) {
+      const r = cur < 0 ? 0 : cur / N | 0, c = cur < 0 ? 0 : cur % N;
+      const nr = (r + (e.key === "ArrowDown") - (e.key === "ArrowUp") + N) % N, nc = (c + (e.key === "ArrowRight") - (e.key === "ArrowLeft") + N) % N;
+      cur = nr * N + nc; render(); e.preventDefault();
+    }
+  });
 
-  // ---------- dica: corrige a palavra marcada, ou mostra uma letra dela ----------
+  // ---------- dica: corrige uma casa errada; senão, borda a casa vazia com menos opções ----------
   function pedirDica() {
-    let w = atual();
-    const errada = i => letras[i] && letras[i] !== P.g[i];
-    // palavra marcada já certa e cheia: vai para uma com erro, ou com casa vazia
-    if (!w.c.some(i => errada(i) || !letras[i])) {
-      w = palavras.find(x => x.c.some(errada)) || palavras.find(x => x.c.some(i => !letras[i]));
-      dir = w.d; cur = w.c[0];
-    }
-    const nome = `${w.n} ${w.d === "h" ? "horizontal" : "vertical"}`;
-    const erradas = w.c.filter(errada);
-    let msg;
-    if (erradas.length) {
-      const eram = erradas.map(i => letras[i]);
-      for (const i of erradas) { letras[i] = P.g[i]; reveladas.add(i); }
-      msg = erradas.length === 1
-        ? `Em <b>${nome}</b>, o <b>${eram[0]}</b> estava errado: troquei por <b>${P.g[erradas[0]]}</b>.`
-        : `Em <b>${nome}</b>, ${erradas.length} letras estavam erradas: já troquei.`;
+    const errada = val.findIndex((v, i) => v && !dadas[i] && v !== +P.s[i]);
+    let msg, i;
+    if (errada >= 0) {
+      i = errada; const era = val[i];
+      guarda(); val[i] = +P.s[i]; notas[i] = 0;
+      msg = `Na linha ${(i / N | 0) + 1}, coluna ${i % N + 1}, o <b>${era}</b> estava errado: troquei pelo <b>${val[i]}</b>.`;
     } else {
-      const vazias = w.c.filter(i => !letras[i]), alvo = vazias[Math.floor(vazias.length / 2)];
-      letras[alvo] = P.g[alvo]; reveladas.add(alvo);
-      msg = `<b>${nome}</b> está certa até aqui. Mostrei a ${w.c.indexOf(alvo) + 1}ª letra: <b>${P.g[alvo]}</b>.`;
+      const opcoes = k => [1, 2, 3, 4, 5, 6].filter(n => !VIZ[k].some(j => val[j] === n)).length;
+      const vazias = val.map((v, k) => (v ? -1 : k)).filter(k => k >= 0).sort((a, b) => opcoes(a) - opcoes(b));
+      i = vazias[0]; if (i == null) return "O tabuleiro já está completo.";
+      const so = opcoes(i) === 1;
+      guarda(); val[i] = +P.s[i]; notas[i] = 0;
+      for (const j of VIZ[i]) notas[j] &= ~(1 << val[i]);
+      msg = `Bordei a casa da linha ${(i / N | 0) + 1}, coluna ${i % N + 1}: ${so ? "só cabia" : "é"} o <b>${val[i]}</b>.`;
     }
-    dicaUsada = true;
-    render(new Set(w.c)); persist();
-    if (cheia()) { avisouCheia = false; confere(); }
+    reveladas.add(i); dicaUsada = true; cur = i;
+    render(new Set([i])); persist();
+    if (cheia()) confere();
     return msg;
   }
   dica = ghDica({ usada: () => dicaUsada, bloqueada: () => finished || !P, pedir: async () => pedirDica() });
@@ -443,7 +455,7 @@
     if (window.jogosHaptico) jogosHaptico(true);
     render();
     if (dica) dica.atualiza();
-    celebrar("cruzadinha", { alvo: $("stage"), esmaecer: $("grade") }).then(() => {   // comum/celebra.js
+    celebrar("cruzadinha", { alvo: $("stage"), esmaecer: $("tab") }).then(() => {   // comum/celebra.js
       document.body.classList.add("acabou", "play"); render();
       setTimeout(showEnd, 200);
     });
@@ -455,8 +467,9 @@
     openModal("endOverlay");
   }
   $("shareBtn").addEventListener("click", () => {
-    const grade = [...Array(N).keys()].map(r => [...P.g.slice(r * N, r * N + N)].map(c => (c === "#" ? "⬛" : "🟩")).join("")).join("\n");
-    const text = `PONTO CRUZ #${dayNum}\n${grade}\n⏱ ${fmt(elapsed)}${dicaUsada ? " · com dica" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/cruzadinha/`;
+    const FACES = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+    const linha = [...Array(N).keys()].map(r => dadas.slice(r * N, r * N + N).map(v => (v ? "🟫" : "🟩")).join("")).join("\n");
+    const text = `PONTO CRUZ #${dayNum} ${FACES[P.l <= 6 ? P.l : 6]}\n${linha}\n⏱ ${fmt(elapsed)}${dicaUsada ? " · com dica" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/cruzadinha/`;
     ghCompartilhar($("shareBtn"), text);
   });
   $("doneBar").addEventListener("click", () => { if (finished) showEnd(); });
@@ -467,9 +480,8 @@
   document.querySelectorAll(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); }));
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
 
-  // jogo livre (modo de teste escondido, comum/proximo.js): igual aos outros jogos — chave "Jogo livre"
-  // escondida, "Extra · nível ▾ · ↻" na linha da data, "Jogar outro" no fim e "‹ Hoje" para voltar.
-  // Desafio sorteado do banco; não grava progresso nem estatística.
+  // jogo livre (modo de teste escondido, comum/proximo.js): "Extra · nível ▾ · ↻" na linha da data,
+  // "Jogar outro" no fim e "‹ Hoje" para voltar. Só sorteia desafios de dados. Não grava nada.
   const nivelDo = (p, idx) => p.l || ((new Date(DADOS.epoch[0], DADOS.epoch[1], DADOS.epoch[2] + idx).getDay() + 6) % 7 + 1);
   let nivelLivre = Number(load("nivel-livre", 4)) || 4, idxLivre = -1;
   function infoLivre() {
@@ -482,10 +494,11 @@
     teste = true; stopTimer();
     document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open"));
     const hoje = (dayNum - 1) % DADOS.puzzles.length;
-    const ids = DADOS.puzzles.map((p, i) => i).filter(i => i !== hoje && i !== idxLivre && nivelDo(DADOS.puzzles[i], i) === nivelLivre);
-    const lista = ids.length ? ids : DADOS.puzzles.map((p, i) => i).filter(i => i !== hoje);
+    const todos = DADOS.puzzles.map((p, i) => i).filter(i => i !== hoje && ehDados(DADOS.puzzles[i]));
+    const ids = todos.filter(i => i !== idxLivre && nivelDo(DADOS.puzzles[i], i) === nivelLivre);
+    const lista = ids.length ? ids : todos;
     idxLivre = lista[Math.floor(Math.random() * lista.length)];
-    document.body.classList.remove("acabou", "play"); avisouCheia = false;
+    document.body.classList.remove("acabou", "play");
     setup(DADOS.puzzles[idxLivre], null);
     infoLivre(); startTimer();
   }
@@ -495,7 +508,7 @@
     document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open"));
     $("dayInfo").classList.remove("gh-nivel");
     const puzzle = DADOS.puzzles[(dayNum - 1) % DADOS.puzzles.length];
-    document.body.classList.remove("acabou", "play"); avisouCheia = false;
+    document.body.classList.remove("acabou", "play");
     setup(puzzle, load("dia:" + dayNum, null));
     if (finished) { document.body.classList.add("acabou"); render(); } else startTimer();
   }
@@ -503,9 +516,9 @@
   $("againBtn").addEventListener("click", () => sorteia());
 })();
 </script>
-<script src="../comum/catalogo.js?v=134"></script>
-<script src="../comum/celebra.js?v=134"></script>
-<script src="../comum/recorde.js?v=134"></script>
-<script src="../comum/proximo.js?v=134" data-jogo="cruzadinha"></script>
+<script src="../comum/catalogo.js?v=135"></script>
+<script src="../comum/celebra.js?v=135"></script>
+<script src="../comum/recorde.js?v=135"></script>
+<script src="../comum/proximo.js?v=135" data-jogo="cruzadinha"></script>
 </body>
 </html>

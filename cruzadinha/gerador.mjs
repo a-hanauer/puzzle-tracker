@@ -1,198 +1,147 @@
-// Gerador do Ponto Cruz (pasta "cruzadinha", o nome antigo): grades 6×6 (até 14/10/2026 eram 5×5)
-// com casas pretas simétricas, todas as casas brancas cruzadas, palavras de 3 a 6 letras do banco
-// (pistas.txt e pistas6.txt).
+// Gerador do Ponto Cruz (pasta "cruzadinha", o nome antigo): desde 17/10/2026 um sudoku 6×6 de dados.
+// Tabuleiro 6×6 com blocos de 2 linhas × 3 colunas; cada linha, coluna e bloco tem os seis dados (1 a 6).
 //
-// Dificuldade pela semana (segunda = 1 … domingo = 7), como nos outros jogos:
-//   · as pistas: fáceis no começo da semana, médias no meio, difíceis no fim;
-//   · as palavras: nos dias fáceis só entram as que têm pista fácil;
-//   · a grade: no fim de semana, menos casas pretas (mais palavras longas se cruzando).
-// Uma palavra não volta logo (pausa por tamanho), e o mesmo vale para a pista.
+// Todo desafio tem solução única e sai só com lógica (sem chute): o gerador só tira uma casa se o
+// desafio continuar resolvível pelas técnicas permitidas para o dia.
+// Técnicas, da mais simples à mais difícil:
+//   1 — casa com um só dado possível (candidato único) e dado com um só lugar no bloco
+//   2 — dado com um só lugar na linha ou na coluna
+//   3 — pares nus e "apontar" (um dado preso a uma linha/coluna dentro do bloco tira o dado do resto)
+// Dificuldade pela semana (segunda = 1 … domingo = 7): menos casas reveladas e técnicas mais longas.
 //
 // Uso:  node cruzadinha/gerador.mjs [dias] [semente]
-// Os desafios que já saíram (até hoje) não mudam.
-
-import { readFileSync, writeFileSync } from "node:fs";
+// Os desafios que já saíram (até hoje) não mudam — inclusive os de palavras cruzadas (até 16/10/2026).
+import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { PISTAS } from "./pistas.mjs";
 import { mantidos } from "../comum/selecao.mjs";
-import { confere } from "./confere-pistas.mjs";
 
-export const EPOCH = [2026, 9, 10];            // #1 = sábado, 10/10/2026
-let N = 6;                                     // 5×5 até 14/10/2026; 6×6 daí em diante
-let seed = 20261011;
+export const EPOCH = [2026, 9, 10];            // #1 = sábado, 10/10/2026 (a numeração continua a das palavras cruzadas)
+let seed = 20261017;
 function rand() { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
 const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
-// casas pretas (índices 0–35 da 6×6), simétricas pelo centro; quanto menos, mais palavras longas se cruzam
-export const PADROES = {   // testadas com o banco de out/2026 (de 26 grades simétricas possíveis, as que fecham bem)
-  dez: [[0, 1, 6, 7, 12, 23, 28, 29, 34, 35], [0, 1, 2, 6, 7, 28, 29, 33, 34, 35]],     // duas palavras de 6 letras
-  oito: [[0, 1, 2, 6, 29, 33, 34, 35], [0, 1, 6, 12, 23, 29, 34, 35]],                    // quatro palavras de 6 letras
+const N = 6, BR = 2, BC = 3;                   // blocos de 2 linhas × 3 colunas
+export const UNIDADES = (() => {
+  const u = [];
+  for (let r = 0; r < N; r++) u.push([...Array(N).keys()].map(c => r * N + c));
+  for (let c = 0; c < N; c++) u.push([...Array(N).keys()].map(r => r * N + c));
+  for (let br = 0; br < N / BR; br++) for (let bc = 0; bc < N / BC; bc++) {
+    const b = []; for (let r = 0; r < BR; r++) for (let c = 0; c < BC; c++) b.push((br * BR + r) * N + bc * BC + c); u.push(b);
+  }
+  return u;                                     // 0–5 linhas, 6–11 colunas, 12–17 blocos
+})();
+const DA = [...Array(N * N).keys()].map(i => UNIDADES.map((u, k) => (u.includes(i) ? k : -1)).filter(k => k >= 0));
+const VIZ = [...Array(N * N).keys()].map(i => [...new Set(DA[i].flatMap(k => UNIDADES[k]))].filter(j => j !== i));
+
+// solução aleatória: padrão base embaralhado (dados, linhas dentro da faixa, faixas, colunas dentro da pilha, pilhas)
+function solucao() {
+  const base = (r, c) => ((r % BR) * BC + Math.floor(r / BR) + c) % N;
+  const dig = shuffle([1, 2, 3, 4, 5, 6]);
+  const faixas = shuffle([0, 1, 2]).flatMap(b => shuffle([0, 1]).map(r => b * BR + r));
+  const pilhas = shuffle([0, 1]).flatMap(s => shuffle([0, 1, 2]).map(c => s * BC + c));
+  const g = [];
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) g.push(dig[base(faixas[r], pilhas[c])]);
+  return g;
+}
+
+// resolve com lógica até o nível pedido; devolve { ok, nivel: técnica mais alta usada, passos }
+export function resolve(grade, maxNivel) {
+  const v = grade.slice(), cand = v.map(x => (x ? 0 : 0b1111110));
+  for (let i = 0; i < N * N; i++) if (v[i]) for (const j of VIZ[i]) cand[j] &= ~(1 << v[i]);
+  let nivel = 0, passos = 0;
+  const poe = (i, d) => { v[i] = d; cand[i] = 0; for (const j of VIZ[i]) cand[j] &= ~(1 << d); passos++; };
+  const bits = m => { const o = []; for (let d = 1; d <= N; d++) if (m & (1 << d)) o.push(d); return o; };
+  for (;;) {
+    if (v.every(Boolean)) return { ok: true, nivel, passos, v };
+    if (v.some((x, i) => !x && !cand[i])) return { ok: false, nivel };
+    let feito = false;
+    // nível 1: candidato único; dado com um só lugar no bloco
+    for (let i = 0; i < N * N && !feito; i++) if (!v[i] && bits(cand[i]).length === 1) { poe(i, bits(cand[i])[0]); feito = true; }
+    for (let k = 12; k < 18 && !feito; k++) for (let d = 1; d <= N && !feito; d++) {
+      const u = UNIDADES[k]; if (u.some(i => v[i] === d)) continue;
+      const l = u.filter(i => cand[i] & (1 << d)); if (l.length === 1) { poe(l[0], d); feito = true; }
+    }
+    if (feito) { nivel = Math.max(nivel, 1); continue; }
+    if (maxNivel < 2) return { ok: false, nivel };
+    // nível 2: dado com um só lugar na linha ou na coluna
+    for (let k = 0; k < 12 && !feito; k++) for (let d = 1; d <= N && !feito; d++) {
+      const u = UNIDADES[k]; if (u.some(i => v[i] === d)) continue;
+      const l = u.filter(i => cand[i] & (1 << d)); if (l.length === 1) { poe(l[0], d); feito = true; }
+    }
+    if (feito) { nivel = Math.max(nivel, 2); continue; }
+    if (maxNivel < 3) return { ok: false, nivel };
+    // nível 3: pares nus (em qualquer unidade) e apontar (bloco ↔ linha/coluna); só elimina candidatos
+    for (const u of UNIDADES) {
+      const vaz = u.filter(i => !v[i]);
+      for (let a = 0; a < vaz.length; a++) for (let b = a + 1; b < vaz.length; b++) {
+        const m = cand[vaz[a]];
+        if (m === cand[vaz[b]] && bits(m).length === 2)
+          for (const i of vaz) if (i !== vaz[a] && i !== vaz[b] && cand[i] & m) { cand[i] &= ~m; feito = true; }
+      }
+    }
+    for (let k = 12; k < 18; k++) for (let d = 1; d <= N; d++) {
+      const l = UNIDADES[k].filter(i => !v[i] && cand[i] & (1 << d)); if (l.length < 2) continue;
+      for (let o = 0; o < 12; o++) if (l.every(i => UNIDADES[o].includes(i)))
+        for (const i of UNIDADES[o]) if (!l.includes(i) && !v[i] && cand[i] & (1 << d)) { cand[i] &= ~(1 << d); feito = true; }
+    }
+    for (let o = 0; o < 12; o++) for (let d = 1; d <= N; d++) {
+      const l = UNIDADES[o].filter(i => !v[i] && cand[i] & (1 << d)); if (l.length < 2) continue;
+      for (let k = 12; k < 18; k++) if (l.every(i => UNIDADES[k].includes(i)))
+        for (const i of UNIDADES[k]) if (!l.includes(i) && !v[i] && cand[i] & (1 << d)) { cand[i] &= ~(1 << d); feito = true; }
+    }
+    if (feito) { nivel = Math.max(nivel, 3); continue; }
+    return { ok: false, nivel };
+  }
+}
+
+// por nível do dia: quantas casas reveladas (faixa) e técnica exigida (mínima e máxima)
+export const NIVEL = {
+  1: { dadas: [16, 18], tec: [1, 1] },
+  2: { dadas: [14, 16], tec: [1, 1] },
+  3: { dadas: [12, 14], tec: [2, 2] },
+  4: { dadas: [11, 13], tec: [2, 2] },
+  5: { dadas: [10, 12], tec: [2, 3] },
+  6: { dadas: [9, 11], tec: [3, 3] },
+  7: { dadas: [8, 10], tec: [3, 3] },
 };
-// por nível: grades possíveis e chance de cada nível de pista [fácil, média, difícil]
-export const NIVEL = {   // out/2026: mais difícil desde a segunda (o público pede desafio)
-  1: { grades: ["dez"], pista: [.6, .4, 0] },
-  2: { grades: ["dez"], pista: [.4, .5, .1] },
-  3: { grades: ["dez"], pista: [.2, .55, .25] },
-  4: { grades: ["dez"], pista: [.1, .5, .4] },
-  5: { grades: ["dez", "oito"], pista: [0, .4, .6] },
-  6: { grades: ["oito"], pista: [0, .2, .8] },
-  7: { grades: ["oito"], pista: [0, .1, .9] },
-};
 
-function slots(pretas) {
-  const P = new Set(pretas), out = [];
-  for (const dir of ["a", "d"]) for (let k = 0; k < N; k++) {
-    let run = [];
-    const fecha = () => { if (run.length >= 2) out.push({ dir, cs: run }); run = []; };
-    for (let j = 0; j < N; j++) { const i = dir === "a" ? k * N + j : j * N + k; if (P.has(i)) fecha(); else run.push(i); }
-    fecha();
-  }
-  return out;
-}
-
-// índice por (tamanho, posição, letra) em bitsets: os candidatos de um molde saem de um AND rápido
-const INDICE = new Map();
-function indice(voc) {
-  let ix = INDICE.get(voc);
-  if (ix) return ix;
-  ix = {};
-  for (const w of voc) (ix[w.length] ??= { ws: [] }).ws.push(w);
-  for (const L in ix) {
-    const e = ix[L], n = e.ws.length, B = (n + 31) >>> 5;
-    e.B = B; e.tudo = new Uint32Array(B).fill(0xffffffff);
-    if (n & 31) e.tudo[B - 1] = (1 << (n & 31)) - 1;
-    e.pos = Array.from({ length: +L }, () => ({}));
-    e.ws.forEach((w, k) => { for (let j = 0; j < w.length; j++) (e.pos[j][w[j]] ??= new Uint32Array(B))[k >>> 5] |= 1 << (k & 31); });
-  }
-  INDICE.clear(); INDICE.set(voc, ix);
-  return ix;
-}
-const conta = b => { let c = 0; for (let x of b) { x -= (x >>> 1) & 0x55555555; x = (x & 0x33333333) + ((x >>> 2) & 0x33333333); c += (((x + (x >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24; } return c; };
-
-export function preencher(pretas, voc, limite = 30000, uso = new Map()) {
-  const S = slots(pretas);
-  if (S.some(s => s.cs.length < 3)) return null;               // nada de palavra de 2 letras
-  const ix = indice(voc);
-  if (S.some(s => !ix[s.cs.length])) return null;
-  const g = new Array(N * N).fill(""), usadas = new Set();
-  const cruza = S.map(s => S.filter(o => o !== s && o.cs.some(c => s.cs.includes(c))));
-  // candidatos de um slot com as letras já postas (bitset) e quantos são, sem contar palavras já usadas
-  const bits = s => {
-    const e = ix[s.cs.length], b = e.tudo.slice();
-    s.cs.forEach((c, j) => { if (g[c]) { const m = e.pos[j][g[c]]; if (!m) b.fill(0); else for (let k = 0; k < e.B; k++) b[k] &= m[k]; } });
-    return b;
-  };
-  const lista = s => { const e = ix[s.cs.length], b = bits(s), out = []; for (let k = 0; k < e.B; k++) { let x = b[k]; while (x) { const t = 31 - Math.clz32(x & -x); out.push(e.ws[(k << 5) + t]); x &= x - 1; } } return out.filter(w => !usadas.has(w)); };
-  const cheio = s => s.cs.every(c => g[c]);
-  let nos = 0;
-  function rec() {
-    if (++nos > limite) return false;
-    let melhor = -1, n = Infinity;
-    for (let i = 0; i < S.length; i++) {
-      if (cheio(S[i])) continue;
-      const c = conta(bits(S[i]));
-      if (!c) return false;
-      if (c < n) { n = c; melhor = i; }
+export function desafio(nivel) {
+  const cfg = NIVEL[nivel];
+  for (let t = 0; t < 4000; t++) {
+    const sol = solucao(), g = sol.slice();
+    const alvo = cfg.dadas[0] + Math.floor(rand() * (cfg.dadas[1] - cfg.dadas[0] + 1));
+    for (const i of shuffle([...Array(N * N).keys()])) {
+      if (g.filter(Boolean).length <= alvo) break;
+      const d = g[i]; g[i] = 0;
+      if (!resolve(g, cfg.tec[1]).ok) g[i] = d;
     }
-    if (melhor < 0) return true;
-    const s = S[melhor];
-    // as menos usadas e as que deixam mais saídas nos cruzamentos vêm antes (com um pouco de sorteio)
-    const opc = lista(s);
-    if (!opc.length) return false;
-    const amostra = opc.length > 250 ? shuffle(opc).slice(0, 250) : opc;
-    const nota = [];
-    for (const w of amostra) {
-      const antes = s.cs.map(c => g[c]);
-      s.cs.forEach((c, j) => (g[c] = w[j]));
-      let sc = 0;
-      for (const o of cruza[melhor]) { if (cheio(o)) { const ow = o.cs.map(c => g[c]).join(""); if (!voc.has(ow) || ow === w) { sc = -1; break; } continue; } const k = conta(bits(o)); if (!k) { sc = -1; break; } sc += Math.log(k); }
-      s.cs.forEach((c, j) => (g[c] = antes[j]));
-      if (sc >= 0) nota.push([w, sc + rand() * 1.5 - Math.log1p(uso.get(w) || 0) * 0.8]);
-    }
-    nota.sort((a, b) => b[1] - a[1]);
-    for (const [w] of nota.slice(0, 12)) {
-      const antes = s.cs.map(c => g[c]);
-      s.cs.forEach((c, j) => (g[c] = w[j])); usadas.add(w);
-      if (rec()) return true;
-      s.cs.forEach((c, j) => (g[c] = antes[j])); usadas.delete(w);
-    }
-    return false;
+    const dadas = g.filter(Boolean).length;
+    if (dadas < cfg.dadas[0] || dadas > cfg.dadas[1]) continue;
+    const r = resolve(g, cfg.tec[1]);
+    if (!r.ok || r.nivel < cfg.tec[0]) continue;
+    return { g: g.map(x => x || ".").join(""), s: sol.join(""), t: r.nivel, l: nivel };
   }
-  if (!rec()) return null;
-  const palavras = S.map(s => s.cs.map(c => g[c]).join(""));
-  if (new Set(palavras).size !== palavras.length || palavras.some(w => !voc.has(w))) return null;
-  return { g, S };
-}
-
-// sorteia o nível da pista pela tabela do dia; se a palavra não tem, usa o nível mais perto
-function pistaDo(w, pesos, recentes) {
-  const ps = PISTAS.get(w);
-  let r = rand(), alvo = 0;
-  for (; alvo < 2 && r >= pesos[alvo]; alvo++) r -= pesos[alvo];
-  // perto do alvo (no máximo um nível de distância): primeiro uma pista não usada há pouco, senão repete
-  const perto = [alvo, alvo - 1, alvo + 1].filter(i => i >= 0 && i <= 2 && ps[i]);
-  const i = perto.find(i => !recentes.has(ps[i])) ?? perto[0] ?? [0, 1, 2].find(i => ps[i]);
-  return { p: ps[i], d: i + 1 };
-}
-
-// números das pistas: como no jornal, em ordem de leitura
-function montar(pretas, r, nivel, recentes) {
-  const { g, S } = r, num = {}; let n = 0;
-  for (let i = 0; i < N * N; i++) if (S.some(s => s.cs[0] === i)) num[i] = ++n;
-  const pista = s => { const w = s.cs.map(c => g[c]).join(""); return { n: num[s.cs[0]], c: s.cs, w, ...pistaDo(w, NIVEL[nivel].pista, recentes) }; };
-  return {
-    l: nivel,
-    g: g.map((ch, i) => (pretas.includes(i) ? "#" : ch)).join(""),
-    h: S.filter(s => s.dir === "a").map(pista),
-    v: S.filter(s => s.dir === "d").map(pista).sort((a, b) => a.n - b.n),
-  };
+  return null;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const erros = confere();                                         // banco de pistas fora das regras: não gera
-  if (erros.length) { console.error(erros.join("\n")); process.exit(1); }
-  const args = process.argv.slice(2).filter(a => !a.startsWith("--"));
-  const DIAS = +(args[0] || 365);
-  if (args[1]) seed = +args[1];
+  const DIAS = +(process.argv[2] || 365);
+  if (process.argv[3]) seed = +process.argv[3];
   const dir = dirname(fileURLToPath(import.meta.url));
-  // MANTER=n: mantém os n primeiros do arquivo atual (quando já saiu uma parte adiantada)
-  const old = process.env.MANTER ? JSON.parse(readFileSync(join(dir, "desafios.json"), "utf8")).puzzles.slice(0, +process.env.MANTER) : mantidos(dir, EPOCH);
+  const old = mantidos(dir, EPOCH);
   const out = [...old];
-  const TODAS = new Set(PISTAS.keys());
-  const FACEIS = new Set([...PISTAS].filter(([, p]) => p[0]).map(([w]) => w));
-  // quanto tempo uma palavra fica sem voltar, pelo tamanho (as de 3 letras são poucas)
-  const PAUSA = { 3: 4, 4: 7, 5: 14, 6: 30 };
-  const TETO = { 3: 6, 4: 4, 5: 3, 6: 2 };                    // máximo de vezes em 90 dias
-  const recentes = (k, f) => new Set(out.slice(Math.max(0, k - 45)).flatMap((p, i, a) => [...p.h, ...p.v].map(x => x.w).filter(w => a.length - i <= PAUSA[w.length] * f)));
-  let falhas = 0;
-  const uso = new Map();
-  for (const p of old) for (const x of [...p.h, ...p.v]) uso.set(x.w, (uso.get(x.w) || 0) + 1);
+  const vistos = new Set(old.map(p => p.g));
   for (let k = old.length; k < DIAS; k++) {
-    const data = new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k);
-    const nivel = (data.getDay() + 6) % 7 + 1;                 // segunda = 1 … domingo = 7
-    const pistasRecentes = new Set(out.slice(-90).flatMap(p => [...p.h, ...p.v].map(x => x.p)));
-    const janela = new Map();
-    for (const p of out.slice(-90)) for (const x of [...p.h, ...p.v]) janela.set(x.w, (janela.get(x.w) || 0) + 1);
-    let feito = null;
-    for (let t = 0; t < 900 && !feito; t++) {
-      const f = t < 60 ? 1 : t < 140 ? 0.5 : t < 220 ? 0.25 : 0;            // se não fecha, a pausa encurta
-      const tipos = NIVEL[nivel].grades;
-      // as grades do nível; se não fecha (o banco de palavras é o limite), a de dez casas pretas
-      const tipo = t < 300 ? tipos[Math.floor(rand() * tipos.length)] : "dez";
-      const pretas = PADROES[tipo][Math.floor(rand() * PADROES[tipo].length)];
-      const evitar = recentes(k, f);
-      // e nenhuma palavra muito repetida nos últimos 90 dias (a não ser em último caso)
-      if (t < 300) for (const [w, n] of janela) if (n >= TETO[w.length]) evitar.add(w);
-      const voc = new Set([...(nivel <= 2 ? FACEIS : TODAS)].filter(w => !evitar.has(w)));
-      const r = preencher(pretas, voc, tipo === "oito" ? 2500 : 800);
-      if (r) feito = montar(pretas, r, nivel, pistasRecentes); else falhas++;
-    }
-    if (!feito) throw new Error(`não consegui montar o dia ${k + 1}`);
-    out.push(feito);
-    for (const x of [...feito.h, ...feito.v]) uso.set(x.w, (uso.get(x.w) || 0) + 1);
-    if (process.env.LOG) console.log(k + 1, nivel, feito.g.split("#").length - 1, falhas);
+    const nivel = (new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k).getDay() + 6) % 7 + 1;
+    let p = null;
+    for (let t = 0; t < 50 && (!p || vistos.has(p.g)); t++) p = desafio(nivel);
+    if (!p) throw new Error(`não consegui montar o dia ${k + 1}`);
+    vistos.add(p.g); out.push(p);
+    if (process.env.LOG) console.log(k + 1, nivel, p.g.replace(/\./g, "").length, "técnica", p.t);
   }
   writeFileSync(join(dir, "desafios.json"), JSON.stringify({ epoch: EPOCH, puzzles: out }));
-  console.log(`pronto: ${out.length} dias (${old.length} mantidos) · palavras no banco: ${PISTAS.size} · tentativas falhas: ${falhas}`);
+  const novos = out.slice(old.length), por = {};
+  for (const p of novos) { por[p.l] ??= []; por[p.l].push(p.g.replace(/\./g, "").length); }
+  console.log(`pronto: ${out.length} dias (${old.length} mantidos) · reveladas por nível:`, Object.fromEntries(Object.entries(por).map(([l, a]) => [l, `${Math.min(...a)}–${Math.max(...a)}`])));
 }
