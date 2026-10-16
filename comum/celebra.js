@@ -80,6 +80,10 @@
   .celebra .panela-tampa { transform-box: fill-box; transform-origin: 50% 100%; animation: cel-tampa .7s cubic-bezier(.3, 1.4, .5, 1) .55s both; }
   @keyframes cel-tampa { 0% { transform: translateY(-60px) rotate(-12deg); opacity: 0; } 40% { opacity: 1; } 65% { transform: translateY(-12px) rotate(4deg); } 100% { transform: none; opacity: 1; } }
 
+  /* Ponto Cruz: cada perna do X só aparece quando começa a ser bordada (sem pontinho da ponta redonda antes) */
+  .celebra .traco.cz-p { animation: cel-traco var(--t, .53s) ease-in-out var(--d, 0s) forwards, cel-mostra 0s linear var(--d, 0s) both; }
+  @keyframes cel-mostra { from { opacity: 0; } to { opacity: 1; } }
+
   /* Cordel: o barbante se estende e o folheto cai pendurado, balançando */
   .celebra .cordel-folheto { transform-box: fill-box; transform-origin: 50% 0; animation: cel-pendura .9s cubic-bezier(.3, 1.3, .5, 1) .35s both; }
   .celebra .cordel-sol { transform-box: fill-box; transform-origin: center; animation: cel-entra .37s cubic-bezier(.3, 1.4, .45, 1) 1.1s both; }
@@ -121,13 +125,37 @@
       <path class="traco" d="M0 -70C-10 -82 10 -90 0 -102" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.25s;--t:.4s"/>
       <path class="traco" d="M26 -66C16 -78 36 -86 26 -98" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.35s;--t:.4s"/>`,
 
-    cruzadinha: () => `
-      <g class="entra">
-      <circle r="76" fill="#fbf7ec"/>
-      <circle r="76" fill="none" stroke="#c48a55" stroke-width="11"/><circle r="70" fill="none" stroke="#a87040" stroke-width="2.5"/>
-      <rect x="-11" y="-98" width="22" height="16" rx="4" fill="#8a5a32"/><rect x="-4" y="-104" width="8" height="10" rx="2" fill="#6e4524"/>
-    </g><circle cx="-44" cy="-44" r="1.6" fill="#ddd4bf"/><circle cx="-22" cy="-44" r="1.6" fill="#ddd4bf"/><circle cx="22" cy="-44" r="1.6" fill="#ddd4bf"/><circle cx="44" cy="-44" r="1.6" fill="#ddd4bf"/><circle cx="-44" cy="-22" r="1.6" fill="#ddd4bf"/><circle cx="-22" cy="-22" r="1.6" fill="#ddd4bf"/><circle cx="22" cy="-22" r="1.6" fill="#ddd4bf"/><circle cx="44" cy="-22" r="1.6" fill="#ddd4bf"/><circle cx="-44" cy="22" r="1.6" fill="#ddd4bf"/><circle cx="-22" cy="22" r="1.6" fill="#ddd4bf"/><circle cx="22" cy="22" r="1.6" fill="#ddd4bf"/><circle cx="44" cy="22" r="1.6" fill="#ddd4bf"/><circle cx="-44" cy="44" r="1.6" fill="#ddd4bf"/><circle cx="-22" cy="44" r="1.6" fill="#ddd4bf"/><circle cx="22" cy="44" r="1.6" fill="#ddd4bf"/><circle cx="44" cy="44" r="1.6" fill="#ddd4bf"/><path class="traco" style="--l:24;--d:0.35s;--t:.18s" d="M-7.5 -7.5L7.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.44s;--t:.18s" d="M7.5 -7.5L-7.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.42s;--t:.18s" d="M-29.5 -7.5L-14.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.51s;--t:.18s" d="M-14.5 -7.5L-29.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.49s;--t:.18s" d="M14.5 -7.5L29.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.58s;--t:.18s" d="M29.5 -7.5L14.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.56s;--t:.18s" d="M-7.5 -29.5L7.5 -14.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.65s;--t:.18s" d="M7.5 -29.5L-7.5 -14.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.63s;--t:.18s" d="M-7.5 14.5L7.5 29.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.72s;--t:.18s" d="M7.5 14.5L-7.5 29.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.70s;--t:.18s" d="M-51.5 -7.5L-36.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.79s;--t:.18s" d="M-36.5 -7.5L-51.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.77s;--t:.18s" d="M36.5 -7.5L51.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.86s;--t:.18s" d="M51.5 -7.5L36.5 7.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.84s;--t:.18s" d="M-7.5 -51.5L7.5 -36.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.93s;--t:.18s" d="M7.5 -51.5L-7.5 -36.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:0.91s;--t:.18s" d="M-7.5 36.5L7.5 51.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" style="--l:24;--d:1.00s;--t:.18s" d="M7.5 36.5L-7.5 51.5" stroke="#6c8a1c" stroke-width="5" stroke-linecap="round" fill="none"/><path class="traco" d="M44 0C62 18 58 46 82 58" fill="none" stroke="#6c8a1c" stroke-width="3" stroke-linecap="round" style="--l:80;--d:1.1s;--t:.3s"/>
-      <g class="entra" style="--d:1.35s"><g transform="translate(84 60) rotate(40)"><rect x="-2.5" y="-4" width="5" height="40" rx="2.5" fill="#cfd3d6"/><path d="M-2.5 34L0 46L2.5 34Z" fill="#cfd3d6"/><rect x="-1" y="0" width="2" height="7" rx="1" fill="#fbf7ec"/></g></g>`,
+    // Ponto Cruz: um retalho de tela com um bloco 2 × 3 do tabuleiro; os seis dados são bordados em ordem,
+    // cada um na cor do seu número (as mesmas --d1…--d6 do jogo, versão clara), e a agulha fecha.
+    // O ícone é este quadro final sem a agulha (.cz-agulha), que fica pequena demais num ícone.
+    cruzadinha: () => {
+      const COR = ["", "#c43d7c", "#e07b14", "#3d8b3a", "#2c66b0", "#7d45a8", "#0e8a87"];
+      const PIPS = { 1: [[0, 0]], 2: [[-1, -1], [1, 1]], 3: [[-1, -1], [0, 0], [1, 1]], 4: [[-1, -1], [1, -1], [-1, 1], [1, 1]],
+        5: [[-1, -1], [1, -1], [0, 0], [-1, 1], [1, 1]], 6: [[-1, -1], [-1, 0], [-1, 1], [1, -1], [1, 0], [1, 1]] };
+      const W = 168, H = 118, g = 52, top = -H / 2;
+      const perna = (x1, y1, x2, y2, cor, d) => `<path class="traco cz-p" style="--l:16;--d:${d.toFixed(2)}s;--t:.16s" d="M${x1} ${y1}L${x2} ${y2}" stroke="${cor}" stroke-width="3.5" stroke-linecap="round" fill="none"/>`;
+      const X = (cx, cy, cor, d, r = 5.6) => perna(cx - r, cy - r, cx + r, cy + r, cor, d) + perna(cx + r, cy - r, cx - r, cy + r, cor, d + .11);
+      let franja = "", furos = "", faces = "";
+      for (let x = -W / 2 + 4; x <= W / 2 - 4; x += 6) franja += `M${x} ${top - 2}v-7M${x} ${-top + 2}v7`;
+      for (let y = top + 7; y <= -top - 7; y += 8.7) for (let x = -W / 2 + 8; x <= W / 2 - 8; x += 8.7) furos += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.3"/>`;
+      for (let n = 1; n <= 6; n++) {
+        const cx = ((n - 1) % 3 - 1) * g, cy = (Math.floor((n - 1) / 3) - .5) * g;
+        faces += PIPS[n].map(([a, b], k) => X(cx + a * 13.5, cy + b * 13.5, COR[n], .45 + (n - 1) * .14 + k * .05)).join("");
+      }
+      return `
+      <g class="entra" transform="rotate(-6)">
+        <path d="${franja}" stroke="#e6dcc4" stroke-width="2" stroke-linecap="round"/>
+        <rect x="${-W / 2}" y="${top}" width="${W}" height="${H}" rx="4" fill="#fbf7ec" stroke="#e6dcc4" stroke-width="2"/>
+        <g fill="#e4dbc6">${furos}</g>
+        <path class="traco cz-p" style="--l:170;--d:.3s;--t:.3s" d="M${-W / 2 + 8} 0H${W / 2 - 8}" stroke="#7a6a58" stroke-width="2.6" stroke-dasharray="6 5" fill="none"/>
+        <path class="traco cz-p" style="--l:110;--d:.32s;--t:.25s" d="M${-g / 2} ${top + 8}V${-top - 8}M${g / 2} ${top + 8}V${-top - 8}" stroke="#7a6a58" stroke-width="1.6" stroke-dasharray="4 5" fill="none" opacity=".6"/>
+        ${faces}
+      </g>
+      <g class="cz-agulha">
+        <path class="traco cz-p" d="M${g + 14} 30C90 54 92 70 84 86" fill="none" stroke="${COR[6]}" stroke-width="3" stroke-linecap="round" style="--l:80;--d:1.3s;--t:.3s"/>
+        <g class="entra" style="--d:1.45s"><g transform="translate(80 82) rotate(20)"><rect x="-2.5" y="-4" width="5" height="40" rx="2.5" fill="#cfd3d6"/><path d="M-2.5 34L0 46L2.5 34Z" fill="#cfd3d6"/><rect x="-1" y="0" width="2" height="7" rx="1" fill="#fbf7ec"/></g></g>
+      </g>`;
+    },
 
     cordel: () => `
       <path class="traco" d="M-96 -66Q0 -46 96 -66" fill="none" stroke="#6e5a44" stroke-width="3.5" stroke-linecap="round" style="--l:200;--t:.45s"/>

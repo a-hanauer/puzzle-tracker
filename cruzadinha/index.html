@@ -9,11 +9,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Ponto Cruz">
 <title>PONTO CRUZ — sudoku de dados bordados</title>
-<link rel="icon" type="image/png" href="icon.png?v=22">
-<script src="../comum/tema.js?v=135"></script>
-<script src="../comum/cabecalho.js?v=135"></script>
-<script src="../comum/dica.js?v=135"></script>
-<link rel="apple-touch-icon" href="icon.png?v=22">
+<link rel="icon" type="image/png" href="icon.png?v=23">
+<script src="../comum/tema.js?v=136"></script>
+<script src="../comum/cabecalho.js?v=136"></script>
+<script src="../comum/dica.js?v=136"></script>
+<link rel="apple-touch-icon" href="icon.png?v=23">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -26,8 +26,8 @@
     --furo: rgba(70, 60, 30, .10); --madeira: #c48a55; --madeira-2: #a87040; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%2334352a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
     --accent: #6c8a1c; --on-accent: #fffefa; --errada: #c8321e;
     /* uma meada por dado (vermelho fica só para o erro) */
-    --d1: #c43d7c; --d2: #e07b14; --d3: #3d8b3a; --d4: #2c66b0; --d5: #7d45a8; --d6: #8a5526;
-    --e1: #b5607f; --e2: #c98a45; --e3: #6f9560; --e4: #5b80a8; --e5: #8a6aa3; --e6: #8f6b4a;
+    --d1: #c43d7c; --d2: #e07b14; --d3: #3d8b3a; --d4: #2c66b0; --d5: #7d45a8; --d6: #0e8a87;
+    --e1: #b5607f; --e2: #c98a45; --e3: #6f9560; --e4: #5b80a8; --e5: #8a6aa3; --e6: #5f9894;
     --shadow: 0 1px 2px rgba(40, 40, 20, .07), 0 6px 18px rgba(40, 40, 20, .07);
   }
   @media (prefers-color-scheme: dark) {
@@ -37,8 +37,8 @@
       --kb-bg: #2b2c25; --kb-ink: #eef0e2; --kb-dim: #9a9c8c; --barra: #3f4726; --barra-ink: #f1f4e6;
       --furo: rgba(255, 255, 240, .06); --madeira: #8a5e38; --madeira-2: #6e4726; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%238f927a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
       --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
-      --d1: #f06aa8; --d2: #ffa24a; --d3: #7cc96f; --d4: #6fa6f2; --d5: #b98ae6; --d6: #d39a62;
-      --e1: #d58aa8; --e2: #e0ad73; --e3: #9cc18c; --e4: #8eabd0; --e5: #b39ccc; --e6: #c09a78;
+      --d1: #f06aa8; --d2: #ffa24a; --d3: #7cc96f; --d4: #6fa6f2; --d5: #b98ae6; --d6: #4fd1c5;
+      --e1: #d58aa8; --e2: #e0ad73; --e3: #9cc18c; --e4: #8eabd0; --e5: #b39ccc; --e6: #8cc2bd;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
     }
   }
@@ -48,8 +48,8 @@
       --kb-bg: #2b2c25; --kb-ink: #eef0e2; --kb-dim: #9a9c8c; --barra: #3f4726; --barra-ink: #f1f4e6;
       --furo: rgba(255, 255, 240, .06); --madeira: #8a5e38; --madeira-2: #6e4726; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%238f927a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
       --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
-      --d1: #f06aa8; --d2: #ffa24a; --d3: #7cc96f; --d4: #6fa6f2; --d5: #b98ae6; --d6: #d39a62;
-      --e1: #d58aa8; --e2: #e0ad73; --e3: #9cc18c; --e4: #8eabd0; --e5: #b39ccc; --e6: #c09a78;
+      --d1: #f06aa8; --d2: #ffa24a; --d3: #7cc96f; --d4: #6fa6f2; --d5: #b98ae6; --d6: #4fd1c5;
+      --e1: #d58aa8; --e2: #e0ad73; --e3: #9cc18c; --e4: #8eabd0; --e5: #b39ccc; --e6: #8cc2bd;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -124,7 +124,7 @@
   .resp b { font-weight: 800; letter-spacing: .04em; }
   .resp span { color: var(--muted); }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=135">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=136">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
   .gh .gh-brand b { letter-spacing: .02em; font-stretch: 75%; font-size: 1.15rem; }   /* nome comprido: cabe ao lado da dica */
@@ -136,7 +136,7 @@
 
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Ponto Cruz — recarregar"><img src="icon.png?v=22" data-escuro="icon-escuro.png?v=22" alt=""><b>PONTO CRUZ</b></a>
+  <a class="gh-brand" href="./" aria-label="Ponto Cruz — recarregar"><img src="icon.png?v=23" data-escuro="icon-escuro.png?v=23" alt=""><b>PONTO CRUZ</b></a>
   <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
@@ -156,7 +156,7 @@
 <div class="controls" id="controls">
   <div class="prog">
     <button class="done-bar" id="doneBar" aria-label="Jogo completo: ver resultado">
-      <img class="ic" src="icon.png?v=22" data-escuro="icon-escuro.png?v=22" alt="">
+      <img class="ic" src="icon.png?v=23" data-escuro="icon-escuro.png?v=23" alt="">
       <span class="txt"><b id="doneTitle">0:00</b><span id="doneSub">Ponto Cruz completo</span></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
@@ -186,7 +186,7 @@
 <div class="overlay" id="endOverlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon.png?v=22" data-escuro="icon-escuro.png?v=22" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,40,20,.15)"></div>
+    <div class="fim-art"><img src="icon.png?v=23" data-escuro="icon-escuro.png?v=23" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,40,20,.15)"></div>
     <h2 class="fim-title">Ponto Cruz completo!</h2>
     <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="endSub"></p>
@@ -537,9 +537,9 @@
   $("againBtn").addEventListener("click", () => sorteia());
 })();
 </script>
-<script src="../comum/catalogo.js?v=135"></script>
-<script src="../comum/celebra.js?v=135"></script>
-<script src="../comum/recorde.js?v=135"></script>
-<script src="../comum/proximo.js?v=135" data-jogo="cruzadinha"></script>
+<script src="../comum/catalogo.js?v=136"></script>
+<script src="../comum/celebra.js?v=136"></script>
+<script src="../comum/recorde.js?v=136"></script>
+<script src="../comum/proximo.js?v=136" data-jogo="cruzadinha"></script>
 </body>
 </html>

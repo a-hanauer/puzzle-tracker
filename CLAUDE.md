@@ -45,7 +45,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - `comum/acervo.mjs`: categorias da Panelinha e temas do Cordel (campo `c`). Área (`a`) para o rodízio;
   família (`f`) para não pôr dois grupos parecidos no mesmo dia.
 - Ponto Cruz (pasta `cruzadinha`): desde 16/10/2026 é um **sudoku 6×6 de dados** (blocos 2×3), faces do dado em
-  ponto-cruz, uma cor de linha por dado (`--d1`…`--d6`; vermelho só para erro, em moldura tracejada); as reveladas
+  ponto-cruz, uma cor de linha por dado (`--d1`…`--d6`, o 6 em turquesa; vermelho só para erro, em moldura tracejada); as reveladas
   ganham um quadradinho de tecido tingido e ponto mais grosso; anotações em mini dados.
   `cruzadinha/gerador.mjs`: solução única e só lógica, com um resolvedor "de gente". Pouca anotação: de segunda a
   sexta quase tudo sai olhando (a dificuldade vem de menos casas e de casas mais escondidas, com poucas à vista por vez);
