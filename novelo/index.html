@@ -137,15 +137,13 @@
   .wall { stroke: var(--wall); stroke-width: 11; stroke-linecap: round; }
   .wall-st { stroke: var(--wall-st); stroke-width: 2; stroke-dasharray: 5 5; stroke-linecap: round; }
   .th { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  /* fio de lã: grosso (~2/3 da casa), borda felpuda, fios torcidos em diagonal e um brilho fosco */
-  .th-shadow { stroke: rgba(40, 10, 15, .16); stroke-width: 74; transform: translateY(3px); }
-  .th-edge { stroke: var(--thread-dk); stroke-width: 72; filter: url(#felpa); }
-  /* volume: corpo mais escuro, miolo na cor do fio puxado para cima e uma luz macia — um cilindro de lã */
-  .th-main { stroke: color-mix(in srgb, var(--thread) var(--vol-corpo, 68%), #000); stroke-width: 66; }
-  .th-core { stroke: var(--thread); stroke-width: var(--vol-miolo, 44px); transform: translate(-2px, -3px); filter: url(#macio); }
-  .th-luz { stroke: #fff; stroke-opacity: var(--vol-luz, .38); stroke-width: 16; transform: translate(-5px, -8px); filter: url(#macio); }
-  .th-twist { stroke: url(#twist); stroke-width: 66; }
+  /* o rastro é um emaranhado de fios finos (na escala do novelo), que enchem o caminho */
   .th-sheen { stroke: var(--sheen); stroke-width: 10; opacity: 0; }   /* só aparece no brilho de quando termina */
+  .fio-base { stroke: var(--thread); stroke-opacity: var(--fio-fundo, .16); stroke-width: 64; }
+  .fio-sob { stroke: var(--thread-dk); stroke-width: 9; }
+  .fio-a { stroke: var(--thread); stroke-width: 5.5; }
+  .fio-b { stroke: color-mix(in srgb, var(--thread) 78%, #fff); stroke-width: 5.5; }
+  .fio-c { stroke: color-mix(in srgb, var(--thread) 82%, #000); stroke-width: 5.5; }
   .tw-a { fill: var(--twist); }
   .tw-b { fill: var(--sheen); opacity: .55; }
   .head { fill: url(#bola); stroke: var(--board); stroke-width: 6; }
@@ -426,6 +424,82 @@
     else startTimer();
   }).catch(() => { $("stage").innerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
 
+
+  // ---------- o rastro de lã ----------
+  // A partir da linha central (casa a casa), arredonda as curvas e solta vários fios finos que vão e
+  // voltam de um lado ao outro do caminho. As ondas dependem só da distância desde o começo, então o
+  // que já foi desenhado não muda enquanto o fio cresce. Nas pontas os fios se juntam (saem do novelo).
+  const FIO = { modo: "lacadas", meia: 30, passo: 3 };
+  function centro(pts) {
+    if (pts.length < 2) return [];
+    const R = 46, out = [];
+    const push = (x, y) => out.push([x, y]);
+    push(...pts[0]);
+    for (let i = 1; i < pts.length - 1; i++) {
+      const [ax, ay] = pts[i - 1], [bx, by] = pts[i], [cx2, cy2] = pts[i + 1];
+      const l1 = Math.hypot(bx - ax, by - ay) || 1, l2 = Math.hypot(cx2 - bx, cy2 - by) || 1;
+      const r = Math.min(R, l1 / 2, l2 / 2);
+      const p0 = [bx - (bx - ax) / l1 * r, by - (by - ay) / l1 * r], p2 = [bx + (cx2 - bx) / l2 * r, by + (cy2 - by) / l2 * r];
+      push(...p0);
+      for (let t = .2; t < 1; t += .2) { const u = 1 - t; push(u * u * p0[0] + 2 * u * t * bx + t * t * p2[0], u * u * p0[1] + 2 * u * t * by + t * t * p2[1]); }
+      push(...p2);
+    }
+    push(...pts.at(-1));
+    // reamostra a cada FIO.passo, com tangente
+    const res = []; let s = 0, acc = 0;
+    for (let i = 1; i < out.length; i++) {
+      const [x0, y0] = out[i - 1], [x1, y1] = out[i], L = Math.hypot(x1 - x0, y1 - y0);
+      if (!L) continue;
+      const tx = (x1 - x0) / L, ty = (y1 - y0) / L;
+      while (acc <= L) { res.push([x0 + tx * acc, y0 + ty * acc, -ty, tx, s + acc]); acc += FIO.passo; }
+      acc -= L; s += L;
+    }
+    res.push([...out.at(-1), res.length ? res.at(-1)[2] : 0, res.length ? res.at(-1)[3] : 1, s]);
+    // suaviza a direção nas curvas (as laçadas viram junto, sem espetar)
+    const J = 4, nrm = res.map((_, i) => {
+      let x = 0, y = 0;
+      for (let k = Math.max(0, i - J); k <= Math.min(res.length - 1, i + J); k++) { x += res[k][2]; y += res[k][3]; }
+      const l = Math.hypot(x, y) || 1; return [x / l, y / l];
+    });
+    res.forEach((r, i) => { r[2] = nrm[i][0]; r[3] = nrm[i][1]; });
+    // quanto o caminho está virando ali (0 em reta, 1 numa curva fechada): nas curvas as laçadas encolhem
+    res.forEach((r, i) => { const a = nrm[Math.max(0, i - 8)], b = nrm[Math.min(res.length - 1, i + 8)]; r[5] = Math.min(1, 1 - (a[0] * b[0] + a[1] * b[1])); });
+    return res;
+  }
+  // laçadas (o desenho em uso): três fios que dão voltinhas pelo caminho, como um rabisco de lã
+  // emaranhado (guardado): fios em ondas de vários tamanhos, cada um com o centro um pouco deslocado
+  const FIOS = {
+    emaranhado: [[.75, 150, 0, .45, "a", .25], [.7, 110, .3, .5, "b", -.3], [.8, 190, .55, .4, "c", .05], [.6, 85, .15, .6, "a", .45],
+                 [.75, 130, .75, .35, "b", -.5], [.65, 170, .9, .5, "c", .35], [.55, 95, .4, .55, "a", -.15], [.8, 230, .65, .3, "b", .55],
+                 [.6, 120, .2, .45, "c", -.6], [.7, 210, .85, .4, "a", 0]],
+    lacadas: [[.95, 46, 0, 0, "a", 0, 15], [.9, 58, .37, 0, "b", 0, 18], [.85, 70, .71, 0, "c", 0, 21]],
+  };
+  function fiosD(pts) {
+    const c = centro(pts);
+    if (c.length < 2) return null;
+    const tot = c.at(-1)[4], modo = FIO.modo, lista = FIOS[modo] || FIOS.emaranhado;
+    const d = { a: "", b: "", c: "", sob: "" };
+    lista.forEach(([amp, lam, fase, seg, cls, vies = 0, volta = 0], j) => {
+      let str = "";
+      c.forEach(([x, y, nx, ny, s, curva = 0], k) => {
+        const taper = Math.max(0, Math.min(1, s / 40, (tot - s) / 40));          // os fios se juntam nas pontas
+        const ang = 2 * Math.PI * (s / lam + fase);
+        let o = Math.sin(ang);
+        if (seg) o = (1 - seg) * o + seg * Math.sin(2 * Math.PI * (s / (lam * 1.73) + fase * 2.3 + j));
+        o = Math.max(-1, Math.min(1, (o * amp + vies * (1 - amp)) * (volta ? 1 : 1.45))) * FIO.meia * taper;   // ondas somadas ficam no meio: abre e limita à largura
+        const ao = volta ? Math.cos(ang) * volta * taper * (1 - .8 * curva) : 0;   // laçada: anda para trás e para a frente
+        str += (k ? "L" : "M") + (x + nx * o - ny * ao).toFixed(1) + " " + (y + ny * o + nx * ao).toFixed(1);
+      });
+      d[cls] += str; d.sob += str;
+    });
+    return d;
+  }
+  function fiosSVG(pts, extra = "") {
+    const d = fiosD(pts);
+    if (!d) return "";
+    const lin = "M" + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join("L");
+    return `<path class="th fio-base" d="${lin}"/><path class="th fio-sob" d="${d.sob}"/><path class="th fio-a" d="${d.a}"/><path class="th fio-b" d="${d.b}"/><path class="th fio-c" d="${d.c}"/>${extra}`;
+  }
   // ---------- desenho ----------
   const S = "http://www.w3.org/2000/svg";
   let gThread, gTop, W = 0;
@@ -487,7 +561,7 @@
   function render() {
     if (dica) dica.atualiza();
     // fio: os caminhos são criados aqui e atualizados por drawThread (também durante o arrasto)
-    gThread.innerHTML = `<path class="th th-shadow"/><path class="th th-edge"/><path class="th th-main"/><path class="th th-core"/><path class="th th-twist"/><path class="th th-luz"/><path class="th th-sheen"/>`;
+    gThread.innerHTML = "";
     const head = path.at(-1);
     let top = `<circle class="head" id="tipDot" r="38" style="display:none"/>`;
     // números: botões de roupa
@@ -551,7 +625,7 @@
       }
     }
     const d = pts.length > 1 ? "M" + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join("L") : "";
-    for (const el of gThread.children) el.setAttribute("d", d);
+    gThread.innerHTML = pts.length > 1 ? fiosSVG(pts, `<path class="th th-sheen" d="${d}"/>`) : "";
     const dot = $("tipDot");
     if (!dot) return;
     const head = path.at(-1);
@@ -863,7 +937,7 @@
     let s = `<defs><pattern id="tw-${id}" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect class="tw-a" width="7" height="18"/><rect class="tw-b" x="9" width="2.5" height="18"/></pattern></defs>
       <rect class="b-bg" x="1" y="1" width="328" height="328" rx="26"/>`;
     const d = "M" + cells.map(pt).join("L");
-    s += `<path class="th th-edge" d="${d}"/><path class="th th-main" d="${d}"/><path class="th" style="stroke:url(#tw-${id});stroke-width:66" d="${d}"/>`;
+    s += fiosSVG(cells.map(i => pt(i).split(" ").map(Number)));
     if (wall) s += `<path class="wall" d="${wall}"/><path class="wall-st" d="${wall}"/>`;
     for (const [i, n] of nums) { const [x, y] = pt(i).split(" ").map(Number); s += `<circle class="btn" cx="${x}" cy="${y}" r="33"/><circle class="btn-rim" cx="${x}" cy="${y}" r="26.5"/><text class="btn-n" x="${x}" y="${y + 1}">${n}</text>`; }
     $(id).innerHTML = s;
