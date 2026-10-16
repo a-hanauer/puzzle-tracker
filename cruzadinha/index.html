@@ -9,11 +9,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Ponto Cruz">
 <title>PONTO CRUZ — sudoku de dados bordados</title>
-<link rel="icon" type="image/png" href="icon.png?v=23">
-<script src="../comum/tema.js?v=136"></script>
-<script src="../comum/cabecalho.js?v=136"></script>
-<script src="../comum/dica.js?v=136"></script>
-<link rel="apple-touch-icon" href="icon.png?v=23">
+<link rel="icon" type="image/png" href="icon.png?v=24">
+<script src="../comum/tema.js?v=137"></script>
+<script src="../comum/cabecalho.js?v=137"></script>
+<script src="../comum/dica.js?v=137"></script>
+<link rel="apple-touch-icon" href="icon.png?v=24">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -24,10 +24,11 @@
     --casa: #fbf7ec; --preta: #23241c; --grade: #23241c; --palavra: #e6eec4; --atual: #c3d77e; --num: #4b4c40; --fio: #2f3a12;
     --kb-bg: #e6e2d4; --kb-ink: #23241c; --kb-dim: #6f7062; --barra: #e6eec4; --barra-ink: #2f3a12;
     --furo: rgba(70, 60, 30, .10); --madeira: #c48a55; --madeira-2: #a87040; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%2334352a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
-    --accent: #6c8a1c; --on-accent: #fffefa; --errada: #c8321e;
-    /* uma meada por dado (vermelho fica só para o erro) */
-    --d1: #c43d7c; --d2: #e07b14; --d3: #3d8b3a; --d4: #2c66b0; --d5: #7d45a8; --d6: #0e8a87;
-    --e1: #b5607f; --e2: #c98a45; --e3: #6f9560; --e4: #5b80a8; --e5: #8a6aa3; --e6: #5f9894;
+    --accent: #6c8a1c; --on-accent: #fffefa; --errada: #3a2e22;
+    /* uma meada por dado, do frio ao quente: 1 roxo · 2 azul · 3 turquesa · 4 verde · 5 laranja · 6 vermelho.
+       O erro não usa cor: tecido riscado com moldura tracejada na cor da linha escura (--errada). */
+    --d1: #7d45a8; --d2: #2c66b0; --d3: #0e8a87; --d4: #3d8b3a; --d5: #e07b14; --d6: #c8352b;
+    --e1: #8a6aa3; --e2: #5b80a8; --e3: #5f9894; --e4: #6f9560; --e5: #c98a45; --e6: #b5605a;
     --shadow: 0 1px 2px rgba(40, 40, 20, .07), 0 6px 18px rgba(40, 40, 20, .07);
   }
   @media (prefers-color-scheme: dark) {
@@ -36,9 +37,9 @@
       --casa: #2c2d25; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3f4726; --atual: #72872f; --num: #b5b7a6; --fio: #f1f4e6;
       --kb-bg: #2b2c25; --kb-ink: #eef0e2; --kb-dim: #9a9c8c; --barra: #3f4726; --barra-ink: #f1f4e6;
       --furo: rgba(255, 255, 240, .06); --madeira: #8a5e38; --madeira-2: #6e4726; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%238f927a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
-      --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
-      --d1: #f06aa8; --d2: #ffa24a; --d3: #7cc96f; --d4: #6fa6f2; --d5: #b98ae6; --d6: #4fd1c5;
-      --e1: #d58aa8; --e2: #e0ad73; --e3: #9cc18c; --e4: #8eabd0; --e5: #b39ccc; --e6: #8cc2bd;
+      --accent: #a9c653; --on-accent: #161a0a; --errada: #f1ead8;
+      --d1: #b98ae6; --d2: #6fa6f2; --d3: #4fd1c5; --d4: #7cc96f; --d5: #ffa24a; --d6: #f26b5e;
+      --e1: #b39ccc; --e2: #8eabd0; --e3: #8cc2bd; --e4: #9cc18c; --e5: #e0ad73; --e6: #d88f88;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
     }
   }
@@ -47,9 +48,9 @@
       --casa: #2c2d25; --preta: #0b0c09; --grade: #0b0c09; --palavra: #3f4726; --atual: #72872f; --num: #b5b7a6; --fio: #f1f4e6;
       --kb-bg: #2b2c25; --kb-ink: #eef0e2; --kb-dim: #9a9c8c; --barra: #3f4726; --barra-ink: #f1f4e6;
       --furo: rgba(255, 255, 240, .06); --madeira: #8a5e38; --madeira-2: #6e4726; --ponto-preto: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2010%2010%27%3E%3Cpath%20d%3D%27M2%202L8%208M8%202L2%208%27%20stroke%3D%27%238f927a%27%20stroke-width%3D%271.7%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");
-      --accent: #a9c653; --on-accent: #161a0a; --errada: #ff7a66;
-      --d1: #f06aa8; --d2: #ffa24a; --d3: #7cc96f; --d4: #6fa6f2; --d5: #b98ae6; --d6: #4fd1c5;
-      --e1: #d58aa8; --e2: #e0ad73; --e3: #9cc18c; --e4: #8eabd0; --e5: #b39ccc; --e6: #8cc2bd;
+      --accent: #a9c653; --on-accent: #161a0a; --errada: #f1ead8;
+      --d1: #b98ae6; --d2: #6fa6f2; --d3: #4fd1c5; --d4: #7cc96f; --d5: #ffa24a; --d6: #f26b5e;
+      --e1: #b39ccc; --e2: #8eabd0; --e3: #8cc2bd; --e4: #9cc18c; --e5: #e0ad73; --e6: #d88f88;
       --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -124,7 +125,7 @@
   .resp b { font-weight: 800; letter-spacing: .04em; }
   .resp span { color: var(--muted); }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=136">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=137">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
   .gh .gh-brand b { letter-spacing: .02em; font-stretch: 75%; font-size: 1.15rem; }   /* nome comprido: cabe ao lado da dica */
@@ -136,7 +137,7 @@
 
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Ponto Cruz — recarregar"><img src="icon.png?v=23" data-escuro="icon-escuro.png?v=23" alt=""><b>PONTO CRUZ</b></a>
+  <a class="gh-brand" href="./" aria-label="Ponto Cruz — recarregar"><img src="icon.png?v=24" data-escuro="icon-escuro.png?v=24" alt=""><b>PONTO CRUZ</b></a>
   <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
@@ -156,7 +157,7 @@
 <div class="controls" id="controls">
   <div class="prog">
     <button class="done-bar" id="doneBar" aria-label="Jogo completo: ver resultado">
-      <img class="ic" src="icon.png?v=23" data-escuro="icon-escuro.png?v=23" alt="">
+      <img class="ic" src="icon.png?v=24" data-escuro="icon-escuro.png?v=24" alt="">
       <span class="txt"><b id="doneTitle">0:00</b><span id="doneSub">Ponto Cruz completo</span></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
@@ -174,7 +175,7 @@
       <li>Cada <b>linha</b>, cada <b>coluna</b> e cada <b>bloco</b> (os retângulos de 2 × 3 marcados com o ponto mais grosso) tem os seis dados, sem repetir.</li>
       <li>Toque numa casa e depois num dado para bordar. Tocar no mesmo dado de novo tira.</li>
       <li><b>Anotar</b> liga o rascunho: os dados viram marquinhas pequenas na casa. Quando você borda um dado, as marquinhas dele somem da linha, da coluna e do bloco.</li>
-      <li>Dado repetido numa linha, coluna ou bloco fica em vermelho.</li>
+      <li>Dado repetido numa linha, coluna ou bloco fica com o tecido riscado e uma moldura tracejada.</li>
       <li>A <b>dica</b> (a lâmpada) borda uma casa que já dá para descobrir, ou corrige uma errada. Uma por dia.</li>
     </ul>
     <p>Todo desafio tem uma única solução e sai só com lógica, sem chute. Na segunda vêm muitas casas bordadas; ao longo da semana, menos, e as que faltam ficam mais escondidas. Até sexta quase tudo sai só olhando, sem precisar anotar; no sábado e no domingo, é preciso ver um ou dois lances à frente.</p>
@@ -186,7 +187,7 @@
 <div class="overlay" id="endOverlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon.png?v=23" data-escuro="icon-escuro.png?v=23" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,40,20,.15)"></div>
+    <div class="fim-art"><img src="icon.png?v=24" data-escuro="icon-escuro.png?v=24" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,40,20,.15)"></div>
     <h2 class="fim-title">Ponto Cruz completo!</h2>
     <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="endSub"></p>
@@ -306,7 +307,8 @@
     const fio = v("--fio"), acc = v("--accent"), err = v("--errada"), muted = v("--muted");
     const bad = conflitos(), sel = finished ? -1 : cur;
     const rS = sel >= 0 ? (sel / N | 0) : -9, cS = sel >= 0 ? sel % N : -9, bS = sel >= 0 ? bloco(sel) : -9, vS = sel >= 0 ? val[sel] : 0;
-    let s = `<defs><pattern id="aida" width="10" height="10" patternUnits="userSpaceOnUse" x="${PAD}" y="${PAD}"><circle cx="5" cy="5" r="1.3" style="fill:var(--furo)"/></pattern>
+    let s = `<defs><pattern id="risco" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="12" fill="${err}" opacity=".16"/></pattern>
+      <pattern id="aida" width="10" height="10" patternUnits="userSpaceOnUse" x="${PAD}" y="${PAD}"><circle cx="5" cy="5" r="1.3" style="fill:var(--furo)"/></pattern>
       <style>.pt{fill:none;stroke:var(--cor);stroke-width:calc(var(--w)*1px);stroke-linecap:round}.pt-sob{fill:none;stroke:var(--sob,rgba(0,0,0,.2));stroke-width:calc(var(--ws)*1px);stroke-linecap:round}</style></defs>`;
     s += `<rect x="1" y="1" width="${W - 2}" height="${W - 2}" rx="26" style="fill:var(--madeira);stroke:var(--madeira-2)" stroke-width="4"/>`;
     s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" rx="10" style="fill:var(--casa)"/>`;
@@ -342,7 +344,7 @@
           fundo = `<rect x="${x + 2}" y="${y + 2}" width="${U - 4}" height="${U - 4}" rx="6" style="fill:color-mix(in srgb, var(--d${d}) ${dada ? 34 : 15}%, transparent)"/>`;
           f = face(d, x + U / 2, y + U / 2, U, `var(--d${d})`, false, 1);
         }
-        const erro = bad.has(i) ? `<rect x="${x + 6}" y="${y + 6}" width="${U - 12}" height="${U - 12}" rx="14" fill="none" stroke="${err}" stroke-width="5" stroke-dasharray="10 7" stroke-linecap="round"/>` : "";
+        const erro = bad.has(i) ? `<rect x="${x + 6}" y="${y + 6}" width="${U - 12}" height="${U - 12}" rx="14" fill="url(#risco)" stroke="${err}" stroke-width="3.5" stroke-dasharray="10 7" stroke-linecap="round"/>` : "";
         conteudo = `${fundo}${erro}<g${pulam && pulam.has(i) ? ' class="pula"' : ""}>${f}</g>`;
       } else if (notas[i]) {
         for (let m = 1; m <= 6; m++) if (notas[i] & (1 << m)) conteudo += face(m, x + 18 + ((m - 1) % 3) * 32, y + 30 + ((m - 1) / 3 | 0) * 40, 30, COR === "B" ? `var(--e${m})` : `var(--d${m})`, true);
@@ -537,9 +539,9 @@
   $("againBtn").addEventListener("click", () => sorteia());
 })();
 </script>
-<script src="../comum/catalogo.js?v=136"></script>
-<script src="../comum/celebra.js?v=136"></script>
-<script src="../comum/recorde.js?v=136"></script>
-<script src="../comum/proximo.js?v=136" data-jogo="cruzadinha"></script>
+<script src="../comum/catalogo.js?v=137"></script>
+<script src="../comum/celebra.js?v=137"></script>
+<script src="../comum/recorde.js?v=137"></script>
+<script src="../comum/proximo.js?v=137" data-jogo="cruzadinha"></script>
 </body>
 </html>

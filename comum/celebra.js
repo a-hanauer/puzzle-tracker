@@ -129,7 +129,7 @@
     // cada um na cor do seu número (as mesmas --d1…--d6 do jogo, versão clara), e a agulha fecha.
     // O ícone é este quadro final sem a agulha (.cz-agulha), que fica pequena demais num ícone.
     cruzadinha: () => {
-      const COR = ["", "#c43d7c", "#e07b14", "#3d8b3a", "#2c66b0", "#7d45a8", "#0e8a87"];
+      const COR = ["", "#7d45a8", "#2c66b0", "#0e8a87", "#3d8b3a", "#e07b14", "#c8352b"];
       const PIPS = { 1: [[0, 0]], 2: [[-1, -1], [1, 1]], 3: [[-1, -1], [0, 0], [1, 1]], 4: [[-1, -1], [1, -1], [-1, 1], [1, 1]],
         5: [[-1, -1], [1, -1], [0, 0], [-1, 1], [1, 1]], 6: [[-1, -1], [-1, 0], [-1, 1], [1, -1], [1, 0], [1, 1]] };
       const W = 168, H = 118, g = 52, top = -H / 2;
@@ -152,7 +152,7 @@
         ${faces}
       </g>
       <g class="cz-agulha">
-        <path class="traco cz-p" d="M${g + 14} 30C90 54 92 70 84 86" fill="none" stroke="${COR[6]}" stroke-width="3" stroke-linecap="round" style="--l:80;--d:1.3s;--t:.3s"/>
+        <path class="traco cz-p" d="M${g + 14} 30C90 54 92 70 84 86" fill="none" stroke="${COR[3]}" stroke-width="3" stroke-linecap="round" style="--l:80;--d:1.3s;--t:.3s"/>
         <g class="entra" style="--d:1.45s"><g transform="translate(80 82) rotate(20)"><rect x="-2.5" y="-4" width="5" height="40" rx="2.5" fill="#cfd3d6"/><path d="M-2.5 34L0 46L2.5 34Z" fill="#cfd3d6"/><rect x="-1" y="0" width="2" height="7" rx="1" fill="#fbf7ec"/></g></g>
       </g>`;
     },
