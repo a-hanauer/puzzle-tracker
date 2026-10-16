@@ -1,4 +1,4 @@
-// Gerador do Ponto Cruz (pasta "cruzadinha", o nome antigo): desde 17/10/2026 um sudoku 6×6 de dados.
+// Gerador do Ponto Cruz (pasta "cruzadinha", o nome antigo): sudoku 6×6 de dados bordados (desde 16/10/2026).
 // Tabuleiro 6×6 com blocos de 2 linhas × 3 colunas; cada linha, coluna e bloco tem os seis dados (1 a 6).
 //
 // Todo desafio tem solução única e sai só com lógica (sem chute): o gerador só tira uma casa se o
@@ -10,7 +10,7 @@
 // Dificuldade pela semana (segunda = 1 … domingo = 7): menos casas reveladas e técnicas mais longas.
 //
 // Uso:  node cruzadinha/gerador.mjs [dias] [semente]
-// Os desafios que já saíram (até hoje) não mudam — inclusive os de palavras cruzadas (até 16/10/2026).
+// Os desafios que já saíram (até hoje) não mudam.
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -129,7 +129,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const DIAS = +(process.argv[2] || 365);
   if (process.argv[3]) seed = +process.argv[3];
   const dir = dirname(fileURLToPath(import.meta.url));
-  const old = mantidos(dir, EPOCH);
+  // NOVO=1: refaz tudo (em 16/10/2026 o jogo trocou de palavras cruzadas para dados e o ano todo foi refeito)
+  const old = process.env.NOVO ? [] : mantidos(dir, EPOCH);
   const out = [...old];
   const vistos = new Set(old.map(p => p.g));
   for (let k = old.length; k < DIAS; k++) {

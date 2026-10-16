@@ -44,11 +44,11 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   literatura, música, geografia, mitologia) a temas infantis; bichos, expressões e gramática só de vez em quando.
 - `comum/acervo.mjs`: categorias da Panelinha e temas do Cordel (campo `c`). Área (`a`) para o rodízio;
   família (`f`) para não pôr dois grupos parecidos no mesmo dia.
-- Ponto Cruz (pasta `cruzadinha`): desde 17/10/2026 é um **sudoku 6×6 de dados** (blocos 2×3), faces do dado em
-  ponto-cruz — linha escura nas reveladas, verde nas do jogador, vermelho em repetição; anotações em mini dados.
+- Ponto Cruz (pasta `cruzadinha`): desde 16/10/2026 é um **sudoku 6×6 de dados** (blocos 2×3), faces do dado em
+  ponto-cruz, uma cor de linha por dado (`--d1`…`--d6`; vermelho só para erro, em moldura tracejada); as reveladas
+  ganham um quadradinho de tecido tingido e ponto mais grosso; anotações em mini dados.
   `cruzadinha/gerador.mjs`: solução única e só lógica; a semana tira casas e pede técnicas mais longas
-  (1 candidato único/bloco · 2 linha/coluna · 3 pares e apontar). Até 16/10/2026 eram palavras cruzadas:
-  esses dias ficam no `desafios.json` e abrem em `palavras.html` (banco antigo em `pistas*.txt`, `gerador-palavras.mjs`).
+  (1 candidato único/bloco · 2 linha/coluna · 3 pares e apontar). As palavras cruzadas antigas foram descartadas.
 - Panelinha: `panelinha/confere-categorias.mjs` (o gerador roda antes). Listas de palavras o mais completas
   possível: uma palavra que cabe em dois grupos e não está nas duas listas vira resposta dupla sem o gerador
   saber. Pegadinhas (roxo) conferidas letra por letra.
