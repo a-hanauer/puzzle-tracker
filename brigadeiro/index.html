@@ -60,12 +60,6 @@
   #tab { display: block; overflow: visible; touch-action: none; }
   #tab .casa { cursor: pointer; }
   #tab .peca { transition: transform var(--anda, .1s) ease-out; }
-  #tab .seta { cursor: pointer; animation: seta .18s ease-out both; }
-  #tab .seta circle { fill: var(--surface); stroke: var(--accent); stroke-width: 3; filter: drop-shadow(0 2px 3px rgba(60, 25, 10, .25)); }
-  #tab .seta path { fill: none; stroke: var(--accent); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
-  #tab .seta.empurra circle { fill: var(--accent); stroke: var(--surface); }
-  #tab .seta.empurra path { stroke: var(--on-accent); }
-  @keyframes seta { from { opacity: 0; } to { opacity: 1; } }
   #tab.treme { animation: treme .32s ease; }
   @keyframes treme { 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
   #tab .chegou > g { animation: chegou .34s cubic-bezier(.3, 1.6, .5, 1); transform-box: fill-box; transform-origin: center; }
@@ -78,12 +72,15 @@
   .cups svg { width: 30px; height: 30px; }
   .cont { font-size: .86rem; line-height: 1.25; font-weight: 600; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
   .cont b { color: var(--ink); font-size: 1.12rem; font-weight: 800; }
-  .tec { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0 0 4px; }
+  .tec { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 4px; }
   .tec button { border: 0; padding: 0; height: 58px; border-radius: 12px; background: var(--kb-bg); color: var(--kb-ink); cursor: pointer;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font: 700 .74rem/1 inherit; }
   .tec button:active { transform: translateY(1px); }
   .tec svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
   .tec button:disabled { opacity: .45; cursor: default; }
+  .tec .seta-btn svg { width: 26px; height: 26px; stroke-width: 2.6; }
+  .tec .seta-btn.empurra { background: var(--accent); color: var(--on-accent); }   /* essa seta empurra um doce */
+  .tec .seta-btn:disabled { opacity: .3; }
 
   /* ---------- fim: os botões viram a faixa de resultado ---------- */
   .controls { display: none; padding-top: 12px; }
@@ -138,9 +135,14 @@
   <div class="cups" id="cups" aria-label="Forminhas preenchidas"></div>
   <div class="cont" id="cont"></div>
 </div>
+<!-- setas como no teclado físico: Desfazer ↑ Recomeçar / ← ↓ → -->
 <div class="tec" id="tec">
   <button id="desfazBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M6.5 3v4h4"/></svg>Desfazer</button>
+  <button class="seta-btn" data-d="0" type="button" aria-label="Para cima"><svg viewBox="0 0 24 24" style="transform:rotate(0deg)"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
   <button id="recomecaBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg>Recomeçar</button>
+  <button class="seta-btn" data-d="3" type="button" aria-label="Para a esquerda"><svg viewBox="0 0 24 24" style="transform:rotate(270deg)"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+  <button class="seta-btn" data-d="2" type="button" aria-label="Para baixo"><svg viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+  <button class="seta-btn" data-d="1" type="button" aria-label="Para a direita"><svg viewBox="0 0 24 24" style="transform:rotate(90deg)"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
 </div>
 
 <div class="controls" id="controls">
@@ -161,7 +163,7 @@
     <div class="demo" id="demo"></div>
     <ul>
       <li>Toque numa casa livre e a colher vai até lá sozinha.</li>
-      <li>As <b>setas</b> em volta da colher mostram para onde dá para ir: cada toque anda uma casa. A seta cheia, em cima de um brigadeiro, <b>empurra</b> o doce uma casa para o outro lado. Tocar mais adiante, numa casa que a colher não alcança, empurra até lá.</li>
+      <li>As <b>setas</b> embaixo andam uma casa. A seta colorida <b>empurra</b> o brigadeiro que está à frente da colher; a apagada não tem para onde ir. Também dá para tocar numa casa (a colher vai até lá) ou no doce encostado nela.</li>
       <li>A colher empurra <b>um doce por vez</b> e não puxa. Doce encostado num canto não sai mais: aí é hora de <b>Desfazer</b>.</li>
       <li>A <b>dica</b> (a lâmpada) faz o próximo empurrão do melhor caminho e diz quantos faltam. Se você travou, ela volta até onde ainda dava. Uma por dia.</li>
     </ul>
@@ -301,7 +303,7 @@
     forminhas.forEach((f, k) => { s += forminha(X(f % W) + 50, Y(f / W | 0) + 50, CUPS[k % 4]); });
     s += `<g id="marca"></g>`;
     doces.forEach((_, k) => { s += `<g class="peca doce" id="doce${k}"><g>${brigadeiro(31, k)}</g></g>`; });
-    s += `<g class="peca" id="colher"><g id="colherGira">${COLHER}</g></g><g id="setas"></g>`;
+    s += `<g class="peca" id="colher"><g id="colherGira">${COLHER}</g></g>`;
     for (let i = 0; i < N; i++) s += `<rect class="casa" data-i="${i}" x="${X(i % W)}" y="${Y(i / W | 0)}" width="${U}" height="${U}" fill="transparent"/>`;
     const t = $("tab"); t.setAttribute("viewBox", `-10 -6 ${LW + 20} ${LH + 26}`); t.innerHTML = s;
   }
@@ -323,22 +325,14 @@
     if (seco) { void t.getBoundingClientRect(); t.style.removeProperty("--anda"); }
     setas();
   }
-  // setas em volta da colher: só para onde dá para ir; cheia (rosa) quando empurra um doce
+  // setas do teclado: apagadas onde não dá para ir; cheia (cor de destaque) quando empurra um doce
   function setas() {
-    const el = $("setas"); if (!el) return;
-    if (finished || ocupado || !P) { el.innerHTML = ""; return; }
-    let h = "";
-    for (let d = 0; d < 4; d++) {
-      const j = passo(colher, d);
-      if (j < 0 || parede[j]) continue;
-      const emp = temDoce(j);
-      if (emp && !livre(passo(j, d))) continue;
-      const cx = X(j % W) + 50 - DIRS[d][0] * (emp ? 0 : 6), cy = Y(j / W | 0) + 50 - DIRS[d][1] * (emp ? 0 : 6);
-      // no doce: a seta fica na borda dele, do lado de lá
-      const ox = emp ? DIRS[d][0] * 30 : 0, oy = emp ? DIRS[d][1] * 30 : 0;
-      h += `<g class="seta${emp ? " empurra" : ""}" transform="translate(${cx + ox} ${cy + oy}) rotate(${[0, 90, 180, 270][d]})"><circle r="21"/><path d="M-8.5 4.5L0 -5L8.5 4.5"/></g>`;
-    }
-    el.innerHTML = h;
+    document.querySelectorAll(".seta-btn").forEach(b => {
+      const d = +b.dataset.d, j = P ? passo(colher, d) : -1;
+      const pode = !!P && !finished && j >= 0 && !parede[j] && (!temDoce(j) || livre(passo(j, d)));
+      b.disabled = !pode;
+      b.classList.toggle("empurra", pode && temDoce(j));
+    });
   }
   function placar() {
     const n = nasForminhas();
@@ -456,17 +450,16 @@
 
   // toques no tabuleiro (sem deslizar: o toque é mais preciso). Seta ou casa vizinha = um passo/empurrão
   let toque = null;
-  $("tab").addEventListener("pointerdown", e => { toque = { x: e.clientX, y: e.clientY, alvo: e.target.closest(".casa"), seta: e.target.closest(".seta") }; });
+  $("tab").addEventListener("pointerdown", e => { toque = { alvo: e.target.closest(".casa") }; });
   $("tab").addEventListener("pointerup", e => {
     if (!toque) return;
-    const { alvo, seta } = toque; toque = null;
-    const el = seta || alvo;
-    if (!el) return;
-    if (seta) { const d = [0, 90, 180, 270].indexOf(+seta.getAttribute("transform").match(/rotate\((\d+)\)/)[1]); setTimeout(() => vaiPara(d), 0); return; }
+    const { alvo } = toque; toque = null;
+    if (!alvo) return;
     const i = +alvo.dataset.i; setTimeout(() => tentaIr(i), 0);    // depois do toque (vibração no iPhone)
   });
   $("tab").addEventListener("pointercancel", () => { toque = null; });
   $("desfazBtn").addEventListener("click", () => setTimeout(desfaz, 0));
+  document.querySelectorAll(".seta-btn").forEach(b => b.addEventListener("click", () => setTimeout(() => vaiPara(+b.dataset.d), 0)));
   $("recomecaBtn").addEventListener("click", () => setTimeout(recomeca, 0));
   document.addEventListener("keydown", e => {
     if (!P || finished || document.querySelector(".overlay.open") || e.metaKey || e.ctrlKey || e.altKey) return;
