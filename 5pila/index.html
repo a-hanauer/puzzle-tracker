@@ -376,6 +376,16 @@ header{
 
 /* simplificado: estatísticas ficam no painel Jogos do Dia */
 #btn-stats[hidden], #btn-settings[hidden]{display:none !important;}
+
+/* ===== teclas da registradora: cada casa é uma tecla em relevo com aro de metal, como o visor ao lado ===== */
+:root{--tecla-a:#fffdf6;--tecla-b:#ece5d2;--tecla-aro:#cfc6b0;--tecla-aro-on:#9d947d;--tecla-base:#a9a08a;--tecla-base-on:#857c66;--tecla-ink:#2a2620;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--tecla-a:#3b3934;--tecla-b:#2a2925;--tecla-aro:#55524a;--tecla-aro-on:#8a8577;--tecla-base:#1b1a17;--tecla-base-on:#1b1a17;--tecla-ink:#f1ead7;} }
+:root[data-theme="dark"]{--tecla-a:#3b3934;--tecla-b:#2a2925;--tecla-aro:#55524a;--tecla-aro-on:#8a8577;--tecla-base:#1b1a17;--tecla-base-on:#1b1a17;--tecla-ink:#f1ead7;}
+.tile{border:0;border-radius:12px;background:radial-gradient(circle at 50% 35%,var(--tecla-a),var(--tecla-b));color:var(--tecla-ink);margin-bottom:3px;
+  box-shadow:0 0 0 2.5px var(--tecla-aro),0 3px 0 2.5px var(--tecla-base),inset 0 2px 2px rgba(255,255,255,.6);}
+.tile.filled{box-shadow:0 0 0 2.5px var(--tecla-aro-on),0 3px 0 2.5px var(--tecla-base-on),inset 0 2px 2px rgba(255,255,255,.6);}
+.tile.cursor{box-shadow:0 0 0 2.5px var(--accent),0 3px 0 2.5px var(--tecla-base),0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);}
+.tile.correct,.tile.present,.tile.absent,.tile.maybe{box-shadow:0 3px 0 0 rgba(0,0,0,.28),inset 0 2px 2px rgba(255,255,255,.35);}
 </style>
 
 <link rel="stylesheet" href="../comum/cabecalho.css?v=140">

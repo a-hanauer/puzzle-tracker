@@ -418,6 +418,21 @@
   .tile-row.input .tile{background:var(--tile-ghost);color:var(--text);}
   .tile-row.input .tile.filled{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.08);}
   .tile-row.input .tile.cur{box-shadow:inset 0 0 0 2px var(--accent);}
+  /* ===== pão de forma: as palavras de cima e de baixo são fatias (casca dourada, miolo com furinhos).
+     A fatia de cima tem o topo arredondado (--rt); os cantos de fora das letras das pontas seguem a curva
+     da casca (raio da fatia − folga), e os cantos de dentro ficam pequenos (--ri), iguais em todas as letras. */
+  .tile-row{--ri:5px;}
+  .tile-row .tile{border-radius:var(--ri);}
+  .tile-row .tile:first-child{border-radius:calc(var(--r) - var(--p)) var(--ri) var(--ri) calc(var(--r) - var(--p));}
+  .tile-row .tile:last-child{border-radius:var(--ri) calc(var(--r) - var(--p)) calc(var(--r) - var(--p)) var(--ri);}
+  #row-top{--rt:28px;border-radius:var(--rt) var(--rt) var(--r) var(--r);}
+  #row-top .tile:first-child{border-radius:calc(var(--rt) - var(--p)) var(--ri) var(--ri) calc(var(--r) - var(--p));}
+  #row-top .tile:last-child{border-radius:var(--ri) calc(var(--rt) - var(--p)) calc(var(--r) - var(--p)) var(--ri);}
+  .tile-row.bound{background:linear-gradient(180deg,var(--casca1),var(--casca2));box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 3px 6px rgba(90,50,10,.22);}
+  .tile-row.bound .tile{background:var(--miolo) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cg fill='%23b8925a' fill-opacity='.22'%3E%3Cellipse cx='8' cy='10' rx='2.2' ry='1.4'/%3E%3Cellipse cx='30' cy='6' rx='1.6' ry='1'/%3E%3Cellipse cx='48' cy='16' rx='2.4' ry='1.5'/%3E%3Cellipse cx='18' cy='30' rx='1.4' ry='1'/%3E%3Cellipse cx='40' cy='34' rx='2' ry='1.3'/%3E%3Cellipse cx='10' cy='48' rx='1.8' ry='1.2'/%3E%3Cellipse cx='32' cy='52' rx='2.3' ry='1.4'/%3E%3Cellipse cx='54' cy='46' rx='1.5' ry='1'/%3E%3C/g%3E%3C/svg%3E");color:#3b2a14;box-shadow:inset 0 0 0 1px rgba(150,110,50,.15),inset 0 -3px 6px rgba(190,140,70,.18);}
+  :root{--casca1:#d9a35c;--casca2:#b97a36;--miolo:#fbf1d8;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--casca1:#b98244;--casca2:#8f5b26;--miolo:#e9d9b6;} }
+  :root[data-theme="dark"]{--casca1:#b98244;--casca2:#8f5b26;--miolo:#e9d9b6;}
   .bubble.closer{background:var(--accent);color:#fff;}
   .bubble.lock{background:var(--good);color:#fff;}
   /* linha do tempo: trilho bem suave; o progresso preenche o trilho conforme os palpites */
