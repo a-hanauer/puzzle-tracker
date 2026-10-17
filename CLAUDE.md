@@ -60,5 +60,6 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - `brigadeiro/motor.mjs` (resolvedor por empurrões mínimos, casas mortas) é usado pelo gerador e pela dica da página.
 - `brigadeiro/gerador.mjs`: sorteia o tabuleiro, põe os doces nas forminhas e "desfaz" o jogo puxando (busca em largura), então
   todo desafio tem solução e o mínimo de empurrões é exato. A semana sobe em doces (2 → 4) e empurrões mínimos (≈7 → 36).
-- Jogar: tocar numa casa leva a colher; tocar no doce encostado (ou mais adiante na linha) empurra; deslizar anda/empurra.
+- Jogar: setas em volta da colher (só onde dá para ir; a cheia, rosa, empurra); tocar numa casa leva a colher; tocar no doce
+  encostado empurra (ou numa casa adiante que a colher não alcança). Sem deslizar (era impreciso).
   A dica faz o próximo empurrão ótimo e, se o jogo travou, volta até o último ponto com saída.

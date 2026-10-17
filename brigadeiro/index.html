@@ -60,6 +60,12 @@
   #tab { display: block; overflow: visible; touch-action: none; }
   #tab .casa { cursor: pointer; }
   #tab .peca { transition: transform var(--anda, .1s) ease-out; }
+  #tab .seta { cursor: pointer; animation: seta .18s ease-out both; }
+  #tab .seta circle { fill: var(--surface); stroke: var(--accent); stroke-width: 3; filter: drop-shadow(0 2px 3px rgba(60, 25, 10, .25)); }
+  #tab .seta path { fill: none; stroke: var(--accent); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
+  #tab .seta.empurra circle { fill: var(--accent); stroke: var(--surface); }
+  #tab .seta.empurra path { stroke: var(--on-accent); }
+  @keyframes seta { from { opacity: 0; } to { opacity: 1; } }
   #tab.treme { animation: treme .32s ease; }
   @keyframes treme { 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
   #tab .chegou > g { animation: chegou .34s cubic-bezier(.3, 1.6, .5, 1); transform-box: fill-box; transform-origin: center; }
@@ -155,7 +161,7 @@
     <div class="demo" id="demo"></div>
     <ul>
       <li>Toque numa casa livre e a colher vai até lá sozinha.</li>
-      <li>Para <b>empurrar</b>, toque no brigadeiro encostado na colher: ele anda uma casa para o outro lado. Tocar mais adiante, numa casa que a colher não alcança, empurra até lá. Deslizar o dedo no tabuleiro também anda e empurra.</li>
+      <li>As <b>setas</b> em volta da colher mostram para onde dá para ir: cada toque anda uma casa. A seta cheia, em cima de um brigadeiro, <b>empurra</b> o doce uma casa para o outro lado. Tocar mais adiante, numa casa que a colher não alcança, empurra até lá.</li>
       <li>A colher empurra <b>um doce por vez</b> e não puxa. Doce encostado num canto não sai mais: aí é hora de <b>Desfazer</b>.</li>
       <li>A <b>dica</b> (a lâmpada) faz o próximo empurrão do melhor caminho e diz quantos faltam. Se você travou, ela volta até onde ainda dava. Uma por dia.</li>
     </ul>
@@ -295,7 +301,7 @@
     forminhas.forEach((f, k) => { s += forminha(X(f % W) + 50, Y(f / W | 0) + 50, CUPS[k % 4]); });
     s += `<g id="marca"></g>`;
     doces.forEach((_, k) => { s += `<g class="peca doce" id="doce${k}"><g>${brigadeiro(31, k)}</g></g>`; });
-    s += `<g class="peca" id="colher"><g id="colherGira">${COLHER}</g></g>`;
+    s += `<g class="peca" id="colher"><g id="colherGira">${COLHER}</g></g><g id="setas"></g>`;
     for (let i = 0; i < N; i++) s += `<rect class="casa" data-i="${i}" x="${X(i % W)}" y="${Y(i / W | 0)}" width="${U}" height="${U}" fill="transparent"/>`;
     const t = $("tab"); t.setAttribute("viewBox", `-10 -6 ${LW + 20} ${LH + 26}`); t.innerHTML = s;
   }
@@ -315,6 +321,24 @@
     $("colher").style.transform = tr(colher);
     $("colherGira").setAttribute("transform", `rotate(${[-90, 0, 90, 180][olha]})`);
     if (seco) { void t.getBoundingClientRect(); t.style.removeProperty("--anda"); }
+    setas();
+  }
+  // setas em volta da colher: só para onde dá para ir; cheia (rosa) quando empurra um doce
+  function setas() {
+    const el = $("setas"); if (!el) return;
+    if (finished || ocupado || !P) { el.innerHTML = ""; return; }
+    let h = "";
+    for (let d = 0; d < 4; d++) {
+      const j = passo(colher, d);
+      if (j < 0 || parede[j]) continue;
+      const emp = temDoce(j);
+      if (emp && !livre(passo(j, d))) continue;
+      const cx = X(j % W) + 50 - DIRS[d][0] * (emp ? 0 : 6), cy = Y(j / W | 0) + 50 - DIRS[d][1] * (emp ? 0 : 6);
+      // no doce: a seta fica na borda dele, do lado de lá
+      const ox = emp ? DIRS[d][0] * 30 : 0, oy = emp ? DIRS[d][1] * 30 : 0;
+      h += `<g class="seta${emp ? " empurra" : ""}" transform="translate(${cx + ox} ${cy + oy}) rotate(${[0, 90, 180, 270][d]})"><circle r="21"/><path d="M-8.5 4.5L0 -5L8.5 4.5"/></g>`;
+    }
+    el.innerHTML = h;
   }
   function placar() {
     const n = nasForminhas();
@@ -350,7 +374,7 @@
   function anda(rota, fim) {
     ocupado = true;
     const vai = k => {
-      if (k >= rota.length) { ocupado = false; fim && fim(); return; }
+      if (k >= rota.length) { ocupado = false; setas(); fim && fim(); return; }
       olha = dirEntre(colher, rota[k]); colher = rota[k]; posiciona();
       setTimeout(() => vai(k + 1), 70);
     };
@@ -362,7 +386,7 @@
     ocupado = true;
     const um = () => {
       const b = passo(colher, d), f = b >= 0 ? passo(b, d) : -1;
-      if (feitos >= vezes || b < 0 || !temDoce(b) || !livre(f)) { ocupado = false; depois(feitos); return; }
+      if (feitos >= vezes || b < 0 || !temDoce(b) || !livre(f)) { ocupado = false; setas(); depois(feitos); return; }
       const k = doces.indexOf(b);
       doces[k] = f; colher = b; olha = d; emp++; feitos++;
       posiciona(false, eForm.has(f) ? k : -1);
@@ -430,14 +454,16 @@
     posiciona(); placar(); persist(); aviso("De volta ao começo. Desfazer volta para onde você estava.", 3000);
   }
 
-  // toques e deslizes no tabuleiro
+  // toques no tabuleiro (sem deslizar: o toque é mais preciso). Seta ou casa vizinha = um passo/empurrão
   let toque = null;
-  $("tab").addEventListener("pointerdown", e => { toque = { x: e.clientX, y: e.clientY, alvo: e.target.closest(".casa") }; });
+  $("tab").addEventListener("pointerdown", e => { toque = { x: e.clientX, y: e.clientY, alvo: e.target.closest(".casa"), seta: e.target.closest(".seta") }; });
   $("tab").addEventListener("pointerup", e => {
     if (!toque) return;
-    const dx = e.clientX - toque.x, dy = e.clientY - toque.y, alvo = toque.alvo; toque = null;
-    if (Math.hypot(dx, dy) > 24) { const d = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0); setTimeout(() => vaiPara(d), 0); return; }
-    if (alvo) { const i = +alvo.dataset.i; setTimeout(() => tentaIr(i), 0); }   // depois do toque (vibração no iPhone)
+    const { alvo, seta } = toque; toque = null;
+    const el = seta || alvo;
+    if (!el) return;
+    if (seta) { const d = [0, 90, 180, 270].indexOf(+seta.getAttribute("transform").match(/rotate\((\d+)\)/)[1]); setTimeout(() => vaiPara(d), 0); return; }
+    const i = +alvo.dataset.i; setTimeout(() => tentaIr(i), 0);    // depois do toque (vibração no iPhone)
   });
   $("tab").addEventListener("pointercancel", () => { toque = null; });
   $("desfazBtn").addEventListener("click", () => setTimeout(desfaz, 0));
