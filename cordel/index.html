@@ -75,6 +75,9 @@
   .stage > .fim-subrow { align-self: stretch; }
   .tab { position: relative; line-height: 0; flex-shrink: 0; touch-action: none; }
   #board { display: block; overflow: visible; }
+  /* papel de folheto (grão leve) e tinta de carimbo nas palavras achadas */
+  body { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .10 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23f)'/%3E%3C/svg%3E"); }
+  .bola.tema, .bola.chave, .lk.tema, .lk.chave { filter: url(#tinta); }
   .lk { stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; fill: none; }
   .lk.tema { stroke: var(--tema); } .lk.chave { stroke: var(--chave); } .lk.sel { stroke: var(--sel); }
   .bola { fill: transparent; }
@@ -167,6 +170,11 @@
 <div class="tema"><small>Tema de hoje</small><span id="pista">…</span></div>
 <div class="atual" id="atual" aria-live="polite"></div>
 
+<!-- tinta de xilogravura: borda irregular e pequenas falhas nas marcas das palavras achadas -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="tinta" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="1" seed="3" result="g"/><feColorMatrix in="g" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.85" result="m"/><feComposite in="d" in2="m" operator="in"/></filter>
+</defs></svg>
 <div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro data-haptico><svg id="board" role="img" aria-label="Tabuleiro de letras"></svg></div></div>
 
 <div class="controls" id="controls">
