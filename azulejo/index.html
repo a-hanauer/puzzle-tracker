@@ -41,6 +41,7 @@
     --glaze: #fbfcfe; --cob: #1f4fa3; --cob-soft: #a9bfe6;
     --ac0: #1f4fa3; --ac1: #d9a02f; --ac2: #2f7d62; --ac3: #4f86d6; --ac4: #d9a02f; --ac5: #2f7d62;
     --frame: #1f4fa3;
+    --vazia: #e4e1da; --vazia-sombra: rgba(0, 0, 0, .12); --rejunte: #eef0f2;
     /* seis famílias de azulejo, cada uma com fundo, desenho e detalhe próprios (para os painéis vizinhos não se confundirem):
        0 clássico (cobalto no branco) · 1 invertido (branco no cobalto) · 2 amarelo · 3 verde · 4 manganês · 5 azul-céu */
     --g0: #fbfcfe; --m0: #1f4fa3; --a0: #d9a02f;
@@ -78,6 +79,7 @@
       --glaze: #e9eef8; --cob: #1f4fa3; --cob-soft: #a9bfe6;
       --ac0: #1f4fa3; --ac1: #d9a02f; --ac2: #2f7d62; --ac3: #4f86d6; --ac4: #d9a02f; --ac5: #2f7d62;
       --frame: #7fa6ec;
+      --vazia: #2b2f37; --vazia-sombra: rgba(0, 0, 0, .35); --rejunte: #c9cdd3;
       --g0: #e9eef8; --m0: #1f4fa3; --a0: #d9a02f;
       --g1: #2a5bb0; --m1: #e9eef8; --a1: #f0c75e;
       --g2: #dcc274; --m2: #1d3f86; --a2: #eef2f8;
@@ -113,6 +115,7 @@
       --glaze: #e9eef8; --cob: #1f4fa3; --cob-soft: #a9bfe6;
       --ac0: #1f4fa3; --ac1: #d9a02f; --ac2: #2f7d62; --ac3: #4f86d6; --ac4: #d9a02f; --ac5: #2f7d62;
       --frame: #7fa6ec;
+      --vazia: #2b2f37; --vazia-sombra: rgba(0, 0, 0, .35); --rejunte: #c9cdd3;
       --g0: #e9eef8; --m0: #1f4fa3; --a0: #d9a02f;
       --g1: #2a5bb0; --m1: #e9eef8; --a1: #f0c75e;
       --g2: #dcc274; --m2: #1d3f86; --a2: #eef2f8;
@@ -147,7 +150,13 @@
   .tab { position: relative; line-height: 0; flex-shrink: 0; }   /* moldura do tabuleiro: recebe os toques (e o label da vibração no iPhone) */
   #board { display: block; touch-action: none; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(40, 25, 10, .08)) drop-shadow(0 8px 20px rgba(40, 25, 10, .08)); }
   .b-bg { fill: var(--board); }
-  .b-cell { fill: var(--cell); stroke: var(--cell-line); stroke-width: 1.5; }
+  /* casa vazia: argamassa rebaixada na parede de reboco */
+  .b-cell { fill: var(--vazia); stroke: rgba(0, 0, 0, .10); stroke-width: 1.5; }
+  .b-cell-sombra { fill: none; stroke: var(--vazia-sombra); stroke-width: 3; }
+  /* azulejo antigo: esmalte com brilho e relevo, tom mais quente, traço pintado à mão e craquelê */
+  .az-tinta { fill: rgba(255, 225, 170, .16); } .az-brilho { fill: url(#brilho); }
+  .az-luz { fill: none; stroke: rgba(255, 255, 255, .7); stroke-width: 2.4; } .az-sombra { fill: none; stroke: rgba(0, 0, 0, .14); stroke-width: 2.4; }
+  .az-rejunte { fill: none; stroke: var(--rejunte); stroke-width: 7; }
   .p-shadow { fill: rgba(30, 20, 10, .08); }
   .p-st { fill: none; stroke: var(--stitch); stroke-width: 2; stroke-dasharray: 6 7; stroke-linecap: round; }
   .p-empty { fill: var(--empty); }
@@ -164,16 +173,16 @@
   /* azulejos */
   .az-bg, .az-g { fill: var(--g); } .az-m { fill: var(--m); } .az-j { fill: none; stroke: var(--m); stroke-opacity: .22; stroke-width: 1.5; }
   .az-a0, .az-a1, .az-a2, .az-a3, .az-a4, .az-a5 { fill: var(--a); }
-  .az-frame { fill: none; stroke: var(--frame); stroke-width: 6; }
+  .az-frame { fill: none; stroke: var(--frame); stroke-width: 5; }
   /* etiqueta dentro de um painel certo: azul-marinho com contorno branco, para saltar do desenho */
-  .tg.on .tg-sh { fill: #16275a; stroke: #fbfcfe; stroke-width: 4; paint-order: stroke; } .tg.on .tg-n { fill: #fff; }
+  .tg.on .tg-sh { fill: url(#placa-on); stroke: #fbfcfe; stroke-width: 4; paint-order: stroke; } .tg.on .tg-n { fill: #fff; }
   .prev { fill: rgba(127, 110, 80, .08); stroke: var(--ink); stroke-width: 4; stroke-dasharray: 14 10; stroke-linecap: round; }
   .prev-badge { fill: var(--ink); }
   .prev-t { fill: var(--bg); font: 800 28px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
   /* etiqueta = o formato do painel em sólido (horizontal, vertical, quadrado), com o número em branco;
      formato livre = uma cruz gorda (horizontal + vertical juntos), como no Patches.
      Sem azulejo: o desenho só aparece depois do painel montado. */
-  .tg-sh { fill: var(--tag-ink); }
+  .tg-sh { fill: url(#placa); filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .3)); }   /* plaquinha de cerâmica */
   .tg-n { fill: var(--tag-fg); font: 800 34px "Noto Sans", -apple-system, sans-serif; text-anchor: middle; dominant-baseline: central; }
   /* etiqueta já dentro do painel certo: continua sólida, com o mesmo contraste de antes */
   .prev.ok { stroke: var(--ok); fill: color-mix(in srgb, var(--ok) 12%, transparent); }
@@ -487,9 +496,18 @@
     const b = $("board");
     b.setAttribute("viewBox", `0 0 ${W} ${W}`);
     let s = `<defs>${fabricDefs("fab")}
-      <pattern id="hatch" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="hb" width="18" height="18"/><rect class="hl" width="5" height="18"/></pattern></defs>
-      <rect class="b-bg" width="${W}" height="${W}" rx="30"/>`;
-    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) s += `<rect class="b-cell" x="${PAD + c * U + 4}" y="${PAD + r * U + 4}" width="${U - 8}" height="${U - 8}" rx="16"/>`;
+      <pattern id="hatch" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="hb" width="18" height="18"/><rect class="hl" width="5" height="18"/></pattern>
+      <filter id="reboco" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .42  0 0 0 0 .41  0 0 0 0 .4  0 0 0 .16 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <linearGradient id="brilho" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".10"/></linearGradient>
+      <pattern id="craq" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M0 30L22 34L40 22L61 30L80 18L100 26M18 34L14 60L30 78L26 100M61 30L66 55L90 64L100 60M66 55L48 72L56 100M30 78L48 72" fill="none" stroke="#3a3020" stroke-opacity=".34" stroke-width="1.2"/></pattern>
+      <filter id="mao"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="5"/><feDisplacementMap in="SourceGraphic" scale="3.5" xChannelSelector="R" yChannelSelector="G"/></filter>
+      <linearGradient id="placa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:color-mix(in srgb, var(--tag-ink) 82%, #fff)"/><stop offset="1" style="stop-color:color-mix(in srgb, var(--tag-ink) 80%, #000)"/></linearGradient>
+      <linearGradient id="placa-on" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3f7a"/><stop offset="1" stop-color="#101d45"/></linearGradient></defs>
+      <rect class="b-bg" width="${W}" height="${W}" rx="30"/><rect width="${W}" height="${W}" rx="30" fill="#fff" filter="url(#reboco)"/>`;
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      const x = PAD + c * U + 4, y = PAD + r * U + 4;
+      s += `<rect class="b-cell" x="${x}" y="${y}" width="${U - 8}" height="${U - 8}" rx="8"/><path class="b-cell-sombra" d="M${x + 3} ${y + 88}V${y + 8}Q${x + 3} ${y + 3} ${x + 8} ${y + 3}H${x + 88}"/>`;
+    }
     s += `<g id="gP"></g><g id="gT"></g><g id="gV"></g>`;
     b.innerHTML = s;
     gP = $("gP"); gT = $("gT"); gV = $("gV");
@@ -513,8 +531,18 @@
       const cls = st.s === -1 ? "p-empty" : "p-bad", stc = st.s === -1 ? " e" : " b";
       return `<g class="patch"><rect class="${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="12"/><rect class="p-st${stc}" x="${x + 8}" y="${y + 8}" width="${w - 16}" height="${h - 16}" rx="8"/></g>`;
     }
-    return `<g class="patch" style="animation-delay:${k * 45}ms"><rect style="fill:url(#fab${clues[st.s].c})" x="${x}" y="${y}" width="${w}" height="${h}" rx="12"/>
-      <rect class="az-frame fr${clues[st.s].c}" x="${x + 3}" y="${y + 3}" width="${w - 6}" height="${h - 6}" rx="10"/></g>`;
+    // cada azulejo do painel: tom quente, brilho do esmalte, relevo e craquelê; rejunte entre eles
+    let az = "", rj = "";
+    for (let i = 0; i < p.w; i++) for (let j = 0; j < p.h; j++) {
+      const tx = PAD + (p.c0 + i) * U + 4, ty = PAD + (p.r0 + j) * U + 4;
+      az += `<rect class="az-tinta" x="${tx}" y="${ty}" width="92" height="92"/><rect x="${tx}" y="${ty}" width="92" height="92" fill="url(#craq)" transform="rotate(${(i * 90 + j * 180) % 360} ${tx + 46} ${ty + 46})"/>
+        <rect class="az-brilho" x="${tx}" y="${ty}" width="92" height="92" rx="3"/><path class="az-luz" d="M${tx + 3} ${ty + 88}V${ty + 4}H${tx + 88}"/><path class="az-sombra" d="M${tx + 4} ${ty + 89}H${tx + 89}V${ty + 4}"/>`;
+    }
+    for (let i = 1; i < p.w; i++) rj += `M${x - 4 + i * U} ${y}V${y + h}`;
+    for (let j = 1; j < p.h; j++) rj += `M${x} ${y - 4 + j * U}H${x + w}`;
+    return `<g class="patch" style="animation-delay:${k * 45}ms"><rect style="fill:url(#fab${clues[st.s].c})" filter="url(#mao)" x="${x}" y="${y}" width="${w}" height="${h}" rx="12"/>
+      ${az}${rj ? `<path class="az-rejunte" d="${rj}"/>` : ""}
+      <rect class="az-frame fr${clues[st.s].c}" x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" rx="9"/></g>`;
   }
   // tamanho do desenho da etiqueta, em unidades da casa (1 casa = 100)
   const TAG = { q: [62, 62], l: [86, 48], a: [48, 86] };
