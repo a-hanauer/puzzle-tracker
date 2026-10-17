@@ -276,6 +276,19 @@
   .app[data-g].done a.game { opacity: 1; }
   .app[data-g].done .icon { filter: none; }
   .app[data-g].done .status { color: var(--tile-muted, var(--muted)); }
+  /* volume: o cartão vira um ladrilho (brilho na borda de cima, base um pouco mais escura, sombra tingida).
+     O degradê só começa abaixo do ícone, para o fundo liso do ícone não aparecer como um quadrado. */
+  .app[data-g], .app[data-g].done {
+    --luz: rgba(255,255,255,.13); --sombra: rgba(0,0,0,.55);
+    border: 0; border-radius: 22px;
+    background: linear-gradient(180deg, var(--tile-bg) 0%, var(--tile-bg) 56%, color-mix(in srgb, var(--tile-bg) 86%, #000) 100%);
+    box-shadow: inset 0 1.5px 0 var(--luz), inset 0 -2px 0 rgba(0,0,0,.08),
+      0 7px 14px -7px var(--sombra), 0 2px 4px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .app[data-g] { --luz: rgba(255,255,255,.6); --sombra: color-mix(in srgb, var(--tile-bg) 45%, #000); }
+  }
+  :root[data-theme="light"] .app[data-g] { --luz: rgba(255,255,255,.6); --sombra: color-mix(in srgb, var(--tile-bg) 45%, #000); }
   /* cores dos cartões: cada jogo tem o seu matiz, todos com a mesma saturação e luminosidade
      (claro: 60% / 86%; escuro: 30% / 18%) — o Pingado fica um pouco mais fundo no claro, para a
      xícara branca aparecer. O fundo dos ícones é exatamente essa cor. */
