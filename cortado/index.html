@@ -26,6 +26,8 @@
     --muted: #8a7a6b;
     --line: #e3d7c6;
     --board: #e8dccb;
+    /* bandeja de madeira escura; café em juta, leite em porcelana, vazia rebaixada na bandeja */
+    --band1: #9c6d48; --band2: #6f4a2e; --veio: #6f4a2e; --juta: #dcc79f; --juta-a: #c9b083; --juta-b: #e6d4b0; --porc2: #efe5d3;
     --cell: #faf4ea;
     --cell-line: rgba(110, 80, 50, .10);
     --cell-fix: #e6d8c4;
@@ -58,6 +60,7 @@
       --muted: #9d8f80;
       --line: #362c24;
       --board: #1e1814;
+      --band1: #5a4030; --band2: #3b2819; --veio: #3b2819; --juta: #9c8462; --juta-a: #8a7252; --juta-b: #ab9370; --porc2: #e6dccb;
       --cell: #2c241e;
       --cell-line: rgba(255, 255, 255, .04);
       --cell-fix: #1f1814;
@@ -91,6 +94,7 @@
       --muted: #9d8f80;
       --line: #362c24;
       --board: #1e1814;
+      --band1: #5a4030; --band2: #3b2819; --veio: #3b2819; --juta: #9c8462; --juta-a: #8a7252; --juta-b: #ab9370; --porc2: #e6dccb;
       --cell: #2c241e;
       --cell-line: rgba(255, 255, 255, .04);
       --cell-fix: #1f1814;
@@ -140,25 +144,25 @@
   .b-cell { fill: var(--cell); stroke: var(--cell-line); stroke-width: 1.5; }
   .b-cell.fix { fill: var(--cell-fix); }
   /* casa com peça ganha a cor da peça (café escuro, leite claro); a vazia fica listrada */
-  .b-cell.vaz { fill: url(#vazio); }
+  .b-cell.vaz { fill: rgba(30, 15, 5, .32); stroke: rgba(0, 0, 0, .22); stroke-width: 3; }
   .vz-a { fill: var(--cell); } .vz-b { fill: var(--cell-stripe, var(--cell)); }
-  .b-cell.v1 { fill: var(--cell-cafe, var(--cell)); }
-  .b-cell.v2 { fill: var(--cell-leite, var(--cell)); }
-  .b-cell.fix.v1 { fill: var(--cell-cafe-fix, var(--cell-cafe, var(--cell-fix))); }
-  .b-cell.fix.v2 { fill: var(--cell-leite-fix, var(--cell-leite, var(--cell-fix))); }
+  .b-cell.v1, .b-cell.fix.v1 { fill: url(#juta); stroke: rgba(80, 55, 25, .25); filter: url(#sombra); }
+  .b-cell.v2, .b-cell.fix.v2 { fill: url(#porc); stroke: rgba(150, 120, 90, .25); filter: url(#sombra); }
   .fix-mark { fill: none; stroke: transparent; stroke-width: 3; }
   .fix-mark.m1 { stroke: var(--fix-ring-cafe, transparent); } .fix-mark.m2 { stroke: var(--fix-ring-leite, transparent); }
   .b-cell.bad { fill: url(#hatch); }
   .hb { fill: var(--bad-soft); } .hl { fill: var(--bad); opacity: .4; }
-  .d-cafe { fill: var(--grao, var(--cafe)); }
-  .d-cafe-slit { fill: none; stroke: var(--grao-slit, var(--cafe-slit)); stroke-width: 4.2; stroke-linecap: round; }
-  .d-leite { fill: var(--leite); stroke: var(--leite-st); stroke-width: 3; }
-  .d-leite-sh { fill: var(--leite-sh); }
+  .d-cafe { fill: url(#grao); }
+  .d-cafe-slit { fill: none; stroke: #2c170a; stroke-width: 4.2; stroke-linecap: round; }
+  .d-cafe-luz { fill: rgba(255, 230, 200, .25); }
+  .d-leite { fill: url(#gota); stroke: #c9ad85; stroke-width: 2; }
+  .d-leite-sh { fill: #fff; opacity: .9; }
+  .d-sombra { filter: url(#sombra); }
   .drop { transform-box: fill-box; transform-origin: 50% 70%; }
   .drop.pop { animation: pop .22s cubic-bezier(.3, 1.6, .5, 1); }
   @keyframes pop { from { transform: scale(.55); opacity: .4; } to { transform: none; opacity: 1; } }
-  .sg-bg { fill: var(--sign-bg); }
-  .sg { stroke: var(--sign); stroke-width: 4.5; stroke-linecap: round; fill: none; }
+  .sg-bg { fill: #fffdf8; stroke: rgba(150, 120, 90, .35); stroke-width: 1.5; filter: url(#sombra); }   /* torrão de açúcar */
+  .sg { stroke: #6b4127; stroke-width: 4.5; stroke-linecap: round; fill: none; }
   .sg.bad { stroke: var(--bad); }
 
   .won .drop { animation: puff .45s cubic-bezier(.3, 1.6, .5, 1) both; }
@@ -433,14 +437,14 @@
     const path = "M0 -29C8 -19 21 -6 21 8A21 21 0 0 1 -21 8C-21 -6 -8 -19 0 -29Z";
     const t = `translate(${x} ${y + 2}) scale(${s})`;
     // a posição fica no <g> de fora; a animação (CSS transform) só no de dentro
-    if (v === 1) return `<g transform="translate(${x} ${y}) scale(${s}) rotate(-28)"><g class="drop${cls}"><ellipse class="d-cafe" rx="19" ry="26"/><path class="d-cafe-slit" d="M1.5 -20C-9 -7 9 7 -1.5 20"/></g></g>`;
-    return `<g transform="${t}"><g class="drop${cls}"><path class="d-leite" d="${path}"/><path class="d-leite-sh" d="M13 5C16 15 10 23 1 25C11 20 14 13 13 5Z"/></g></g>`;
+    if (v === 1) return `<g transform="translate(${x} ${y}) scale(${s}) rotate(-28)"><g class="drop${cls}"><g class="d-sombra"><ellipse class="d-cafe" rx="19" ry="26"/></g><path class="d-cafe-slit" d="M1.5 -20C-9 -7 9 7 -1.5 20"/><ellipse class="d-cafe-luz" cx="-8" cy="-10" rx="4" ry="8"/></g></g>`;
+    return `<g transform="${t}"><g class="drop${cls}"><g class="d-sombra"><path class="d-leite" d="${path}"/></g><ellipse class="d-leite-sh" cx="-8" cy="4" rx="4" ry="8"/></g></g>`;
   }
   // sinal na borda entre duas casas: = ou ×, sobre um quadradinho da cor do fundo
   function signSVG(s, isBad) {
     const ra = (s.a / N) | 0, ca = s.a % N, horiz = s.b === s.a + 1;
     const x = PAD + ca * U + (horiz ? U : U / 2), y = PAD + ra * U + (horiz ? U / 2 : U);
-    let g = `<rect class="sg-bg" x="${x - 15}" y="${y - 15}" width="30" height="30" rx="9"/>`;
+    let g = `<rect class="sg-bg" x="${x - 15}" y="${y - 15}" width="30" height="30" rx="6"/>`;
     const c = `sg${isBad ? " bad" : ""}`;
     if (s.t === "=") g += `<path class="${c}" d="M${x - 8} ${y - 5}H${x + 8}M${x - 8} ${y + 5}H${x + 8}"/>`;
     else g += `<path class="${c}" d="M${x - 7} ${y - 7}L${x + 7} ${y + 7}M${x + 7} ${y - 7}L${x - 7} ${y + 7}"/>`;
@@ -452,8 +456,16 @@
     const b = $("board");
     b.setAttribute("viewBox", `0 0 ${W} ${W}`);
     b.innerHTML = `<defs><pattern id="hatch" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="hb" width="18" height="18"/><rect class="hl" width="5" height="18"/></pattern>
-      <pattern id="vazio" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="vz-a" width="14" height="14"/><rect class="vz-b" width="4" height="14"/></pattern></defs>
-      <rect class="b-bg" width="${W}" height="${W}" rx="30"/><g id="gC"></g><g id="gD"></g><g id="gS"></g>`;
+      <pattern id="vazio" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="vz-a" width="14" height="14"/><rect class="vz-b" width="4" height="14"/></pattern>
+      <linearGradient id="bandeja" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--band1)"/><stop offset="1" style="stop-color:var(--band2)"/></linearGradient>
+      <pattern id="veio" width="300" height="46" patternUnits="userSpaceOnUse"><path d="M0 14C70 6 150 22 220 12S300 10 300 16M0 36C80 28 160 44 240 34S300 32 300 38" style="stroke:var(--veio)" stroke-width="3" fill="none" opacity=".55"/></pattern>
+      <pattern id="juta" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" style="fill:var(--juta)"/><path d="M0 2H8M0 6H8" style="stroke:var(--juta-a)" stroke-width="1.6"/><path d="M2 0V8M6 0V8" style="stroke:var(--juta-b)" stroke-width="1.2" opacity=".8"/></pattern>
+      <radialGradient id="porc" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff"/><stop offset="1" style="stop-color:var(--porc2)"/></radialGradient>
+      <radialGradient id="grao" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#9a6a45"/><stop offset=".55" stop-color="#6b4127"/><stop offset="1" stop-color="#3e2312"/></radialGradient>
+      <linearGradient id="gota" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffefb"/><stop offset="1" stop-color="#ecdcbf"/></linearGradient>
+      <filter id="sombra" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(50,25,10,.3)"/></filter></defs>
+      <rect width="${W}" height="${W}" rx="30" fill="url(#bandeja)"/><rect width="${W}" height="${W}" rx="30" fill="url(#veio)"/>
+      <rect x="6" y="6" width="${W - 12}" height="${W - 12}" rx="25" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="3"/><g id="gC"></g><g id="gD"></g><g id="gS"></g>`;
     gC = $("gC"); gD = $("gD"); gS = $("gS");
   }
   function fit() {
