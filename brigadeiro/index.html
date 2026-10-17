@@ -84,10 +84,19 @@
   .tec .seta-btn svg { width: 26px; height: 26px; stroke-width: 2.6; }
   .tec .seta-btn.empurra { background: var(--accent); color: var(--on-accent); }   /* essa seta empurra um doce */
   .tec .seta-btn:disabled { opacity: .3; }
+  /* setas sozinhas em T invertido; Desfazer e Recomeçar ficam do outro lado da assadeira, longe do polegar */
+  .tec [data-d="0"] { grid-column: 2; grid-row: 1; } .tec [data-d="3"] { grid-column: 1; grid-row: 2; }
+  .tec [data-d="2"] { grid-column: 2; grid-row: 2; } .tec [data-d="1"] { grid-column: 3; grid-row: 2; }
+  .acoes { display: flex; justify-content: center; gap: 8px; margin: 2px 0 8px; }
+  .acoes button { border: 0; height: 36px; padding: 0 13px; border-radius: 99px; background: var(--kb-bg); color: var(--kb-ink); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; font: 700 .8rem/1 inherit; }
+  .acoes button:active { transform: translateY(1px); }
+  .acoes button:disabled { opacity: .45; cursor: default; }
+  .acoes svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
 
   /* ---------- fim: os botões viram a faixa de resultado ---------- */
   .controls { display: none; padding-top: 12px; }
-  body.acabou .tec, body.acabou .status { display: none; }
+  body.acabou .tec, body.acabou .status, body.acabou .acoes { display: none; }
   body.acabou .controls { display: flex; }
   .prog { position: relative; overflow: hidden; flex: 1; height: 64px; border-radius: 16px; background: #3b2116; box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(40, 20, 10, .3); }
   .done-bar { position: absolute; inset: 0; display: flex; align-items: center; gap: 12px; padding: 0 18px; margin: 0; border: 0; background: none;
@@ -132,17 +141,20 @@
 <div class="gh-meta"><span class="gh-info" id="dayInfo"></span><label class="gh-free" hidden><input type="checkbox" id="livreChk" autocomplete="off"></label></div>
 <div class="aviso" id="aviso" aria-live="polite"></div>
 
+<div class="acoes" id="acoes">
+  <button id="desfazBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M6.5 3v4h4"/></svg>Desfazer</button>
+  <button id="recomecaBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg>Recomeçar</button>
+</div>
+
 <div class="stage" id="stage"><svg id="tab" data-tabuleiro role="grid" aria-label="Assadeira com brigadeiros e forminhas"></svg></div>
 
 <div class="status" id="status">
   <div class="cups" id="cups" aria-label="Forminhas preenchidas"></div>
   <div class="cont" id="cont"></div>
 </div>
-<!-- setas como no teclado físico (inclinam a assadeira): Desfazer ↑ Recomeçar / ← ↓ → -->
+<!-- setas como no teclado físico (inclinam a assadeira): ↑ / ← ↓ → -->
 <div class="tec" id="tec">
-  <button id="desfazBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M6.5 3v4h4"/></svg>Desfazer</button>
   <button class="seta-btn" data-d="0" type="button" aria-label="Para cima"><svg viewBox="0 0 24 24" style="transform:rotate(0deg)"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
-  <button id="recomecaBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg>Recomeçar</button>
   <button class="seta-btn" data-d="3" type="button" aria-label="Para a esquerda"><svg viewBox="0 0 24 24" style="transform:rotate(270deg)"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
   <button class="seta-btn" data-d="2" type="button" aria-label="Para baixo"><svg viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
   <button class="seta-btn" data-d="1" type="button" aria-label="Para a direita"><svg viewBox="0 0 24 24" style="transform:rotate(90deg)"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
