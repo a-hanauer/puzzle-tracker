@@ -78,21 +78,24 @@
   @media (prefers-reduced-motion: reduce) { #tab.treme, #tab .pula { animation: none !important; } }
 
   /* ---------- ferramentas e dados ---------- */
-  .ferr { display: flex; justify-content: center; gap: 10px; margin: 12px 0 8px; }
-  .ferr button { border: 0; background: var(--kb-bg); color: var(--kb-ink); border-radius: 99px; height: 36px; padding: 0 15px; cursor: pointer;
-    font: 650 .84rem "Noto Sans", -apple-system, sans-serif; display: inline-flex; align-items: center; gap: 6px; }
-  .ferr button:disabled { opacity: .45; cursor: default; }
-  .ferr button.on { background: var(--accent); color: var(--on-accent); }
-  .ferr svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-  .dados { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 7px; margin: 0 0 4px; }
-  .dados button { border: 0; padding: 0; aspect-ratio: 1; max-height: 64px; border-radius: 12px; background: var(--kb-bg); cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: transform .08s ease; }
+  .tec { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 12px 0 0; }
+  .dados { display: contents; }
+  .tec button { border: 0; padding: 0; height: 62px; border-radius: 12px; background: var(--kb-bg); color: var(--kb-ink); cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font: 700 .74rem/1 inherit; }
+  .dados button[data-n="1"] { order: 1; } .dados button[data-n="2"] { order: 2; } .dados button[data-n="3"] { order: 3; } #apagaBtn { order: 4; }
+  .dados button[data-n="4"] { order: 5; } .dados button[data-n="5"] { order: 6; } .dados button[data-n="6"] { order: 7; } #desfazBtn { order: 8; }
+  .tec .acao svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .tec button:disabled { opacity: .45; cursor: default; }
+  .nota-barra { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 42px; margin: 8px 0 4px; border: 0; border-radius: 12px;
+    background: var(--kb-bg); color: var(--kb-ink); font: 700 .9rem inherit; cursor: pointer; }
+  .nota-barra svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .nota-barra.on { background: var(--accent); color: var(--on-accent); }
   .dados button:active { transform: translateY(1px); }
   .dados button.cheio { opacity: .38; }             /* os seis desse dado já estão no tabuleiro */
-  .dados svg { width: 80%; height: 80%; overflow: visible; pointer-events: none; }
+  .dados svg { width: 46px; height: 46px; overflow: visible; pointer-events: none; }
   /* ---------- fim: os dados viram a faixa de resultado ---------- */
   .controls { display: none; padding-top: 12px; }
-  body.acabou .ferr, body.acabou .dados { display: none; }
+  body.acabou .tec, body.acabou .nota-barra { display: none; }
   body.acabou .controls { display: flex; }
   .prog { position: relative; overflow: hidden; flex: 1; height: 64px; border-radius: 16px; background: #23241c; box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(30, 30, 20, .3); }
   .done-bar { position: absolute; inset: 0; display: flex; align-items: center; gap: 12px; padding: 0 18px; margin: 0; border: 0; background: none;
@@ -147,12 +150,13 @@
 
 <div class="stage" id="stage"><svg id="tab" data-tabuleiro role="grid" aria-label="Tabuleiro 6 por 6"></svg></div>
 
-<div class="ferr" id="ferr">
-  <button id="desfazBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Desfazer</button>
-  <button id="notaBtn" type="button" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Anotar</button>
-  <button id="apagaBtn" type="button"><svg viewBox="0 0 24 24"><path d="M8.4 4.8h11.2a2.4 2.4 0 0 1 2.4 2.4v9.6a2.4 2.4 0 0 1-2.4 2.4H8.4L1.9 12z"/><path d="M12.6 9.4l5 5.2M17.6 9.4l-5 5.2"/></svg>Apagar</button>
+<!-- teclado na organização do LinkedIn: 1 2 3 Apagar / 4 5 6 Desfazer; Anotar numa barra embaixo -->
+<div class="tec" id="tec">
+  <div class="dados" id="dados"></div>
+  <button id="apagaBtn" class="acao" type="button" aria-label="Apagar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>Apagar</button>
+  <button id="desfazBtn" class="acao" type="button" aria-label="Desfazer" disabled><svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M6.5 3v4h4"/></svg>Desfazer</button>
 </div>
-<div class="dados" id="dados"></div>
+<button id="notaBtn" class="nota-barra" type="button" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Anotar</button>
 
 <div class="controls" id="controls">
   <div class="prog">
@@ -412,7 +416,7 @@
     const i = +el.dataset.i;
     setTimeout(() => { cur = i; startTimer(); render(); }, 0);   // depois do toque (vibração no iPhone)
   });
-  $("dados").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setTimeout(() => borda(+b.dataset.n), 0); });
+  $("dados").addEventListener("click", e => { const b = e.target.closest("button[data-n]"); if (b) setTimeout(() => borda(+b.dataset.n), 0); });
   $("notaBtn").addEventListener("click", () => setTimeout(() => { modoNota = !modoNota; render(); }, 0));
   $("apagaBtn").addEventListener("click", () => setTimeout(apaga, 0));
   $("desfazBtn").addEventListener("click", () => setTimeout(desfaz, 0));
