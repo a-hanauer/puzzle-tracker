@@ -197,22 +197,25 @@
           `<g transform="translate(${x} ${y}) scale(5)"><path class="brilha" style="--d:${d}s" d="M0-1L.22-.22 1 0 .22.22 0 1-.22.22-1 0-.22-.22Z" fill="#fff4cf"/></g>`).join("")}
       </g>`,
 
-    novelo: () => `
-      <defs><clipPath id="cel-nov"><circle r="62"/></clipPath></defs>
+    // Novelo: o novelo gira enquanto as voltas de lã vão se enrolando (grandes círculos inclinados), e o fio solto sai por último
+    novelo: () => {
+      const R = 62, esc = "#a8332c", cla = "#ee8a7d", meio = "#c24a40";
+      let aneis = "";
+      const anel = (ry, phi, cor, w, d) => { const per = Math.PI * (3 * (R + ry) - Math.sqrt((3 * R + ry) * (R + 3 * ry)));
+        return `<ellipse class="traco" style="--l:${per.toFixed(0)};--d:${d.toFixed(2)}s;--t:.45s" rx="${R}" ry="${Math.max(1, ry).toFixed(1)}" transform="rotate(${phi})" fill="none" stroke="${cor}" stroke-width="${w}" opacity=".88"/>`; };
+      for (let k = 0; k < 15; k++) aneis += anel(R * Math.abs(Math.cos(k * 12 * Math.PI / 180)), k * 23, k % 3 ? esc : cla, 3, .2 + k * .05);
+      for (let k = 0; k < 9; k++) aneis += anel(R * (.15 + k * .1), 30 + k * 17, k % 2 ? meio : cla, 3.4, .6 + k * .06);
+      return `
+      <defs><radialGradient id="cel-nov-s" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#3a0d08" stop-opacity=".45"/></radialGradient></defs>
       <g transform="translate(-8 -8) scale(1.3)">
-      <path class="traco" style="--l:140;--d:1.4s;--t:.4s" d="M44 44C62 62 70 78 92 74" fill="none" stroke="#c9443b" stroke-width="9" stroke-linecap="round"/>
+      <ellipse cx="6" cy="${R + 6}" rx="${R * .8}" ry="9" fill="rgba(60,15,10,.18)"/>
+      <path class="traco" style="--l:140;--d:1.4s;--t:.4s" d="M44 44C62 62 70 78 92 74" fill="none" stroke="#c9443b" stroke-width="7" stroke-linecap="round"/>
       <g class="nov-bola">
-        <circle r="62" fill="#d6564b"/>
-        <g clip-path="url(#cel-nov)" fill="none" stroke="#a8332c" stroke-width="7" stroke-linecap="round">
-          <path class="traco" style="--l:220;--d:.3s" d="M-70 -20C-30 -60 30 -60 70 -20"/>
-          <path class="traco" style="--l:220;--d:.47s" d="M-70 0C-30 -40 30 -40 70 0"/>
-          <path class="traco" style="--l:220;--d:.63s" d="M-70 22C-30 -18 30 -18 70 22"/>
-          <path class="traco" style="--l:220;--d:.8s" d="M-20 -70C-60 -30 -60 30 -20 70"/>
-          <path class="traco" style="--l:220;--d:.97s" d="M8 -70C-32 -30 -32 30 8 70"/>
-          <path class="traco" style="--l:220;--d:1.13s" d="M36 -70C-4 -30 -4 30 36 70"/>
-        </g>
+        <circle r="${R}" fill="#d6564b"/>${aneis}<circle r="${R}" fill="url(#cel-nov-s)"/>
+        <path d="M-30 -36Q-14 -50 6 -50" fill="none" stroke="#ffd2c8" stroke-width="4" stroke-linecap="round" opacity=".55"/>
       </g>
-      </g>`,
+      </g>`;
+    },
 
     retalhos: () => {
       const q = (rot, d) => `<g transform="rotate(${rot})"><g class="azu-q" style="--d:${d}s">
