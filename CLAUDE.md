@@ -55,11 +55,12 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 ## Brigadeiro (no lugar da Panelinha desde 17/10/2026)
 
-- "Empurrar caixas": a colher de pau empurra brigadeiros até as forminhas numa assadeira 7 × 8; paredes são barras de chocolate.
-  Visual: papel-manteiga, forminhas de festa (rosa, azul, amarelo, verde); ícone e fim = um brigadeiro caindo na forminha rosa.
-- `brigadeiro/motor.mjs` (resolvedor por empurrões mínimos, casas mortas) é usado pelo gerador e pela dica da página.
-- `brigadeiro/gerador.mjs`: sorteia o tabuleiro, põe os doces nas forminhas e "desfaz" o jogo puxando (busca em largura), então
-  todo desafio tem solução e o mínimo de empurrões é exato. A semana sobe em doces (2 → 4) e empurrões mínimos (≈7 → 36).
-- Jogar: setas no formato do teclado físico (Desfazer ↑ Recomeçar / ← ↓ →); a seta apagada não tem para onde ir e a colorida
-  empurra um doce. Tocar numa casa leva a colher; tocar no doce encostado empurra. Sem deslizar (era impreciso).
-  A dica faz o próximo empurrão ótimo e, se o jogo travou, volta até o último ponto com saída.
+- Inclinar a assadeira (7 × 8): cada seta faz TODOS os brigadeiros rolarem juntos até bater (chocolate, borda, outro doce,
+  forminha cheia). O doce cai na forminha da cor do seu granulado ao passar por ela; forminha de outra cor não segura.
+  (Começou como "empurrar caixas" com colher de pau; trocado no mesmo dia, ano todo refeito.)
+- Visual: assadeira de alumínio, papel-manteiga, paredes de barra de chocolate, forminhas rosa/azul/amarelo/verde;
+  ícone e fim = um brigadeiro caindo na forminha rosa. Setas no formato do teclado físico (Desfazer ↑ Recomeçar / ← ↓ →);
+  seta apagada = não mexe nada.
+- `brigadeiro/motor.mjs` (inclinar + busca em largura do mínimo de inclinações) serve o gerador e a dica da página.
+- `brigadeiro/gerador.mjs`: sorteia paredes, forminhas e doces e resolve; a semana sobe em doces (2 → 4) e inclinações
+  mínimas (3–4 na segunda → 10–13 no domingo). A dica faz a próxima inclinação ótima; se travou, volta até ter saída.

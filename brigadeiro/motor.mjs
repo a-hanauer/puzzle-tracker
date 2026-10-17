@@ -1,10 +1,12 @@
-// Motor do Brigadeiro (empurrar doces até as forminhas), usado pelo gerador e pela página (dica).
+// Motor do Brigadeiro (inclinar a assadeira), usado pelo gerador e pela página (dica).
 //
 // Tabuleiro W × H, casas numeradas por linha (i = y * W + x). Desafio em texto, uma letra por casa:
-//   #  barra de chocolate (parede)      .  papel vazio      f  forminha vazia
-//   b  brigadeiro                        c  brigadeiro já na forminha
-//   o  colher                            p  colher em cima de uma forminha
-// A colher anda pelas casas livres e empurra um brigadeiro por vez (não puxa, não empurra dois).
+//   #  barra de chocolate (parede)    .  papel vazio
+//   a b c d  brigadeiro com granulado da cor 0, 1, 2, 3 (rosa, azul, amarelo, verde)
+//   A B C D  forminha da cor 0, 1, 2, 3
+// Inclinar a assadeira para um lado faz TODOS os brigadeiros rolarem juntos até baterem em alguma coisa
+// (chocolate, borda, outro brigadeiro, forminha já cheia). Quem passa por cima da forminha da sua cor cai
+// nela e fica; forminha de outra cor não segura (o doce passa por cima). Termina com todos nas forminhas.
 
 export const W = 7, H = 8, N = W * H;
 export const DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];        // cima, direita, baixo, esquerda
@@ -15,84 +17,69 @@ export const passo = (i, d) => {
 };
 
 export function ler(g) {
-  const parede = [], forminhas = [], doces = []; let colher = -1;
+  const parede = [], forminhas = [], doces = [];
   [...g].forEach((ch, i) => {
     parede[i] = ch === "#";
-    if ("fcp".includes(ch)) forminhas.push(i);
-    if ("bc".includes(ch)) doces.push(i);
-    if ("op".includes(ch)) colher = i;
+    if (ch >= "A" && ch <= "D") forminhas.push({ i, cor: ch.charCodeAt(0) - 65 });
+    if (ch >= "a" && ch <= "d") doces.push({ i, cor: ch.charCodeAt(0) - 97 });
   });
-  return { parede, forminhas, doces: doces.sort((a, b) => a - b), colher };
+  return { parede, forminhas, doces };
 }
 
-// casas por onde a colher alcança (sem atravessar doces); devolve a lista e a menor casa (para normalizar)
-export function alcance(parede, ocupado, de) {
-  const vis = new Uint8Array(N), fila = [de]; vis[de] = 1; let min = de;
-  for (let k = 0; k < fila.length; k++) for (let d = 0; d < 4; d++) {
-    const j = passo(fila[k], d);
-    if (j >= 0 && !vis[j] && !parede[j] && !ocupado[j]) { vis[j] = 1; fila.push(j); if (j < min) min = j; }
+// estado: { doces: [{ i, cor }] que ainda rolam, cheias: bits das forminhas já com doce }
+// devolve { doces, cheias, mexeu, caiu: [índices dos doces que caíram], rotas: [[casas por onde cada doce passou]] }
+export function inclina(T, st, d) {
+  const formAt = new Int8Array(N).fill(-1);
+  T.forminhas.forEach((f, k) => (formAt[f.i] = k));
+  const ord = st.doces.map((x, k) => k).sort((a, b) => {
+    const pa = st.doces[a].i, pb = st.doces[b].i;
+    const va = d === 0 ? (pa / W | 0) : d === 2 ? -(pa / W | 0) : d === 1 ? -(pa % W) : pa % W;
+    const vb = d === 0 ? (pb / W | 0) : d === 2 ? -(pb / W | 0) : d === 1 ? -(pb % W) : pb % W;
+    return va - vb;                                                // quem está na frente rola primeiro
+  });
+  const ocup = new Uint8Array(N); st.doces.forEach(x => (ocup[x.i] = 1));
+  let cheias = st.cheias, mexeu = false;
+  const novos = st.doces.map(x => ({ ...x })), caiu = [], rotas = st.doces.map(() => []);
+  for (const k of ord) {
+    const x = novos[k];
+    ocup[x.i] = 0;
+    let pos = x.i, dentro = false;
+    for (;;) {
+      const nx = passo(pos, d);
+      if (nx < 0 || T.parede[nx] || ocup[nx]) break;
+      const f = formAt[nx];
+      if (f >= 0 && (cheias >> f) & 1) break;                       // forminha cheia é obstáculo
+      pos = nx; rotas[k].push(pos); mexeu = true;
+      if (f >= 0 && T.forminhas[f].cor === x.cor) { cheias |= 1 << f; dentro = true; break; }
+    }
+    x.i = pos;
+    if (dentro) caiu.push(k); else ocup[pos] = 1;
   }
-  return { vis, min };
+  return { doces: novos.filter((_, k) => !caiu.includes(k)), cheias, mexeu, caiu, rotas, todos: novos };
 }
 
-// casas mortas: um doce ali nunca mais chega a forminha nenhuma (puxando a partir das forminhas)
-export function mortas(parede, forminhas) {
-  const vivo = new Uint8Array(N), fila = [...forminhas];
-  for (const f of forminhas) vivo[f] = 1;
-  for (let k = 0; k < fila.length; k++) for (let d = 0; d < 4; d++) {
-    const b = passo(fila[k], d), c = b >= 0 ? passo(b, d) : -1;          // o doce vem de b, a colher fica em c
-    if (b >= 0 && c >= 0 && !parede[b] && !parede[c] && !vivo[b]) { vivo[b] = 1; fila.push(b); }
-  }
-  return vivo.map(v => !v);
-}
+const chave = st => st.doces.map(x => x.cor + "@" + x.i).sort().join(",") + "|" + st.cheias;
 
-const chave = (doces, p) => doces.join(",") + "|" + p;
-
-// menor número de empurrões até pôr todos os doces nas forminhas, com a sequência de empurrões.
-// devolve { n, empurroes: [{ de, dir }], estados (quanto a busca precisou olhar) } ou null (sem saída). limite: estados no máximo (segurança).
-export function resolve(g, limite = 2e6) {
-  const { parede, forminhas, doces, colher } = typeof g === "string" ? ler(g) : g;
-  const morta = mortas(parede, forminhas), eForm = new Uint8Array(N); forminhas.forEach(f => (eForm[f] = 1));
-  const ocup = new Uint8Array(N);
-  const pronto = ds => ds.every(i => eForm[i]);
-  const r0 = (() => { doces.forEach(i => (ocup[i] = 1)); const a = alcance(parede, ocup, colher); doces.forEach(i => (ocup[i] = 0)); return a; })();
-  const ini = { doces, p: r0.min, pai: null, mov: null };
-  if (pronto(doces)) return { n: 0, empurroes: [] };
-  const vistos = new Set([chave(doces, r0.min)]);
-  let nivel = [ini], n = 0;
-  while (nivel.length && vistos.size < limite) {
-    const prox = []; n++;
-    for (const st of nivel) {
-      st.doces.forEach(i => (ocup[i] = 1));
-      const { vis } = alcance(parede, ocup, st.p);
-      for (const b of st.doces) for (let d = 0; d < 4; d++) {
-        const atras = passo(b, (d + 2) % 4), frente = passo(b, d);
-        if (atras < 0 || frente < 0 || !vis[atras] || parede[frente] || ocup[frente] || morta[frente]) continue;
-        const nd = st.doces.map(x => (x === b ? frente : x)).sort((x, y) => x - y);
-        ocup[b] = 0; ocup[frente] = 1;
-        const { min } = alcance(parede, ocup, b);
-        ocup[frente] = 0; ocup[b] = 1;
-        const k = chave(nd, min);
-        if (vistos.has(k)) continue;
-        vistos.add(k);
-        const novo = { doces: nd, p: min, pai: st, mov: { de: b, dir: d } };
-        if (pronto(nd)) {
-          st.doces.forEach(i => (ocup[i] = 0));
-          const empurroes = []; for (let s = novo; s.mov; s = s.pai) empurroes.unshift(s.mov);
-          return { n, empurroes, estados: vistos.size };
-        }
-        prox.push(novo);
-      }
-      st.doces.forEach(i => (ocup[i] = 0));
+// menor número de inclinações até todos os doces caírem; devolve { n, lances: [d], estados } ou null
+export function resolve(g, limite = 400000, ini = null) {
+  const T = typeof g === "string" ? ler(g) : g;
+  const st0 = ini || { doces: T.doces.map(x => ({ ...x })), cheias: 0 };
+  if (!st0.doces.length) return { n: 0, lances: [], estados: 1 };
+  const vistos = new Map([[chave(st0), null]]);
+  let nivel = [{ st: st0, pai: null, d: -1 }];
+  for (let n = 1; nivel.length && vistos.size < limite; n++) {
+    const prox = [];
+    for (const no of nivel) for (let d = 0; d < 4; d++) {
+      const r = inclina(T, no.st, d);
+      if (!r.mexeu) continue;
+      const st = { doces: r.doces, cheias: r.cheias }, k = chave(st);
+      if (vistos.has(k)) continue;
+      vistos.set(k, 1);
+      const novo = { st, pai: no, d };
+      if (!st.doces.length) { const lances = []; for (let s = novo; s.pai; s = s.pai) lances.unshift(s.d); return { n, lances, estados: vistos.size }; }
+      prox.push(novo);
     }
     nivel = prox;
   }
   return null;
-}
-
-// quantas vezes a solução troca de doce (mais trocas = doces que dependem uns dos outros)
-export function trocas(empurroes) {
-  let ultimo = -1, t = 0;
-  for (const e of empurroes) { if (e.de !== ultimo) t++; ultimo = passo(e.de, e.dir); }
-  return t;
 }
