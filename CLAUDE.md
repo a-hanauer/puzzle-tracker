@@ -42,8 +42,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 - Público: gente com boa formação. Preferir conhecimentos gerais densos (história, artes, ciência,
   literatura, música, geografia, mitologia) a temas infantis; bichos, expressões e gramática só de vez em quando.
-- `comum/acervo.mjs`: categorias da Panelinha e temas do Cordel (campo `c`). Área (`a`) para o rodízio;
-  família (`f`) para não pôr dois grupos parecidos no mesmo dia.
+- `comum/acervo.mjs`: temas do Cordel (campo `c`; os campos da Panelinha, que saiu, ficaram). Área (`a`) para o rodízio;
+  família (`f`) para não pôr dois temas parecidos no mesmo dia.
 - Ponto Cruz (pasta `cruzadinha`): desde 16/10/2026 é um **sudoku 6×6 de dados** (blocos 2×3), faces do dado em
   ponto-cruz, uma cor de linha por dado, do frio ao quente (`--d1`…`--d6`: roxo, azul, turquesa, verde, laranja, vermelho); o erro não usa cor: tecido riscado e moldura tracejada na linha escura; as reveladas
   ganham um quadradinho de tecido tingido e ponto mais grosso; anotações em mini dados.
@@ -52,6 +52,13 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   sábado pede um lance à frente ("apontar"), domingo dois (no máximo). Nada mais longo que isso, e sem memória:
   o resolvedor refaz as possibilidades a cada casa (o lance vale só para achar a próxima casa, como quem não anota).
   As palavras cruzadas antigas foram descartadas.
-- Panelinha: `panelinha/confere-categorias.mjs` (o gerador roda antes). Listas de palavras o mais completas
-  possível: uma palavra que cabe em dois grupos e não está nas duas listas vira resposta dupla sem o gerador
-  saber. Pegadinhas (roxo) conferidas letra por letra.
+
+## Brigadeiro (no lugar da Panelinha desde 17/10/2026)
+
+- "Empurrar caixas": a colher de pau empurra brigadeiros até as forminhas numa assadeira 7 × 8; paredes são barras de chocolate.
+  Visual: papel-manteiga, forminhas de festa (rosa, azul, amarelo, verde); ícone e fim = um brigadeiro caindo na forminha rosa.
+- `brigadeiro/motor.mjs` (resolvedor por empurrões mínimos, casas mortas) é usado pelo gerador e pela dica da página.
+- `brigadeiro/gerador.mjs`: sorteia o tabuleiro, põe os doces nas forminhas e "desfaz" o jogo puxando (busca em largura), então
+  todo desafio tem solução e o mínimo de empurrões é exato. A semana sobe em doces (2 → 4) e empurrões mínimos (≈7 → 36).
+- Jogar: tocar numa casa leva a colher; tocar no doce encostado (ou mais adiante na linha) empurra; deslizar anda/empurra.
+  A dica faz o próximo empurrão ótimo e, se o jogo travou, volta até o último ponto com saída.

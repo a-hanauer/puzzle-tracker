@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="gh-carregando" data-fixa>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f7efe8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16100d" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Brigadeiro">
+<title>BRIGADEIRO — empurre os doces até as forminhas</title>
+<link rel="icon" type="image/png" href="icon.png?v=1">
+<script src="../comum/tema.js?v=138"></script>
+<script src="../comum/cabecalho.js?v=138"></script>
+<script src="../comum/dica.js?v=138"></script>
+<link rel="apple-touch-icon" href="icon.png?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
+<style>
+  /* assadeira de alumínio com papel-manteiga; barras de chocolate como paredes; forminhas de festa */
+  :root {
+    --bg: #f7efe8; --surface: #fffaf6; --surface-2: #efe2d8; --ink: #2b1a12; --muted: #8c7264; --line: #ead9cd;
+    --kb-bg: #eedfd4; --kb-ink: #2b1a12; --kb-dim: #8c7264;
+    --accent: #b0466f; --on-accent: #fffaf6;
+    --aro1: #c9ced3; --aro2: #aeb4ba; --papel: #fbf3e3; --quadricula: rgba(150, 110, 60, .09); --sombra: rgba(70, 35, 15, .22);
+    --shadow: 0 1px 2px rgba(60, 30, 10, .07), 0 6px 18px rgba(60, 30, 10, .07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16100d; --surface: #221915; --surface-2: #2e231d; --ink: #f3e6dc; --muted: #a88f80; --line: #33271f;
+      --kb-bg: #2a1f19; --kb-ink: #f3e6dc; --kb-dim: #a88f80;
+      --accent: #e98fae; --on-accent: #2a1018;
+      --aro1: #8d949b; --aro2: #6c737a; --papel: #3a302a; --quadricula: rgba(255, 240, 220, .05); --sombra: rgba(0, 0, 0, .55);
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
+    }
+  }
+  :root[data-theme="dark"] {
+      --bg: #16100d; --surface: #221915; --surface-2: #2e231d; --ink: #f3e6dc; --muted: #a88f80; --line: #33271f;
+      --kb-bg: #2a1f19; --kb-ink: #f3e6dc; --kb-dim: #a88f80;
+      --accent: #e98fae; --on-accent: #2a1018;
+      --aro1: #8d949b; --aro2: #6c737a; --papel: #3a302a; --quadricula: rgba(255, 240, 220, .05); --sombra: rgba(0, 0, 0, .55);
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.22);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body, a, button { touch-action: manipulation; }
+  html { height: 100%; background: var(--bg); -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0 auto; max-width: 520px; background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
+    min-height: calc(100% + var(--sobra, 0px)); display: flex; flex-direction: column;
+    -webkit-font-smoothing: antialiased; -webkit-user-select: none; user-select: none;
+  }
+  .aviso { text-align: center; min-height: 24px; line-height: 1.3; padding-top: 3px; font-size: .9rem; font-weight: 700; color: var(--muted); margin: 0 0 4px; }
+  .aviso b { color: var(--ink); }
+
+  /* ---------- tabuleiro (SVG) ---------- */
+  .stage { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  #tab { display: block; overflow: visible; touch-action: none; }
+  #tab .casa { cursor: pointer; }
+  #tab .peca { transition: transform var(--anda, .1s) ease-out; }
+  #tab.treme { animation: treme .32s ease; }
+  @keyframes treme { 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
+  #tab .chegou > g { animation: chegou .34s cubic-bezier(.3, 1.6, .5, 1); transform-box: fill-box; transform-origin: center; }
+  @keyframes chegou { 45% { transform: scale(1.14); } }
+  @media (prefers-reduced-motion: reduce) { #tab.treme, #tab .chegou > g { animation: none !important; } #tab .peca { transition: none; } }
+
+  /* ---------- placar e botões ---------- */
+  .status { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 10px 2px 10px; }
+  .cups { display: flex; gap: 6px; }
+  .cups svg { width: 30px; height: 30px; }
+  .cont { font-size: .86rem; line-height: 1.25; font-weight: 600; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+  .cont b { color: var(--ink); font-size: 1.12rem; font-weight: 800; }
+  .tec { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0 0 4px; }
+  .tec button { border: 0; padding: 0; height: 58px; border-radius: 12px; background: var(--kb-bg); color: var(--kb-ink); cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font: 700 .74rem/1 inherit; }
+  .tec button:active { transform: translateY(1px); }
+  .tec svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .tec button:disabled { opacity: .45; cursor: default; }
+
+  /* ---------- fim: os botões viram a faixa de resultado ---------- */
+  .controls { display: none; padding-top: 12px; }
+  body.acabou .tec, body.acabou .status { display: none; }
+  body.acabou .controls { display: flex; }
+  .prog { position: relative; overflow: hidden; flex: 1; height: 64px; border-radius: 16px; background: #3b2116; box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(40, 20, 10, .3); }
+  .done-bar { position: absolute; inset: 0; display: flex; align-items: center; gap: 12px; padding: 0 18px; margin: 0; border: 0; background: none;
+    color: #fffaf6; font: inherit; text-align: left; cursor: pointer; }
+  .done-bar .ic { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }
+  .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .done-bar .txt b { font-size: 1.32rem; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .done-bar .txt span { font-size: .78rem; font-weight: 600; color: rgba(255,250,246,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,250,246,.7); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  body.play .done-bar .ic { animation: dobra .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
+  @keyframes dobra { from { transform: scale(.3) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* ---------- janelas ---------- */
+  .overlay { position: fixed; inset: 0; z-index: 10; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(20, 10, 5, .45); backdrop-filter: blur(3px); }
+  .overlay.open { display: flex; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal { width: 100%; max-width: 400px; max-height: 88vh; overflow: auto; background: var(--surface); border-radius: 22px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .modal h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+  .modal .close { border: none; background: var(--surface-2); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; }
+  .modal p, .modal li { font-size: .92rem; line-height: 1.5; color: var(--ink); }
+  .modal ul { padding-left: 20px; margin: 8px 0; }
+  .modal li { margin: 4px 0; }
+  .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--ink); color: var(--bg); font: inherit; font-weight: 700; font-size: .95rem; margin-top: 6px; }
+  .demo { display: flex; justify-content: center; margin: 6px 0 2px; }
+  .demo svg { width: 200px; height: auto; }
+</style>
+<link rel="stylesheet" href="../comum/cabecalho.css?v=138">
+<style>
+  :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+  .gh .gh-brand b { letter-spacing: .02em; font-stretch: 75%; font-size: 1.15rem; }   /* nome comprido: cabe ao lado da dica */
+</style>
+</head>
+<body>
+
+<header class="gh">
+  <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+  <a class="gh-brand" href="./" aria-label="Brigadeiro — recarregar"><img src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt=""><b>BRIGADEIRO</b></a>
+  <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
+  <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
+</header>
+
+<div class="gh-meta"><span class="gh-info" id="dayInfo"></span><label class="gh-free" hidden><input type="checkbox" id="livreChk" autocomplete="off"></label></div>
+<div class="aviso" id="aviso" aria-live="polite"></div>
+
+<div class="stage" id="stage"><svg id="tab" data-tabuleiro role="grid" aria-label="Assadeira com brigadeiros e forminhas"></svg></div>
+
+<div class="status" id="status">
+  <div class="cups" id="cups" aria-label="Forminhas preenchidas"></div>
+  <div class="cont" id="cont"></div>
+</div>
+<div class="tec" id="tec">
+  <button id="desfazBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M6.5 3v4h4"/></svg>Desfazer</button>
+  <button id="recomecaBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg>Recomeçar</button>
+</div>
+
+<div class="controls" id="controls">
+  <div class="prog">
+    <button class="done-bar" id="doneBar" aria-label="Jogo completo: ver resultado">
+      <img class="ic" src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt="">
+      <span class="txt"><b id="doneTitle">0:00</b><span id="doneSub">Brigadeiros nas forminhas</span></span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Como jogar -->
+<div class="overlay" id="helpOverlay">
+  <div class="modal">
+    <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
+    <p>Leve cada brigadeiro até uma forminha, empurrando com a colher de pau.</p>
+    <div class="demo" id="demo"></div>
+    <ul>
+      <li>Toque numa casa livre e a colher vai até lá sozinha.</li>
+      <li>Para <b>empurrar</b>, toque no brigadeiro encostado na colher: ele anda uma casa para o outro lado. Tocar mais adiante, numa casa que a colher não alcança, empurra até lá. Deslizar o dedo no tabuleiro também anda e empurra.</li>
+      <li>A colher empurra <b>um doce por vez</b> e não puxa. Doce encostado num canto não sai mais: aí é hora de <b>Desfazer</b>.</li>
+      <li>A <b>dica</b> (a lâmpada) faz o próximo empurrão do melhor caminho e diz quantos faltam. Se você travou, ela volta até onde ainda dava. Uma por dia.</li>
+    </ul>
+    <p>Todo desafio tem solução, e embaixo aparece o mínimo de empurrões possível. Ao longo da semana vêm mais doces e caminhos mais longos.</p>
+    <button class="btn-main" data-close>Jogar</button>
+  </div>
+</div>
+
+<!-- Fim de jogo -->
+<div class="overlay" id="endOverlay">
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><img src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(60,30,10,.15)"></div>
+    <h2 class="fim-title">Brigadeiros nas forminhas!</h2>
+    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
+    <p class="fim-sub" id="endSub"></p>
+    <div class="fim-count" id="nextBox">Próximo Brigadeiro em <b id="countdown" data-contagem>--:--:--</b></div>
+    <button class="fim-btn" id="againBtn" hidden>Jogar outro</button>
+    <div data-proximo hidden></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  let DADOS = null, teste = false, M = null;     // M: motor.mjs (resolvedor, para a dica e para ver se travou)
+  import("./motor.mjs").then(m => { M = m; }).catch(() => {});
+  const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+  const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const LS = "brigadeiro:";
+  const load = (k, d) => { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
+  const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
+
+  // ---------- regras ----------
+  const W = 7, H = 8, N = W * H, U = 100, B = 34;
+  const DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];             // cima, direita, baixo, esquerda
+  const NOME_DIR = ["para cima", "para a direita", "para baixo", "para a esquerda"];
+  const passo = (i, d) => { const x = i % W + DIRS[d][0], y = (i / W | 0) + DIRS[d][1]; return x < 0 || y < 0 || x >= W || y >= H ? -1 : y * W + x; };
+  const ONDE = i => `linha ${(i / W | 0) + 1}, coluna ${i % W + 1}`;
+
+  let P = null, dayNum = 0, parede = [], forminhas = [], eForm = new Set(), ini = null;
+  let doces = [], colher = 0, olha = 1, emp = 0, history = [], ocupado = false;
+  let finished = false, timer = null, startedAt = 0, elapsed = 0, dicaUsada = false, dica = null;
+
+  function recomputeStats(st) {
+    const days = Object.keys(st.times).map(Number).sort((a, b) => a - b);
+    let best = 0, run = 0, prev = -9;
+    for (const d of days) { run = d === prev + 1 ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+    st.played = days.length; st.best = best; st.streak = run; st.lastDay = days.at(-1) || 0;
+    return st;
+  }
+  const nasForminhas = () => doces.filter(i => eForm.has(i)).length;
+  const temDoce = i => doces.includes(i);
+  const livre = i => i >= 0 && !parede[i] && !temDoce(i);
+
+  function setup(puzzle, saved) {
+    P = puzzle;
+    parede = []; forminhas = []; const ds = []; let c = 0;
+    [...P.g].forEach((ch, i) => { parede[i] = ch === "#"; if ("fcp".includes(ch)) forminhas.push(i); if ("bc".includes(ch)) ds.push(i); if ("op".includes(ch)) c = i; });
+    eForm = new Set(forminhas);
+    ini = { doces: ds, colher: c };
+    const ok = saved && Array.isArray(saved.doces) && saved.doces.length === ds.length;
+    doces = ok ? saved.doces.slice() : ds.slice();
+    colher = ok ? saved.colher : c;
+    olha = ok ? (saved.olha ?? 1) : 1;
+    emp = ok ? saved.emp || 0 : 0;
+    dicaUsada = !!saved?.dica;
+    elapsed = saved?.elapsed || 0;
+    finished = !!saved?.done;
+    history = saved?.hist && ok ? saved.hist : [];
+    const now = new Date();
+    $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l || (now.getDay() + 6) % 7 + 1}/7`;
+    desenhaFixo(); tamanho(); posiciona(true); placar(); showTime();
+    if (dica) dica.atualiza();
+  }
+  function persist() {
+    if (!P || teste) return;
+    const total = forminhas.length;
+    save("dia:" + dayNum, { pid: P.g, doces, colher, olha, emp, hist: history.slice(-150), dica: dicaUsada, elapsed: currentElapsed(), done: finished,
+      time: finished ? elapsed : null, started: emp > 0 || history.length > 0, prog: [finished ? total : nasForminhas(), total] });
+  }
+
+  fetch("desafios.json").then(r => r.json()).then(data => {
+    DADOS = data;
+    dayNum = dayNumber(data.epoch);
+    const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
+    let saved = load("dia:" + dayNum, null);
+    if (saved && saved.pid !== puzzle.g) saved = null;
+    setup(puzzle, saved);
+    persist();
+    if (finished) { document.body.classList.add("acabou"); placar(); }
+    else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
+  }).catch(() => { $("stage").innerHTML = '<p style="text-align:center;color:var(--muted)">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
+
+  // ---------- desenho ----------
+  const CUPS = ["#f19bbb", "#8ccbe9", "#f5cf62", "#a9dc8f"];
+  const X = x => B + x * U, Y = y => B + y * U;
+  function forminha(cx, cy, cor, R = 44) {
+    let p = ""; const n = 28;
+    for (let k = 0; k <= n; k++) { const a = k / n * Math.PI * 2, r = k % 2 ? R * .91 : R; p += `${k ? "L" : "M"}${(cx + Math.cos(a) * r).toFixed(1)} ${(cy + Math.sin(a) * r).toFixed(1)}`; }
+    let pr = ""; for (let k = 0; k < n; k += 2) { const a = k / n * Math.PI * 2; pr += `M${(cx + Math.cos(a) * R * .68).toFixed(1)} ${(cy + Math.sin(a) * R * .68).toFixed(1)}L${(cx + Math.cos(a) * R * .95).toFixed(1)} ${(cy + Math.sin(a) * R * .95).toFixed(1)}`; }
+    return `<path d="${p}Z" fill="${cor}"/><path d="${pr}" stroke="rgba(0,0,0,.12)" stroke-width="${(R / 22).toFixed(1)}"/><circle cx="${cx}" cy="${cy}" r="${(R * .66).toFixed(1)}" fill="${cor}"/><circle cx="${cx}" cy="${cy}" r="${(R * .66).toFixed(1)}" fill="rgba(0,0,0,.08)"/>`;
+  }
+  function brigadeiro(r, seed) {          // centrado em 0,0
+    let g = ""; const cs = ["#8a5a3a", "#a06c48", "#3e2414"];
+    for (let k = 0; k < 26; k++) {
+      const a = (k * 137.5 + seed * 31) * Math.PI / 180, rr = r * .13 + Math.sqrt(k / 26) * r * .74, x = Math.cos(a) * rr, y = Math.sin(a) * rr, t = (k * 53 + seed * 17) % 180;
+      g += `<rect x="${(x - r * .145).toFixed(1)}" y="${(y - r * .05).toFixed(1)}" width="${(r * .29).toFixed(1)}" height="${(r * .1).toFixed(1)}" rx="${(r * .05).toFixed(1)}" fill="${cs[k % 3]}" transform="rotate(${t} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+    }
+    return `<circle cy="${(r * .14).toFixed(1)}" r="${r}" fill="rgba(40,15,0,.28)"/><circle r="${r}" fill="url(#bri)"/>${g}<ellipse cx="${(-r * .35).toFixed(1)}" cy="${(-r * .45).toFixed(1)}" rx="${(r * .3).toFixed(1)}" ry="${(r * .16).toFixed(1)}" fill="rgba(255,235,215,.22)" transform="rotate(-25 ${(-r * .35).toFixed(1)} ${(-r * .45).toFixed(1)})"/>`;
+  }
+  const COLHER = `<g filter="url(#sb)"><rect x="-50" y="-6.5" width="54" height="13" rx="6.5" fill="#c9935a"/><ellipse cx="19" cy="0" rx="25" ry="20" fill="#d8a56c"/><ellipse cx="20" cy="0" rx="17" ry="13" fill="#c18750"/><path d="M-46 -2H-4" stroke="rgba(255,255,255,.25)" stroke-width="2" stroke-linecap="round"/></g>`;
+  const DEFS = `<defs>
+    <radialGradient id="bri" cx="36%" cy="30%" r="72%"><stop offset="0" stop-color="#8a5636"/><stop offset=".5" stop-color="#4f2c18"/><stop offset="1" stop-color="#2b170b"/></radialGradient>
+    <linearGradient id="choc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6b3f24"/><stop offset="1" stop-color="#4a2914"/></linearGradient>
+    <linearGradient id="aro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--aro1)"/><stop offset="1" style="stop-color:var(--aro2)"/></linearGradient>
+    <filter id="sb" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="rgba(40,15,0,.35)"/></filter>
+    <filter id="sbt" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="10" stdDeviation="12" style="flood-color:var(--sombra)"/></filter>
+    <pattern id="papel" width="${U / 4}" height="${U / 4}" patternUnits="userSpaceOnUse" x="${B}" y="${B}"><path d="M0 .5H${U / 4}M.5 0V${U / 4}" style="stroke:var(--quadricula)" stroke-width="1.2"/></pattern></defs>`;
+  const LW = W * U + 2 * B, LH = H * U + 2 * B;
+  function desenhaFixo() {
+    let s = DEFS;
+    s += `<rect x="0" y="0" width="${LW}" height="${LH}" rx="42" fill="url(#aro)" filter="url(#sbt)"/>`;
+    s += `<rect x="9" y="9" width="${LW - 18}" height="${LH - 18}" rx="34" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="3"/>`;
+    s += `<rect x="${B}" y="${B}" width="${W * U}" height="${H * U}" rx="18" style="fill:var(--papel)"/><rect x="${B}" y="${B}" width="${W * U}" height="${H * U}" rx="18" fill="url(#papel)"/>`;
+    const Pa = (x, y) => x >= 0 && y >= 0 && x < W && y < H && parede[y * W + x];
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (Pa(x, y)) {
+      const g = 7, x0 = X(x) + (Pa(x - 1, y) ? 0 : g), y0 = Y(y) + (Pa(x, y - 1) ? 0 : g), x1 = X(x + 1) - (Pa(x + 1, y) ? 0 : g), y1 = Y(y + 1) - (Pa(x, y + 1) ? 0 : g);
+      const junto = Pa(x - 1, y) || Pa(x + 1, y) || Pa(x, y - 1) || Pa(x, y + 1);
+      s += `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" rx="${junto ? 4 : 10}" fill="url(#choc)" filter="url(#sb)"/>`;
+    }
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (Pa(x, y))     // gomos por cima das sombras
+      s += `<rect x="${X(x) + 16}" y="${Y(y) + 16}" width="${U - 32}" height="${U - 32}" rx="6" fill="#5e3720" stroke="#7d4f31" stroke-width="3"/><path d="M${X(x) + 18} ${Y(y) + 19}H${X(x) + U - 18}" stroke="rgba(255,220,190,.18)" stroke-width="3"/>`;
+    forminhas.forEach((f, k) => { s += forminha(X(f % W) + 50, Y(f / W | 0) + 50, CUPS[k % 4]); });
+    s += `<g id="marca"></g>`;
+    doces.forEach((_, k) => { s += `<g class="peca doce" id="doce${k}"><g>${brigadeiro(31, k)}</g></g>`; });
+    s += `<g class="peca" id="colher"><g id="colherGira">${COLHER}</g></g>`;
+    for (let i = 0; i < N; i++) s += `<rect class="casa" data-i="${i}" x="${X(i % W)}" y="${Y(i / W | 0)}" width="${U}" height="${U}" fill="transparent"/>`;
+    const t = $("tab"); t.setAttribute("viewBox", `-10 -6 ${LW + 20} ${LH + 26}`); t.innerHTML = s;
+  }
+  function tamanho() {
+    const st = $("stage"), t = $("tab");
+    t.style.width = t.style.height = "0px";
+    const r = (LH + 26) / (LW + 20);
+    const w = Math.max(200, Math.min(st.clientWidth, (st.clientHeight) / r, 470));
+    t.style.width = w + "px"; t.style.height = w * r + "px";
+  }
+  window.addEventListener("resize", () => { if (P) tamanho(); });
+  const tr = i => `translate(${X(i % W) + 50}px, ${Y(i / W | 0) + 50}px)`;
+  function posiciona(seco, chegou = -1) {
+    const t = $("tab");
+    if (seco) t.style.setProperty("--anda", "0s");
+    doces.forEach((i, k) => { const el = $("doce" + k); el.style.transform = tr(i); el.classList.toggle("chegou", k === chegou); });
+    $("colher").style.transform = tr(colher);
+    $("colherGira").setAttribute("transform", `rotate(${[-90, 0, 90, 180][olha]})`);
+    if (seco) { void t.getBoundingClientRect(); t.style.removeProperty("--anda"); }
+  }
+  function placar() {
+    const n = nasForminhas();
+    const mini = (cheia, cor) => `<svg viewBox="-50 -50 100 100" aria-hidden="true">${forminha(0, 0, cor)}${cheia ? `<circle r="27" fill="#4a2a17"/><ellipse cx="-9" cy="-11" rx="8" ry="4.5" fill="rgba(255,235,215,.25)"/>` : ""}</svg>`;
+    $("cups").innerHTML = forminhas.map((f, k) => mini(doces.includes(f), CUPS[k % 4])).join("");
+    $("cups").setAttribute("aria-label", `${n} de ${forminhas.length} forminhas com brigadeiro`);
+    $("cont").innerHTML = `<b>${emp}</b> ${emp === 1 ? "empurrão" : "empurrões"}<br>mínimo ${P.m}`;
+    $("desfazBtn").disabled = finished || !history.length;
+    $("recomecaBtn").disabled = finished || (!history.length && emp === 0);
+    if (finished) { $("doneTitle").textContent = fmt(elapsed); $("doneSub").textContent = `${emp} empurrões · mínimo ${P.m}`; }
+  }
+
+  let avT = 0;
+  function aviso(html, ms = 2200) { const el = $("aviso"); clearTimeout(avT); el.innerHTML = html; if (ms) avT = setTimeout(() => (el.innerHTML = ""), ms); }
+
+  // ---------- jogar ----------
+  const foto = () => ({ doces: doces.slice(), colher, olha, emp });
+  function guarda() { history.push(foto()); if (history.length > 400) history.shift(); }
+  // caminho da colher até a casa alvo (sem atravessar doces nem chocolate)
+  function caminho(de, ate) {
+    if (de === ate) return [];
+    const pai = new Map([[de, -1]]), fila = [de];
+    for (let k = 0; k < fila.length; k++) for (let d = 0; d < 4; d++) {
+      const j = passo(fila[k], d);
+      if (j < 0 || pai.has(j) || !livre(j)) continue;
+      pai.set(j, fila[k]); fila.push(j);
+      if (j === ate) { const p = []; for (let x = j; x !== de; x = pai.get(x)) p.unshift(x); return p; }
+    }
+    return null;
+  }
+  const dirEntre = (a, b) => [0, 1, 2, 3].find(d => passo(a, d) === b);
+  // anda casa por casa (animado); depois chama fim
+  function anda(rota, fim) {
+    ocupado = true;
+    const vai = k => {
+      if (k >= rota.length) { ocupado = false; fim && fim(); return; }
+      olha = dirEntre(colher, rota[k]); colher = rota[k]; posiciona();
+      setTimeout(() => vai(k + 1), 70);
+    };
+    vai(0);
+  }
+  // empurra o doce à frente da colher, vezes vezes, na direção d
+  function empurra(d, vezes = 1) {
+    let feitos = 0;
+    ocupado = true;
+    const um = () => {
+      const b = passo(colher, d), f = b >= 0 ? passo(b, d) : -1;
+      if (feitos >= vezes || b < 0 || !temDoce(b) || !livre(f)) { ocupado = false; depois(feitos); return; }
+      const k = doces.indexOf(b);
+      doces[k] = f; colher = b; olha = d; emp++; feitos++;
+      posiciona(false, eForm.has(f) ? k : -1);
+      if (eForm.has(f) && window.jogosHaptico) jogosHaptico();
+      placar();
+      setTimeout(um, 110);
+    };
+    um();
+  }
+  function depois(feitos) {
+    persist(); placar();
+    if (doces.every(i => eForm.has(i))) { ganhou(); return; }
+    if (feitos) avisaTravado();
+  }
+  // doce parado num canto sem forminha (ou dois doces/um doce e chocolate travando juntos) não sai mais
+  function avisaTravado() {
+    if (!M) return;
+    const morta = M.mortas(parede, forminhas);
+    const preso = doces.find(i => !eForm.has(i) && morta[i]);
+    if (preso != null) aviso(`O brigadeiro da ${ONDE(preso)} não sai mais dali. <b>Desfaça</b> o último empurrão.`, 4200);
+  }
+  function tentaIr(i) {
+    if (!P || finished || ocupado || parede[i]) return;
+    startTimer();
+    // 1) doce encostado na colher: empurra uma casa
+    const d0 = dirEntre(colher, i);
+    if (d0 != null && temDoce(i)) {
+      if (!livre(passo(i, d0))) return nega();
+      guarda(); return empurra(d0, 1);
+    }
+    // 2) casa livre aonde a colher chega: anda até lá
+    if (temDoce(i)) return nega("Encoste a colher no brigadeiro para empurrar.");
+    const rota = caminho(colher, i);
+    if (rota && !rota.length) return;
+    if (rota) { guarda(); anda(rota, () => { persist(); placar(); }); return; }
+    // 3) casa que a colher não alcança, mais adiante na linha de um doce encostado nela: empurra até lá
+    for (let d = 0; d < 4; d++) {
+      const b = passo(colher, d); if (b < 0 || !temDoce(b)) continue;
+      let k = 0, j = b;
+      while (true) { j = passo(j, d); if (j < 0 || !livre(j)) break; k++; if (j === i) { guarda(); return empurra(d, k); } }
+    }
+    return nega("A colher não chega lá: tem doce ou chocolate no caminho.");
+  }
+  // um passo na direção (deslizar o dedo ou setas do teclado)
+  function vaiPara(d) {
+    if (!P || finished || ocupado) return;
+    startTimer();
+    const j = passo(colher, d);
+    if (j < 0 || parede[j]) return nega();
+    if (temDoce(j)) { if (!livre(passo(j, d))) return nega(); guarda(); return empurra(d, 1); }
+    guarda(); anda([j], () => { persist(); placar(); });
+  }
+  function nega(msg) {
+    if (window.jogosHaptico) jogosHaptico();
+    if (msg) aviso(msg);
+  }
+  function desfaz() {
+    if (finished || ocupado || !history.length) return;
+    const f = history.pop(); doces = f.doces; colher = f.colher; olha = f.olha; emp = f.emp;
+    posiciona(); placar(); persist(); aviso("");
+  }
+  function recomeca() {
+    if (finished || ocupado || (!history.length && emp === 0)) return;
+    guarda(); doces = ini.doces.slice(); colher = ini.colher; olha = 1; emp = 0;
+    posiciona(); placar(); persist(); aviso("De volta ao começo. Desfazer volta para onde você estava.", 3000);
+  }
+
+  // toques e deslizes no tabuleiro
+  let toque = null;
+  $("tab").addEventListener("pointerdown", e => { toque = { x: e.clientX, y: e.clientY, alvo: e.target.closest(".casa") }; });
+  $("tab").addEventListener("pointerup", e => {
+    if (!toque) return;
+    const dx = e.clientX - toque.x, dy = e.clientY - toque.y, alvo = toque.alvo; toque = null;
+    if (Math.hypot(dx, dy) > 24) { const d = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0); setTimeout(() => vaiPara(d), 0); return; }
+    if (alvo) { const i = +alvo.dataset.i; setTimeout(() => tentaIr(i), 0); }   // depois do toque (vibração no iPhone)
+  });
+  $("tab").addEventListener("pointercancel", () => { toque = null; });
+  $("desfazBtn").addEventListener("click", () => setTimeout(desfaz, 0));
+  $("recomecaBtn").addEventListener("click", () => setTimeout(recomeca, 0));
+  document.addEventListener("keydown", e => {
+    if (!P || finished || document.querySelector(".overlay.open") || e.metaKey || e.ctrlKey || e.altKey) return;
+    const d = { ArrowUp: 0, ArrowRight: 1, ArrowDown: 2, ArrowLeft: 3 }[e.key];
+    if (d != null) { vaiPara(d); e.preventDefault(); }
+    else if (e.key === "z" || e.key === "Z" || e.key === "Backspace") { desfaz(); e.preventDefault(); }
+  });
+
+  // ---------- dica: o próximo empurrão do melhor caminho (motor.mjs); se travou, volta até onde ainda dava ----------
+  const estadoAgora = () => ({ parede, forminhas, doces: doces.slice().sort((a, b) => a - b), colher });
+  async function pedirDica() {
+    if (!M) M = await import("./motor.mjs");
+    let r = M.resolve(estadoAgora()), voltou = 0;
+    while (!r && history.length) {             // sem saída daqui: desfaz até achar um ponto que ainda resolve
+      const f = history.pop(); doces = f.doces; colher = f.colher; olha = f.olha; emp = f.emp; voltou++;
+      r = M.resolve(estadoAgora());
+    }
+    if (!r) { doces = ini.doces.slice(); colher = ini.colher; olha = 1; emp = 0; r = M.resolve(estadoAgora()); voltou = -1; }
+    posiciona(); placar();
+    dicaUsada = true;
+    if (!r.empurroes.length) { persist(); return "Já está tudo nas forminhas."; }
+    const { de, dir } = r.empurroes[0], atras = passo(de, (dir + 2) % 4);
+    const falta = r.n - 1;
+    const antes = voltou > 0 ? `Daquele jeito não tinha mais saída: voltei ${voltou} ${voltou === 1 ? "lance" : "lances"}. ` : voltou < 0 ? "Daquele jeito não tinha mais saída: voltei ao começo. " : "";
+    guarda();
+    const rota = caminho(colher, atras) || [];
+    await new Promise(ok => anda(rota, ok));
+    await new Promise(ok => { empurra(dir, 1); const t = setInterval(() => { if (!ocupado) { clearInterval(t); ok(); } }, 30); });
+    persist();
+    return `${antes}Empurrei o brigadeiro da ${ONDE(de)} ${NOME_DIR[dir]}. ${falta ? `Daqui, o melhor caminho tem mais ${falta} ${falta === 1 ? "empurrão" : "empurrões"}.` : "Pronto!"}`;
+  }
+  dica = ghDica({ usada: () => dicaUsada, bloqueada: () => finished || !P || ocupado, pedir: pedirDica });
+
+  // ---------- cronômetro ----------
+  const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`; };
+  const currentElapsed = () => elapsed + (timer ? (Date.now() - startedAt) / 1000 : 0);
+  function showTime() { $("timer").textContent = fmt(currentElapsed()); }
+  function startTimer() { if (timer || finished || document.hidden || !P) return; startedAt = Date.now(); timer = setInterval(showTime, 500); showTime(); }
+  function stopTimer() { if (!timer) return; elapsed = currentElapsed(); clearInterval(timer); timer = null; showTime(); }
+  document.addEventListener("visibilitychange", () => {
+    if (!P) return;
+    if (document.hidden) { stopTimer(); persist(); }
+    else if (!finished && !document.querySelector(".overlay.open") && (emp || history.length)) startTimer();
+  });
+  setInterval(() => { if (timer) persist(); }, 5000);
+
+  // ---------- fim ----------
+  function ganhou() {
+    if (finished) return;
+    stopTimer();
+    finished = true;
+    elapsed = Math.round(elapsed); showTime();
+    const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
+    if (!teste && st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
+    persist();
+    if (window.jogosHaptico) jogosHaptico(true);
+    placar();
+    if (dica) dica.atualiza();
+    setTimeout(() => celebrar("brigadeiro", { alvo: $("stage"), esmaecer: $("tab") }).then(() => {   // comum/celebra.js
+      document.body.classList.add("acabou", "play"); placar();
+      setTimeout(showEnd, 200);
+    }), 250);
+  }
+  function showEnd() {
+    $("endTime").textContent = fmt(elapsed);
+    $("endSub").textContent = `#${dayNum} · ${emp} empurrões (mínimo ${P.m}) · ${dicaUsada ? "com dica" : "sem dica"}`;
+    if (window.semanaFim) semanaFim($("endSub"), semanaTempos(LS, dayNum), "tempo");   // últimos 7 dias
+    openModal("endOverlay");
+  }
+  $("shareBtn").addEventListener("click", () => {
+    const perfeito = emp === P.m;
+    const text = `BRIGADEIRO #${dayNum} ${"🟤".repeat(forminhas.length)}\n${emp} empurrões${perfeito ? " (o mínimo!)" : ` · mínimo ${P.m}`}\n⏱ ${fmt(elapsed)}${dicaUsada ? " · com dica" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/brigadeiro/`;
+    ghCompartilhar($("shareBtn"), text);
+  });
+  $("doneBar").addEventListener("click", () => { if (finished) showEnd(); });
+
+  // ---------- janelas ----------
+  function openModal(id) { $(id).classList.add("open"); stopTimer(); }
+  function closeModal(el) { el.classList.remove("open"); if (!finished && !document.querySelector(".overlay.open") && (emp || history.length)) startTimer(); }
+  document.querySelectorAll(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); }));
+  $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+  // exemplo na ajuda: a colher, um brigadeiro e a forminha
+  $("demo").innerHTML = `<svg viewBox="0 0 300 100"><defs><radialGradient id="bri" cx="36%" cy="30%" r="72%"><stop offset="0" stop-color="#8a5636"/><stop offset=".5" stop-color="#4f2c18"/><stop offset="1" stop-color="#2b170b"/></radialGradient><filter id="sb" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="rgba(40,15,0,.35)"/></filter></defs>
+    <rect width="300" height="100" rx="18" style="fill:var(--papel)"/>${forminha(250, 50, CUPS[0])}<g transform="translate(150 50)">${brigadeiro(31, 1)}</g><g transform="translate(60 50)">${COLHER}</g>
+    <path d="M190 50h18m-7-7 7 7-7 7" stroke="#b0466f" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/></svg>`;
+
+  // jogo livre (modo de teste escondido, comum/proximo.js): "Extra · nível ▾ · ↻" na linha da data,
+  // "Jogar outro" no fim e "‹ Hoje" para voltar. Não grava nada.
+  const nivelDo = (p, idx) => p.l || ((new Date(DADOS.epoch[0], DADOS.epoch[1], DADOS.epoch[2] + idx).getDay() + 6) % 7 + 1);
+  let nivelLivre = Number(load("nivel-livre", 4)) || 4, idxLivre = -1;
+  function infoLivre() {
+    if (!teste) return;
+    ghNivel($("dayInfo"), { niveis: [1, 2, 3, 4, 5, 6, 7].map(v => ({ v, rotulo: `nível ${v}`, curto: String(v) })), atual: nivelLivre,
+      aoMudar: v => { nivelLivre = v; save("nivel-livre", v); sorteia(); }, aoSortear: () => sorteia() });
+  }
+  function sorteia() {
+    if (!DADOS) return;
+    teste = true; stopTimer();
+    document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open"));
+    const hoje = (dayNum - 1) % DADOS.puzzles.length;
+    const todos = DADOS.puzzles.map((p, i) => i).filter(i => i !== hoje);
+    const ids = todos.filter(i => i !== idxLivre && nivelDo(DADOS.puzzles[i], i) === nivelLivre);
+    const lista = ids.length ? ids : todos;
+    idxLivre = lista[Math.floor(Math.random() * lista.length)];
+    document.body.classList.remove("acabou", "play");
+    setup(DADOS.puzzles[idxLivre], null);
+    infoLivre(); aviso("");
+  }
+  function voltaDia() {
+    if (!DADOS || !teste) return;
+    teste = false; stopTimer(); idxLivre = -1;
+    document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open"));
+    $("dayInfo").classList.remove("gh-nivel");
+    const puzzle = DADOS.puzzles[(dayNum - 1) % DADOS.puzzles.length];
+    document.body.classList.remove("acabou", "play");
+    let saved = load("dia:" + dayNum, null); if (saved && saved.pid !== puzzle.g) saved = null;
+    setup(puzzle, saved);
+    if (finished) { document.body.classList.add("acabou"); placar(); }
+  }
+  $("livreChk").addEventListener("change", e => (e.target.checked ? sorteia() : voltaDia()));
+  $("againBtn").addEventListener("click", () => sorteia());
+})();
+</script>
+<script src="../comum/catalogo.js?v=138"></script>
+<script src="../comum/celebra.js?v=138"></script>
+<script src="../comum/recorde.js?v=138"></script>
+<script src="../comum/proximo.js?v=138" data-jogo="brigadeiro"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-// Acervo de conhecimentos gerais (out/2026), compartilhado pela Panelinha e pelo Cordel.
+// Acervo de conhecimentos gerais (out/2026), do Cordel (e da Panelinha, que saiu em 17/10/2026; os campos dela ficaram).
 // Mais denso que o banco antigo: história, artes, literatura, música, ciência, filosofia,
 // geografia, mitologia, cozinha do mundo, esporte, economia, tecnologia e jogos de palavras.
 //

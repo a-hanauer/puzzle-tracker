@@ -76,13 +76,12 @@
   @keyframes cel-dir { to { transform: translateX(9px) rotate(3deg); } }
   @keyframes cel-faca { 0% { transform: translateY(-40px); opacity: 0; } 30% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(95px); opacity: 0; } }
 
-  /* Panelinha: a panela aparece, a tampa pula e o vapor sobe */
-  .celebra .panela-tampa { transform-box: fill-box; transform-origin: 50% 100%; animation: cel-tampa .7s cubic-bezier(.3, 1.4, .5, 1) .55s both; }
-  @keyframes cel-tampa { 0% { transform: translateY(-60px) rotate(-12deg); opacity: 0; } 40% { opacity: 1; } 65% { transform: translateY(-12px) rotate(4deg); } 100% { transform: none; opacity: 1; } }
-
-  /* Ponto Cruz: cada perna do X só aparece quando começa a ser bordada (sem pontinho da ponta redonda antes) */
-  .celebra .traco.cz-p { animation: cel-traco var(--t, .53s) ease-in-out var(--d, 0s) forwards, cel-mostra 0s linear var(--d, 0s) both; }
-  @keyframes cel-mostra { from { opacity: 0; } to { opacity: 1; } }
+  /* Brigadeiro: o doce cai na forminha e quica; o granulado salpica em volta */
+  .celebra .bri-cai, .celebra .bri-conf { transform-box: fill-box; transform-origin: 50% 100%; }
+  .celebra .bri-cai { animation: cel-bri-cai .5s cubic-bezier(.35, 0, .4, 1) var(--d, 0s) both; }
+  @keyframes cel-bri-cai { 0% { transform: translateY(-120px) scale(.9); opacity: 0; } 25% { opacity: 1; } 62% { transform: translateY(0) scale(1.06, .9); } 80% { transform: translateY(-10px); } 100% { transform: none; opacity: 1; } }
+  .celebra .bri-conf { animation: cel-bri-conf .45s ease-out var(--d, 0s) both; }
+  @keyframes cel-bri-conf { from { transform: translateY(-30px) scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
 
   /* Cordel: o barbante se estende e o folheto cai pendurado, balançando */
   .celebra .cordel-folheto { transform-box: fill-box; transform-origin: 50% 0; animation: cel-pendura .9s cubic-bezier(.3, 1.3, .5, 1) .35s both; }
@@ -110,20 +109,31 @@
         </g>
       </g>`,
 
-    panelinha: () => `
-      <g class="entra">
-        <rect x="-82" y="-4" width="22" height="12" rx="6" fill="#7a5446"/><rect x="60" y="-4" width="22" height="12" rx="6" fill="#7a5446"/>
-        <path d="M-64 -16H64V36A26 26 0 0 1 38 62H-38A26 26 0 0 1 -64 36Z" fill="#c8463a"/>
-        <rect x="-68" y="-22" width="136" height="12" rx="6" fill="#f6ede3"/>
-        <circle cx="-34" cy="14" r="6" fill="#f6ede3"/><circle cx="-6" cy="32" r="6" fill="#f6ede3"/><circle cx="24" cy="10" r="6" fill="#f6ede3"/><circle cx="42" cy="38" r="6" fill="#f6ede3"/><circle cx="-44" cy="44" r="5" fill="#f6ede3"/>
-      </g>
-      <g class="panela-tampa">
-        <path d="M-60 -24C-56 -50 56 -50 60 -24Z" fill="#b23b30"/>
-        <rect x="-12" y="-58" width="24" height="12" rx="6" fill="#7a5446"/>
-      </g>
-      <path class="traco" d="M-26 -66C-36 -78 -16 -86 -26 -98" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.15s;--t:.4s"/>
-      <path class="traco" d="M0 -70C-10 -82 10 -90 0 -102" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.25s;--t:.4s"/>
-      <path class="traco" d="M26 -66C16 -78 36 -86 26 -98" fill="none" stroke="#c9bdb0" stroke-width="5" stroke-linecap="round" style="--l:40;--d:1.35s;--t:.4s"/>`,
+    // Brigadeiro: a forminha rosa abre, o brigadeiro cai e quica, e um granulado colorido salpica em volta
+    brigadeiro: () => {
+      const forminha = (R, cor) => {
+        let p = "", pr = ""; const n = 28;
+        for (let k = 0; k <= n; k++) { const a = k / n * Math.PI * 2, r = k % 2 ? R * .91 : R; p += `${k ? "L" : "M"}${(Math.cos(a) * r).toFixed(1)} ${(8 + Math.sin(a) * r).toFixed(1)}`; }
+        for (let k = 0; k < n; k += 2) { const a = k / n * Math.PI * 2; pr += `M${(Math.cos(a) * R * .68).toFixed(1)} ${(8 + Math.sin(a) * R * .68).toFixed(1)}L${(Math.cos(a) * R * .95).toFixed(1)} ${(8 + Math.sin(a) * R * .95).toFixed(1)}`; }
+        return `<path d="${p}Z" fill="${cor}"/><path d="${pr}" stroke="rgba(0,0,0,.12)" stroke-width="3.7"/><circle cy="8" r="${R * .66}" fill="${cor}"/><circle cy="8" r="${R * .66}" fill="rgba(0,0,0,.08)"/>`;
+      };
+      const r = 54, cs = ["#8a5a3a", "#a06c48", "#3e2414"];
+      let gran = "", conf = "";
+      for (let k = 0; k < 30; k++) {
+        const a = (k * 137.5 + 93) * Math.PI / 180, rr = r * .12 + Math.sqrt(k / 30) * r * .75, x = Math.cos(a) * rr, y = 4 + Math.sin(a) * rr, t = (k * 53 + 51) % 180;
+        gran += `<rect x="${(x - 8.1).toFixed(1)}" y="${(y - 2.7).toFixed(1)}" width="16.2" height="5.4" rx="2.7" fill="${cs[k % 3]}" transform="rotate(${t} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+      }
+      const cc = ["#f19bbb", "#8ccbe9", "#f5cf62", "#a9dc8f", "#fff4e0"];
+      for (let k = 0; k < 16; k++) {
+        const a = k * 2.39996, rr = 70 + (k * 37) % 26, x = Math.cos(a) * rr, y = Math.sin(a) * rr * .9, t = (k * 61) % 180;
+        conf += `<g class="bri-conf" style="--d:${(.95 + k * .03).toFixed(2)}s"><rect x="${(x - 6).toFixed(1)}" y="${(y - 2).toFixed(1)}" width="12" height="4" rx="2" fill="${cc[k % 5]}" transform="rotate(${t} ${x.toFixed(1)} ${y.toFixed(1)})"/></g>`;
+      }
+      return `<defs><radialGradient id="cel-bri" cx="36%" cy="30%" r="72%"><stop offset="0" stop-color="#8a5636"/><stop offset=".5" stop-color="#4f2c18"/><stop offset="1" stop-color="#2b170b"/></radialGradient></defs>
+      <g class="entra">${forminha(82, "#f19bbb")}</g>
+      <g class="bri-cai" style="--d:.38s"><circle cy="${4 + r * .12}" r="${r}" fill="rgba(40,15,0,.25)"/><circle cy="4" r="${r}" fill="url(#cel-bri)"/>${gran}
+        <ellipse cx="${-r * .35}" cy="${4 - r * .45}" rx="${r * .3}" ry="${r * .16}" fill="rgba(255,235,215,.22)" transform="rotate(-25 ${-r * .35} ${4 - r * .45})"/></g>
+      ${conf}`;
+    },
 
     // Ponto Cruz: um retalho de tela com um bloco 2 × 3 do tabuleiro; os seis dados são bordados em ordem,
     // cada um na cor do seu número (as mesmas --d1…--d6 do jogo, versão clara), e a agulha fecha.
