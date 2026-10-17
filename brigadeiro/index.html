@@ -60,6 +60,9 @@
   #tab { display: block; overflow: visible; touch-action: none; }
   #tab .casa { cursor: pointer; }
   #tab .peca { transition: transform var(--anda, .1s) ease-out; }
+  #tab .gran { transform-box: fill-box; transform-origin: center; }
+  .stage { perspective: 900px; }
+  #tab { transform-origin: 50% 50%; will-change: transform; }
   #tab.treme { animation: treme .32s ease; }
   @keyframes treme { 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
   #tab .chegou > g { animation: chegou .34s cubic-bezier(.3, 1.6, .5, 1); transform-box: fill-box; transform-origin: center; }
@@ -280,7 +283,7 @@
       const a = (k * 137.5 + seed * 31) * Math.PI / 180, rr = r * .13 + Math.sqrt(k / 26) * r * .74, x = Math.cos(a) * rr, y = Math.sin(a) * rr, t = (k * 53 + seed * 17) % 180;
       g += `<rect x="${(x - r * .145).toFixed(1)}" y="${(y - r * .05).toFixed(1)}" width="${(r * .29).toFixed(1)}" height="${(r * .1).toFixed(1)}" rx="${(r * .05).toFixed(1)}" fill="${cs[k % 3]}" transform="rotate(${t} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
     }
-    return `<circle cy="${(r * .14).toFixed(1)}" r="${r}" fill="rgba(40,15,0,.28)"/><circle r="${r}" fill="url(#bri)"/>${g}<ellipse cx="${(-r * .35).toFixed(1)}" cy="${(-r * .45).toFixed(1)}" rx="${(r * .3).toFixed(1)}" ry="${(r * .16).toFixed(1)}" fill="rgba(255,235,215,.22)" transform="rotate(-25 ${(-r * .35).toFixed(1)} ${(-r * .45).toFixed(1)})"/>`;
+    return `<circle cy="${(r * .14).toFixed(1)}" r="${r}" fill="rgba(40,15,0,.28)"/><circle r="${r}" fill="url(#bri)"/><g class="gran">${g}</g><ellipse cx="${(-r * .35).toFixed(1)}" cy="${(-r * .45).toFixed(1)}" rx="${(r * .3).toFixed(1)}" ry="${(r * .16).toFixed(1)}" fill="rgba(255,235,215,.22)" transform="rotate(-25 ${(-r * .35).toFixed(1)} ${(-r * .45).toFixed(1)})"/>`;
   }
   const DEFS = `<defs>
     <radialGradient id="bri" cx="36%" cy="30%" r="72%"><stop offset="0" stop-color="#8a5636"/><stop offset=".5" stop-color="#4f2c18"/><stop offset="1" stop-color="#2b170b"/></radialGradient>
@@ -357,29 +360,39 @@
     if (!r.mexeu) { if (window.jogosHaptico) jogosHaptico(); return false; }
     startTimer(); guarda();
     const vivos = doces.map((x, k) => k).filter(k => !doces[k].dentro);
+    const POR_CASA = 120;                                            // ms por casa: rolam devagar, cada um no seu ritmo
     let maior = 0;
     vivos.forEach((k, j) => {
       const fim = r.todos[j], passos = r.rotas[j].length, el = $("doce" + k);
       maior = Math.max(maior, passos);
-      el.style.transition = `transform ${Math.max(.08, passos * .06)}s cubic-bezier(.35, 0, .55, 1)`;
+      const dur = Math.max(1, passos) * POR_CASA;
+      el.style.transition = `transform ${dur}ms cubic-bezier(.45, .05, .55, .95)`;
       doces[k].i = fim.i;
       doces[k].dentro = r.caiu.includes(j);
       el.style.transform = tr(fim.i, doces[k].dentro);
       el.classList.remove("chegou");
-      if (doces[k].dentro) setTimeout(() => { el.classList.add("chegou"); if (window.jogosHaptico) jogosHaptico(); }, passos * 60);
+      // o granulado gira enquanto o doce rola (uma volta a cada ~3 casas, no sentido do movimento)
+      if (passos) {
+        const g = el.querySelector(".gran"), de = +(g.dataset.ang || 0), ate = de + (d === 1 || d === 2 ? 1 : -1) * passos * 120;
+        g.dataset.ang = ate;
+        g.animate([{ transform: `rotate(${de}deg)` }, { transform: `rotate(${ate}deg)` }], { duration: dur, easing: "cubic-bezier(.45, .05, .55, .95)", fill: "forwards" });
+      }
+      if (doces[k].dentro) setTimeout(() => { el.classList.add("chegou"); if (window.jogosHaptico) jogosHaptico(); }, dur);
     });
     cheias = r.cheias; inc++;
-    // a assadeira pende um pouco para o lado da inclinação
-    const t = $("bandeja"); t.style.transition = "transform .12s ease-out";
-    t.style.transform = `translate(${DIRS[d][0] * 6}px, ${DIRS[d][1] * 6}px)`;
-    setTimeout(() => { t.style.transition = "transform .25s ease"; t.style.transform = ""; }, 140);
+    // a assadeira inclina de verdade (em perspectiva) para o lado escolhido enquanto os doces rolam, e volta
+    const total = Math.max(1, maior) * POR_CASA, a = 7;
+    const incl = `rotateX(${-DIRS[d][1] * a}deg) rotateY(${DIRS[d][0] * a}deg)`;
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+      $("tab").animate([{ transform: "none" }, { transform: incl, offset: .18 }, { transform: incl, offset: .7 }, { transform: "none" }],
+        { duration: total + 260, easing: "ease-in-out" });
     ocupado = true; setas();
     setTimeout(() => {
       ocupado = false; placar(); persist(); setas();
       if (doces.every(x => x.dentro)) { ganhou(); return; }
       if (!depois) avisaTravado();
       depois && depois();
-    }, Math.max(140, maior * 60 + 40));
+    }, total + 80);
     placar();
     return true;
   }
