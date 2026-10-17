@@ -96,19 +96,26 @@
   // desenhos: viewBox -100 -100 200 200, centrados em 0,0
   const ARTE = {
     pingado: () => `
-      <defs><clipPath id="cel-xc"><circle r="39"/></clipPath></defs>
-      <g transform="translate(-6 0) scale(1.25)">
-        <g class="entra"><ellipse rx="66" ry="62" fill="#efe4d4"/><ellipse rx="52" ry="49" fill="#e4d6c1"/></g>
-        <g class="entra" style="--d:.08s">
-          <rect x="38" y="-10" width="34" height="20" rx="10" fill="#fbf5ec"/>
-          <circle r="46" fill="#fbf5ec"/><circle r="39" fill="#9c6a3f"/><circle r="35" fill="#7a4a2a"/>
-          <g clip-path="url(#cel-xc)">
-            <circle class="cafe-gota" cy="-2" r="4" fill="#f6ecdc"/>
-            <path class="cafe-coracao" d="M0 25C-27 7 -30 -14 -15 -19C-7 -22 0 -16 0 -9C0 -16 7 -22 15 -19C30 -14 27 7 0 25Z" fill="#f6ecdc"/>
+        <defs><clipPath id="cel-xc"><circle r="39"/></clipPath>
+          <radialGradient id="cel-pires" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#fbf6ee"/><stop offset=".7" stop-color="#efe4d4"/><stop offset="1" stop-color="#d9c8b0"/></radialGradient>
+          <radialGradient id="cel-xic" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ece2d2"/></radialGradient>
+          <radialGradient id="cel-crema" cx="45%" cy="42%" r="62%"><stop offset="0" stop-color="#b67a46"/><stop offset=".6" stop-color="#8a5530"/><stop offset=".92" stop-color="#5f361b"/><stop offset="1" stop-color="#4a2913"/></radialGradient>
+          <radialGradient id="cel-leite" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#ead9bd"/></radialGradient>
+          <filter id="cel-somb" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="rgba(70,40,15,.3)"/></filter></defs>
+        <g transform="translate(-6 0) scale(1.25)">
+          <g class="entra"><ellipse rx="66" ry="62" fill="url(#cel-pires)" filter="url(#cel-somb)"/><ellipse rx="52" ry="49" fill="none" stroke="rgba(150,120,90,.25)" stroke-width="2"/></g>
+          <g class="entra" style="--d:.08s">
+            <path d="M40 -11h18a11 11 0 0 1 0 22H40Z" fill="url(#cel-xic)" stroke="rgba(150,120,90,.3)" stroke-width="1.5" filter="url(#cel-somb)"/>
+            <circle r="46" fill="url(#cel-xic)" filter="url(#cel-somb)"/><circle r="46" fill="none" stroke="rgba(150,120,90,.25)" stroke-width="1.5"/>
+            <circle r="40.5" fill="#d9c9b2"/><circle r="39" fill="url(#cel-crema)"/>
+            <g clip-path="url(#cel-xc)">
+              <circle class="cafe-gota" cy="-2" r="4" fill="#f6ecdc"/>
+              <path class="cafe-coracao" d="M0 25C-27 7 -30 -14 -15 -19C-7 -22 0 -16 0 -9C0 -16 7 -22 15 -19C30 -14 27 7 0 25Z" fill="url(#cel-leite)" stroke="#e8d3b2" stroke-width="1.5"/>
+              <path d="M-26 -30A39 39 0 0 1 10 -37" fill="none" stroke="rgba(255,235,210,.28)" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <path d="M-38 -16A44 44 0 0 1 -8 -44" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/>
           </g>
-        </g>
-      </g>`,
-
+        </g>`,
     // Brigadeiro: a forminha rosa abre, o brigadeiro cai e quica, e um granulado colorido salpica em volta
     brigadeiro: () => {
       const forminha = (R, cor) => {
@@ -168,35 +175,54 @@
     },
 
     cordel: () => `
-      <path class="traco" d="M-96 -66Q0 -46 96 -66" fill="none" stroke="#6e5a44" stroke-width="3.5" stroke-linecap="round" style="--l:200;--t:.45s"/>
-      <g class="cordel-folheto">
-        <rect x="-50" y="-52" width="100" height="134" rx="5" fill="#f4ecdc"/>
-        <rect x="-38" y="-38" width="76" height="9" rx="2" fill="#141210"/>
-        <rect x="-38" y="-24" width="76" height="70" rx="3" fill="#141210"/>
-        <circle class="cordel-sol" cx="17" cy="-6" r="11" fill="#c8321e"/>
-        <path d="M-38 46V20L-22 8L-8 18L8 2L24 16L38 6V46Z" fill="#f4ecdc"/>
-        <path d="M-30 46V30h12v16Z M-26 30l2-6 2 6Z" fill="#141210"/>
-        <rect x="-38" y="54" width="54" height="6" rx="2" fill="#141210"/>
-        <rect x="-38" y="66" width="40" height="6" rx="2" fill="#141210"/>
-        <rect x="-7" y="-66" width="14" height="26" rx="4" fill="#9a6a43"/>
-        <rect x="-1.5" y="-64" width="3" height="22" rx="1.5" fill="#6e4a2c"/>
-      </g>`,
-
+        <defs>
+          <linearGradient id="cel-pino" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b98a5c"/><stop offset=".5" stop-color="#d7a878"/><stop offset="1" stop-color="#9a6a43"/></linearGradient>
+          <linearGradient id="cel-pap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8f0df"/><stop offset="1" stop-color="#ead9ba"/></linearGradient>
+          <filter id="cel-fibra" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .35  0 0 0 0 .2  0 0 0 .18 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+          <filter id="cel-tinta" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".12" numOctaves="2" seed="9"/><feDisplacementMap in="SourceGraphic" scale="2.5" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="cel-hach" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><rect width="5" height="2.2" fill="#141210"/></pattern>
+          <filter id="cel-somb2" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="3" dy="6" stdDeviation="4" flood-color="rgba(40,30,20,.3)"/></filter>
+        </defs>
+        <path class="traco" d="M-96 -66Q0 -46 96 -66" fill="none" stroke="#6e5a44" stroke-width="4" stroke-linecap="round" style="--l:200;--t:.45s"/>
+        <path d="M-96 -66Q0 -46 96 -66" fill="none" stroke="#a48a6c" stroke-width="1.6" stroke-dasharray="3 4" opacity=".7"/>
+        <g class="cordel-folheto">
+          <g filter="url(#cel-somb2)"><rect x="-50" y="-52" width="100" height="134" rx="4" fill="url(#cel-pap)"/></g>
+          <rect x="-50" y="-52" width="100" height="134" rx="4" fill="#fff" filter="url(#cel-fibra)"/>
+          <g filter="url(#cel-tinta)">
+            <rect x="-38" y="-38" width="76" height="9" rx="1.5" fill="#141210"/>
+            <rect x="-38" y="-24" width="76" height="70" rx="2" fill="#141210"/>
+            <rect x="-38" y="-24" width="76" height="70" rx="2" fill="url(#cel-hach)" opacity=".0"/>
+            <circle class="cordel-sol" cx="17" cy="-6" r="11" fill="#c8321e"/>
+            <path d="M-38 46V20L-22 8L-8 18L8 2L24 16L38 6V46Z" fill="#f4ecdc"/>
+            <path d="M-38 46V30L-22 22L-8 30L8 18L24 28L38 22V46Z" fill="url(#cel-hach)"/>
+            <path d="M-30 46V30h12v16Z M-26 30l2-6 2 6Z" fill="#141210"/>
+            <rect x="-38" y="54" width="54" height="6" rx="2" fill="#141210"/>
+            <rect x="-38" y="66" width="40" height="6" rx="2" fill="#141210"/>
+          </g>
+          <rect x="-7.5" y="-67" width="15" height="27" rx="4" fill="url(#cel-pino)"/>
+          <rect x="-1.5" y="-65" width="3" height="23" rx="1.5" fill="#6e4a2c"/>
+          <circle cy="-56" r="3.2" fill="#c9ced3" stroke="#8d949b" stroke-width="1"/>
+        </g>`,
     eclipse: () => `
-      <defs>
-        <radialGradient id="cel-sol" cx="42%" cy="38%" r="62%"><stop offset="0" stop-color="#fff7d1"/><stop offset=".42" stop-color="#ffd23f"/><stop offset="1" stop-color="#f08c00"/></radialGradient>
-        <radialGradient id="cel-coroa" r="50%"><stop offset=".5" stop-color="#fff4c2" stop-opacity=".95"/><stop offset=".68" stop-color="#ffc83d" stop-opacity=".6"/><stop offset="1" stop-color="#ffb020" stop-opacity="0"/></radialGradient>
-        <clipPath id="cel-ceu"><circle r="98"/></clipPath>
-      </defs>
-      <circle class="entra" r="98" fill="#0d1233"/>
-      <g clip-path="url(#cel-ceu)">
-        <circle class="ecl-coroa" r="86" fill="url(#cel-coroa)"/>
-        <circle class="entra" style="--d:.07s" r="48" fill="url(#cel-sol)"/>
-        <circle class="ecl-lua" cx="3" cy="-3" r="46.5" fill="#0d1233"/>
-        ${[[-66, -48, .6], [58, -62, .87], [70, 44, 1.13], [-58, 60, 1.4], [-80, 6, 1], [28, 76, .73]].map(([x, y, d]) =>
-          `<g transform="translate(${x} ${y}) scale(5)"><path class="brilha" style="--d:${d}s" d="M0-1L.22-.22 1 0 .22.22 0 1-.22.22-1 0-.22-.22Z" fill="#fff4cf"/></g>`).join("")}
-      </g>`,
-
+        <defs>
+          <radialGradient id="cel-sol" cx="42%" cy="38%" r="62%"><stop offset="0" stop-color="#fff7d1"/><stop offset=".42" stop-color="#ffd23f"/><stop offset="1" stop-color="#f08c00"/></radialGradient>
+          <radialGradient id="cel-coroa" r="50%"><stop offset=".5" stop-color="#fff4c2" stop-opacity=".95"/><stop offset=".68" stop-color="#ffc83d" stop-opacity=".6"/><stop offset="1" stop-color="#ffb020" stop-opacity="0"/></radialGradient>
+          <radialGradient id="cel-noite" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#1c2560"/><stop offset="1" stop-color="#070a22"/></radialGradient>
+          <radialGradient id="cel-luaesc" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#1a2150"/><stop offset="1" stop-color="#080b24"/></radialGradient>
+          <clipPath id="cel-ceu"><circle r="98"/></clipPath>
+        </defs>
+        <circle class="entra" r="98" fill="url(#cel-noite)"/>
+        <g clip-path="url(#cel-ceu)">
+          ${Array.from({ length: 22 }, (_, k) => { const a = k * 2.4, r = 30 + (k * 53) % 66; return `<circle cx="${(Math.cos(a) * r * 1.4).toFixed(1)}" cy="${(Math.sin(a) * r * 1.4).toFixed(1)}" r="${(k % 3 ? .9 : 1.5)}" fill="#fff" opacity="${(.35 + (k % 4) * .15).toFixed(2)}"/>`; }).join("")}
+          <g class="ecl-coroa">
+            <circle r="86" fill="url(#cel-coroa)"/>
+            ${Array.from({ length: 16 }, (_, k) => `<path d="M0 -50L${k % 2 ? 2 : 3.5} ${k % 2 ? -68 : -80}L0 ${k % 2 ? -73 : -88}L${k % 2 ? -2 : -3.5} ${k % 2 ? -68 : -80}Z" transform="rotate(${k * 22.5 + 6})" fill="#fff1b8" opacity="${k % 2 ? .3 : .5}"/>`).join("")}
+          </g>
+          <circle class="entra" style="--d:.07s" r="48" fill="url(#cel-sol)"/>
+          <g class="ecl-lua"><circle cx="3" cy="-3" r="46.5" fill="url(#cel-luaesc)"/><path d="M-30 -30A44 44 0 0 1 20 -42" fill="none" stroke="#3a4690" stroke-width="2.5" stroke-linecap="round" opacity=".7" transform="translate(3 -3)"/></g>
+          ${[[-66, -48, .6], [58, -62, .87], [70, 44, 1.13], [-58, 60, 1.4], [-80, 6, 1], [28, 76, .73]].map(([x, y, d]) =>
+            `<g transform="translate(${x} ${y}) scale(5)"><path class="brilha" style="--d:${d}s" d="M0-1L.22-.22 1 0 .22.22 0 1-.22.22-1 0-.22-.22Z" fill="#fff4cf"/></g>`).join("")}
+        </g>`,
     // Novelo: o novelo gira enquanto as voltas de lã vão se enrolando (grandes círculos inclinados), e o fio solto sai por último
     novelo: () => {
       const R = 62, esc = "#a8332c", cla = "#ee8a7d", meio = "#c24a40";
@@ -219,43 +245,70 @@
 
     retalhos: () => {
       const q = (rot, d) => `<g transform="rotate(${rot})"><g class="azu-q" style="--d:${d}s">
-        <rect x="0" y="0" width="70" height="70" fill="#f4f1e8"/>
-        <path d="M0 0H70V70A70 70 0 0 1 0 0Z" fill="#1f4fa3" opacity=".12"/>
-        <path d="M0 0Q48 8 58 58Q8 48 0 0Z" fill="#1f4fa3"/>
-        <circle cx="52" cy="18" r="7" fill="#3b72c9"/><circle cx="18" cy="52" r="7" fill="#3b72c9"/>
-        <path d="M70 70m-20 0a20 20 0 0 1 20-20" fill="none" stroke="#1f4fa3" stroke-width="6"/>
-      </g></g>`;
+          <rect x="0" y="0" width="70" height="70" fill="#f4f1e8"/><rect x="0" y="0" width="70" height="70" fill="rgba(255,225,170,.14)"/>
+          <g filter="url(#cel-mao)">
+          <path d="M0 0H70V70A70 70 0 0 1 0 0Z" fill="#1f4fa3" opacity=".12"/>
+          <path d="M0 0Q48 8 58 58Q8 48 0 0Z" fill="#1f4fa3"/><path d="M6 6Q40 14 50 50" fill="none" stroke="#3b72c9" stroke-width="3" opacity=".7"/>
+          <circle cx="52" cy="18" r="7" fill="#3b72c9"/><circle cx="18" cy="52" r="7" fill="#3b72c9"/>
+          <path d="M70 70m-20 0a20 20 0 0 1 20-20" fill="none" stroke="#1f4fa3" stroke-width="6"/></g>
+          <path d="M8 30L20 34L30 26L44 30M20 34L18 50L28 62" fill="none" stroke="#3a3020" stroke-opacity=".28" stroke-width="1"/>
+        </g></g>`;
       return `
-      <g class="entra"><rect x="-86" y="-86" width="172" height="172" rx="14" fill="#173d80"/><rect x="-76" y="-76" width="152" height="152" rx="6" fill="#f4f1e8"/></g>
-      <g transform="scale(1.086)">${q(180, .33)}${q(270, .53)}${q(0, .73)}${q(90, .93)}</g>
-      <circle class="entra" style="--d:1.2s" r="15" fill="#f4f1e8"/><circle class="entra" style="--d:1.27s" r="9" fill="#1f4fa3"/>`;
+        <defs><filter id="cel-mao"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="5"/><feDisplacementMap in="SourceGraphic" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <linearGradient id="cel-azb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>
+          <linearGradient id="cel-azm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a5bb0"/><stop offset="1" stop-color="#112f6b"/></linearGradient>
+          <filter id="cel-azs" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="rgba(10,30,70,.35)"/></filter></defs>
+        <g class="entra"><rect x="-86" y="-86" width="172" height="172" rx="14" fill="url(#cel-azm)" filter="url(#cel-azs)"/><rect x="-76" y="-76" width="152" height="152" rx="6" fill="#f4f1e8"/></g>
+        <g transform="scale(1.086)">${q(180, .33)}${q(270, .53)}${q(0, .73)}${q(90, .93)}</g>
+        <path d="M-76 0H76M0 -76V76" stroke="#e9ecef" stroke-width="3"/>
+        <rect class="surge" style="--d:1.1s" x="-76" y="-76" width="152" height="152" rx="6" fill="url(#cel-azb)"/>
+        <path class="surge" style="--d:1.1s" d="M-74 70V-74H70" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="2.5"/>
+        <circle class="entra" style="--d:1.2s" r="15" fill="#f4f1e8"/><circle class="entra" style="--d:1.27s" r="9" fill="#1f4fa3"/><circle class="entra" style="--d:1.3s" cx="-3" cy="-3" r="3" fill="#fff" opacity=".6"/>`;
     },
-
     quinhentos: () => {
       const nota = (y, r, d, r0, top) => `<g transform="translate(0 ${y}) rotate(${r})"><g class="pila-nota" style="--d:${d}s;--r0:${r0}deg">
-        <rect x="-86" y="-48" width="172" height="96" rx="9" fill="${top ? "#b89bd9" : "#a888cf"}"/>
-        <rect x="-77" y="-39" width="154" height="78" rx="5" fill="none" stroke="#8d6cc0" stroke-width="2.6"/>
-        ${top ? `<path d="M-77 20c22-13 40 13 66 0s44 13 84-2" fill="none" stroke="#a384cf" stroke-width="6"/>
-        <circle cx="-42" cy="-2" r="24" fill="#d8c8ee"/>
-        <text x="-42" y="7" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="800" font-size="22" fill="#6f4fa8">R$</text>
-        <text x="36" y="22" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="800" font-size="62" fill="#5a3d8c">5</text>` : ""}
-      </g></g>`;
-      return nota(28, 8, .1, -60, false) + nota(12, -6, .37, 40, false) + nota(-6, -2, .63, -30, true);
+          <rect x="-86" y="-48" width="172" height="96" rx="9" fill="url(#cel-nota${top ? "a" : "b"})" filter="url(#cel-ns)"/>
+          <rect x="-86" y="-48" width="172" height="96" rx="9" fill="url(#cel-gui)"/>
+          <rect x="-77" y="-39" width="154" height="78" rx="5" fill="none" stroke="#8d6cc0" stroke-width="2.4"/>
+          <rect x="-77" y="-35" width="154" height="70" rx="3" fill="none" stroke="#c6b0e6" stroke-width="1" stroke-dasharray="2 2"/>
+          ${top ? `<rect x="12" y="-48" width="7" height="96" fill="#d9c9ef" opacity=".7"/><path d="M-77 20c22-13 40 13 66 0s44 13 84-2" fill="none" stroke="#a384cf" stroke-width="6"/>
+          <circle cx="-42" cy="-2" r="25" fill="#e6dbf4" stroke="#8d6cc0" stroke-width="2"/><circle cx="-42" cy="-2" r="20" fill="none" stroke="#b9a2df" stroke-width="1.2" stroke-dasharray="1.5 2"/>
+          <text x="-42" y="7" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="800" font-size="22" fill="#6f4fa8">R$</text>
+          <text x="38" y="24" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="800" font-size="62" fill="#3f2a6b" opacity=".25">5</text>
+          <text x="36" y="22" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="800" font-size="62" fill="#5a3d8c">5</text>
+          <path d="M-80 -42h40" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5"/>` : ""}
+        </g></g>`;
+      return `<defs>
+          <linearGradient id="cel-notaa" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9b0e6"/><stop offset="1" stop-color="#a888cf"/></linearGradient>
+          <linearGradient id="cel-notab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b294d8"/><stop offset="1" stop-color="#9273c0"/></linearGradient>
+          <pattern id="cel-gui" width="40" height="16" patternUnits="userSpaceOnUse"><path d="M0 8Q10 0 20 8T40 8M0 12Q10 4 20 12T40 12" fill="none" stroke="#7b59b3" stroke-opacity=".18" stroke-width="1"/></pattern>
+          <filter id="cel-ns" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(60,30,100,.3)"/></filter></defs>`
+        + nota(28, 8, .1, -60, false) + nota(12, -6, .37, 40, false) + nota(-6, -2, .63, -30, true);
     },
-
     sanduba: () => {
-      const fatia = (y) => `<rect x="-72" y="${y}" width="144" height="46" rx="16" fill="#e9c98a"/><rect x="-66" y="${y + 5}" width="132" height="36" rx="12" fill="#fdf6e6"/>`;
+      const poros = (y0, h) => Array.from({ length: 14 }, (_, k) => `<ellipse cx="${(-58 + (k * 37) % 116).toFixed(0)}" cy="${(y0 + 8 + (k * 13) % (h - 16)).toFixed(0)}" rx="${(1.6 + (k % 3) * .7).toFixed(1)}" ry="1.1" fill="#c9a160" opacity=".45"/>`).join("");
+      const fatia = (y, topo) => `<g filter="url(#cel-ss)"><rect x="-72" y="${y}" width="144" height="46" rx="${topo ? "22" : "16"}" fill="url(#cel-casca)"/></g>
+        <rect x="-66" y="${y + 5}" width="132" height="36" rx="${topo ? "18" : "12"}" fill="url(#cel-miolo)"/>${poros(y + 5, 36)}
+        <path d="M-60 ${y + 4}H60" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/>`;
       const sand = `
-        <g class="sando-cam" style="--d:.13s">${fatia(34)}</g>
-        <g class="sando-cam" style="--d:.33s"><path d="M-72 30 q8 -8 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 v10 H-72z" fill="#7fb556"/><path d="M-72 26 q8 -8 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 v8 H-72z" fill="#9fce72"/></g>
-        <g class="sando-cam" style="--d:.53s"><rect x="-82" y="-12" width="164" height="42" rx="21" fill="#bd7426"/><rect x="-82" y="-12" width="164" height="32" rx="16" fill="#d68f34"/>
-          ${[[-60, -2], [-34, 6], [-8, -4], [18, 5], [44, -1], [62, 8], [-48, 12], [30, 12]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#bd7426"/>`).join("")}</g>
-        <g class="sando-cam" style="--d:.73s">${fatia(-60)}</g>`;
+          <g class="sando-cam" style="--d:.13s">${fatia(34, false)}</g>
+          <g class="sando-cam" style="--d:.33s"><path d="M-74 31 q8 -9 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 v10 H-74z" fill="#6aa646"/><path d="M-74 26 q8 -9 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 v8 H-74z" fill="#9fce72"/>
+            ${[-56, -24, 8, 40].map(x => `<path d="M${x} 24l6 6" stroke="#cfe8b0" stroke-width="1.6" stroke-linecap="round"/>`).join("")}</g>
+          <g class="sando-cam" style="--d:.43s"><rect x="-70" y="16" width="140" height="10" rx="3" fill="#f5c84a"/><circle cx="-40" cy="21" r="2.4" fill="#e0ab26"/><circle cx="12" cy="20" r="2" fill="#e0ab26"/><circle cx="46" cy="22" r="2.4" fill="#e0ab26"/></g>
+          <g class="sando-cam" style="--d:.53s"><rect x="-82" y="-12" width="164" height="42" rx="21" fill="#a8621e"/><rect x="-82" y="-12" width="164" height="32" rx="16" fill="url(#cel-file)"/>
+            ${[-52, -22, 8, 38].map(x => `<path d="M${x} -6l14 22" stroke="#7a420f" stroke-width="4" stroke-linecap="round" opacity=".55"/>`).join("")}
+            <path d="M-70 -6Q0 -14 70 -6" fill="none" stroke="rgba(255,220,160,.4)" stroke-width="3" stroke-linecap="round"/></g>
+          <g class="sando-cam" style="--d:.73s">${fatia(-60, true)}</g>`;
       return `
-      <defs><clipPath id="cel-esq"><rect x="-100" y="-100" width="100" height="200"/></clipPath><clipPath id="cel-dir"><rect x="0" y="-100" width="100" height="200"/></clipPath></defs>
-      <g class="sando-esq"><g clip-path="url(#cel-esq)">${sand}</g></g>
-      <g class="sando-dir"><g clip-path="url(#cel-dir)">${sand}</g></g>
-      <g class="sando-faca"><rect x="-3" y="-96" width="6" height="70" rx="3" fill="#dfe3ea"/><rect x="-6" y="-120" width="12" height="28" rx="5" fill="#6b4a2f"/></g>`;
+        <defs><clipPath id="cel-esq"><rect x="-100" y="-100" width="100" height="200"/></clipPath><clipPath id="cel-dir"><rect x="0" y="-100" width="100" height="200"/></clipPath>
+          <linearGradient id="cel-casca" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2ad62"/><stop offset="1" stop-color="#b97a36"/></linearGradient>
+          <radialGradient id="cel-miolo" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#fff8e8"/><stop offset="1" stop-color="#f3e2bd"/></radialGradient>
+          <linearGradient id="cel-file" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dd9a46"/><stop offset="1" stop-color="#bd7426"/></linearGradient>
+          <filter id="cel-ss" x="-10%" y="-20%" width="120%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(90,50,10,.28)"/></filter></defs>
+        <ellipse cx="0" cy="88" rx="78" ry="8" fill="rgba(80,50,20,.18)"/>
+        <g class="sando-esq"><g clip-path="url(#cel-esq)">${sand}</g></g>
+        <g class="sando-dir"><g clip-path="url(#cel-dir)">${sand}</g></g>
+        <g class="sando-faca"><rect x="-3" y="-96" width="6" height="70" rx="3" fill="#dfe3ea"/><rect x="-6" y="-120" width="12" height="28" rx="5" fill="#6b4a2f"/></g>`;
     },
   };
 
