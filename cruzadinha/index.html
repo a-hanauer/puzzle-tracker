@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <style>
-  /* tecido de talagarça num bastidor de madeira; linha escura para o que vem pronto, verde para o que você borda */
+  /* retalho de talagarça sobre a mesa (com sombra); linha escura para o que vem pronto, verde para o que você borda */
   :root {
     --bg: #f4f3ec; --surface: #fffefa; --surface-2: #e8e7dc; --ink: #1f2016; --muted: #75766a; --line: #deddd0;
     --casa: #fbf7ec; --preta: #23241c; --grade: #23241c; --palavra: #e6eec4; --atual: #c3d77e; --num: #4b4c40; --fio: #2f3a12;
@@ -127,6 +127,18 @@
   .resp div { margin-bottom: 4px; }
   .resp b { font-weight: 800; letter-spacing: .04em; }
   .resp span { color: var(--muted); }
+
+  :root { --trama: rgba(255,255,255,.55); --trama2: rgba(120,100,60,.08); --furo2: rgba(90,70,30,.22);
+    --sombra-tab: rgba(60,50,20,.28); --sombra-tab2: rgba(60,50,20,.14); --borda-tab: rgba(255,255,255,.7); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --trama: rgba(255,255,240,.035); --trama2: rgba(0,0,0,.18); --furo2: rgba(0,0,0,.45);
+    --sombra-tab: rgba(0,0,0,.75); --sombra-tab2: rgba(0,0,0,.5); --borda-tab: rgba(255,255,240,.07); } }
+  :root[data-theme="dark"] { --trama: rgba(255,255,240,.035); --trama2: rgba(0,0,0,.18); --furo2: rgba(0,0,0,.45);
+    --sombra-tab: rgba(0,0,0,.75); --sombra-tab2: rgba(0,0,0,.5); --borda-tab: rgba(255,255,240,.07); }
+  .dados button, #apagaBtn, #desfazBtn, .nota-barra { background: linear-gradient(180deg, color-mix(in srgb, var(--kb-bg) 70%, #fff), var(--kb-bg) 60%, color-mix(in srgb, var(--kb-bg) 92%, #000)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 1px 0 rgba(0,0,0,.08), 0 3px 6px -3px rgba(60,50,20,.35); }
+  .nota-barra.on { background: var(--accent) !important; }
+
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dados button, :root:not([data-theme="light"]) #apagaBtn, :root:not([data-theme="light"]) #desfazBtn, :root:not([data-theme="light"]) .nota-barra, :root[data-theme="dark"] .dados button, :root[data-theme="dark"] #apagaBtn, :root[data-theme="dark"] #desfazBtn, :root[data-theme="dark"] .nota-barra { background: linear-gradient(180deg, color-mix(in srgb, var(--kb-bg) 88%, #fff), var(--kb-bg) 60%, color-mix(in srgb, var(--kb-bg) 85%, #000)) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 3px 6px -3px #000; } }
 </style>
 <link rel="stylesheet" href="../comum/cabecalho.css?v=142">
 <style>
@@ -288,10 +300,10 @@
   // grosso: espessura relativa do ponto; contorno: cor de uma linha mais larga por baixo (destaca as reveladas)
   function face(n, cx, cy, tam, cor, nota, grosso = 1, contorno = null) {
     const g = tam * .27, r = tam * .085, w = tam * .048 * grosso;
-    let sob = "", top = "";
-    for (const [i, j] of PIPS[n]) { const x = cx + (i - 1) * g, y = cy + (j - 1) * g; if (!nota) sob += xis(x, y, r, "pt-sob"); top += xis(x, y, r, "pt"); }
+    let sob = "", top = "", luz = "";
+    for (const [i, j] of PIPS[n]) { const x = cx + (i - 1) * g, y = cy + (j - 1) * g; if (!nota) { sob += xis(x + tam * .012, y + tam * .016, r, "pt-sob"); luz += xis(x - tam * .006, y - tam * .008, r * .78, "pt-luz"); } top += xis(x, y, r, "pt"); }
     const ws = contorno ? w * 2.1 : w * 1.6;
-    return `<g class="face" style="--cor:${cor};--w:${w.toFixed(2)};--ws:${ws.toFixed(2)}${contorno ? `;--sob:${contorno}` : ""}">${sob}${top}</g>`;
+    return `<g class="face" style="--cor:${cor};--w:${w.toFixed(2)};--ws:${ws.toFixed(2)}${contorno ? `;--sob:${contorno}` : ""}">${sob}${top}${luz}</g>`;
   }
   const COR = "A";                                   // meadas vivas (as variantes B e C ficaram no código)
 
@@ -312,10 +324,14 @@
     const bad = conflitos(), sel = finished ? -1 : cur;
     const rS = sel >= 0 ? (sel / N | 0) : -9, cS = sel >= 0 ? sel % N : -9, bS = sel >= 0 ? bloco(sel) : -9, vS = sel >= 0 ? val[sel] : 0;
     let s = `<defs><pattern id="risco" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="12" fill="${err}" opacity=".16"/></pattern>
-      <pattern id="aida" width="10" height="10" patternUnits="userSpaceOnUse" x="${PAD}" y="${PAD}"><circle cx="5" cy="5" r="1.3" style="fill:var(--furo)"/></pattern>
-      <style>.pt{fill:none;stroke:var(--cor);stroke-width:calc(var(--w)*1px);stroke-linecap:round}.pt-sob{fill:none;stroke:var(--sob,rgba(0,0,0,.2));stroke-width:calc(var(--ws)*1px);stroke-linecap:round}</style></defs>`;
-    s += `<rect x="1" y="1" width="${W - 2}" height="${W - 2}" rx="26" style="fill:var(--madeira);stroke:var(--madeira-2)" stroke-width="4"/>`;
-    s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" rx="10" style="fill:var(--casa)"/>`;
+      <pattern id="aida" width="10" height="10" patternUnits="userSpaceOnUse" x="${PAD}" y="${PAD}"><rect x="1.3" y="1.3" width="7.4" height="7.4" rx="2.2" style="fill:var(--trama)"/><path d="M1.3 3.5h7.4M1.3 6.5h7.4" style="stroke:var(--trama2)" stroke-width=".7"/><circle cx="0" cy="0" r="1.25" style="fill:var(--furo2)"/><circle cx="10" cy="0" r="1.25" style="fill:var(--furo2)"/><circle cx="0" cy="10" r="1.25" style="fill:var(--furo2)"/><circle cx="10" cy="10" r="1.25" style="fill:var(--furo2)"/></pattern>
+      <radialGradient id="vinheta" cx="50%" cy="45%" r="75%"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#3a2a10" stop-opacity=".07"/></radialGradient>
+      <style>.pt{fill:none;stroke:var(--cor);stroke-width:calc(var(--w)*1px);stroke-linecap:round}.pt-sob{fill:none;stroke:var(--sob,rgba(40,25,5,.28));stroke-width:calc(var(--ws)*1px);stroke-linecap:round}.pt-luz{fill:none;stroke:rgba(255,255,255,.42);stroke-width:calc(var(--w)*.32px);stroke-linecap:round}</style></defs>`;
+    s += `<defs><filter id="somb" x="-15%" y="-15%" width="130%" height="135%"><feDropShadow dx="0" dy="2" stdDeviation="2" style="flood-color:var(--sombra-tab2)"/><feDropShadow dx="0" dy="10" stdDeviation="11" style="flood-color:var(--sombra-tab)"/></filter></defs>
+      <rect x="3" y="3" width="${W - 6}" height="${W - 6}" rx="16" style="fill:var(--casa)" filter="url(#somb)"/>
+      <rect x="3" y="3" width="${W - 6}" height="${W - 6}" rx="16" fill="url(#aida)"/>
+      <rect x="3.5" y="3.5" width="${W - 7}" height="${W - 7}" rx="15.5" fill="none" style="stroke:var(--borda-tab)" stroke-width="1.5"/>`;
+    s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" rx="6" style="fill:var(--casa)"/>`;
     for (let i = 0; i < 36; i++) {
       const x = PAD + (i % N) * U, y = PAD + (i / N | 0) * U;
       let f = "";
@@ -324,7 +340,7 @@
       else if (vS && val[i] === vS) f = "var(--palavra)";
       if (f) s += `<rect x="${x}" y="${y}" width="${U}" height="${U}" style="fill:${f}" opacity="${i === sel ? 1 : .8}"/>`;
     }
-    s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" fill="url(#aida)"/>`;
+    s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" fill="url(#aida)"/><rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" rx="10" fill="url(#vinheta)"/>`;
     let fino = "", grosso = "";
     for (let k = 1; k < N; k++) {
       const x = PAD + k * U, y = PAD + k * U;
