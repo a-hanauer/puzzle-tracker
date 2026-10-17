@@ -12,10 +12,10 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=141"></script>
-<script src="comum/catalogo.js?v=141"></script>
-<script src="comum/celebra.js?v=141"></script>
-<script src="comum/recorde.js?v=141"></script>
+<script src="comum/tema.js?v=142"></script>
+<script src="comum/catalogo.js?v=142"></script>
+<script src="comum/celebra.js?v=142"></script>
+<script src="comum/recorde.js?v=142"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -976,6 +976,7 @@ const ST_ICON = {
 const LOGICA = { eclipse: { pre: "eclipse:", ep: [2026, 8, 27] }, novelo: { pre: "novelo:", ep: [2026, 8, 28] }, retalhos: { pre: "retalhos:", ep: [2026, 8, 28] }, pingado: { pre: "pingado:", ep: [2026, 8, 28] }, brigadeiro: { pre: "brigadeiro:", ep: [2026, 9, 17] }, cruzadinha: { pre: "cruzadinha:", ep: [2026, 9, 10] } };
 function recordeHoje(g, p) {
   if (g.id === "cordel") return false;                 // Cordel: sem nível para comparar tempos
+  if (p.inc != null) return p.won && p.inc <= p.min;   // Brigadeiro: troféu = resolvido no mínimo possível
   const lg = LOGICA[g.id];
   if (lg && window.recordeDoDia) {
     const t0 = new Date(); t0.setHours(0, 0, 0, 0);
@@ -994,6 +995,7 @@ function statusText(g, p, isDone) {
   }
   if (!p.finished) return `<span class="pl leve">${ST_ICON.meio}${p.tries}/${p.max}</span>`;
   const extra = (p.won && recordeHoje(g, p) ? ST_ICON.trofeu : "") + (p.dica ? ST_ICON.dica : "");
+  if (p.inc != null) return `<span class="pl">${ST_ICON.ok}${p.inc}<span class="dim">&nbsp;· mín ${p.min}</span>${extra}</span>`;   // Brigadeiro
   if (p.time != null) return `<span class="pl">${ST_ICON.tempo}${fmtTime(p.time)}${extra}</span>`;
   return p.won
     ? `<span class="pl">${ST_ICON.ok}${p.tries}<span class="dim">/${p.max}</span>${extra}</span>`
@@ -1763,6 +1765,7 @@ function renderNative(t0) {
   for (const tg of TIMED) {
     const ge = GAMES.find(x => x.id === tg.id);
     if (!ge) continue;
+    if (tg.id === "brigadeiro") { blocks.brigadeiro = blocoInclinacoes(tg); continue; }
     const st = readJSON(tg.id + ":stats") || {};
     const times = st.times || {};                            // { número do dia: segundos }
     const e0 = new Date(tg.epoch[0], tg.epoch[1], tg.epoch[2]);
@@ -1798,6 +1801,39 @@ function renderNative(t0) {
         <div class="axis"><span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>hoje</span></div>
         <div class="readout">Verde = recorde daquele nível. Toque numa barra para ver o tempo.</div>`
         : `<div class="empty">Seus tempos aparecem aqui depois do primeiro desafio resolvido.</div>`}`;
+  }
+  // Brigadeiro: o desempenho é o número de inclinações (comparado com o mínimo do dia)
+  function blocoInclinacoes(tg) {
+    const st = readJSON(tg.id + ":stats") || {}, m = st.inc || {};   // { número do dia: [inclinações, mínimo] }
+    const e0 = new Date(tg.epoch[0], tg.epoch[1], tg.epoch[2]);
+    const dnum = d => Math.round((d - e0) / 86400000) + 1;
+    const reg = Object.entries(m).map(([n, v]) => { const d = addDays(e0, +n - 1); return { d, inc: v[0], min: v[1], extra: v[0] - v[1], nv: (d.getDay() + 6) % 7 }; });
+    const perf = reg.filter(x => x.extra <= 0).length;
+    const semana = reg.filter(x => x.d >= seg0), anterior = reg.filter(x => x.d >= segAnt && x.d < seg0);
+    const mS = media(semana.map(x => x.extra)), mA = media(anterior.map(x => x.extra));
+    const rec = Array(7).fill(null); reg.forEach(x => { if (rec[x.nv] == null || x.inc < rec[x.nv]) rec[x.nv] = x.inc; });
+    const vals = days.map(d => m[dnum(d)] || null);
+    const top = Math.max(1, ...vals.filter(Boolean).map(v => v[0]));
+    const bars = days.map((d, i) => {
+      const v = vals[i], p = v && v[0] <= v[1];
+      const lab = !v ? "sem partida" : `${v[0]} ${v[0] === 1 ? "inclinação" : "inclinações"} · ${p ? "o mínimo possível" : `mínimo ${v[1]}`}`;
+      return `<button class="vbar ${!v ? "none" : "full"}${p ? " rec" : ""}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${!v ? 0 : Math.max(6, 100 * v[0] / top)}%"></i></button>`;
+    }).join("");
+    const mais = v => (v > 0 ? "+" : "") + dec(v);
+    return `
+      <div class="minis">
+        <div><div class="v">${st.played || 0}</div><div class="l">resolvidos</div></div>
+        <div><div class="v">${st.streak || 0}</div><div class="l">sequência</div></div>
+        <div><div class="v">${mS == null ? "–" : mais(mS)}</div><div class="l">acima do mínimo</div>${mS != null && mA != null ? cmpHTML(mS - mA, dec) : ""}</div>
+        <div><div class="v">${perf}</div><div class="l">no mínimo</div></div>
+      </div>
+      <div class="mini-title">Menos inclinações por nível</div>
+      <div class="rec7">${rec.map((t, n) => `<div class="${n === nvHoje ? "hj" : ""}"><span class="d">${DIAS3[n]}</span><b>${t == null ? "–" : t}</b></div>`).join("")}</div>
+      <div class="mini-title">Inclinações por dia · 30 dias</div>
+      ${vals.some(Boolean) ? `<div class="vbars recs" style="height:80px">${bars}</div>
+        <div class="axis"><span>${days[0].getDate()} ${MONTHS[days[0].getMonth()]}</span><span>hoje</span></div>
+        <div class="readout">Verde = resolvido no mínimo possível. Toque numa barra para ver.</div>`
+        : `<div class="empty">Suas inclinações aparecem aqui depois do primeiro desafio resolvido.</div>`}`;
   }
   const ids = Object.keys(blocks);
   $("gameCard").hidden = !ids.length;

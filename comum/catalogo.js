@@ -81,7 +81,14 @@ const LOCAL_PROGRESS = {
   // Ponto Cruz (pasta e id "cruzadinha", o nome antigo): desafio #1 = 10/10/2026; prog = [casas preenchidas, total]
   cruzadinha() { return progressoPorTempo("cruzadinha", [2026, 9, 10]); },
   // Brigadeiro (entrou no lugar da Panelinha): desafio #1 = 17/10/2026; prog = [doces nas forminhas, total]
-  brigadeiro() { return progressoPorTempo("brigadeiro", [2026, 9, 17]); },
+  // o resultado é o número de inclinações (sem tempo): inc e min aparecem na pílula do painel
+  brigadeiro() {
+    const r = progressoPorTempo("brigadeiro", [2026, 9, 17]);
+    if (!r || !r.finished) return r;
+    const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+    const p = readJSON(`brigadeiro:dia:${Math.round((today0 - new Date(2026, 9, 17)) / 86400000) + 1}`) || {};
+    return { ...r, time: null, inc: p.inc, min: p.min ?? p.inc };
+  },
 };
 function progressoPorTempo(jogo, ep = [2026, 8, 28]) {
   const today0 = new Date(); today0.setHours(0, 0, 0, 0);

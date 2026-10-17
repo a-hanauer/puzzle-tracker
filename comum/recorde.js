@@ -90,9 +90,9 @@
     } else {
       var vit = dias.filter(function (x) { return x.v != null && !x.perdeu; }).map(function (x) { return x.v; });
       var m = vit.length ? (vit.reduce(function (a, b) { return a + b; }, 0) / vit.length).toFixed(1).replace(".", ",").replace(",0", "") : null;
-      rodape = vals.length > 1 ? vals.length + " de 7" + (m ? " · média <b>" + m + "</b> tentativas" : "") : "";
+      rodape = vals.length > 1 ? vals.length + " de 7" + (m ? " · média <b>" + m + "</b> " + tipo : "") : "";
     }
     box.innerHTML = '<div class="sem-tit">Últimos 7 dias</div><div class="sem-barras">' + barras + '</div><div class="sem-dias">' + nomes + "</div>" + (rodape ? '<div class="sem-rodape">' + rodape + "</div>" : "");
-    box.setAttribute("aria-label", "Últimos 7 dias: " + dias.map(function (x) { return x.v == null ? "sem partida" : (tempo ? fmtT(x.v) : x.v + " tentativas") + (x.perdeu ? " (não foi)" : ""); }).join(", "));
+    box.setAttribute("aria-label", "Últimos 7 dias: " + dias.map(function (x) { return x.v == null ? "sem partida" : (tempo ? fmtT(x.v) : x.v + " " + tipo) + (x.perdeu ? " (não foi)" : ""); }).join(", "));
   };
 })();
