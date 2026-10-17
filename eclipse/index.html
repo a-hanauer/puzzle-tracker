@@ -137,7 +137,8 @@
   }
   .board .grid { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); }
   .board .regions { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-  .board .regions .seams { fill: none; stroke: var(--seam); stroke-width: 2.4; }
+  .board .regions .seams { fill: none; stroke: color-mix(in srgb, var(--board) 75%, transparent); stroke-width: 2.6; }
+  .board .regions .chumbo { fill: none; stroke: var(--board); stroke-width: 6; stroke-linejoin: round; }
   .cell {
     position: relative; aspect-ratio: 1; padding: 0; margin: 0; border: 0; background: none;
     display: flex; align-items: center; justify-content: center;
@@ -297,8 +298,8 @@
     content: ""; position: absolute; inset: 2px; border-radius: 7px;
     background: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--bad) 55%, transparent) 3px 5px);
   }
-  .tip .dt { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--dot); vertical-align: 1px; margin: 0 2px; }
-  .tip .dt.a { width: 4px; height: 4px; opacity: .55; vertical-align: 2px; }
+  .tip .dt { display: inline-block; width: 8px; height: 8px; background: var(--mark, var(--dot)); clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); vertical-align: 0; margin: 0 2px; }
+  .tip .dt.a { width: 6px; height: 6px; clip-path: none; border-radius: 50%; opacity: .85; vertical-align: 1px; }
 
   /* ================= modos sol / lua ================= */
   /* marca de "não cabe" com a cor do modo */
@@ -310,9 +311,9 @@
   html, body, .board { transition: background-color .35s ease; }
   /* pontos como estrelas: um brilho em volta, na cor do modo.
      os seus brilham forte; os automáticos são menores e brilham fraco */
-  .cell > svg.dot { fill: var(--mark, var(--dot)); opacity: .95;
-    filter: drop-shadow(0 0 1.5px var(--mark, var(--dot))) drop-shadow(0 0 4px var(--mark, var(--dot))); }
-  .cell > svg.dot.auto { opacity: .75; filter: drop-shadow(0 0 1.5px var(--mark, var(--dot))); }
+  .cell > svg.dot { fill: var(--mark, var(--dot)); opacity: 1;
+    filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, .9)) drop-shadow(0 1px 1px rgba(0, 0, 0, .25)); }
+  .cell > svg.dot.auto { transform: none; opacity: .85; filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, .8)); }
   .cell > svg.dim { opacity: .4; }
 
   /* dia e noite: o fundo da página esquenta no modo sol e esfria no modo lua */
@@ -397,11 +398,15 @@
       <circle cx="23.2" cy="21" r="11.9" fill="#0d1233"/>
     </symbol>
     <symbol id="i-orb" viewBox="0 0 40 40">
-      <circle cx="20" cy="20" r="12.6" fill="url(#g-sun)"/>
+      <circle cx="20" cy="20" r="15.5" fill="#ffd75e" opacity=".35"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(0 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(30 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(60 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(90 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(120 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(150 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(180 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(210 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(240 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(270 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(300 20 20)" fill="#f6a623"/><path d="M20 3.2L21.6 7.6H18.4Z" transform="rotate(330 20 20)" fill="#f6a623"/>
+      <circle cx="20" cy="20" r="11" fill="url(#g-sun)"/><circle cx="16.5" cy="16" r="3.4" fill="#fff" opacity=".55"/>
     </symbol>
-    <symbol id="i-dot" viewBox="0 0 40 40"><circle cx="20" cy="20" r="3.4"/></symbol>
+    <symbol id="i-dot" viewBox="0 0 40 40"><circle cx="20" cy="20" r="3.6"/></symbol>
+    <symbol id="i-estrela" viewBox="0 0 40 40"><path d="M20 9.5L22.6 17.4L30.5 20L22.6 22.6L20 30.5L17.4 22.6L9.5 20L17.4 17.4Z"/></symbol>
     <symbol id="i-luna" viewBox="0 0 40 40">
       <path transform="translate(20 20) scale(1.05) translate(-20 -20)" d="M20.61 6.01A13.2 13.2 0 1 0 34.01 22.39A10.6 10.6 0 0 1 20.61 6.01Z" style="fill: var(--moon)"/>
+      <circle cx="13" cy="22" r="2.2" fill="rgba(0,0,0,.18)"/><circle cx="18" cy="29" r="1.6" fill="rgba(0,0,0,.16)"/><circle cx="11" cy="15" r="1.3" fill="rgba(0,0,0,.14)"/>
+      <path d="M9 14A13 13 0 0 0 14 31" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.6" stroke-linecap="round"/>
     </symbol>
   </defs>
 </svg>
@@ -441,7 +446,7 @@
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
   </button>
 </div>
-<div class="tip" id="tip"><span id="tipAll" hidden><b>Visão geral</b>: sóis e luas juntos<br>toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use href="#i-orb"/></svg>&nbsp;→&nbsp;<svg><use href="#i-luna"/></svg>&nbsp;→&nbsp;vazio · o ponto vale nas duas vistas</span><span id="tipPlay"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-orb"/></svg>&nbsp;→&nbsp;vazio<br>Pontos pequenos <i class="dt a"></i> são automáticos · arraste marca vários</span><span id="tipDone" hidden></span></div>
+<div class="tip" id="tip"><span id="tipAll" hidden><b>Visão geral</b>: sóis e luas juntos<br>toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use href="#i-orb"/></svg>&nbsp;→&nbsp;<svg><use href="#i-luna"/></svg>&nbsp;→&nbsp;vazio · a estrela vale nas duas vistas</span><span id="tipPlay"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-orb"/></svg>&nbsp;→&nbsp;vazio<br>Estrela <i class="dt"></i> é sua · ponto <i class="dt a"></i> é do jogo · arraste marca vários</span><span id="tipDone" hidden></span></div>
 
 <!-- Como jogar -->
 <div class="overlay" id="helpOverlay">
@@ -462,7 +467,7 @@
       <li>No <b>modo sol</b>, toque numa casa para marcar um <b>ponto</b> ("sol não cabe aqui"), toque de novo para pôr o <b>sol</b> e mais uma vez para limpar. Arraste o dedo para marcar várias casas.</li>
       <li>As luas aparecem apagadas, só de referência. No <b>modo lua</b> é o mesmo, para as luas.</li>
       <li>No meio da chave, o <b>eclipse</b> mostra sóis e luas juntos. Ali o toque faz ponto → sol → lua → vazio, e o ponto vale para as duas vistas (nem sol nem lua cabem).</li>
-      <li>Os pontos pequenos são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
+      <li>As <b>estrelinhas</b> são as casas que você marcou. Os <b>pontos</b> são automáticos: vizinhas de qualquer peça e a linha, coluna e região de cada sol (no modo sol) ou de cada lua (no modo lua).</li>
       <li>O fundo da tela esquenta no modo sol e esfria no modo lua. As casas com ponto (seu ou automático) ficam um pouco mais escuras, e um pouco mais quando nem sol nem lua cabem; assim as livres aparecem melhor.</li>
     </ul>
     <p>Conflitos aparecem destacados com listras vermelhas.</p>
@@ -662,12 +667,28 @@
     // o vão na borda do tabuleiro fica igual ao vão entre regiões
     b.style.setProperty("--pad", (GAP / (W + 2 * GAP) * 100) + "%");
     b.style.setProperty("--rad", `${((R_OUT + 2 * GAP) / (W + 2 * GAP) * 100)}% / ${((R_OUT + 2 * GAP) / (W + 2 * GAP) * 100)}%`);
-    let svg = `<svg class="regions" viewBox="0 0 ${W} ${W}" preserveAspectRatio="none" aria-hidden="true"><defs>`;
+    // vitral: cada região é um vidro colorido; cada casa um pedaço com tom levemente diferente,
+    // luz entrando de cima, textura de vidro e um reflexo; o "chumbo" é da cor do tabuleiro
+    let svg = `<svg class="regions" viewBox="0 0 ${W} ${W}" preserveAspectRatio="none" aria-hidden="true"><defs>
+      <radialGradient id="vt-luz" cx="30%" cy="22%" r="90%"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".5" stop-color="#fff" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></radialGradient>
+      <filter id="vt-vidro" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="9"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .12 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>`;
     let body = "";
+    const tom = i => ((i * 2654435761) >>> 0) % 1000 / 1000;          // variação fixa por casa
     for (let k = 0; k < N; k++) {
       const d = regionPath(k), id = "rg" + k;
       svg += `<clipPath id="${id}"><path d="${d}"/></clipPath>`;
-      body += `<path class="reg" d="${d}" style="fill:var(--r${k})"/><path class="seams" d="${seamPath(k)}" clip-path="url(#${id})"/>`;
+      let pecas = "";
+      for (let i = 0; i < N * N; i++) if (regions[i] === k) {
+        const t = tom(i + k * 7), x = (i % N) * U, y = ((i / N) | 0) * U;
+        pecas += `<rect x="${x}" y="${y}" width="${U}" height="${U}" fill="${t < .5 ? "#000" : "#fff"}" opacity="${(Math.abs(t - .5) * .16).toFixed(3)}"/>`;
+      }
+      // reflexo: uma faixa diagonal clara atravessando a região
+      const ys = [...Array(N * N).keys()].filter(i => regions[i] === k), r0 = Math.min(...ys.map(i => (i / N) | 0)), c0 = Math.min(...ys.map(i => i % N));
+      const rx = c0 * U, ry = r0 * U;
+      body += `<path class="reg" d="${d}" style="fill:var(--r${k})"/><g clip-path="url(#${id})">${pecas}
+        <path d="${d}" fill="url(#vt-luz)"/><path d="${d}" fill="#fff" filter="url(#vt-vidro)"/>
+        <path d="M${rx - U} ${ry + U * 1.6}L${rx + U * 1.6} ${ry - U}L${rx + U * 1.9} ${ry - U * .7}L${rx - U * .7} ${ry + U * 1.9}Z" fill="#fff" opacity=".16"/></g>
+        <path class="seams" d="${seamPath(k)}" clip-path="url(#${id})"/><path class="chumbo" d="${d}"/>`;
     }
     svg += "</defs>" + body + "</svg>";
     b.innerHTML = '<div class="grid">' + svg + "</div>";
@@ -690,7 +711,7 @@
   const ICON = {
     S: '<svg class="sun"><use href="#i-orb"/></svg>', M: '<svg class="moon"><use href="#i-luna"/></svg>',
     Sd: '<svg class="sun dim"><use href="#i-orb"/></svg>', Md: '<svg class="moon dim"><use href="#i-luna"/></svg>',
-    X: '<svg class="dot"><use href="#i-dot"/></svg>', Xa: '<svg class="dot auto"><use href="#i-dot"/></svg>',
+    X: '<svg class="dot"><use href="#i-estrela"/></svg>', Xa: '<svg class="dot auto"><use href="#i-dot"/></svg>',   // sua marca = estrelinha; a do jogo = ponto
     "": "",
   };
   let mode = "S";                              // "S" = modo sol · "M" = modo lua · "E" = visão geral (peças das duas e marcas "nada cabe")
