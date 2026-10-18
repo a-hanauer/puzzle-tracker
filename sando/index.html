@@ -2,9 +2,9 @@
 <html lang="pt-BR" class="gh-carregando" data-fixa>
 <head>
 <meta charset="UTF-8">
-<script src="../comum/tema.js?v=142"></script>
-<script src="../comum/cabecalho.js?v=142"></script>
-<script src="../comum/dica.js?v=142"></script>
+<script src="../comum/tema.js?v=143"></script>
+<script src="../comum/cabecalho.js?v=143"></script>
+<script src="../comum/dica.js?v=143"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -468,7 +468,7 @@
   .mode-switch-track{border:0;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=142">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=143">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: #fff; --fim-btn-border: 0; --gh-fim-ink: #fff; --gh-fim-border: 0; --gh-fim-border-lose: 0; --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
@@ -673,9 +673,14 @@
   var MAX_GUESSES = 14;
   // jogo livre: a dificuldade é o número de tentativas (o desafio do dia é sempre 14)
   var TRIES_LIVRE = { facil: 20, normal: 14, dificil: 10 };
+  // nível do desafio do dia pela semana: seg–ter Fácil, qua–sex Normal, sáb–dom Difícil (o jogo livre escolhe à parte)
+  var NIVEL_SEMANA = ['dificil', 'facil', 'facil', 'normal', 'normal', 'normal', 'dificil'];   // getDay(): domingo = 0
+  var NOME_NIVEL = { facil: 'fácil', normal: 'normal', dificil: 'difícil' };
+  function nivelDoDia(){ return NIVEL_SEMANA[new Date().getDay()]; }
+
   function nivelLivre(){ try { var v = localStorage.getItem('sanduba-nivel-livre'); return TRIES_LIVRE[v] ? v : 'normal'; } catch(e){ return 'normal'; } }
   window.sandubaLivre = {
-    diario: 'normal',                 // o desafio do dia é sempre o nível Normal
+    diario: NOME_NIVEL[nivelDoDia()],    // o desafio do dia segue a semana (domingo é Difícil)
     niveis: [{ v: 'facil', rotulo: 'Fácil', opcao: 'Fácil · 20' }, { v: 'normal', rotulo: 'Normal', opcao: 'Normal · 14' }, { v: 'dificil', rotulo: 'Difícil', opcao: 'Difícil · 10' }],
     atual: nivelLivre,
     aoMudar: function(v){ try { localStorage.setItem('sanduba-nivel-livre', v); } catch(e){} closeModal('end-overlay'); newGame('practice'); window.dispatchEvent(new Event('sanduba-livre')); },
@@ -729,7 +734,7 @@
   }
 
   function newGame(mode){
-    MAX_GUESSES = mode === 'daily' ? 14 : TRIES_LIVRE[nivelLivre()];
+    MAX_GUESSES = TRIES_LIVRE[mode === 'daily' ? nivelDoDia() : nivelLivre()];
     var secretIdx = mode === 'daily' ? dailyIndex() : GOOD_SECRET_INDICES_3[Math.floor(Math.random()*GOOD_SECRET_INDICES_3.length)];
     state = {
       mode: mode, secret: DICT[secretIdx], secretIdx: secretIdx,
@@ -762,7 +767,7 @@
         // guardamos só as PALAVRAS (índices ficam defasados se o dicionário
         // mudar de tamanho) e o segredo do dia, para invalidar o progresso
         // caso a lista de segredos mude e o recheio do dia seja outro.
-        secret: state.secret,
+        secret: state.secret, max: MAX_GUESSES,
         guesses: state.guesses.map(function(g){ return {word: g.word}; }),
         dica: state.dica ? state.dica.word : null
       }));
@@ -1220,6 +1225,8 @@
       rebuildBoundsFromGuesses();
     }
     if(prog && prog.guesses && prog.guesses.length){
+      // partida começada mantém o número de tentativas com que começou (antes do nível pela semana eram 14)
+      if(!prog.secret || prog.secret === state.secret) MAX_GUESSES = prog.max || 14;
       // Os índices salvos podem estar defasados se o dicionário mudou de
       // tamanho desde a última partida. Por isso recalculamos idx e cmp a
       // partir da PALAVRA (que é estável), e descartamos o progresso inteiro
@@ -1322,9 +1329,9 @@
     fn => { document.getElementById("practice-toggle").addEventListener("change", () => setTimeout(fn)); window.addEventListener("sanduba-livre", fn); },
     window.sandubaLivre);
 </script>
-<script src="../comum/catalogo.js?v=142"></script>
-<script src="../comum/celebra.js?v=142"></script>
-<script src="../comum/recorde.js?v=142"></script>
-<script src="../comum/proximo.js?v=142" data-jogo="sanduba"></script>
+<script src="../comum/catalogo.js?v=143"></script>
+<script src="../comum/celebra.js?v=143"></script>
+<script src="../comum/recorde.js?v=143"></script>
+<script src="../comum/proximo.js?v=143" data-jogo="sanduba"></script>
 </body>
 </html>

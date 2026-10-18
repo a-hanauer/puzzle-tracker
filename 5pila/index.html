@@ -11,9 +11,9 @@
 <meta name="apple-mobile-web-app-title" content="5PILA">
 <link rel="icon" type="image/png" href="icon-claro.png?v=21">
 <link rel="apple-touch-icon" href="icon-claro.png?v=21">
-<script src="../comum/tema.js?v=142"></script>
-<script src="../comum/cabecalho.js?v=142"></script>
-<script src="../comum/dica.js?v=142"></script>
+<script src="../comum/tema.js?v=143"></script>
+<script src="../comum/cabecalho.js?v=143"></script>
+<script src="../comum/dica.js?v=143"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -388,7 +388,7 @@ header{
 .tile.correct,.tile.present,.tile.absent,.tile.maybe{box-shadow:0 3px 0 0 rgba(0,0,0,.28),inset 0 2px 2px rgba(255,255,255,.35);}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=142">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=143">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--accent-ink); --gh-fim-ink: var(--accent-ink); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -564,9 +564,14 @@ header{
   var MAX_TRIES = 8;
   // jogo livre: a dificuldade é o número de tentativas (o desafio do dia é sempre 8)
   var TRIES_LIVRE = { facil: 10, normal: 8, dificil: 6 };
+  // nível do desafio do dia pela semana: seg–ter Fácil, qua–sex Normal, sáb–dom Difícil (o jogo livre escolhe à parte)
+  var NIVEL_SEMANA = ['dificil', 'facil', 'facil', 'normal', 'normal', 'normal', 'dificil'];   // getDay(): domingo = 0
+  var NOME_NIVEL = { facil: 'fácil', normal: 'normal', dificil: 'difícil' };
+  function nivelDoDia(){ return NIVEL_SEMANA[new Date().getDay()]; }
+
   function nivelLivre(){ var v = load('nivel-livre', 'normal'); return TRIES_LIVRE[v] ? v : 'normal'; }
   window.quinhentosLivre = {
-    diario: 'normal',                 // o desafio do dia é sempre o nível Normal
+    diario: NOME_NIVEL[nivelDoDia()],    // o desafio do dia segue a semana (domingo é Difícil)
     niveis: [{ v: 'facil', rotulo: 'Fácil', opcao: 'Fácil · 10' }, { v: 'normal', rotulo: 'Normal', opcao: 'Normal · 8' }, { v: 'dificil', rotulo: 'Difícil', opcao: 'Difícil · 6' }],
     atual: nivelLivre,
     aoMudar: function(v){ save('nivel-livre', v); closeModal('overlay-end'); clearCurrent(); newGame(true); window.dispatchEvent(new Event('quinhentos-livre')); },
@@ -632,8 +637,7 @@ header{
 
   function newGame(newPractice){
     practiceMode = newPractice !== undefined ? newPractice : practiceMode;
-    var linhas = practiceMode ? TRIES_LIVRE[nivelLivre()] : 8;
-    if(linhas !== MAX_TRIES){ MAX_TRIES = linhas; buildBoard(); setTimeout(ajustarTabuleiro); }
+    var linhas = TRIES_LIVRE[practiceMode ? nivelLivre() : nivelDoDia()];
 
     var pool = POOLS[diff];
     var secret, secretIdx;
@@ -662,16 +666,19 @@ header{
       state = saved;
       if(!state.paint) state.paint = makeEmptyPaint();
       if(!state.tallies) state.tallies = [];
+      // partida começada mantém o número de linhas com que começou (antes do nível pela semana eram 8)
+      linhas = state.max || (state.guesses && state.guesses.length ? 8 : linhas); state.max = linhas;
       if(state.won) revealAllPaint();
       else if(!state.finished) propagateAll();   // aplica os vermelhos definitivos em jogos já salvos
     } else {
       state = {
         diff: diff, practice: practiceMode, secret: secret, dayNum: dayNum,
         guesses: [], statuses: [], tallies: [], paint: makeEmptyPaint(), auto: makeEmptyPaint(),
-        finished:false, won:false
+        finished:false, won:false, max: linhas
       };
       if(!practiceMode) save('game:'+diff, state);
     }
+    if(linhas !== MAX_TRIES){ MAX_TRIES = linhas; buildBoard(); setTimeout(ajustarTabuleiro); }
     clearCurrent();
     render();
     // já terminado: a faixa de fim fica à mostra; a bandeja só abre pelo toque nela
@@ -1467,9 +1474,9 @@ header{
     fn => { new MutationObserver(fn).observe(document.getElementById("mode-switch"), { attributes: true, attributeFilter: ["class"] }); window.addEventListener("quinhentos-livre", fn); },
     window.quinhentosLivre);
 </script>
-<script src="../comum/catalogo.js?v=142"></script>
-<script src="../comum/celebra.js?v=142"></script>
-<script src="../comum/recorde.js?v=142"></script>
-<script src="../comum/proximo.js?v=142" data-jogo="quinhentos"></script>
+<script src="../comum/catalogo.js?v=143"></script>
+<script src="../comum/celebra.js?v=143"></script>
+<script src="../comum/recorde.js?v=143"></script>
+<script src="../comum/proximo.js?v=143" data-jogo="quinhentos"></script>
 </body>
 </html>

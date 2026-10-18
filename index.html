@@ -12,10 +12,10 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=142"></script>
-<script src="comum/catalogo.js?v=142"></script>
-<script src="comum/celebra.js?v=142"></script>
-<script src="comum/recorde.js?v=142"></script>
+<script src="comum/tema.js?v=143"></script>
+<script src="comum/catalogo.js?v=143"></script>
+<script src="comum/celebra.js?v=143"></script>
+<script src="comum/recorde.js?v=143"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -848,8 +848,9 @@ function backfillSanduba() {
     const p = readJSON(k);
     if (!p || !Array.isArray(p.guesses) || !p.guesses.length) continue;
     const tries = p.guesses.length, won = p.guesses.some(g => g.word === p.secret);
-    if (!won && tries < 14) continue;          // partida largada no meio: não conta
-    (state.results[day] ??= {}).sanduba = { tries, max: 14, won };
+    const max = p.max || 14;
+    if (!won && tries < max) continue;         // partida largada no meio: não conta
+    (state.results[day] ??= {}).sanduba = { tries, max, won };
     const set = new Set(state.history[day] || []); set.add("sanduba"); state.history[day] = [...set];
     changed = true;
   }
@@ -989,7 +990,7 @@ function statusText(g, p, isDone) {
   if (!p) {                                             // ainda não jogado: o nível do dia
     if (isDone) return `<span class="pl">Feito</span>`;
     if (g.id === "cordel") return `<span class="pl leve">tema novo</span>`;
-    if (!LOGICA[g.id]) return `<span class="pl leve">normal</span>`;
+    if (!LOGICA[g.id]) return `<span class="pl leve">${["difícil", "fácil", "fácil", "normal", "normal", "normal", "difícil"][new Date().getDay()]}</span>`;   // Sando e 5PILA: nível pela semana
     const n = (new Date().getDay() + 6) % 7 + 1;
     return `<span class="pl leve">nível ${n}<span class="nv" aria-hidden="true">${[...Array(7)].map((_, i) => `<i${i < n ? ' class="on"' : ""}></i>`).join("")}</span></span>`;
   }

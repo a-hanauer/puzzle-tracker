@@ -42,6 +42,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 - Público: gente com boa formação. Preferir conhecimentos gerais densos (história, artes, ciência,
   literatura, música, geografia, mitologia) a temas infantis; bichos, expressões e gramática só de vez em quando.
+- Sando e 5PILA: o desafio do dia segue a semana pelas tentativas: seg–ter Fácil (20 / 10), qua–sex Normal (14 / 8),
+  sáb–dom Difícil (10 / 6). Partida já começada guarda o seu `max`.
 - `comum/acervo.mjs`: temas do Cordel (campo `c`; os campos da Panelinha, que saiu, ficaram). Área (`a`) para o rodízio;
   família (`f`) para não pôr dois temas parecidos no mesmo dia.
 - Ponto Cruz (pasta `cruzadinha`): desde 16/10/2026 é um **sudoku 6×6 de dados** (blocos 2×3), faces do dado em

@@ -61,7 +61,7 @@
         var p = ler("sanduba-daily-" + chave(d, false));
         if (p && Array.isArray(p.guesses) && p.guesses.length) {
           var won = p.guesses.some(function (g) { return g.word === p.secret; });
-          if (won || p.guesses.length >= 14) r = { tries: p.guesses.length, won: won };
+          if (won || p.guesses.length >= (p.max || 14)) r = { tries: p.guesses.length, won: won };
         }
       }
       return r && r.tries != null ? { d: d, v: r.tries, perdeu: !r.won } : { d: d, v: null };
