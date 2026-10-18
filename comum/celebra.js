@@ -326,34 +326,59 @@
     el.style.animation = `cel-sai ${SAIDA}ms ease forwards`;
     setTimeout(() => el.remove(), SAIDA + 50);
   }
+  // enquadramento de cada ícone: o ícone é o quadro final do desenho visto por esta viewBox [x, y, lado]
+  const QUADRO = { novelo: [-106, -104, 212], cruzadinha: [-104, -104, 208], brigadeiro: [-108, -106, 216] };
+  // congela o quadro final: as regras ".celebra …" deixam de valer quando o desenho sai do tabuleiro,
+  // então cada peça leva consigo, em estilo próprio, a posição, o giro e a transparência em que parou
+  function congela(svg) {
+    const pecas = svg.querySelectorAll("*");
+    const base = [...pecas].map(e => { const c = getComputedStyle(e); return [e, c.transformBox, c.transformOrigin]; });
+    svg.getAnimations({ subtree: true }).forEach(a => { try { a.commitStyles(); } catch (e) {} a.cancel(); });
+    base.forEach(([e, box, ori]) => { if (e.style) { e.style.transformBox = box; e.style.transformOrigin = ori; e.style.animation = "none"; } });
+  }
   function passagem(ov) {
-    const { el, svg } = espera, esm = espera.esm; espera = null;
+    const { el, svg, jogo } = espera, esm = espera.esm; espera = null;
     const modal = ov.querySelector(".modal"), slot = modal.querySelector(".fim-art > *");
     const de = svg.getBoundingClientRect();
     modal.style.animation = "none";                       // mede a posição final, sem a animação de abrir
     const para = slot ? slot.getBoundingClientRect() : null;
     modal.style.animation = "";
-    // o desenho sai do tabuleiro e passa a voar por cima de tudo
+    const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches, T = reduz ? 1 : 520;
+    if (!para || !para.width) {                           // sem lugar para pousar: o desenho só some
+      el.style.animation = `cel-sai ${SAIDA}ms ease forwards`; setTimeout(() => el.remove(), SAIDA + 50);
+      setTimeout(() => esm.forEach(e => e.classList.remove("cel-dim")), T); return;
+    }
+    congela(svg);
+    // o voo tem o tamanho final da arte da janela: por baixo, uma cópia do ícone (que vai aparecendo);
+    // por cima, o desenho, no lugar exato em que ele está dentro do ícone (mesmo enquadramento)
+    const [qx, qy, ql] = QUADRO[jogo] || [-106, -106, 212];
+    const S = para.width, H = para.height, u = S / ql;
     const voo = document.createElement("div");
     voo.className = "cel-voo";
-    voo.style.cssText = `position:fixed;left:${de.left}px;top:${de.top}px;width:${de.width}px;height:${de.height}px;z-index:9999;pointer-events:none;`;
-    voo.append(svg); document.body.append(voo); el.remove();
-    const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches, T = reduz ? 1 : 460;
-    if (slot) slot.style.visibility = "hidden";
-    // tamanho final: o desenho ocupa a arte da janela (o ícone é o quadro final dele)
-    const lado = para ? Math.min(para.width, para.height) * .82 : 0;
-    const dx = para ? para.left + para.width / 2 - (de.left + de.width / 2) : 0, dy = para ? para.top + para.height / 2 - (de.top + de.height / 2) : 0;
-    const k = para ? lado / de.width : .3;
-    const va = voo.animate([{ transform: "none" }, { transform: `translate(${dx}px, ${dy}px) scale(${k})` }], { duration: T, easing: "cubic-bezier(.45, 0, .2, 1)", fill: "forwards" });
+    voo.style.cssText = `position:fixed;left:${para.left}px;top:${para.top}px;width:${S}px;height:${H}px;z-index:9999;pointer-events:none;transform-origin:0 0;`;
+    const copia = slot.cloneNode(true);
+    copia.style.cssText += `;position:absolute;left:0;top:0;width:${S}px;height:${H}px;margin:0;opacity:0;`;
+    const caixa = document.createElement("div");
+    caixa.style.cssText = `position:absolute;left:${(-100 - qx) * u}px;top:${(-100 - qy) * u + (H - S) / 2}px;width:${200 * u}px;height:${200 * u}px;`;
+    svg.style.cssText = "display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 10px 24px rgba(30, 20, 10, .28));";
+    caixa.append(svg); voo.append(copia, caixa); document.body.append(voo); el.remove();
+    slot.style.visibility = "hidden";
+    // começo: a caixa do desenho coincide com o desenho no tabuleiro
+    const k0 = de.width / (200 * u);
+    const cx = (-100 - qx) * u + 100 * u, cy = (-100 - qy) * u + (H - S) / 2 + 100 * u;
+    const tx = de.left + de.width / 2 - para.left - k0 * cx, ty = de.top + de.height / 2 - para.top - k0 * cy;
+    const curva = "cubic-bezier(.45, 0, .2, 1)";
+    const va = voo.animate([{ transform: `translate(${tx}px, ${ty}px) scale(${k0})` }, { transform: "none" }], { duration: T, easing: curva, fill: "both" });
+    // na segunda metade do voo o desenho vira o ícone: o ícone (com o fundo e a sombra) acende por baixo
+    // e o desenho se apaga por cima, já do mesmo tamanho e no mesmo lugar
+    copia.animate([{ opacity: 0 }, { opacity: 1 }], { duration: T * .5, delay: T * .45, easing: "ease-out", fill: "both" });
+    caixa.animate([{ opacity: 1 }, { opacity: 0 }], { duration: T * .4, delay: T * .6, easing: "ease-in", fill: "both" });
+    svg.animate([{ filter: "drop-shadow(0 10px 24px rgba(30, 20, 10, .28))" }, { filter: "drop-shadow(0 2px 4px rgba(30, 20, 10, 0))" }], { duration: T, easing: curva, fill: "both" });
     // a janela surge (escala + opacidade) em volta do desenho, que chega ao lugar da arte
-    modal.animate([{ opacity: 0, transform: "scale(.9)" }, { opacity: 1, transform: "none" }], { duration: T * .8, delay: T * .15, easing: "cubic-bezier(.2, .9, .3, 1.1)", fill: "backwards" });
+    modal.animate([{ opacity: 0, transform: "scale(.92)" }, { opacity: 1, transform: "none" }], { duration: T * .75, delay: T * .1, easing: "cubic-bezier(.2, .9, .3, 1)", fill: "backwards" });
     ov.animate([{ backgroundColor: "transparent", backdropFilter: "blur(0px)" }, {}], { duration: T * .7 });
     setTimeout(() => esm.forEach(e => e.classList.remove("cel-dim")), T);   // o tabuleiro só volta com o fundo da janela já por cima
-    va.finished.then(() => {
-      if (slot) slot.style.visibility = "";
-      const f = voo.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduz ? 1 : 160, fill: "forwards" });
-      f.finished.then(() => voo.remove());
-    });
+    va.finished.then(() => { slot.style.visibility = ""; requestAnimationFrame(() => voo.remove()); });
   }
   new MutationObserver(ms => {
     if (!espera) return;
@@ -383,7 +408,7 @@
           if (feito) return; feito = true;
           // tocar pula: o desenho aparece completo e a janela já vem
           el.getAnimations({ subtree: true }).forEach(a => { if (a.effect && a.effect.target !== el && isFinite(a.effect.getComputedTiming().endTime)) a.finish(); });   // as estrelas piscam sem fim
-          espera = { el, esm, svg: el.querySelector("svg") };
+          espera = { el, esm, svg: el.querySelector("svg"), jogo };
           setTimeout(() => { if (espera && espera.el === el) solta(true); }, 1500);   // a janela não veio
           res();
         };
