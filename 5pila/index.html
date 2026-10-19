@@ -160,12 +160,13 @@ header{
 /* a largura máxima é calculada em JS (ajustarTabuleiro) para as 8 linhas caberem na altura livre */
 .board{display:flex;flex-direction:column;gap:6px;width:100%;max-width:460px;}
 /* linha: a palavra (5 letras largas) e, à direita, o placar numa cápsula estreita */
-.row{display:grid;grid-template-columns:repeat(5,1fr) 94px;gap:5px;}
-.row .cnt{margin-left:5px;}
+.row{display:grid;grid-template-columns:repeat(5,1fr) 94px;grid-auto-rows:var(--casa-h,auto);gap:5px;}
+.row .cnt{margin-left:5px;height:var(--casa-h,auto);min-height:0;}   /* dias de muitas linhas: o placar acompanha a altura da casa */
+.row .cnt .count-cell{font-size:min(clamp(20px,6.2vw,27px),calc(var(--casa-h,99px) * .58));}
 .tile{
   aspect-ratio:var(--casa-ar,1/1);min-width:0;min-height:0;overflow:hidden;border-radius:11px;border:2px solid var(--line);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-weight:800;font-size:clamp(18px,6.4vw,29px);
+  font-family:var(--font-display);font-weight:800;font-size:min(clamp(18px,6.4vw,29px),calc(var(--casa-h,99px) * .6));
   letter-spacing:-0.5px;
   text-transform:uppercase;background:var(--panel);color:var(--ink);
   transition:transform .1s ease, background .12s ease, border-color .12s ease;
@@ -786,8 +787,18 @@ header{
     var largura = boardEl.clientWidth;
     var casaL = (largura - 5 * 5 - 94) / 5;
     var casaA = (livre - (MAX_TRIES - 1) * 6) / MAX_TRIES;
-    if(livre < 200 || casaL <= 0 || casaA >= casaL){ boardEl.style.removeProperty('--casa-ar'); return; }
-    boardEl.style.setProperty('--casa-ar', casaL.toFixed(2) + ' / ' + Math.max(casaA, casaL * 0.55).toFixed(2));
+    boardEl.style.removeProperty('--casa-h');
+    if(livre < 120 || casaL <= 0){ boardEl.style.removeProperty('--casa-ar'); return; }
+    if(casaA >= casaL){ boardEl.style.removeProperty('--casa-ar'); boardEl.style.setProperty('--casa-h', casaL.toFixed(1) + 'px'); return; }
+    // casa achatada até 0,55 da largura; se nem assim couber (dias de 10 linhas, telas baixas), o tabuleiro
+    // inteiro estreita, para as linhas caberem na altura e o teclado ficar todo à vista
+    var minAr = 0.55;
+    if(casaA < casaL * minAr){
+      casaL = casaA / minAr;
+      boardEl.style.maxWidth = Math.floor(5 * casaL + 5 * 5 + 94) + 'px';
+    }
+    boardEl.style.setProperty('--casa-ar', casaL.toFixed(2) + ' / ' + casaA.toFixed(2));
+    boardEl.style.setProperty('--casa-h', casaA.toFixed(1) + 'px');
   }
   ajustarTabuleiro();
   if(document.documentElement.classList.contains('standalone')){
