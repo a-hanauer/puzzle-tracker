@@ -386,6 +386,8 @@ header{
   box-shadow:0 0 0 2.5px var(--tecla-aro),0 3px 0 2.5px var(--tecla-base),inset 0 2px 2px rgba(255,255,255,.6);}
 .tile.filled{box-shadow:0 0 0 2.5px var(--tecla-aro-on),0 3px 0 2.5px var(--tecla-base-on),inset 0 2px 2px rgba(255,255,255,.6);}
 .tile.cursor{box-shadow:0 0 0 2.5px var(--accent),0 3px 0 2.5px var(--tecla-base),0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);}
+.row.falta{opacity:.55;transition:opacity .2s ease;}
+.row.falta .tile{background:transparent;box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--tecla-aro) 70%, transparent);}
 .tile.correct,.tile.present,.tile.absent,.tile.maybe{box-shadow:0 3px 0 0 rgba(0,0,0,.28),inset 0 2px 2px rgba(255,255,255,.35);}
 </style>
 
@@ -1005,6 +1007,8 @@ header{
     for(var r=0;r<MAX_TRIES;r++){
       var submitted = r < state.guesses.length;
       var word = submitted ? state.guesses[r] : null;
+      var t0 = document.getElementById('tile-'+r+'-0');
+      if(t0) t0.parentNode.classList.toggle('falta', r > activeRow || (state.finished && !submitted));   // linhas que ainda não chegaram: só o contorno
       for(var c=0;c<WORD_LEN;c++){
         var t = document.getElementById('tile-'+r+'-'+c);
         if(submitted){
