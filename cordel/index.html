@@ -77,7 +77,7 @@
   #board { display: block; overflow: visible; }
   /* papel de folheto (grão leve) e tinta de carimbo nas palavras achadas */
   body { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .10 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23f)'/%3E%3C/svg%3E"); }
-  .bola.tema, .bola.chave, .lk.tema, .lk.chave { filter: url(#tinta); }
+  .achadas { filter: url(#tinta); }   /* um filtro só, no grupo das palavras achadas (por peça pesava a cada toque) */
   .lk { stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; fill: none; }
   .lk.tema { stroke: var(--tema); } .lk.chave { stroke: var(--chave); } .lk.sel { stroke: var(--sel); }
   .bola { fill: transparent; }
@@ -172,7 +172,7 @@
 
 <!-- tinta de xilogravura: borda irregular e pequenas falhas nas marcas das palavras achadas -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <filter id="tinta" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/>
+  <filter id="tinta" filterUnits="userSpaceOnUse" x="-60" y="-60" width="720" height="920"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/>
     <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="1" seed="3" result="g"/><feColorMatrix in="g" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.85" result="m"/><feComposite in="d" in2="m" operator="in"/></filter>
 </defs></svg>
 <div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro data-haptico><svg id="board" role="img" aria-label="Tabuleiro de letras"></svg></div></div>
@@ -316,23 +316,36 @@
   if (window.visualViewport) visualViewport.addEventListener("resize", () => { if (P) fit(); });
 
   const donoDe = () => { const d = new Array(C).fill(-1); for (const k of achadas) for (const c of P.w[k].p) d[c] = k; return d; };
+  // O tabuleiro tem uma parte fixa (palavras achadas, com a tinta, bolinhas e letras), refeita só quando muda
+  // o que foi achado, e a seleção, que muda a cada casa arrastada e só mexe na linha e na cor das bolinhas dela.
+  let chaveFixa = "";
   function render() {
     if (!P) return;
+    const chave = [...achadas].join(",") + "|" + alvo + "|" + finished;
+    if (chave !== chaveFixa || !$("selLk")) { chaveFixa = chave; desenhaFixo(); }
+    // seleção: só a linha e as bolinhas do caminho
+    $("selLk").setAttribute("points", caminho.length > 1 ? caminho.map(i => xy(i).join(",")).join(" ") : "");
+    const no = new Set(caminho);
+    $("board").querySelectorAll(".bola.livre").forEach(c => c.classList.toggle("sel", no.has(+c.dataset.i)));
+    painel();
+  }
+  function desenhaFixo() {
     const dono = donoDe();
-    let lk = "", bl = "", tx = "";
+    let lk = "", ba = "", bl = "", tx = "";
     const linha = (p, cls) => p.length > 1 ? `<polyline class="lk ${cls}" points="${p.map(i => xy(i).join(",")).join(" ")}"/>` : "";
     for (const k of achadas) lk += linha(P.w[k].p, P.w[k].k ? "chave" : "tema");
-    lk += linha(caminho, "sel");
     for (let i = 0; i < C; i++) {
       const [x, y] = xy(i), k = dono[i];
-      const cls = k >= 0 ? (P.w[k].k ? "chave" : "tema") : caminho.includes(i) ? "sel" : "";
       const nv = recente.has(i) ? " novo" : "";
-      bl += `<circle class="bola ${cls}${nv}" cx="${x}" cy="${y}" r="38"/>`;
+      if (k >= 0) ba += `<circle class="bola ${P.w[k].k ? "chave" : "tema"}${nv}" cx="${x}" cy="${y}" r="38"/>`;
+      else bl += `<circle class="bola livre" data-i="${i}" cx="${x}" cy="${y}" r="38"/>`;
       if (alvo >= 0 && !achadas.has(alvo) && P.w[alvo].p.includes(i)) bl += `<circle class="bola dica" cx="${x}" cy="${y}" r="42"/>`;
       tx += `<text class="le ${k >= 0 ? (P.w[k].k ? "chave" : "tema") : ""}" x="${x}" y="${y + 2}">${letras[i]}</text>`;
     }
     recente = new Set();
-    $("board").innerHTML = lk + bl + tx;
+    $("board").innerHTML = `<g class="achadas">${lk}${ba}</g><polyline id="selLk" class="lk sel" points=""/>${bl}${tx}`;
+  }
+  function painel() {
     $("board").classList.toggle("won", finished);
     // dica: bolinhas = palavras fora do tema desde a última dica ganha
     const ganhas = Math.floor(extras.length / 3), livres = ganhas - dicasUsadas, resto = extras.length % 3;
