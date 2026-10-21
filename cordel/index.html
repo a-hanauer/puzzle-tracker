@@ -445,7 +445,10 @@
     render();
     if (w.length < 4) { aviso("Palavras têm <b>4 letras</b> ou mais"); treme(); persist(); return; }
     const mesmas = (a, b) => a.length === b.length && a.every(x => b.includes(x));
-    const k = P.w.findIndex((x, j) => !achadas.has(j) && x.w === w && mesmas(x.p, cs));
+    // vale a palavra do tema, mesmo traçada por outras letras iguais (nos desafios antigos a mesma palavra às vezes
+    // cabia de dois jeitos): conta e marca as casas certas dela
+    let k = P.w.findIndex((x, j) => !achadas.has(j) && x.w === w && mesmas(x.p, cs));
+    if (k < 0) k = P.w.findIndex((x, j) => !achadas.has(j) && x.w === w);
     if (k >= 0) {
       achadas.add(k); log.push(P.w[k].k ? "k" : "t");
       P.w[k].p.forEach(i => recente.add(i));

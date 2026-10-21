@@ -18,7 +18,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { TEMAS } from "./temas.mjs";
 import { ACERVO } from "../comum/acervo.mjs";   // temas de conhecimentos gerais (out/2026)
-const DO_ACERVO = ACERVO.filter(c => c.c).map(c => [c.c[0], c.c[1], c.w]);
+import { NOVOS } from "./temas-novos.mjs";        // temas novos (21/10/2026): mais áreas e outros feitios
+// [pista, chave, palavras, área, família]
+const DO_ACERVO = [...ACERVO, ...NOVOS].filter(c => c.c).map(c => [c.c[0], c.c[1], c.w, c.a, c.f || c.c[1]]);
 import { mantidos } from "../comum/selecao.mjs";
 
 export const H = 8, W = 6, C = H * W;
@@ -72,11 +74,14 @@ function* caminhos(start, len, livre, xs) {
   livre[start] = 1;
 }
 
-function encaixar(chave, palavras, orcamento = 40000) {
+function encaixar(chave, palavras, orcamento = 40000, unica = false) {
   const livre = new Uint8Array(C).fill(1), xs = new Set(), grid = new Array(C).fill(""), sol = [];
   let nos = 0;
   // casas livres e diagonais ficam por conta de caminhos(); aqui só as letras
   const marcaCaminho = (p, w, on) => { for (let k = 0; k < p.length; k++) grid[p[k]] = on ? w[k] : ""; };
+  // unica: toda palavra já posta tem um traçado só; letras novas só criam traçados, então dá para cortar cedo
+  const postas = [];
+  const unicas = () => !unica || postas.every(w => formas(grid, w) === 1);
   function resto(ws) {
     if (++nos > orcamento) return false;
     if (!ws.length) return true;
@@ -86,10 +91,10 @@ function encaixar(chave, palavras, orcamento = 40000) {
     for (const w of shuffle(ws.slice())) for (const pal of shuffle([w, [...w].reverse().join("")])) {
       for (const p of caminhos(alvo, pal.length, livre, xs)) {
         if (++nos > orcamento) return false;
-        marcaCaminho(p, pal, true);
+        marcaCaminho(p, pal, true); postas.push(w);
         const rest = ws.filter(x => x !== w);
-        if (cabe(componentes(livre), rest.map(x => x.length)) && resto(rest)) { sol.push({ w, p: pal === w ? p : p.slice().reverse() }); return true; }
-        marcaCaminho(p, pal, false);
+        if (unicas() && cabe(componentes(livre), rest.map(x => x.length)) && resto(rest)) { sol.push({ w, p: pal === w ? p : p.slice().reverse() }); return true; }
+        marcaCaminho(p, pal, false); postas.pop();
       }
     }
     return false;
@@ -102,10 +107,10 @@ function encaixar(chave, palavras, orcamento = 40000) {
     for (const s of starts) for (const p of caminhos(s, chave.length, livre, xs)) {
       if (++nos > orcamento) return null;
       if (!p.some(fim)) continue;
-      marcaCaminho(p, chave, true);
+      marcaCaminho(p, chave, true); postas.push(chave);
       const ws = palavras.slice();
-      if (cabe(componentes(livre), ws.map(x => x.length)) && resto(ws)) { sol.push({ w: chave, p, chave: true }); return { grid, sol }; }
-      marcaCaminho(p, chave, false);
+      if (unicas() && cabe(componentes(livre), ws.map(x => x.length)) && resto(ws)) { sol.push({ w: chave, p, chave: true }); return { grid, sol }; }
+      marcaCaminho(p, chave, false); postas.pop();
       nos += 50;
     }
   }
@@ -125,6 +130,19 @@ function* grupos(ws, alvo) {
   yield* rec(0, 0);
 }
 
+// de quantas maneiras (conjuntos de casas diferentes) dá para traçar a palavra no tabuleiro
+export function formas(grid, w, limite = 2) {
+  const achados = new Set(), usado = new Uint8Array(C), path = [];
+  function rec(i, k) {
+    if (achados.size >= limite) return;
+    if (k === w.length) { achados.add(path.slice().sort((a, b) => a - b).join(",")); return; }
+    for (const j of NB[i]) if (!usado[j] && grid[j] === w[k]) { usado[j] = 1; path.push(j); rec(j, k + 1); path.pop(); usado[j] = 0; }
+  }
+  for (let i = 0; i < C && achados.size < limite; i++) if (grid[i] === w[0]) { usado[i] = 1; path.push(i); rec(i, 1); path.pop(); usado[i] = 0; }
+  return achados.size;
+}
+export const ambiguas = (grid, ws) => ws.filter(w => formas(grid, w) > 1).length;
+
 export function montar(tema) {
   const [pista, chaveTxt, lista] = tema;
   const chave = norm(chaveTxt);
@@ -132,16 +150,27 @@ export function montar(tema) {
   for (const t of lista) { const n = norm(t); if (n.length >= 4 && n.length <= 10 && n !== chave && !vistos.has(n)) vistos.set(n, t); }
   const ws = [...vistos.keys()];
   let tent = 0;
+  // cada palavra do tema só pode ser traçada de um jeito (sem precisar adivinhar qual dos "A" vizinhos é o certo);
+  // se não der, fica o tabuleiro com menos palavras ambíguas
+  let melhor = null;
+  const t0 = Date.now();
   for (const g of grupos(ws, C - chave.length)) {
-    if (++tent > 60) break;
-    const r = encaixar(chave, g);
+    if (++tent > 400 || (melhor && Date.now() - t0 > 4000)) break;
+    const r = encaixar(chave, g, 40000, true) || (tent > 40 && !melhor ? encaixar(chave, g) : null);
     if (!r) continue;
+    const amb = ambiguas(r.grid, [chave, ...g]);
+    if (!melhor || amb < melhor.amb) melhor = { r, amb };
+    if (amb === 0) break;
+  }
+  if (melhor) {
+    const r = melhor.r;
     const ordem = r.sol.sort((a, b) => (b.chave ? 1 : 0) - (a.chave ? 1 : 0) || a.w.localeCompare(b.w));
     return {
       t: pista, c: chave,
       g: r.grid.join(""),
       // palavras: texto do tabuleiro, forma escrita e caminho (casas em ordem)
       w: ordem.map(x => ({ w: x.w, o: x.chave ? chaveTxt : vistos.get(x.w), p: x.p, ...(x.chave ? { k: 1 } : {}) })),
+      amb: melhor.amb,
     };
   }
   return null;
@@ -153,14 +182,23 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const old = mantidos(dir, EPOCH);
   const usados = new Set(old.map(p => p.c));
   // a partir de 15/10/2026 só os temas do acervo (os antigos eram fáceis demais); quando acabarem, recomeçam
-  const fila = shuffle(DO_ACERVO.filter(t => !usados.has(norm(t[1]))));
-  const out = [...old];
+  // rodízio: a área não se repete em 3 dias seguidos e a família não volta em 10 dias
+  const resta = shuffle(DO_ACERVO.filter(t => !usados.has(norm(t[1]))));
+  const out = [...old], ultimas = [], fams = [];
   const t0 = Date.now();
-  for (const tema of fila) {
+  let amb = 0;
+  while (resta.length) {
+    let k = resta.findIndex(t => !ultimas.slice(-3).includes(t[3]) && !fams.slice(-10).includes(t[4]));
+    if (k < 0) k = resta.findIndex(t => !ultimas.slice(-1).includes(t[3]));
+    if (k < 0) k = 0;
+    const tema = resta.splice(k, 1)[0];
     const p = montar(tema);
     if (!p) { console.log("não encaixou:", tema[0]); continue; }
-    out.push(p);
+    if (p.amb) { amb++; console.log(`ambígua (${p.amb}):`, tema[0]); }
+    delete p.amb;
+    out.push(p); ultimas.push(tema[3]); fams.push(tema[4]);
   }
+  console.log(`${amb} com alguma palavra de dois jeitos`);
   writeFileSync(join(dir, "desafios.json"), JSON.stringify({ epoch: EPOCH, puzzles: out }));
   console.log(`pronto: ${out.length} dias (${old.length} mantidos) em ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 }
