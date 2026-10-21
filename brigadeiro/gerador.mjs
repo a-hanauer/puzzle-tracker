@@ -18,13 +18,14 @@ function rand() { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(s
 const rint = n => Math.floor(rand() * n);
 const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rint(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
+// 21/10/2026: segunda a quinta ficaram mais difíceis (o nível 1 é o antigo 3); sábado e domingo não mudaram
 export const NIVEL = {
-  1: { doces: 2, paredes: [7, 10], inc: [3, 4], faixa: [0, .7] },
-  2: { doces: 2, paredes: [7, 11], inc: [4, 6], faixa: [.3, 1] },
-  3: { doces: 3, paredes: [8, 12], inc: [4, 6], faixa: [0, .7] },
-  4: { doces: 3, paredes: [8, 12], inc: [6, 8], faixa: [.2, .9] },
-  5: { doces: 3, paredes: [9, 13], inc: [7, 9], faixa: [.3, 1] },
-  6: { doces: 4, paredes: [9, 13], inc: [7, 10], faixa: [.2, .9] },
+  1: { doces: 3, paredes: [8, 12], inc: [4, 6], faixa: [0, .7] },
+  2: { doces: 3, paredes: [8, 12], inc: [5, 7], faixa: [.2, .9] },
+  3: { doces: 3, paredes: [8, 12], inc: [6, 8], faixa: [.2, .9] },
+  4: { doces: 3, paredes: [9, 13], inc: [7, 9], faixa: [.3, 1] },
+  5: { doces: 4, paredes: [9, 13], inc: [7, 9], faixa: [.2, .9] },
+  6: { doces: 4, paredes: [9, 13], inc: [7, 10], faixa: [.3, 1] },
   7: { doces: 4, paredes: [9, 14], inc: [9, 13], faixa: [.4, 1] },
 };
 

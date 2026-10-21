@@ -64,5 +64,6 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   ícone e fim = um brigadeiro caindo na forminha rosa. Setas no formato do teclado físico (Desfazer ↑ Recomeçar / ← ↓ →);
   seta apagada = não mexe nada.
 - `brigadeiro/motor.mjs` (inclinar + busca em largura do mínimo de inclinações) serve o gerador e a dica da página.
-- `brigadeiro/gerador.mjs`: sorteia paredes, forminhas e doces e resolve; a semana sobe em doces (2 → 4) e inclinações
-  mínimas (3–4 na segunda → 10–13 no domingo). A dica faz a próxima inclinação ótima; se travou, volta até ter saída.
+- `brigadeiro/gerador.mjs`: sorteia paredes, forminhas e doces e resolve. Desde 22/10/2026 a semana vai de 3 doces e 4–6
+  inclinações mínimas na segunda (o antigo nível 3) a 4 doces e 10–13 no domingo; sábado e domingo como antes.
+  A dica faz a próxima inclinação ótima; se travou, volta até ter saída.
