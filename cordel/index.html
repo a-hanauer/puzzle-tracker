@@ -321,7 +321,7 @@
   let chaveFixa = "";
   function render() {
     if (!P) return;
-    const chave = [...achadas].join(",") + "|" + alvo + "|" + finished;
+    const chave = String(letras) + "|" + [...achadas].join(",") + "|" + alvo + "|" + finished;   // letras: outro desafio (jogo livre) refaz tudo
     if (chave !== chaveFixa || !$("selLk")) { chaveFixa = chave; desenhaFixo(); }
     // seleção: só a linha e as bolinhas do caminho
     $("selLk").setAttribute("points", caminho.length > 1 ? caminho.map(i => xy(i).join(",")).join(" ") : "");
