@@ -78,8 +78,6 @@
      e não devem rodar a cada quadro do arrasto; por baixo, o SVG só com o rastro do dedo */
   .tab canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
   #letrasSvg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: visible; }
-  .prov .corpo { fill: none; stroke-width: 58px; stroke-linecap: round; stroke-linejoin: round; }
-  .prov.tema .corpo { stroke: var(--tema); } .prov.chave .corpo { stroke: var(--chave); }
   /* papel de folheto (grão leve) e tinta de carimbo nas palavras achadas */
   body { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .10 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23f)'/%3E%3C/svg%3E"); }
   /* palavra achada = bloco entalhado no formato do rastro, com filete de papel por dentro da borda (como as molduras
@@ -128,8 +126,9 @@
   .etiquetas { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 6px 0 2px; min-height: 30px; }
   .et { height: 30px; padding: 0 11px; border-radius: 99px; display: inline-flex; align-items: center; font-weight: 800; font-size: .8rem; letter-spacing: .05em;
     box-shadow: inset 0 0 0 1.8px color-mix(in srgb, var(--ink) 28%, transparent); color: var(--muted); white-space: nowrap; }
-  .et.tema { background: var(--tema); color: var(--tema-ink); box-shadow: none; animation: novo .35s cubic-bezier(.3, 1.5, .5, 1); }
-  .et.chave { background: var(--chave); color: var(--chave-ink); box-shadow: none; animation: novo .35s cubic-bezier(.3, 1.5, .5, 1); }
+  .et.tema { background: var(--tema); color: var(--tema-ink); box-shadow: none; }
+  .et.chave { background: var(--chave); color: var(--chave-ink); box-shadow: none; }
+  .et.nova { animation: novo .35s cubic-bezier(.3, 1.5, .5, 1); }   /* só a etiqueta da palavra que acabou de sair */
   .controls:not(.done) { display: none; }
   .tip { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 10px; line-height: 1.45; min-height: 2.3em; }
   .tip b { color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -353,20 +352,6 @@
     COR = P.w.map((_, k) => ((melhor >> k) & 1 ? "chave" : "tema"));
   }
   const tinta = k => COR[k] || "tema";
-  // casa bloqueada: estrela de cordel desenhada à mão — cada uma diferente (pontas, tamanhos e giro sorteados
-  // com semente fixa pela casa e pelo desafio), como as estrelas irregulares das capas de folheto
-  function estrela(i) {
-    let sem = 7; for (const ch of String(letras).slice(0, 12) + i) sem = (sem * 31 + ch.charCodeAt(0)) >>> 0;
-    const r = () => ((sem = (sem * 1103515245 + 12345) >>> 0) / 4294967296);
-    const n = 6 + Math.floor(r() * 5), giro = r() * Math.PI, raio = 22 + r() * 6;
-    let d = "";
-    for (let k = 0; k < n * 2; k++) {
-      const a = giro + (k / (n * 2)) * Math.PI * 2 + (r() - .5) * .35;
-      const rr = k % 2 ? 4.5 + r() * 4 : raio * (.62 + r() * .45);
-      d += (k ? "L" : "M") + (Math.cos(a) * rr).toFixed(1) + " " + (Math.sin(a) * rr).toFixed(1);
-    }
-    return `<path d="${d}Z"/>`;
-  }
   // parte fixa (achadas com tinta, bolinhas, letras) só muda quando muda o que foi achado; no arrasto, só a seleção
   let chaveFixa = "";
   function render() {
@@ -377,103 +362,107 @@
     const no = new Set(caminho);
     painel();
   }
-  // desgaste da madeira: riscos claros e finos ao longo de cada trecho, na direção em que a palavra foi traçada
-  // (sorteio fixo por palavra, para não mudar a cada desenho)
-  // corpo do bloco: traço cheio que passa pelo centro de cada letra numa curva suave (Catmull-Rom), em vez de retas
-  // de letra a letra; a borda de goiva (filtro) deixa o contorno irregular
-  function forma(p) {
-    const P2 = p.map(xy), f = n => n.toFixed(1);
-    let d = `M${f(P2[0][0])} ${f(P2[0][1])}`;
-    for (let j = 0; j < P2.length - 1; j++) {
-      const a = P2[j - 1] || P2[j], b = P2[j], c = P2[j + 1], e = P2[j + 2] || c, t = .17;
-      d += `C${f(b[0] + (c[0] - a[0]) * t)} ${f(b[1] + (c[1] - a[1]) * t)} ${f(c[0] - (e[0] - b[0]) * t)} ${f(c[1] - (e[1] - b[1]) * t)} ${f(c[0])} ${f(c[1])}`;
+  // ---------- parte fixa desenhada direto num canvas (sem filtros SVG: no iPhone eles atrasam e piscam) ----------
+  // Bloco: traço cheio numa curva suave pelas letras; a borda de goiva sai de calombos e cortes sorteados ao longo
+  // da borda; por dentro, lascas de goiva (pontudas nas duas pontas) na direção do traço e pontinhos de falha.
+  // Tudo com semente fixa por palavra: o desenho é sempre o mesmo e sai na hora, sem esperar nada.
+  const sorte = txt => { let s = 7; for (const ch of txt) s = (s * 31 + ch.charCodeAt(0)) >>> 0; return () => ((s = (s * 1103515245 + 12345) >>> 0) / 4294967296); };
+  function curva(p) {                          // trechos Bézier pelos centros das letras (Catmull-Rom suave)
+    const Q = p.map(xy), seg = [];
+    for (let j = 0; j < Q.length - 1; j++) {
+      const a = Q[j - 1] || Q[j], b = Q[j], c = Q[j + 1], e = Q[j + 2] || c, t = .17;
+      seg.push([b, [b[0] + (c[0] - a[0]) * t, b[1] + (c[1] - a[1]) * t], [c[0] - (e[0] - b[0]) * t, c[1] - (e[1] - b[1]) * t], c]);
     }
-    return `<path class="corpo" d="${d}"/>`;
+    return seg;
   }
-  // desgaste da madeira: lascas de goiva pontudas nas duas pontas (um fuso achatado), na direção em que a palavra
-  // foi traçada; sorteio fixo por palavra, para não mudar a cada desenho
-  function desgaste(p, k) {
-    let sem = 0; for (const ch of P.w[k].w + k) sem = (sem * 31 + ch.charCodeAt(0)) >>> 0;
-    const r = () => ((sem = (sem * 1103515245 + 12345) >>> 0) / 4294967296);
-    const f = n => n.toFixed(1);
-    let d = "";
-    for (let j = 1; j < p.length; j++) {
-      const [x1, y1] = xy(p[j - 1]), [x2, y2] = xy(p[j]);
-      const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, nx = -uy, ny = ux;
-      for (let q = 0; q < 5; q++) {
-        const off = (r() - .5) * 36, a = r() * L - 6, len = 10 + r() * 10, lw = 1.8 + r() * 1.6;
-        const sx = x1 + ux * a + nx * off, sy = y1 + uy * a + ny * off, ex = sx + ux * len, ey = sy + uy * len;
-        const mx = (sx + ex) / 2, my = (sy + ey) / 2;
-        d += `<path class="lasca" d="M${f(sx)} ${f(sy)}Q${f(mx + nx * lw * 2)} ${f(my + ny * lw * 2)} ${f(ex)} ${f(ey)}Q${f(mx - nx * lw * 2)} ${f(my - ny * lw * 2)} ${f(sx)} ${f(sy)}Z"/>`;
+  const bez = ([p0, p1, p2, p3], t) => { const u = 1 - t; return [0, 1].map(k => u * u * u * p0[k] + 3 * u * u * t * p1[k] + 3 * u * t * t * p2[k] + t * t * t * p3[k]); };
+  const LARG = 29;                             // meia largura do bloco (unidades do tabuleiro; casa = 100)
+  function pintaBloco(g, p, k, cor, fundo) {
+    const r = sorte(P.w[k].w + k), seg = curva(p);
+    g.fillStyle = g.strokeStyle = cor; g.lineCap = g.lineJoin = "round"; g.lineWidth = LARG * 2;
+    g.beginPath(); g.moveTo(...seg.length ? seg[0][0] : xy(p[0]));
+    for (const s of seg) g.bezierCurveTo(...s[1], ...s[2], ...s[3]);
+    if (!seg.length) g.lineTo(...xy(p[0]));
+    g.stroke();
+    // amostra a curva (ponto e direção) a cada ~7 unidades
+    const am = [];
+    for (const s of seg) { const L = Math.hypot(s[3][0] - s[0][0], s[3][1] - s[0][1]), n = Math.max(4, Math.round(L / 7));
+      for (let q = 0; q < n; q++) { const a = bez(s, q / n), b = bez(s, (q + .5) / n), dx = b[0] - a[0], dy = b[1] - a[1], m = Math.hypot(dx, dy) || 1; am.push([a, dx / m, dy / m]); } }
+    // borda de goiva: calombos para fora e cortes para dentro
+    const fase = [r() * 6, r() * 6];
+    for (const [[x, y], ux, uy] of am) for (const lado of [-1, 1]) {
+      const nx = -uy * lado, ny = ux * lado;
+      // ondulação suave: a borda sobe e desce devagar (onda sorteada), não em bolinhas
+      const onda = Math.sin(fase[lado > 0 ? 0 : 1] += .55 + r() * .5) * 1.8 + (r() - .5) * 1.2;
+      g.fillStyle = onda > 0 ? cor : fundo;
+      g.beginPath(); g.arc(x + nx * (LARG + (onda > 0 ? -2 : 3.4)), y + ny * (LARG + (onda > 0 ? -2 : 3.4)), 2.2 + Math.abs(onda) * 1.4, 0, 7); g.fill();
+    }
+    // lascas pontudas nas duas pontas, na direção do traço, e pontinhos de falha
+    g.fillStyle = fundo;
+    for (let q = 0; q < am.length; q += 2) {
+      const [[x, y], ux, uy] = am[q], nx = -uy, ny = ux;
+      if (r() < .45) {
+        const off = (r() - .5) * 36, len = 10 + r() * 10, lw = (1.8 + r() * 1.6) * 2;
+        const sx = x + nx * off, sy = y + ny * off, ex = sx + ux * len, ey = sy + uy * len, mx = (sx + ex) / 2, my = (sy + ey) / 2;
+        g.beginPath(); g.moveTo(sx, sy); g.quadraticCurveTo(mx + nx * lw, my + ny * lw, ex, ey); g.quadraticCurveTo(mx - nx * lw, my - ny * lw, sx, sy); g.fill();
       }
+      if (r() < .15) { g.beginPath(); g.arc(x + nx * (r() - .5) * 46, y + ny * (r() - .5) * 46, .8 + r() * 1.3, 0, 7); g.fill(); }
     }
-    return d;
   }
-  // ---------- parte fixa numa imagem ----------
-  let fixo = null, desenhado = "", fonteOk = false, etqMedida = "", pintou = false;
+  function pintaEstrela(g, i, cor) {
+    const r = sorte(String(letras).slice(0, 12) + i), [cx, cy] = xy(i);
+    const n = 6 + Math.floor(r() * 5), giro = r() * Math.PI, raio = 22 + r() * 6;
+    g.fillStyle = cor; g.beginPath();
+    for (let k = 0; k < n * 2; k++) {
+      const a = giro + (k / (n * 2)) * Math.PI * 2 + (r() - .5) * .35, rr = k % 2 ? 4.5 + r() * 4 : raio * (.62 + r() * .45);
+      g[k ? "lineTo" : "moveTo"](cx + Math.cos(a) * rr, cy + Math.sin(a) * rr);
+    }
+    g.closePath(); g.fill();
+  }
+  let desenhado = "", fonteOk = false, etqMedida = "";
   const letraPronta = (document.fonts ? Promise.race([document.fonts.load(`56px Xilo`, "ABC"), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve()).catch(() => {});
-  // letras e imagem aparecem juntas (letra clara sem o bloco por baixo some no papel)
-  function mostraLetras() { const ls = $("letrasSvg"); if (ls && fonteOk && pintou) ls.style.visibility = ""; }
-  async function pintaFixo() {
+  function pintaFixo() {
     const b = $("board"), tab = $("tab");
-    if (!fixo || !b) return;
+    if (!P || !b) return;
     const w = b.clientWidth, h = b.clientHeight, dpr = Math.min(3, window.devicePixelRatio || 1);
-    const chave = chaveFixa + "|" + w + "x" + h + "|" + (document.documentElement.dataset.theme || "") + matchMedia("(prefers-color-scheme: dark)").matches;
+    const escuro = matchMedia("(prefers-color-scheme: dark)").matches;
+    const chave = chaveFixa + "|" + w + "x" + h + "|" + (document.documentElement.dataset.theme || "") + escuro;
     if (!w || chave === desenhado) return;
     desenhado = chave;
     const cs = getComputedStyle(document.documentElement), v = n => cs.getPropertyValue(n).trim();
-    const css = `
-      .corpo{fill:none;stroke-width:58px;stroke-linecap:round;stroke-linejoin:round}.tema .corpo{stroke:${v("--tema")}}.chave .corpo{stroke:${v("--chave")}}
-      .veio{fill:none;stroke:${v("--bg")};stroke-linecap:round}.lasca{fill:${v("--bg")}}.orn *{fill:${v("--orn")}}.orn .corte{fill:${v("--bg")}}
-      .dica{fill:none;stroke:${v("--dica")};stroke-width:3.5;stroke-dasharray:6 6}
-      .le{font-family:Xilo,sans-serif;font-size:${v("--letra-tam") || "46px"};text-anchor:middle;dominant-baseline:central;fill:${v("--ink")}}
-      .le.tema{fill:${v("--tema-ink")}}.le.chave{fill:${v("--chave-ink")}}`;
-    const defs = document.getElementById("tinta").outerHTML + document.getElementById("tinta-leve").outerHTML;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${N * U} ${R * U}" width="${w * dpr}" height="${h * dpr}"><defs><style>${css}</style>${defs}</defs>` +
-      `<g filter="url(#tinta)">${fixo.ba}</g><g filter="url(#tinta-leve)">${fixo.bl}</g></svg>`;
-    const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
-    const img = new Image();
-    img.onload = () => {
-      if (desenhado !== chave) { URL.revokeObjectURL(url); return; }
-      const cv = document.createElement("canvas"); cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
-      URL.revokeObjectURL(url);
-      // troca seca: a imagem nova cobre o bloco provisório no mesmo quadro (sem esmaecer, sem piscar)
-      const velhos = [...tab.querySelectorAll("canvas")];
-      tab.insertBefore(cv, $("letrasSvg"));
-      requestAnimationFrame(() => { velhos.forEach(c => c.remove()); $("board").querySelectorAll(".prov").forEach(g => g.remove()); });
-      if (!pintou) { pintou = true; mostraLetras(); }
-    };
-    img.src = url;
+    let cv = tab.querySelector("canvas");
+    if (!cv) { cv = document.createElement("canvas"); tab.insertBefore(cv, tab.firstChild); }
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    const g = cv.getContext("2d"), esc = cv.width / (N * U);
+    g.setTransform(esc, 0, 0, esc, 0, 0); g.clearRect(0, 0, N * U, R * U);
+    const fundo = v("--bg");
+    for (const k of achadas) pintaBloco(g, P.w[k].p, k, v(tinta(k) === "chave" ? "--chave" : "--tema"), fundo);
+    for (let i = 0; i < C; i++) if (letras[i] === "#") pintaEstrela(g, i, v("--orn"));
+    if (alvo >= 0 && !achadas.has(alvo)) {
+      g.strokeStyle = v("--dica"); g.lineWidth = 3.5; g.setLineDash([6, 6]);
+      for (const i of [P.w[alvo].p[0], P.w[alvo].p.at(-1)]) { const [x, y] = xy(i); g.beginPath(); g.arc(x, y, 44, 0, 7); g.stroke(); }
+      g.setLineDash([]);
+    }
   }
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { desenhado = ""; pintaFixo(); });
 
   function desenhaFixo() {
     const dono = donoDe();
-    let bl = "", tx = "", ba = "";
-    const pts = p => p.map(i => xy(i).join(",")).join(" ");
-    for (const k of achadas) {
-      const p = P.w[k].p, nv = p.some(i => recente.has(i)) ? " novo" : "";
-      ba += `<g class="bloco ${tinta(k)}${nv}">${forma(p)}${desgaste(p, k)}</g>`;
-    }
-    const marca = alvo >= 0 && !achadas.has(alvo) ? [P.w[alvo].p[0], P.w[alvo].p.at(-1)] : [];
+    let tx = "";
     for (let i = 0; i < C; i++) {
       const [x, y] = xy(i), k = dono[i];
-      if (letras[i] === ".") continue;                 // fora da forma do tabuleiro
-      if (letras[i] === "#") { bl += `<g class="orn" transform="translate(${x} ${y})">${estrela(i)}</g>`; continue; }
-      if (marca.includes(i)) bl += `<circle class="dica" cx="${x}" cy="${y}" r="44"/>`;
+      if (letras[i] === "." || letras[i] === "#") continue;
       tx += `<text class="le ${k >= 0 ? tinta(k) : ""}" x="${x}" y="${y + 2}">${letras[i]}</text>`;
     }
-    // palavra recém-achada: um bloco simples na hora, por baixo da imagem, até a imagem com a xilogravura ficar pronta
-    const prov = [...achadas].filter(k => P.w[k].p.some(i => recente.has(i)));
+    const novas = new Set([...achadas].filter(k => P.w[k].p.some(i => recente.has(i))));
     recente = new Set();
-    $("board").innerHTML = prov.map(k => `<g class="prov ${tinta(k)}">${forma(P.w[k].p)}</g>`).join("") + `<polyline id="selLk" points=""/>`;
+    $("board").innerHTML = `<polyline id="selLk" points=""/>`;
     let ls = $("letrasSvg");
     if (!ls) { ls = document.createElementNS("http://www.w3.org/2000/svg", "svg"); ls.id = "letrasSvg"; ls.setAttribute("aria-hidden", "true"); $("tab").append(ls); }
     ls.setAttribute("viewBox", `0 0 ${N * U} ${R * U}`); ls.innerHTML = tx;
     // as letras só aparecem com a fonte de xilogravura pronta (sem piscar na letra comum antes)
-    if (!fonteOk || !pintou) { ls.style.visibility = "hidden"; letraPronta.then(() => { fonteOk = true; mostraLetras(); }); }
-    fixo = { ba, bl }; desenhado = "";
+    if (!fonteOk) { ls.style.visibility = "hidden"; letraPronta.then(() => { fonteOk = true; ls.style.visibility = ""; }); }
+    desenhado = "";
     // etiquetas: uma por palavra, na ordem do tamanho; vira a palavra quando achada
     const ordem = P.w.map((_, k) => k).sort((a, b) => P.w[b].w.length - P.w[a].w.length || a - b);
     // a altura das etiquetas fica a de quando todas estiverem achadas (palavra é mais larga que "7 letras"):
@@ -484,7 +473,7 @@
       el.style.minHeight = el.offsetHeight + "px";
     }
     $("etiquetas").innerHTML = ordem.map(k => achadas.has(k)
-      ? `<span class="et ${tinta(k)}">${P.w[k].o.toUpperCase()}</span>`
+      ? `<span class="et ${tinta(k)}${novas.has(k) ? " nova" : ""}">${P.w[k].o.toUpperCase()}</span>`
       : `<span class="et">${P.w[k].w.length} letras</span>`).join("");
     fit();                      // as etiquetas mudam a altura que sobra para o tabuleiro
     pintaFixo();
@@ -642,7 +631,7 @@
     const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
     if (!teste && st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
     persist(); render();
-    celebrar("cordel", { alvo: $("stage"), esmaecer: $("board") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
+    celebrar("cordel", { alvo: $("stage"), esmaecer: $("tab") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
   }
   const SIMB = { t: "⚫", k: "🔴", d: "💡" };
   function showEnd() {
