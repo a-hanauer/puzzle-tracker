@@ -408,7 +408,7 @@
     return d;
   }
   // ---------- parte fixa numa imagem ----------
-  let fixo = null, desenhado = "", fonteOk = false;
+  let fixo = null, desenhado = "", fonteOk = false, etqMedida = "";
   const letraPronta = (document.fonts ? Promise.race([document.fonts.load(`56px Xilo`, "ABC"), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve()).catch(() => {});
   async function pintaFixo() {
     const b = $("board"), tab = $("tab");
@@ -468,6 +468,13 @@
     fixo = { ba, bl }; desenhado = "";
     // etiquetas: uma por palavra, na ordem do tamanho; vira a palavra quando achada
     const ordem = P.w.map((_, k) => k).sort((a, b) => P.w[b].w.length - P.w[a].w.length || a - b);
+    // a altura das etiquetas fica a de quando todas estiverem achadas (palavra é mais larga que "7 letras"):
+    // assim o tabuleiro não encolhe no meio da partida
+    if (etqMedida !== P.g + innerWidth) {
+      etqMedida = P.g + innerWidth; const el = $("etiquetas"); el.style.minHeight = "";
+      el.innerHTML = ordem.map(k => `<span class="et tema">${P.w[k].o.toUpperCase()}</span>`).join("");
+      el.style.minHeight = el.offsetHeight + "px";
+    }
     $("etiquetas").innerHTML = ordem.map(k => achadas.has(k)
       ? `<span class="et ${tinta(k)}">${P.w[k].o.toUpperCase()}</span>`
       : `<span class="et">${P.w[k].w.length} letras</span>`).join("");
