@@ -49,7 +49,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   — o #20 é 6×6) e estrelas de cordel desenhadas à mão, cada uma diferente (casas bloqueadas); fora da forma não se desenha nada (só as letras mostram o contorno);
   a semana sobe de 19–23 letras (seg) a 42–48 (dom); as letras se dividem em palavras ligadas na horizontal, vertical ou diagonal (dois traços diagonais não se cruzam), todas
   usadas uma vez; palavra achada = bloco entalhado justo no formato do rastro (sem contorno), borda de goiva, pontinhos de
-  falha e riscos de desgaste na direção do traço; letras em Caesar Dressing (`cordel/fontes`, OFL); embaixo, uma
+  falha e lascas de goiva (pontudas nas duas pontas) na direção do traço; blocos e estrelas são desenhados numa imagem
+  (canvas) uma vez por palavra achada, para não pesar no iPhone; letras por cima em SVG vivo, em Caesar Dressing (`cordel/fontes`, OFL); embaixo, uma
   etiqueta com o tamanho de cada palavra. Palavras de resposta em `cordel/respostas.json` (comuns: substantivos e
   adjetivos no masculino singular e verbos no infinitivo; sem nomes próprios, plurais, conjugações). `cordel/gerador.mjs`
   confere com `alternativas.json` (lista larga, com plurais e conjugações) que a divisão é única e sai sem chute (sempre

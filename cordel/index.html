@@ -75,7 +75,8 @@
   #board { display: block; overflow: visible; }
   /* parte fixa (blocos, letras, florzinhas) desenhada uma vez numa imagem: os filtros de xilogravura pesam no iPhone
      e não devem rodar a cada quadro do arrasto; por baixo, o SVG só com o rastro do dedo */
-  .tab canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+  .tab canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+  #letrasSvg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: visible; }
   .tab canvas.entra { animation: carimbo .22s ease-out; }
   @keyframes carimbo { from { opacity: .35; } to { opacity: 1; } }
   /* papel de folheto (grão leve) e tinta de carimbo nas palavras achadas */
@@ -377,28 +378,27 @@
   }
   // desgaste da madeira: riscos claros e finos ao longo de cada trecho, na direção em que a palavra foi traçada
   // (sorteio fixo por palavra, para não mudar a cada desenho)
+  // desgaste da madeira: lascas de goiva pontudas nas duas pontas (um fuso achatado), na direção em que a palavra
+  // foi traçada; sorteio fixo por palavra, para não mudar a cada desenho
   function desgaste(p, k) {
     let sem = 0; for (const ch of P.w[k].w + k) sem = (sem * 31 + ch.charCodeAt(0)) >>> 0;
     const r = () => ((sem = (sem * 1103515245 + 12345) >>> 0) / 4294967296);
+    const f = n => n.toFixed(1);
     let d = "";
     for (let j = 1; j < p.length; j++) {
       const [x1, y1] = xy(p[j - 1]), [x2, y2] = xy(p[j]);
       const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, nx = -uy, ny = ux;
-      for (let q = 0; q < 4; q++) {
-        const off = (r() - .5) * 40, a = r() * L * .7 - 10, len = 14 + r() * (L * .55);
-        const sx = x1 + ux * a + nx * off, sy = y1 + uy * a + ny * off;
-        const w = (.8 + r() * 1.8).toFixed(1), ondula = (r() - .5) * 3;
-        d += `<path class="veio" stroke-width="${w}" d="M${sx.toFixed(1)} ${sy.toFixed(1)}q${(ux * len / 2 + nx * ondula).toFixed(1)} ${(uy * len / 2 + ny * ondula).toFixed(1)} ${(ux * len).toFixed(1)} ${(uy * len).toFixed(1)}"/>`;
+      for (let q = 0; q < 5; q++) {
+        const off = (r() - .5) * 36, a = r() * L - 6, len = 10 + r() * 10, lw = 1.8 + r() * 1.6;
+        const sx = x1 + ux * a + nx * off, sy = y1 + uy * a + ny * off, ex = sx + ux * len, ey = sy + uy * len;
+        const mx = (sx + ex) / 2, my = (sy + ey) / 2;
+        d += `<path class="lasca" d="M${f(sx)} ${f(sy)}Q${f(mx + nx * lw * 2)} ${f(my + ny * lw * 2)} ${f(ex)} ${f(ey)}Q${f(mx - nx * lw * 2)} ${f(my - ny * lw * 2)} ${f(sx)} ${f(sy)}Z"/>`;
       }
     }
     return d;
   }
   // ---------- parte fixa numa imagem ----------
-  let fixo = null, desenhado = "", fonteDados = null;
-  const fonte = () => fonteDados || (fonteDados = fetch("fontes/CaesarDressing-Regular.ttf").then(r => r.arrayBuffer()).then(b => {
-    let bin = ""; const u = new Uint8Array(b); for (let i = 0; i < u.length; i += 8192) bin += String.fromCharCode.apply(null, u.subarray(i, i + 8192));
-    return "data:font/ttf;base64," + btoa(bin);
-  }).catch(() => ""));
+  let fixo = null, desenhado = "";
   async function pintaFixo() {
     const b = $("board"), tab = $("tab");
     if (!fixo || !b) return;
@@ -407,16 +407,15 @@
     if (!w || chave === desenhado) return;
     desenhado = chave;
     const cs = getComputedStyle(document.documentElement), v = n => cs.getPropertyValue(n).trim();
-    const fnt = await fonte();
-    const css = `@font-face{font-family:Xilo;src:url(${fnt})}
+    const css = `
       .b1{fill:none;stroke-width:58px;stroke-linecap:round;stroke-linejoin:round}.tema .b1{stroke:${v("--tema")}}.chave .b1{stroke:${v("--chave")}}
-      .veio{fill:none;stroke:${v("--bg")};stroke-linecap:round}.orn *{fill:${v("--orn")}}.orn .corte{fill:${v("--bg")}}
+      .veio{fill:none;stroke:${v("--bg")};stroke-linecap:round}.lasca{fill:${v("--bg")}}.orn *{fill:${v("--orn")}}.orn .corte{fill:${v("--bg")}}
       .dica{fill:none;stroke:${v("--dica")};stroke-width:3.5;stroke-dasharray:6 6}
       .le{font-family:Xilo,sans-serif;font-size:${v("--letra-tam") || "46px"};text-anchor:middle;dominant-baseline:central;fill:${v("--ink")}}
       .le.tema{fill:${v("--tema-ink")}}.le.chave{fill:${v("--chave-ink")}}`;
     const defs = document.getElementById("tinta").outerHTML + document.getElementById("tinta-leve").outerHTML;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${N * U} ${R * U}" width="${w * dpr}" height="${h * dpr}"><defs><style>${css}</style>${defs}</defs>` +
-      `<g filter="url(#tinta)">${fixo.ba}</g><g filter="url(#tinta-leve)">${fixo.bl}${fixo.tx}</g></svg>`;
+      `<g filter="url(#tinta)">${fixo.ba}</g><g filter="url(#tinta-leve)">${fixo.bl}</g></svg>`;
     const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
     const img = new Image();
     img.onload = () => {
@@ -450,7 +449,10 @@
     }
     recente = new Set();
     $("board").innerHTML = `<polyline id="selLk" points=""/>`;
-    fixo = { ba, bl, tx }; desenhado = "";
+    let ls = $("letrasSvg");
+    if (!ls) { ls = document.createElementNS("http://www.w3.org/2000/svg", "svg"); ls.id = "letrasSvg"; ls.setAttribute("aria-hidden", "true"); $("tab").append(ls); }
+    ls.setAttribute("viewBox", `0 0 ${N * U} ${R * U}`); ls.innerHTML = tx;
+    fixo = { ba, bl }; desenhado = "";
     // etiquetas: uma por palavra, na ordem do tamanho; vira a palavra quando achada
     const ordem = P.w.map((_, k) => k).sort((a, b) => P.w[b].w.length - P.w[a].w.length || a - b);
     $("etiquetas").innerHTML = ordem.map(k => achadas.has(k)
