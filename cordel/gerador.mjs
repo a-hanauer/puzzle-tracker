@@ -1,204 +1,188 @@
-// Gerador de tabuleiros do Cordel.
+// Gerador do Cordel (desde #21, 24/10/2026): palavras escondidas numa grade, no estilo do Wend.
 //
-// Tabuleiro: 8 linhas × 6 colunas, 48 letras. Cada letra pertence a exatamente uma
-// palavra; as palavras são caminhos de casas vizinhas (inclusive na diagonal), sem
-// repetir casa e sem dois traços diagonais se cruzando. A palavra-chave toca dois
-// lados opostos (esquerda e direita, ou cima e embaixo).
+// A grade (5×5 a 7×7) tem algumas casas bloqueadas (a florzinha); as outras letras se dividem em palavras,
+// cada uma um caminho de casas vizinhas na horizontal ou na vertical, e cada letra é usada uma vez só.
+// O jogador vê quantas palavras há e o tamanho de cada uma.
 //
-// Para cada tema (temas.mjs), escolhe palavras que somam 48 letras com a chave,
-// encaixa a chave primeiro e depois as outras, sempre começando pela casa vazia
-// mais "apertada", e conferindo que cada pedaço de tabuleiro que sobra ainda pode
-// ser preenchido com as palavras que faltam.
-//
-// Uso:  node cordel/gerador.mjs [semente]
-// Os desafios que já saíram (até hoje) não mudam.
-
-import { writeFileSync } from "node:fs";
+// Para cada candidato: sorteia as casas bloqueadas, divide o resto em caminhos e põe em cada caminho uma
+// palavra comum (respostas.json: substantivos e adjetivos no masculino singular e verbos no infinitivo).
+// Depois confere, com uma lista bem mais larga de palavras que alguém poderia tentar (alternativas.json,
+// inclusive plurais e conjugações), que:
+//   1. só existe um jeito de dividir a grade em palavras com aqueles tamanhos;
+//   2. dá para chegar lá sem chute: sempre há uma casa que só cabe numa palavra possível (contando as que
+//      ainda cabem no que sobrou), como quem acha a próxima palavra olhando.
+// Dificuldade pela semana (segunda = 1 … domingo = 7): grade maior, menos casas bloqueadas, palavras mais
+// longas; dentro do nível, o esforço é quantas palavras falsas cabem na grade.
+// Uso:  node cordel/gerador.mjs [dias] [semente]      (os desafios que já saíram não mudam)
+import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { TEMAS } from "./temas.mjs";
-import { ACERVO } from "../comum/acervo.mjs";   // temas de conhecimentos gerais (out/2026)
-import { NOVOS } from "./temas-novos.mjs";        // temas novos (21/10/2026): mais áreas e outros feitios
-// [pista, chave, palavras, área, família]
-const DO_ACERVO = [...ACERVO, ...NOVOS].filter(c => c.c).map(c => [c.c[0], c.c[1], c.w, c.a, c.f || c.c[1]]);
-import { mantidos } from "../comum/selecao.mjs";
+import { mantidos, escolher } from "../comum/selecao.mjs";
 
-export const H = 8, W = 6, C = H * W;
-export const EPOCH = [2026, 9, 4];            // #1 = domingo, 04/10/2026
+const DIR = dirname(fileURLToPath(import.meta.url));
+export const EPOCH = [2026, 9, 4];              // #1 = domingo, 04/10/2026
+export const INICIO = 21;                       // #21 (24/10/2026) é o primeiro no formato novo
+const RESP = JSON.parse(readFileSync(join(DIR, "respostas.json"), "utf8"));      // tabuleiro -> escrita
+const ALT = JSON.parse(readFileSync(join(DIR, "alternativas.json"), "utf8"));
 
-let seed = 20261004;
+let seed = 20261024;
 function rand() { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
-const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-export const norm = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z]/g, "").toUpperCase();
+const rint = n => Math.floor(rand() * n);
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rint(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
-const rc = i => [(i / W) | 0, i % W];
-const NB = [...Array(C)].map((_, i) => { const [r, c] = rc(i), o = []; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const rr = r + dr, cc = c + dc; if ((dr || dc) && rr >= 0 && cc >= 0 && rr < H && cc < W) o.push(rr * W + cc); } return o; });
-// traço diagonal a→b: guarda o "x" que ele ocupa, para outro traço não cruzar
-const xKey = (a, b) => { const [r1, c1] = rc(a), [r2, c2] = rc(b); if (r1 === r2 || c1 === c2) return null; return `${Math.min(r1, r2)},${Math.min(c1, c2)}`; };
+export const NIVEL = {
+  1: { n: 5, bloq: [3, 5], tam: [4, 6], faixa: [0, .7] },
+  2: { n: 5, bloq: [1, 3], tam: [4, 7], faixa: [.2, .9] },
+  3: { n: 6, bloq: [3, 5], tam: [4, 7], faixa: [0, .7] },
+  4: { n: 6, bloq: [1, 3], tam: [5, 8], faixa: [.2, .9] },
+  5: { n: 6, bloq: [0, 2], tam: [5, 8], faixa: [.3, 1] },
+  6: { n: 7, bloq: [2, 4], tam: [5, 8], faixa: [.2, .9] },
+  7: { n: 7, bloq: [0, 2], tam: [6, 8], faixa: [.4, 1] },
+};
 
-function componentes(livre) {
-  const vis = new Uint8Array(C), out = [];
-  for (let i = 0; i < C; i++) if (livre[i] && !vis[i]) {
-    let n = 0; const st = [i]; vis[i] = 1;
-    while (st.length) { const x = st.pop(); n++; for (const y of NB[x]) if (livre[y] && !vis[y]) { vis[y] = 1; st.push(y); } }
-    out.push(n);
-  }
+// trie das palavras que valem para conferir
+const TRIE = { f: {} };
+for (const w of new Set([...ALT, ...Object.keys(RESP)])) { let t = TRIE; for (const ch of w) t = t.f[ch] ??= { f: {} }; t.w = w; }
+const PORTAM = {}; for (const w of Object.keys(RESP)) (PORTAM[w.length] ??= []).push(w);
+
+const viz = (n, i) => { const r = (i / n) | 0, c = i % n, o = []; if (r) o.push(i - n); if (r < n - 1) o.push(i + n); if (c) o.push(i - 1); if (c < n - 1) o.push(i + 1); return o; };
+
+// todas as palavras (de 4 a 8 letras) que cabem em caminhos da grade: [{ w, cells (bits), p }]
+function colocacoes(g, n) {
+  const N = n * n, out = [], vistos = new Set(), usado = new Uint8Array(N), path = [];
+  const rec = (i, t) => {
+    const nt = t.f[g[i]]; if (!nt) return;
+    usado[i] = 1; path.push(i);
+    if (nt.w && path.length >= 4) {
+      const k = nt.w + ":" + [...path].sort((a, b) => a - b).join(",");
+      if (!vistos.has(k)) { vistos.add(k); let m = 0n; for (const c of path) m |= 1n << BigInt(c); out.push({ w: nt.w, m, p: path.slice() }); }
+    }
+    if (path.length < 8) for (const j of viz(n, i)) if (!usado[j] && g[j] !== "#") rec(j, nt);
+    usado[i] = 0; path.pop();
+  };
+  for (let i = 0; i < N; i++) if (g[i] !== "#") rec(i, TRIE);
   return out;
 }
-// os pedaços livres podem ser cobertos por grupos das palavras restantes? (soma de subconjuntos)
-function cabe(comps, lens) {
-  const total = lens.reduce((a, b) => a + b, 0);
-  if (comps.reduce((a, b) => a + b, 0) !== total) return false;
-  if (comps.some(c => c < 4)) return false;
-  const sums = new Set([0]);
-  for (const l of lens) for (const s of [...sums]) sums.add(s + l);
-  return comps.every(c => sums.has(c));
+
+// quantas divisões da grade em palavras com estes tamanhos (para em 2)
+function divisoes(n, cols, livres, tams) {
+  const porCasa = Array.from({ length: n * n }, () => []);
+  for (const c of cols) if (tams.has(c.w.length)) for (const i of c.p) porCasa[i].push(c);
+  let achadas = 0;
+  const faltam = new Map(); for (const [t, q] of tams) faltam.set(t, q);
+  const rec = coberto => {
+    if (achadas > 1) return;
+    let melhor = -1, opc = null;
+    for (const i of livres) if (!(coberto >> BigInt(i) & 1n)) {
+      const o = porCasa[i].filter(c => !(c.m & coberto) && faltam.get(c.w.length) > 0);
+      if (!o.length) return;
+      if (!opc || o.length < opc.length) { melhor = i; opc = o; if (o.length === 1) break; }
+    }
+    if (melhor < 0) { achadas++; return; }
+    for (const c of opc) { faltam.set(c.w.length, faltam.get(c.w.length) - 1); rec(coberto | c.m); faltam.set(c.w.length, faltam.get(c.w.length) + 1); if (achadas > 1) return; }
+  };
+  rec(0n);
+  return achadas;
 }
 
-// um caminho de len casas a partir de start, com as letras de word, sem cruzar diagonais
-function* caminhos(start, len, livre, xs) {
-  const path = [start]; livre[start] = 0;
-  const usados = [];
-  function* rec() {
-    if (path.length === len) { yield path.slice(); return; }
-    const last = path[path.length - 1];
-    for (const n of shuffle(NB[last].filter(n => livre[n]))) {
-      const k = xKey(last, n);
-      if (k && xs.has(k)) continue;
-      livre[n] = 0; path.push(n); if (k) xs.add(k);
-      yield* rec();
-      livre[n] = 1; path.pop(); if (k) xs.delete(k);
+// resolvedor "de gente": a cada passo, uma casa livre que só cabe numa palavra possível
+// (palavras que não esbarram no que já foi achado e cujo tamanho ainda falta); devolve a ordem ou null
+function semChute(n, cols, livres, tams, sol) {
+  let coberto = 0n; const faltam = new Map(tams), ordem = [];
+  const sobra = new Set(sol.map((_, k) => k));
+  while (sobra.size) {
+    const vivas = cols.filter(c => !(c.m & coberto) && faltam.get(c.w.length) > 0);
+    let k = -1;
+    for (const i of livres) if (!(coberto >> BigInt(i) & 1n)) {
+      const o = vivas.filter(c => c.p.includes(i));
+      if (o.length === 1) { k = sol.findIndex(s => s.w === o[0].w && s.m === o[0].m); if (k >= 0) break; }
     }
+    if (k < 0) return null;
+    coberto |= sol[k].m; faltam.set(sol[k].w.length, faltam.get(sol[k].w.length) - 1); sobra.delete(k); ordem.push(k);
   }
-  yield* rec();
-  livre[start] = 1;
+  return ordem;
 }
 
-function encaixar(chave, palavras, orcamento = 40000, unica = false) {
-  const livre = new Uint8Array(C).fill(1), xs = new Set(), grid = new Array(C).fill(""), sol = [];
-  let nos = 0;
-  // casas livres e diagonais ficam por conta de caminhos(); aqui só as letras
-  const marcaCaminho = (p, w, on) => { for (let k = 0; k < p.length; k++) grid[p[k]] = on ? w[k] : ""; };
-  // unica: toda palavra já posta tem um traçado só; letras novas só criam traçados, então dá para cortar cedo
-  const postas = [];
-  const unicas = () => !unica || postas.every(w => formas(grid, w) === 1);
-  function resto(ws) {
-    if (++nos > orcamento) return false;
-    if (!ws.length) return true;
-    // casa livre mais apertada (menos vizinhas livres)
-    let alvo = -1, menor = 9;
-    for (let i = 0; i < C; i++) if (livre[i]) { const n = NB[i].filter(j => livre[j]).length; if (n < menor) { menor = n; alvo = i; } }
-    for (const w of shuffle(ws.slice())) for (const pal of shuffle([w, [...w].reverse().join("")])) {
-      for (const p of caminhos(alvo, pal.length, livre, xs)) {
-        if (++nos > orcamento) return false;
-        marcaCaminho(p, pal, true); postas.push(w);
-        const rest = ws.filter(x => x !== w);
-        if (unicas() && cabe(componentes(livre), rest.map(x => x.length)) && resto(rest)) { sol.push({ w, p: pal === w ? p : p.slice().reverse() }); return true; }
-        marcaCaminho(p, pal, false); postas.pop();
-      }
+// divide as casas livres em caminhos com tamanhos dentro da faixa
+function caminhos(n, livre, tam) {
+  const N = n * n, dono = new Int8Array(N).fill(-1), paths = [];
+  const livresDe = i => viz(n, i).filter(j => livre[j] && dono[j] < 0);
+  for (let guarda = 0; guarda < 40; guarda++) {
+    const resto = [...Array(N).keys()].filter(i => livre[i] && dono[i] < 0);
+    if (!resto.length) return paths;
+    // começa pela casa mais apertada
+    resto.sort((a, b) => livresDe(a).length - livresDe(b).length || rand() - .5);
+    const ini = resto[0];
+    const alvo = tam[0] + rint(tam[1] - tam[0] + 1);
+    const p = [ini]; dono[ini] = paths.length;
+    while (p.length < Math.min(alvo, resto.length)) {
+      const c = livresDe(p.at(-1)); if (!c.length) break;
+      c.sort((a, b) => livresDe(a).length - livresDe(b).length + (rand() - .5) * 1.5);
+      dono[c[0]] = paths.length; p.push(c[0]);
     }
-    return false;
-  }
-  // a chave: começa num lado e precisa tocar o oposto
-  const lados = shuffle([[W, i => i % W === 0, i => i % W === W - 1], [H, i => i < W, i => i >= C - W]]);
-  for (const [minimo, ini, fim] of lados) {
-    if (chave.length < minimo) continue;
-    const starts = shuffle([...Array(C).keys()].filter(ini));
-    for (const s of starts) for (const p of caminhos(s, chave.length, livre, xs)) {
-      if (++nos > orcamento) return null;
-      if (!p.some(fim)) continue;
-      marcaCaminho(p, chave, true); postas.push(chave);
-      const ws = palavras.slice();
-      if (unicas() && cabe(componentes(livre), ws.map(x => x.length)) && resto(ws)) { sol.push({ w: chave, p, chave: true }); return { grid, sol }; }
-      marcaCaminho(p, chave, false); postas.pop();
-      nos += 50;
-    }
+    if (p.length < tam[0]) return null;
+    paths.push(p);
   }
   return null;
 }
 
-// grupos de palavras que somam alvo letras (4 a 8 palavras), em ordem sorteada
-function* grupos(ws, alvo) {
-  const lista = shuffle(ws.slice());
-  const cur = [];
-  function* rec(i, soma) {
-    if (soma === alvo && cur.length >= 4) { yield cur.slice(); return; }
-    if (soma >= alvo || i >= lista.length || cur.length >= 8) return;
-    cur.push(lista[i]); yield* rec(i + 1, soma + lista[i].length); cur.pop();
-    yield* rec(i + 1, soma);
-  }
-  yield* rec(0, 0);
-}
-
-// de quantas maneiras (conjuntos de casas diferentes) dá para traçar a palavra no tabuleiro
-export function formas(grid, w, limite = 2) {
-  const achados = new Set(), usado = new Uint8Array(C), path = [];
-  function rec(i, k) {
-    if (achados.size >= limite) return;
-    if (k === w.length) { achados.add(path.slice().sort((a, b) => a - b).join(",")); return; }
-    for (const j of NB[i]) if (!usado[j] && grid[j] === w[k]) { usado[j] = 1; path.push(j); rec(j, k + 1); path.pop(); usado[j] = 0; }
-  }
-  for (let i = 0; i < C && achados.size < limite; i++) if (grid[i] === w[0]) { usado[i] = 1; path.push(i); rec(i, 1); path.pop(); usado[i] = 0; }
-  return achados.size;
-}
-export const ambiguas = (grid, ws) => ws.filter(w => formas(grid, w) > 1).length;
-
-export function montar(tema) {
-  const [pista, chaveTxt, lista] = tema;
-  const chave = norm(chaveTxt);
-  const vistos = new Map();
-  for (const t of lista) { const n = norm(t); if (n.length >= 4 && n.length <= 10 && n !== chave && !vistos.has(n)) vistos.set(n, t); }
-  const ws = [...vistos.keys()];
-  let tent = 0;
-  // cada palavra do tema só pode ser traçada de um jeito (sem precisar adivinhar qual dos "A" vizinhos é o certo);
-  // se não der, fica o tabuleiro com menos palavras ambíguas
-  let melhor = null;
-  const t0 = Date.now();
-  for (const g of grupos(ws, C - chave.length)) {
-    if (++tent > 400 || (melhor && Date.now() - t0 > 4000)) break;
-    const r = encaixar(chave, g, 40000, true) || (tent > 40 && !melhor ? encaixar(chave, g) : null);
-    if (!r) continue;
-    const amb = ambiguas(r.grid, [chave, ...g]);
-    if (!melhor || amb < melhor.amb) melhor = { r, amb };
-    if (amb === 0) break;
-  }
-  if (melhor) {
-    const r = melhor.r;
-    const ordem = r.sol.sort((a, b) => (b.chave ? 1 : 0) - (a.chave ? 1 : 0) || a.w.localeCompare(b.w));
-    return {
-      t: pista, c: chave,
-      g: r.grid.join(""),
-      // palavras: texto do tabuleiro, forma escrita e caminho (casas em ordem)
-      w: ordem.map(x => ({ w: x.w, o: x.chave ? chaveTxt : vistos.get(x.w), p: x.p, ...(x.chave ? { k: 1 } : {}) })),
-      amb: melhor.amb,
-    };
+export function desafio(nivel) {
+  const cfg = NIVEL[nivel], n = cfg.n, N = n * n;
+  for (let t = 0; t < 4000; t++) {
+    const livre = new Array(N).fill(true);
+    const nb = cfg.bloq[0] + rint(cfg.bloq[1] - cfg.bloq[0] + 1);
+    for (const i of shuffle([...Array(N).keys()]).slice(0, nb)) livre[i] = false;
+    const ps = caminhos(n, livre, cfg.tam);
+    if (!ps) continue;
+    for (let f = 0; f < 12; f++) {
+      const g = new Array(N).fill("#"), sol = [];
+      const usadas = new Set();
+      let ok = true;
+      for (const p of ps) {
+        const op = (PORTAM[p.length] || []).filter(w => !usadas.has(w));
+        if (!op.length) { ok = false; break; }
+        const w = op[rint(op.length)]; usadas.add(w);
+        p.forEach((c, k) => (g[c] = w[k]));
+        let m = 0n; for (const c of p) m |= 1n << BigInt(c);
+        sol.push({ w, m, p });
+      }
+      if (!ok) break;
+      const cols = colocacoes(g, n);
+      const livres = [...Array(N).keys()].filter(i => livre[i]);
+      const tams = new Map(); for (const s of sol) tams.set(s.w.length, (tams.get(s.w.length) || 0) + 1);
+      if (divisoes(n, cols, livres, tams) !== 1) continue;
+      const ordem = semChute(n, cols, livres, tams, sol);
+      if (!ordem) continue;
+      const falsas = cols.filter(c => tams.has(c.w.length)).length - sol.length;
+      return {
+        n, g: g.join(""), l: nivel,
+        // palavras: forma do tabuleiro, forma escrita e caminho; o: ordem em que saem sem chute (para a dica)
+        w: sol.map(s => ({ w: s.w, o: RESP[s.w], p: s.p })), o: ordem,
+        d: falsas + ordem.length, i: rand(),
+      };
+    }
   }
   return null;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  if (process.argv[2]) seed = +process.argv[2];
-  const dir = dirname(fileURLToPath(import.meta.url));
-  const old = mantidos(dir, EPOCH);
-  const usados = new Set(old.map(p => p.c));
-  // a partir de 15/10/2026 só os temas do acervo (os antigos eram fáceis demais); quando acabarem, recomeçam
-  // rodízio: a área não se repete em 3 dias seguidos e a família não volta em 10 dias
-  const resta = shuffle(DO_ACERVO.filter(t => !usados.has(norm(t[1]))));
-  const out = [...old], ultimas = [], fams = [];
-  const t0 = Date.now();
-  let amb = 0;
-  while (resta.length) {
-    let k = resta.findIndex(t => !ultimas.slice(-3).includes(t[3]) && !fams.slice(-10).includes(t[4]));
-    if (k < 0) k = resta.findIndex(t => !ultimas.slice(-1).includes(t[3]));
-    if (k < 0) k = 0;
-    const tema = resta.splice(k, 1)[0];
-    const p = montar(tema);
-    if (!p) { console.log("não encaixou:", tema[0]); continue; }
-    if (p.amb) { amb++; console.log(`ambígua (${p.amb}):`, tema[0]); }
-    delete p.amb;
-    out.push(p); ultimas.push(tema[3]); fams.push(tema[4]);
+  const DIAS = +(process.argv[2] || 365);
+  if (process.argv[3]) seed = +process.argv[3];
+  const old = mantidos(DIR, EPOCH);              // até hoje (os de antes de #21 são do formato de temas)
+  const nivelDe = k => (new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k).getDay() + 6) % 7 + 1;
+  const vistos = new Set(old.map(p => p.g)), fila = {}, t0 = Date.now();
+  for (let l = 1; l <= 7; l++) {
+    let need = 0; for (let k = old.length; k < DIAS; k++) if (nivelDe(k) === l) need++;
+    const per = Math.ceil(need / (NIVEL[l].faixa[1] - NIVEL[l].faixa[0]) * 1.1) + 20, pool = [];
+    while (pool.length < per) { const p = desafio(l); if (!p) throw new Error(`nível ${l}: não consegui montar`); if (!vistos.has(p.g)) { vistos.add(p.g); pool.push(p); } }
+    const r = escolher(pool, need, 20, NIVEL[l].faixa, rand);
+    fila[l] = r.dia; fila["livre" + l] = r.livre;
+    console.log(`nível ${l}: ${pool.length} candidatos · ${((Date.now() - t0) / 1000).toFixed(0)}s`);
   }
-  console.log(`${amb} com alguma palavra de dois jeitos`);
-  writeFileSync(join(dir, "desafios.json"), JSON.stringify({ epoch: EPOCH, puzzles: out }));
-  console.log(`pronto: ${out.length} dias (${old.length} mantidos) em ${((Date.now() - t0) / 1000).toFixed(1)}s`);
+  const out = [...old];
+  for (let k = old.length; k < DIAS; k++) { const { d, ...p } = fila[nivelDe(k)].shift(); out.push(p); }
+  // jogo livre: 20 por nível, fora dos do dia
+  const livre = {}; for (let l = 1; l <= 7; l++) livre[l] = fila["livre" + l].map(({ d, ...p }) => p);
+  writeFileSync(join(DIR, "desafios.json"), JSON.stringify({ epoch: EPOCH, inicio: INICIO, puzzles: out, livre }));
+  for (let l = 1; l <= 7; l++) { const a = out.slice(old.length).filter(p => p.l === l); console.log(`nível ${l}: ${a.length} dias · ${a[0].n}×${a[0].n} · ${Math.min(...a.map(p => p.w.length))}–${Math.max(...a.map(p => p.w.length))} palavras`); }
 }

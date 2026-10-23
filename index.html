@@ -12,10 +12,10 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=144"></script>
-<script src="comum/catalogo.js?v=144"></script>
-<script src="comum/celebra.js?v=144"></script>
-<script src="comum/recorde.js?v=144"></script>
+<script src="comum/tema.js?v=145"></script>
+<script src="comum/catalogo.js?v=145"></script>
+<script src="comum/celebra.js?v=145"></script>
+<script src="comum/recorde.js?v=145"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -974,9 +974,8 @@ const ST_ICON = {
   dica: '<svg class="si" viewBox="0 0 24 24" fill="currentColor" aria-label="com dica"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zM9 20h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/></svg>',
 };
 // jogos de lógica: nível = dia da semana (segunda = 1); número do desafio conta a partir da estreia de cada um
-const LOGICA = { eclipse: { pre: "eclipse:", ep: [2026, 8, 27] }, novelo: { pre: "novelo:", ep: [2026, 8, 28] }, retalhos: { pre: "retalhos:", ep: [2026, 8, 28] }, pingado: { pre: "pingado:", ep: [2026, 8, 28] }, brigadeiro: { pre: "brigadeiro:", ep: [2026, 9, 17] }, cruzadinha: { pre: "cruzadinha:", ep: [2026, 9, 10] } };
+const LOGICA = { eclipse: { pre: "eclipse:", ep: [2026, 8, 27] }, novelo: { pre: "novelo:", ep: [2026, 8, 28] }, retalhos: { pre: "retalhos:", ep: [2026, 8, 28] }, pingado: { pre: "pingado:", ep: [2026, 8, 28] }, brigadeiro: { pre: "brigadeiro:", ep: [2026, 9, 17] }, cruzadinha: { pre: "cruzadinha:", ep: [2026, 9, 10] }, cordel: { pre: "cordel:", ep: [2026, 9, 4] } };
 function recordeHoje(g, p) {
-  if (g.id === "cordel") return false;                 // Cordel: sem nível para comparar tempos
   if (p.inc != null) return p.won && p.inc <= p.min;   // Brigadeiro: troféu = resolvido no mínimo possível
   const lg = LOGICA[g.id];
   if (lg && window.recordeDoDia) {
@@ -989,7 +988,6 @@ function statusText(g, p, isDone) {
   if (!LOCAL_PROGRESS[g.id]) return isDone ? "Feito" : (g.app ? '<span class="tag">APP</span>' : "");
   if (!p) {                                             // ainda não jogado: o nível do dia
     if (isDone) return `<span class="pl">Feito</span>`;
-    if (g.id === "cordel") return `<span class="pl leve">tema novo</span>`;
     if (!LOGICA[g.id]) return `<span class="pl leve">${["difícil", "fácil", "fácil", "normal", "normal", "normal", "difícil"][new Date().getDay()]}</span>`;   // Sando e 5PILA: nível pela semana
     const n = (new Date().getDay() + 6) % 7 + 1;
     return `<span class="pl leve">nível ${n}<span class="nv" aria-hidden="true">${[...Array(7)].map((_, i) => `<i${i < n ? ' class="on"' : ""}></i>`).join("")}</span></span>`;
