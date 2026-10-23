@@ -167,7 +167,7 @@
 
 <!-- tinta de xilogravura: borda irregular e pequenas falhas nas marcas das palavras achadas -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <filter id="tinta" filterUnits="userSpaceOnUse" x="-60" y="-60" width="820" height="820"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/>
+  <filter id="tinta" filterUnits="userSpaceOnUse" x="-60" y="-60" width="900" height="1200"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/>
     <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="1" seed="3" result="g"/><feColorMatrix in="g" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.85" result="m"/><feComposite in="d" in2="m" operator="in"/></filter>
 </defs></svg>
 <div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro data-haptico><svg id="board" role="img" aria-label="Tabuleiro de letras"></svg></div></div>
@@ -234,7 +234,7 @@
   // Grade n×n (5 a 7); "#" = casa bloqueada (florzinha). As palavras são caminhos de casas vizinhas na horizontal
   // ou na vertical e usam todas as letras, cada uma uma vez. O jogador vê só o tamanho de cada palavra.
   const U = 100;
-  let N = 6, C = 36;
+  let N = 6, R = 6, C = 36;          // colunas, linhas, casas
   let P = null, dayNum = 0, letras = "", achadas = new Set(), log = [], dicaUsada = false, alvo = -1;
   let finished = false, timer = null, startedAt = 0, elapsed = 0;
   let caminho = [], arrastou = false, toqueId = null, recente = new Set();
@@ -250,7 +250,7 @@
   }
 
   function setup(puzzle, saved) {
-    P = puzzle; letras = P.g; N = P.n; C = N * N; caminho = []; pintaPalavras();
+    P = puzzle; letras = P.g; N = P.c || P.n; R = P.r || P.n; C = N * R; caminho = []; pintaPalavras();
     achadas = new Set(saved?.found || []);
     log = saved?.log || [];
     dicaUsada = !!saved?.dica;
@@ -305,9 +305,10 @@
     b.style.width = b.style.height = "0px";
     const sub = st.querySelector(".fim-subrow:not([hidden])");
     const hMax = st.clientHeight - 6 - (sub ? sub.offsetHeight + 10 : 0);
-    const w = Math.floor(Math.min(st.clientWidth, hMax, 380));
-    b.setAttribute("viewBox", `0 0 ${N * U} ${N * U}`);
-    b.style.width = b.style.height = w + "px";
+    // tabuleiro em pé: usa a altura da tela; casa de no máximo 64 px
+    const w = Math.floor(Math.min(st.clientWidth, hMax * N / R, N * 64));
+    b.setAttribute("viewBox", `0 0 ${N * U} ${R * U}`);
+    b.style.width = w + "px"; b.style.height = Math.round(w * R / N) + "px";
   }
   window.addEventListener("resize", () => { if (P) fit(); });
   if (window.visualViewport) visualViewport.addEventListener("resize", () => { if (P) fit(); });
@@ -352,6 +353,7 @@
     const marca = alvo >= 0 && !achadas.has(alvo) ? [P.w[alvo].p[0], P.w[alvo].p.at(-1)] : [];
     for (let i = 0; i < C; i++) {
       const [x, y] = xy(i), k = dono[i];
+      if (letras[i] === ".") continue;                 // fora da forma do tabuleiro
       if (letras[i] === "#") { bl += `<g class="orn" transform="translate(${x} ${y})">${FLOR}</g>`; continue; }
       const nv = recente.has(i) ? " novo" : "";
       if (k >= 0) ba += `<circle class="bola ${tinta(k)}${nv}" cx="${x}" cy="${y}" r="38"/>`;
@@ -366,6 +368,7 @@
     $("etiquetas").innerHTML = ordem.map(k => achadas.has(k)
       ? `<span class="et ${tinta(k)}">${P.w[k].o.toUpperCase()}</span>`
       : `<span class="et">${P.w[k].w.length} letras</span>`).join("");
+    fit();                      // as etiquetas mudam a altura que sobra para o tabuleiro
   }
   function painel() {
     $("board").classList.toggle("won", finished);
@@ -403,16 +406,16 @@
   // ---------- traçar ----------
   function casaEm(e, folga = .45) {
     const r = $("board").getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width * N * U, y = (e.clientY - r.top) / r.height * N * U;
+    const x = (e.clientX - r.left) / r.width * N * U, y = (e.clientY - r.top) / r.height * R * U;
     const c = Math.floor(x / U), l = Math.floor(y / U);
-    if (c < 0 || l < 0 || c >= N || l >= N) return -1;
+    if (c < 0 || l < 0 || c >= N || l >= R) return -1;
     const i = l * N + c, [cx, cy] = xy(i);
     return Math.hypot(x - cx, y - cy) <= U * folga ? i : -1;
   }
   // só na horizontal ou na vertical
   const vizinhas = (a, b) => { const r1 = (a / N) | 0, c1 = a % N, r2 = (b / N) | 0, c2 = b % N; return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1; };
   let usada = [];
-  const livre = i => usada[i] < 0 && letras[i] !== "#";
+  const livre = i => usada[i] < 0 && letras[i] !== "#" && letras[i] !== ".";
 
   $("tab").addEventListener("pointerdown", e => {
     if (finished || !P) return;
