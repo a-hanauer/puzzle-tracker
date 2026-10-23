@@ -83,7 +83,7 @@
   /* palavra achada = bloco entalhado no formato do rastro, com filete de papel por dentro da borda (como as molduras
      de cordel); um filtro só (#tinta) para todos os blocos: borda de goiva e falhas na tinta */
   @font-face { font-family: "Xilo"; src: url("fontes/CaesarDressing-Regular.ttf") format("truetype"); font-display: block; }
-  :root { --letra: "Xilo"; --letra-tam: 46px; }
+  :root { --letra: "Xilo"; --letra-tam: 56px; }
   .achadas { filter: url(#tinta); }
   .bloco polyline { fill: none; stroke-linecap: round; stroke-linejoin: round; }
   /* bloco justo (não encosta no vizinho, nem na diagonal) e irregular; os desgastes são riscos na direção do traço */
@@ -124,7 +124,7 @@
   .controls.play .done-bar .ic { animation: dobra .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
   @keyframes dobra { from { transform: scale(.3) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
   /* grade: casa bloqueada = florzinha entalhada; etiquetas com o tamanho de cada palavra */
-  :root { --orn: #8a8070; } @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --orn: #8f8678; } } :root[data-theme="dark"] { --orn: #8f8678; }
+  :root { --orn: #2a2620; } @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --orn: #d9cfbd; } } :root[data-theme="dark"] { --orn: #d9cfbd; }
   .etiquetas { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 6px 0 2px; min-height: 30px; }
   .et { height: 30px; padding: 0 11px; border-radius: 99px; display: inline-flex; align-items: center; font-weight: 800; font-size: .8rem; letter-spacing: .05em;
     box-shadow: inset 0 0 0 1.8px color-mix(in srgb, var(--ink) 28%, transparent); color: var(--muted); white-space: nowrap; }
@@ -351,14 +351,20 @@
     COR = P.w.map((_, k) => ((melhor >> k) & 1 ? "chave" : "tema"));
   }
   const tinta = k => COR[k] || "tema";
-  // casa bloqueada: enfeite entalhado, na tinta do tabuleiro (estrela, roseta ou losango de cordel)
-  const ORNAMENTOS = {
-    flor: '<g opacity=".45"><path d="M0 -26C10 -12 10 -12 0 0C-10 -12 -10 -12 0 -26ZM0 26C10 12 10 12 0 0C-10 12 -10 12 0 26ZM-26 0C-12 10 -12 10 0 0C-12 -10 -12 -10 -26 0ZM26 0C12 10 12 10 0 0C12 -10 12 -10 26 0Z"/><circle r="5"/></g>',
-    estrela: '<path d="M0 -30L7 -7L30 0L7 7L0 30L-7 7L-30 0L-7 -7Z"/><path class="corte" d="M0 -18L2.2 -2.2L0 0L-2.2 -2.2ZM18 0L2.2 2.2L0 0L2.2 -2.2ZM0 18L-2.2 2.2L0 0L2.2 2.2ZM-18 0L-2.2 -2.2L0 0L-2.2 2.2Z"/>',
-    roseta: Array.from({ length: 8 }, (_, k) => `<ellipse rx="6.5" ry="14" transform="rotate(${k * 45}) translate(0 -14)"/>`).join("") + '<circle r="8"/><circle class="corte" r="3.5"/>',
-    losango: '<path d="M0 -30L22 0L0 30L-22 0Z"/><path class="corte" d="M0 -19L13.5 0L0 19L-13.5 0Z"/><path d="M0 -12L8.5 0L0 12L-8.5 0Z"/>',
-  };
-  let FLOR = ORNAMENTOS[(() => { try { return localStorage.getItem("cordel:prova-orn"); } catch { return null; } })()] || ORNAMENTOS.flor;
+  // casa bloqueada: estrela de cordel desenhada à mão — cada uma diferente (pontas, tamanhos e giro sorteados
+  // com semente fixa pela casa e pelo desafio), como as estrelas irregulares das capas de folheto
+  function estrela(i) {
+    let sem = 7; for (const ch of String(letras).slice(0, 12) + i) sem = (sem * 31 + ch.charCodeAt(0)) >>> 0;
+    const r = () => ((sem = (sem * 1103515245 + 12345) >>> 0) / 4294967296);
+    const n = 6 + Math.floor(r() * 5), giro = r() * Math.PI, raio = 22 + r() * 6;
+    let d = "";
+    for (let k = 0; k < n * 2; k++) {
+      const a = giro + (k / (n * 2)) * Math.PI * 2 + (r() - .5) * .35;
+      const rr = k % 2 ? 4.5 + r() * 4 : raio * (.62 + r() * .45);
+      d += (k ? "L" : "M") + (Math.cos(a) * rr).toFixed(1) + " " + (Math.sin(a) * rr).toFixed(1);
+    }
+    return `<path d="${d}Z"/>`;
+  }
   // parte fixa (achadas com tinta, bolinhas, letras) só muda quando muda o que foi achado; no arrasto, só a seleção
   let chaveFixa = "";
   function render() {
@@ -410,7 +416,7 @@
       .le.tema{fill:${v("--tema-ink")}}.le.chave{fill:${v("--chave-ink")}}`;
     const defs = document.getElementById("tinta").outerHTML + document.getElementById("tinta-leve").outerHTML;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${N * U} ${R * U}" width="${w * dpr}" height="${h * dpr}"><defs><style>${css}</style>${defs}</defs>` +
-      `<g filter="url(#tinta)">${fixo.ba}</g>${fixo.bl}<g filter="url(#tinta-leve)">${fixo.tx}</g></svg>`;
+      `<g filter="url(#tinta)">${fixo.ba}</g><g filter="url(#tinta-leve)">${fixo.bl}${fixo.tx}</g></svg>`;
     const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
     const img = new Image();
     img.onload = () => {
@@ -438,7 +444,7 @@
     for (let i = 0; i < C; i++) {
       const [x, y] = xy(i), k = dono[i];
       if (letras[i] === ".") continue;                 // fora da forma do tabuleiro
-      if (letras[i] === "#") { bl += `<g class="orn" transform="translate(${x} ${y})">${FLOR}</g>`; continue; }
+      if (letras[i] === "#") { bl += `<g class="orn" transform="translate(${x} ${y})">${estrela(i)}</g>`; continue; }
       if (marca.includes(i)) bl += `<circle class="dica" cx="${x}" cy="${y}" r="44"/>`;
       tx += `<text class="le ${k >= 0 ? tinta(k) : ""}" x="${x}" y="${y + 2}">${letras[i]}</text>`;
     }
