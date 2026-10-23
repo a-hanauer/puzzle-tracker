@@ -75,21 +75,28 @@
   #board { display: block; overflow: visible; }
   /* papel de folheto (grão leve) e tinta de carimbo nas palavras achadas */
   body { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .10 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23f)'/%3E%3C/svg%3E"); }
-  .achadas { filter: url(#tinta); }   /* um filtro só, no grupo das palavras achadas (por peça pesava a cada toque) */
-  .lk { stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-  .lk.tema { stroke: var(--tema); } .lk.chave { stroke: var(--chave); } .lk.sel { stroke: var(--sel); }
-  .bola { fill: transparent; }
-  .bola.tema { fill: var(--tema); } .bola.chave { fill: var(--chave); } .bola.sel { fill: var(--sel); }
-  .bola.dica { fill: none; stroke: var(--dica); stroke-width: 3.5; stroke-dasharray: 6 6; }
-  .le { font-size: 40px; font-weight: 800; text-anchor: middle; dominant-baseline: central; fill: var(--ink); pointer-events: none; }
+  /* palavra achada = bloco entalhado no formato do rastro, com filete de papel por dentro da borda (como as molduras
+     de cordel); um filtro só (#tinta) para todos os blocos: borda de goiva e falhas na tinta */
+  @font-face { font-family: "Xilo"; src: url("fontes/CaesarDressing-Regular.ttf") format("truetype"); font-display: block; }
+  :root { --letra: "Xilo"; --letra-tam: 46px; }
+  .achadas { filter: url(#tinta); }
+  .bloco polyline { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  /* bloco justo (não encosta no vizinho, nem na diagonal) e irregular; os desgastes são riscos na direção do traço */
+  .bloco .b1 { stroke-width: 58px; }
+  .bloco.tema .b1 { stroke: var(--tema); } .bloco.chave .b1 { stroke: var(--chave); }
+  .bloco .veio { fill: none; stroke: var(--bg); stroke-linecap: round; }
+  #selLk { fill: none; stroke: var(--sel); stroke-width: 58px; stroke-linecap: round; stroke-linejoin: round; }
+  .dica { fill: none; stroke: var(--dica); stroke-width: 3.5; stroke-dasharray: 6 6; }
+  .letras { filter: url(#tinta-leve); }
+  .le { font-family: var(--letra), "Noto Sans", sans-serif; font-size: var(--letra-tam); text-anchor: middle; dominant-baseline: central; fill: var(--ink); pointer-events: none; }
   .le.tema { fill: var(--tema-ink); } .le.chave { fill: var(--chave-ink); }
   .novo { animation: novo .35s cubic-bezier(.3, 1.5, .5, 1); transform-box: fill-box; transform-origin: center; }
   @keyframes novo { from { transform: scale(.6); } to { transform: none; } }
-  .won .bola.tema, .won .bola.chave { animation: puff .45s cubic-bezier(.3, 1.6, .5, 1) both; transform-box: fill-box; transform-origin: center; }
+  .won .bloco { animation: puff .45s cubic-bezier(.3, 1.6, .5, 1) both; transform-box: fill-box; transform-origin: center; }
   @keyframes puff { 45% { transform: scale(1.15); } }
   .tab.treme { animation: treme .3s ease; }
   @keyframes treme { 25% { transform: translateX(-6px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
-  @media (prefers-reduced-motion: reduce) { .novo, .won .bola, .tab.treme { animation: none !important; } }
+  @media (prefers-reduced-motion: reduce) { .novo, .won .bloco, .tab.treme { animation: none !important; } }
 
   /* ---------- controles: dica (vira a faixa de fim) ---------- */
   .controls { display: flex; gap: 10px; padding-top: 10px; }
@@ -167,8 +174,13 @@
 
 <!-- tinta de xilogravura: borda irregular e pequenas falhas nas marcas das palavras achadas -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <filter id="tinta" filterUnits="userSpaceOnUse" x="-60" y="-60" width="900" height="1200"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/>
-    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="1" seed="3" result="g"/><feColorMatrix in="g" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.85" result="m"/><feComposite in="d" in2="m" operator="in"/></filter>
+  <!-- xilogravura: borda de goiva (deslocamento) e falhas na tinta — veios compridos da madeira e pontinhos -->
+  <filter id="tinta" filterUnits="userSpaceOnUse" x="-60" y="-60" width="900" height="1200">
+    <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="8" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="1" seed="3" result="g"/><feColorMatrix in="g" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.25 1.95" result="m"/><feComposite in="d" in2="m" operator="in"/></filter>
+  <filter id="tinta-leve" filterUnits="userSpaceOnUse" x="-60" y="-60" width="900" height="1200">
+    <feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="1" seed="5" result="g"/><feColorMatrix in="g" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.9" result="m"/><feComposite in="d" in2="m" operator="in"/></filter>
 </defs></svg>
 <div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro data-haptico><svg id="board" role="img" aria-label="Tabuleiro de letras"></svg></div></div>
 <div class="etiquetas" id="etiquetas" aria-label="Palavras escondidas"></div>
@@ -190,15 +202,15 @@
     <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
     <p>Divida o tabuleiro nas palavras escondidas.</p>
     <ul>
-      <li>Ligue letras <b>vizinhas na horizontal ou na vertical</b>: arraste o dedo, ou toque letra por letra e toque de novo na última para enviar.</li>
+      <li>Ligue letras <b>vizinhas</b> (para os lados, para cima, para baixo ou na diagonal): arraste o dedo, ou toque letra por letra e toque de novo na última para enviar.</li>
       <li>As palavras usam <b>todas as letras</b> do tabuleiro, cada uma uma vez só. As florzinhas não entram.</li>
       <li>Embaixo do tabuleiro, o tamanho de cada palavra. São palavras comuns: substantivos, adjetivos e verbos no infinitivo.</li>
       <li>Só existe um jeito de dividir o tabuleiro, e sempre dá para achar a próxima palavra sem chutar.</li>
       <li>A <b>dica</b> (a lâmpada) marca o começo e o fim de uma palavra. Uma por dia.</li>
       <li>Acentos e ç não aparecem no tabuleiro.</li>
     </ul>
-    <p>Ao longo da semana o tabuleiro cresce (5×5 na segunda, 7×7 no domingo) e as palavras ficam mais longas.</p>
-    <p class="fonte">Lista de palavras: <a href="https://github.com/fserb/pt-br" target="_blank" rel="noopener">fserb/pt-br</a> (licença MIT).</p>
+    <p>Cada dia o tabuleiro tem uma forma; ao longo da semana ele cresce e as palavras ficam mais longas.</p>
+    <p class="fonte">Lista de palavras: <a href="https://github.com/fserb/pt-br" target="_blank" rel="noopener">fserb/pt-br</a> (licença MIT). Letras: <a href="https://fonts.google.com/specimen/Caesar+Dressing" target="_blank" rel="noopener">Caesar Dressing</a> (licença OFL).</p>
     <button class="btn-main" data-close>Jogar</button>
   </div>
 </div>
@@ -342,27 +354,44 @@
     if (chave !== chaveFixa || !$("selLk")) { chaveFixa = chave; desenhaFixo(); }
     $("selLk").setAttribute("points", caminho.length > 1 ? caminho.map(i => xy(i).join(",")).join(" ") : "");
     const no = new Set(caminho);
-    $("board").querySelectorAll(".bola.livre").forEach(c => c.classList.toggle("sel", no.has(+c.dataset.i)));
     painel();
+  }
+  // desgaste da madeira: riscos claros e finos ao longo de cada trecho, na direção em que a palavra foi traçada
+  // (sorteio fixo por palavra, para não mudar a cada desenho)
+  function desgaste(p, k) {
+    let sem = 0; for (const ch of P.w[k].w + k) sem = (sem * 31 + ch.charCodeAt(0)) >>> 0;
+    const r = () => ((sem = (sem * 1103515245 + 12345) >>> 0) / 4294967296);
+    let d = "";
+    for (let j = 1; j < p.length; j++) {
+      const [x1, y1] = xy(p[j - 1]), [x2, y2] = xy(p[j]);
+      const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, nx = -uy, ny = ux;
+      for (let q = 0; q < 4; q++) {
+        const off = (r() - .5) * 40, a = r() * L * .7 - 10, len = 14 + r() * (L * .55);
+        const sx = x1 + ux * a + nx * off, sy = y1 + uy * a + ny * off;
+        const w = (.8 + r() * 1.8).toFixed(1), ondula = (r() - .5) * 3;
+        d += `<path class="veio" stroke-width="${w}" d="M${sx.toFixed(1)} ${sy.toFixed(1)}q${(ux * len / 2 + nx * ondula).toFixed(1)} ${(uy * len / 2 + ny * ondula).toFixed(1)} ${(ux * len).toFixed(1)} ${(uy * len).toFixed(1)}"/>`;
+      }
+    }
+    return d;
   }
   function desenhaFixo() {
     const dono = donoDe();
-    let lk = "", ba = "", bl = "", tx = "";
-    const linha = (p, cls) => p.length > 1 ? `<polyline class="lk ${cls}" points="${p.map(i => xy(i).join(",")).join(" ")}"/>` : "";
-    for (const k of achadas) lk += linha(P.w[k].p, tinta(k));
+    let bl = "", tx = "", ba = "";
+    const pts = p => p.map(i => xy(i).join(",")).join(" ");
+    for (const k of achadas) {
+      const p = P.w[k].p, nv = p.some(i => recente.has(i)) ? " novo" : "";
+      ba += `<g class="bloco ${tinta(k)}${nv}"><polyline class="b1" points="${pts(p)}"/>${desgaste(p, k)}</g>`;
+    }
     const marca = alvo >= 0 && !achadas.has(alvo) ? [P.w[alvo].p[0], P.w[alvo].p.at(-1)] : [];
     for (let i = 0; i < C; i++) {
       const [x, y] = xy(i), k = dono[i];
       if (letras[i] === ".") continue;                 // fora da forma do tabuleiro
       if (letras[i] === "#") { bl += `<g class="orn" transform="translate(${x} ${y})">${FLOR}</g>`; continue; }
-      const nv = recente.has(i) ? " novo" : "";
-      if (k >= 0) ba += `<circle class="bola ${tinta(k)}${nv}" cx="${x}" cy="${y}" r="38"/>`;
-      else bl += `<circle class="bola livre" data-i="${i}" cx="${x}" cy="${y}" r="38"/>`;
-      if (marca.includes(i)) bl += `<circle class="bola dica" cx="${x}" cy="${y}" r="44"/>`;
+      if (marca.includes(i)) bl += `<circle class="dica" cx="${x}" cy="${y}" r="44"/>`;
       tx += `<text class="le ${k >= 0 ? tinta(k) : ""}" x="${x}" y="${y + 2}">${letras[i]}</text>`;
     }
     recente = new Set();
-    $("board").innerHTML = `<g class="achadas">${lk}${ba}</g><polyline id="selLk" class="lk sel" points=""/>${bl}${tx}`;
+    $("board").innerHTML = `<polyline id="selLk" points=""/><g class="achadas">${ba}</g>${bl}<g class="letras">${tx}</g>`;
     // etiquetas: uma por palavra, na ordem do tamanho; vira a palavra quando achada
     const ordem = P.w.map((_, k) => k).sort((a, b) => P.w[b].w.length - P.w[a].w.length || a - b);
     $("etiquetas").innerHTML = ordem.map(k => achadas.has(k)
@@ -404,7 +433,7 @@
   }
 
   // ---------- traçar ----------
-  function casaEm(e, folga = .45) {
+  function casaEm(e, folga = .4) {   // só perto do centro: assim a diagonal não pega a vizinha por engano
     const r = $("board").getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width * N * U, y = (e.clientY - r.top) / r.height * R * U;
     const c = Math.floor(x / U), l = Math.floor(y / U);
@@ -412,8 +441,8 @@
     const i = l * N + c, [cx, cy] = xy(i);
     return Math.hypot(x - cx, y - cy) <= U * folga ? i : -1;
   }
-  // só na horizontal ou na vertical
-  const vizinhas = (a, b) => { const r1 = (a / N) | 0, c1 = a % N, r2 = (b / N) | 0, c2 = b % N; return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1; };
+  // para os lados, para cima, para baixo e na diagonal
+  const vizinhas = (a, b) => { const r1 = (a / N) | 0, c1 = a % N, r2 = (b / N) | 0, c2 = b % N; return a !== b && Math.abs(r1 - r2) <= 1 && Math.abs(c1 - c2) <= 1; };
   let usada = [];
   const livre = i => usada[i] < 0 && letras[i] !== "#" && letras[i] !== ".";
 

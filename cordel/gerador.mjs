@@ -44,6 +44,9 @@ const FORMAS = {
   halteres: (r, c, W, H) => Math.abs(r - (H - 1) / 2) > H / 6 || Math.abs(c - (W - 1) / 2) <= W / 4,
   zigue: (r, c, W, H) => (r < H / 3 ? c >= W * .3 : r < 2 * H / 3 ? true : c < W * .7),
   degraus: (r, c, W, H) => c <= Math.floor(r * W / H) + 2,
+  colunas: (r, c, W, H) => c < W * .4 || c >= W * .6 || Math.abs(r - (H - 1) / 2) < H / 6,          // um H em pé
+  tê: (r, c, W, H) => r < H * .3 || Math.abs(c - (W - 1) / 2) <= W / 4,
+  seta: (r, c, W, H) => (r < H * .45 ? Math.abs(c - (W - 1) / 2) <= r * (W / 2) / (H * .45) + .5 : Math.abs(c - (W - 1) / 2) <= W / 4),
 };
 export const NOMES_FORMA = Object.keys(FORMAS);
 
@@ -64,7 +67,11 @@ for (const w of new Set([...ALT, ...Object.keys(RESP)])) { let t = TRIE; for (co
 const PORTAM = {}; for (const w of Object.keys(RESP)) (PORTAM[w.length] ??= []).push(w);
 
 let W = 6, H = 6;
-const viz = i => { const r = (i / W) | 0, c = i % W, o = []; if (r) o.push(i - W); if (r < H - 1) o.push(i + W); if (c) o.push(i - 1); if (c < W - 1) o.push(i + 1); return o; };
+// vizinhas: na horizontal, na vertical e na diagonal (viz4: só as quatro de lado, para a forma do tabuleiro)
+const viz4 = i => { const r = (i / W) | 0, c = i % W, o = []; if (r) o.push(i - W); if (r < H - 1) o.push(i + W); if (c) o.push(i - 1); if (c < W - 1) o.push(i + 1); return o; };
+const viz = i => { const r = (i / W) | 0, c = i % W, o = []; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const rr = r + dr, cc = c + dc; if ((dr || dc) && rr >= 0 && cc >= 0 && rr < H && cc < W) o.push(rr * W + cc); } return o; };
+// traço diagonal a→b ocupa o "x" entre quatro casas; dois traços não podem se cruzar nele
+const xKey = (a, b) => { const r1 = (a / W) | 0, c1 = a % W, r2 = (b / W) | 0, c2 = b % W; return r1 === r2 || c1 === c2 ? -1 : Math.min(r1, r2) * W + Math.min(c1, c2); };
 const vazia = ch => ch === "#" || ch === ".";
 
 // todas as palavras (de 4 a 8 letras) que cabem em caminhos da grade: [{ w, cells (bits), p }]
@@ -125,8 +132,9 @@ function semChute(cols, livres, tams, sol) {
 
 // divide as casas livres em caminhos com tamanhos dentro da faixa
 function caminhos(livre, tam) {
-  const N = W * H, dono = new Int8Array(N).fill(-1), paths = [];
+  const N = W * H, dono = new Int8Array(N).fill(-1), paths = [], xs = new Set();
   const livresDe = i => viz(i).filter(j => livre[j] && dono[j] < 0);
+  const dir = (a, b) => [((b / W) | 0) - ((a / W) | 0), (b % W) - (a % W)].join();
   for (let guarda = 0; guarda < 40; guarda++) {
     const resto = [...Array(N).keys()].filter(i => livre[i] && dono[i] < 0);
     if (!resto.length) return paths;
@@ -136,8 +144,13 @@ function caminhos(livre, tam) {
     const alvo = tam[0] + rint(tam[1] - tam[0] + 1);
     const p = [ini]; dono[ini] = paths.length;
     while (p.length < Math.min(alvo, resto.length)) {
-      const c = livresDe(p.at(-1)); if (!c.length) break;
-      c.sort((a, b) => livresDe(a).length - livresDe(b).length + (rand() - .5) * 1.5);
+      const u = p.at(-1), d0 = p.length > 1 ? dir(p.at(-2), u) : null;
+      const c = livresDe(u).filter(j => { const k = xKey(u, j); return k < 0 || !xs.has(k); });
+      if (!c.length) break;
+      // casa apertada primeiro (não deixar buraco), mas com sorteio e um empurrão para virar e ir na diagonal
+      const peso = j => livresDe(j).length - (dir(u, j) !== d0 ? .8 : 0) - (xKey(u, j) >= 0 ? .5 : 0) + (rand() - .5) * 2.2;
+      c.sort((a, b) => peso(a) - peso(b));
+      const k = xKey(u, c[0]); if (k >= 0) xs.add(k);
       dono[c[0]] = paths.length; p.push(c[0]);
     }
     if (p.length < tam[0]) return null;
@@ -150,8 +163,19 @@ function caminhos(livre, tam) {
 function ligada(dentro) {
   const ini = dentro.indexOf(true); if (ini < 0) return false;
   const vis = new Uint8Array(W * H), f = [ini]; vis[ini] = 1;
-  for (let k = 0; k < f.length; k++) for (const j of viz(f[k])) if (dentro[j] && !vis[j]) { vis[j] = 1; f.push(j); }
+  for (let k = 0; k < f.length; k++) for (const j of viz4(f[k])) if (dentro[j] && !vis[j]) { vis[j] = 1; f.push(j); }
   return dentro.every((d, i) => !d || vis[i]);
+}
+
+// quão desenhadas são as palavras: viradas e passos na diagonal (palavra reta é sem graça)
+function curvas(sol) {
+  let v = 0;
+  for (const { p } of sol) for (let k = 1; k < p.length; k++) {
+    const dr = ((p[k] / W) | 0) - ((p[k - 1] / W) | 0), dc = (p[k] % W) - (p[k - 1] % W);
+    if (dr && dc) v += .5;
+    if (k > 1) { const er = ((p[k - 1] / W) | 0) - ((p[k - 2] / W) | 0), ec = (p[k - 1] % W) - (p[k - 2] % W); if (er !== dr || ec !== dc) v += 1; }
+  }
+  return v / sol.length;
 }
 
 export function desafio(nivel, forma = null) {
@@ -193,7 +217,7 @@ export function desafio(nivel, forma = null) {
         c: W, r: H, f: nome, g: g.join(""), l: nivel,   // colunas, linhas, forma; "#" florzinha, "." fora da forma
         // palavras: forma do tabuleiro, forma escrita e caminho; o: ordem em que saem sem chute (para a dica)
         w: sol.map(s => ({ w: s.w, o: RESP[s.w], p: s.p })), o: ordem,
-        d: falsas + ordem.length, i: rand(),
+        d: falsas + ordem.length, i: curvas(sol) + rand(),
       };
     }
   }

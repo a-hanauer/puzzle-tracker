@@ -47,7 +47,9 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Cordel: desde #20 (23/10/2026) é no estilo do Wend (LinkedIn): tabuleiro em pé, com forma sorteada (retângulo, cruz, losango,
   ampulheta, vaso, escada, ferradura, anel, halteres, zigue-zague, degraus; não repete de um dia para o outro; desde #21
   — o #20 é 6×6) e florzinhas (casas bloqueadas); fora da forma não se desenha nada (só as letras mostram o contorno);
-  a semana sobe de 19–23 letras (seg) a 42–48 (dom); as letras se dividem em palavras ligadas só na horizontal/vertical, todas usadas uma vez; embaixo, uma
+  a semana sobe de 19–23 letras (seg) a 42–48 (dom); as letras se dividem em palavras ligadas na horizontal, vertical ou diagonal (dois traços diagonais não se cruzam), todas
+  usadas uma vez; palavra achada = bloco entalhado justo no formato do rastro (sem contorno), borda de goiva, pontinhos de
+  falha e riscos de desgaste na direção do traço; letras em Caesar Dressing (`cordel/fontes`, OFL); embaixo, uma
   etiqueta com o tamanho de cada palavra. Palavras de resposta em `cordel/respostas.json` (comuns: substantivos e
   adjetivos no masculino singular e verbos no infinitivo; sem nomes próprios, plurais, conjugações). `cordel/gerador.mjs`
   confere com `alternativas.json` (lista larga, com plurais e conjugações) que a divisão é única e sai sem chute (sempre
