@@ -2,9 +2,10 @@
 <html lang="pt-BR" class="gh-carregando" data-fixa>
 <head>
 <meta charset="UTF-8">
-<script src="../comum/tema.js?v=145"></script>
-<script src="../comum/cabecalho.js?v=145"></script>
-<script src="../comum/dica.js?v=145"></script>
+<meta name="color-scheme" content="light dark">
+<script src="../comum/tema.js?v=146"></script>
+<script src="../comum/cabecalho.js?v=146"></script>
+<script src="../comum/dica.js?v=146"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -267,16 +268,16 @@
   .tile-row.input .tile.cur{box-shadow:inset 0 0 0 var(--stroke) var(--accent);}
 
   #row-input{ transition: none; }
-  #row-input.fly-up{ animation: flyUp .5s ease forwards; }
-  #row-input.fly-down{ animation: flyDown .5s ease forwards; }
+  #row-input.fly-up{ animation: flyUp .3s cubic-bezier(.4,0,.6,1) forwards; }
+  #row-input.fly-down{ animation: flyDown .3s cubic-bezier(.4,0,.6,1) forwards; }
   #row-input.fly-win{ animation: flyWin .5s ease forwards; }
   @keyframes flyUp{
     0%{ transform: translateY(0); opacity:1; }
-    100%{ transform: translateY(-80px); opacity:0; }
+    100%{ transform: translateY(-46px); opacity:.15; }
   }
   @keyframes flyDown{
     0%{ transform: translateY(0); opacity:1; }
-    100%{ transform: translateY(80px); opacity:0; }
+    100%{ transform: translateY(46px); opacity:.15; }
   }
   @keyframes flyWin{
     0%{ transform: scale(1); opacity:1; }
@@ -468,7 +469,7 @@
   .mode-switch-track{border:0;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=145">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=146">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: #fff; --fim-btn-border: 0; --gh-fim-ink: #fff; --gh-fim-border: 0; --gh-fim-border-lose: 0; --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
@@ -929,9 +930,13 @@
     void inputRow.offsetWidth;
     inputRow.classList.add(cmp === 0 ? 'fly-win' : (cmp < 0 ? 'fly-up' : 'fly-down'));
 
+    // a fatia nova entra no lugar no mesmo quadro em que a de baixo some (sem buraco no meio)
     setTimeout(function(){
       commitGuess(word, wIdx, cmp);
-    }, 480);
+      inputRow.classList.remove('fly-up','fly-down','fly-win');
+      var nova = cmp < 0 ? document.querySelector('#row-top') : cmp > 0 ? document.querySelector('#row-bot, #row-bottom') : null;
+      [nova, inputRow].forEach(function(el){ if(el && el.animate) el.animate([{opacity:.2, transform:'scale(.97)'},{opacity:1, transform:'none'}], {duration:180, easing:'ease-out'}); });
+    }, cmp === 0 ? 480 : 290);
   }
 
   function commitGuess(word, wIdx, cmp){
@@ -1329,9 +1334,9 @@
     fn => { document.getElementById("practice-toggle").addEventListener("change", () => setTimeout(fn)); window.addEventListener("sanduba-livre", fn); },
     window.sandubaLivre);
 </script>
-<script src="../comum/catalogo.js?v=145"></script>
-<script src="../comum/celebra.js?v=145"></script>
-<script src="../comum/recorde.js?v=145"></script>
-<script src="../comum/proximo.js?v=145" data-jogo="sanduba"></script>
+<script src="../comum/catalogo.js?v=146"></script>
+<script src="../comum/celebra.js?v=146"></script>
+<script src="../comum/recorde.js?v=146"></script>
+<script src="../comum/proximo.js?v=146" data-jogo="sanduba"></script>
 </body>
 </html>

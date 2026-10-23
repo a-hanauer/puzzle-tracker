@@ -302,7 +302,13 @@
   const tick = () => atualizar(false);
   // primeira arrumação: com tudo no lugar, a tela aparece (html.gh-carregando, comum/cabecalho.css)
   const mostra = () => requestAnimationFrame(() => document.documentElement.classList.remove("gh-carregando"));
-  const primeiro = () => { tick(); mostra(); };
+  // páginas com <html data-espera> (tabuleiro que chega depois, de desafios.json) só aparecem quando o jogo avisa
+  // (window.ghPronto) — sem mostrar o cabeçalho sozinho e o tabuleiro pulando depois; no máximo 900 ms
+  let pronto = !document.documentElement.hasAttribute("data-espera"), dom = false;
+  const tenta = () => { if (pronto && dom) mostra(); };
+  window.ghPronto = () => { pronto = true; tenta(); };
+  setTimeout(window.ghPronto, 900);
+  const primeiro = () => { tick(); dom = true; tenta(); };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", primeiro); else primeiro();
   setInterval(tick, 1200);
   // assim que a partida aparece terminada (inclusive ao abrir um jogo já resolvido),

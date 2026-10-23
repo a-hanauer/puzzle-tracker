@@ -426,7 +426,9 @@ a.nx.tinta .px-ic { background: none; }
 body:has(.gh-fim.on) [data-tabuleiro]:not(:has(+ .fim-subrow.junto:not([hidden]))) { margin-bottom: 34px !important; }
 /* ao abrir um jogo, a tela só aparece quando já está na posição final (comum/proximo.js tira a
    classe); se algo falhar, aparece sozinha depois de 1 s */
-html.gh-carregando body { visibility: hidden; animation: gh-mostra 0s linear 1s forwards; }
+html.gh-carregando body { visibility: hidden; animation: gh-mostra 0s linear 1.1s forwards; }
+/* enquanto arruma a tela, nada de transição (fundo e cores já entram no lugar certo, sem deslizar) */
+html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-carregando *::after { transition: none !important; }
 @keyframes gh-mostra { to { visibility: visible; } }
 
 /* bandeja de resultado: a contagem sobe para logo abaixo do placar e o pé vira uma linha
@@ -490,3 +492,11 @@ html.gh-carregando body { visibility: hidden; animation: gh-mostra 0s linear 1s 
 .fim-semana .sem-dias .hoje { color: var(--gh-ink); }
 .fim-semana .sem-rodape { margin-top: 10px; font-size: .8rem; color: var(--gh-muted); }
 .fim-semana .sem-rodape b { color: var(--gh-ink); font-variant-numeric: tabular-nums; }
+
+/* janelas no escuro: fundo de trás mais escuro e um filete claro na borda, para a janela não se perder no fundo */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .overlay { background: rgba(0, 0, 0, .62) !important; }
+  :root:not([data-theme="light"]) .overlay > .modal { box-shadow: 0 0 0 1px rgba(255, 255, 255, .09), 0 24px 70px rgba(0, 0, 0, .6) !important; }
+}
+:root[data-theme="dark"] .overlay { background: rgba(0, 0, 0, .62) !important; }
+:root[data-theme="dark"] .overlay > .modal { box-shadow: 0 0 0 1px rgba(255, 255, 255, .09), 0 24px 70px rgba(0, 0, 0, .6) !important; }

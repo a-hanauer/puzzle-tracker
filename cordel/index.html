@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="gh-carregando" data-fixa>
+<html lang="pt-BR" class="gh-carregando" data-espera data-fixa>
 <head>
 <meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#f6f1e6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121110" media="(prefers-color-scheme: dark)">
@@ -10,9 +11,9 @@
 <meta name="apple-mobile-web-app-title" content="Cordel">
 <title>CORDEL — palavras de um tema, ligadas como num fio</title>
 <link rel="icon" type="image/png" href="icon.png?v=22">
-<script src="../comum/tema.js?v=145"></script>
-<script src="../comum/cabecalho.js?v=145"></script>
-<script src="../comum/dica.js?v=145"></script>
+<script src="../comum/tema.js?v=146"></script>
+<script src="../comum/cabecalho.js?v=146"></script>
+<script src="../comum/dica.js?v=146"></script>
 <link rel="apple-touch-icon" href="icon.png?v=22">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,8 +78,8 @@
      e não devem rodar a cada quadro do arrasto; por baixo, o SVG só com o rastro do dedo */
   .tab canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
   #letrasSvg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: visible; }
-  .tab canvas.entra { animation: carimbo .22s ease-out; }
-  @keyframes carimbo { from { opacity: .35; } to { opacity: 1; } }
+  .prov .corpo { fill: none; stroke-width: 58px; stroke-linecap: round; stroke-linejoin: round; }
+  .prov.tema .corpo { stroke: var(--tema); } .prov.chave .corpo { stroke: var(--chave); }
   /* papel de folheto (grão leve) e tinta de carimbo nas palavras achadas */
   body { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .10 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23f)'/%3E%3C/svg%3E"); }
   /* palavra achada = bloco entalhado no formato do rastro, com filete de papel por dentro da borda (como as molduras
@@ -158,7 +159,7 @@
   .palavras .pa.pk { background: var(--chave); color: var(--chave-ink); letter-spacing: .06em; }
 </style>
 <link rel="preload" href="fontes/CaesarDressing-Regular.ttf" as="font" type="font/ttf" crossorigin>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=145">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=146">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
   .gh .gh-brand b { letter-spacing: .02em; font-stretch: 75%; font-size: 1.15rem; }   /* cabe ao lado da dica */
@@ -285,6 +286,7 @@
   }
 
   fetch("desafios.json").then(r => r.json()).then(data => {
+    requestAnimationFrame(() => window.ghPronto && ghPronto());   // a tela aparece já com o tabuleiro (comum/proximo.js)
     DADOS = data;
     dayNum = dayNumber(data.epoch);
     const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
@@ -408,8 +410,10 @@
     return d;
   }
   // ---------- parte fixa numa imagem ----------
-  let fixo = null, desenhado = "", fonteOk = false, etqMedida = "";
+  let fixo = null, desenhado = "", fonteOk = false, etqMedida = "", pintou = false;
   const letraPronta = (document.fonts ? Promise.race([document.fonts.load(`56px Xilo`, "ABC"), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve()).catch(() => {});
+  // letras e imagem aparecem juntas (letra clara sem o bloco por baixo some no papel)
+  function mostraLetras() { const ls = $("letrasSvg"); if (ls && fonteOk && pintou) ls.style.visibility = ""; }
   async function pintaFixo() {
     const b = $("board"), tab = $("tab");
     if (!fixo || !b) return;
@@ -434,9 +438,11 @@
       const cv = document.createElement("canvas"); cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
       cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
       URL.revokeObjectURL(url);
+      // troca seca: a imagem nova cobre o bloco provisório no mesmo quadro (sem esmaecer, sem piscar)
       const velhos = [...tab.querySelectorAll("canvas")];
-      if (velhos.length) { cv.className = "entra"; setTimeout(() => velhos.forEach(c => c.remove()), 230); }
-      tab.append(cv);
+      tab.insertBefore(cv, $("letrasSvg"));
+      requestAnimationFrame(() => { velhos.forEach(c => c.remove()); $("board").querySelectorAll(".prov").forEach(g => g.remove()); });
+      if (!pintou) { pintou = true; mostraLetras(); }
     };
     img.src = url;
   }
@@ -458,13 +464,15 @@
       if (marca.includes(i)) bl += `<circle class="dica" cx="${x}" cy="${y}" r="44"/>`;
       tx += `<text class="le ${k >= 0 ? tinta(k) : ""}" x="${x}" y="${y + 2}">${letras[i]}</text>`;
     }
+    // palavra recém-achada: um bloco simples na hora, por baixo da imagem, até a imagem com a xilogravura ficar pronta
+    const prov = [...achadas].filter(k => P.w[k].p.some(i => recente.has(i)));
     recente = new Set();
-    $("board").innerHTML = `<polyline id="selLk" points=""/>`;
+    $("board").innerHTML = prov.map(k => `<g class="prov ${tinta(k)}">${forma(P.w[k].p)}</g>`).join("") + `<polyline id="selLk" points=""/>`;
     let ls = $("letrasSvg");
     if (!ls) { ls = document.createElementNS("http://www.w3.org/2000/svg", "svg"); ls.id = "letrasSvg"; ls.setAttribute("aria-hidden", "true"); $("tab").append(ls); }
     ls.setAttribute("viewBox", `0 0 ${N * U} ${R * U}`); ls.innerHTML = tx;
     // as letras só aparecem com a fonte de xilogravura pronta (sem piscar na letra comum antes)
-    if (!fonteOk) { ls.style.visibility = "hidden"; letraPronta.then(() => { fonteOk = true; ls.style.visibility = ""; }); }
+    if (!fonteOk || !pintou) { ls.style.visibility = "hidden"; letraPronta.then(() => { fonteOk = true; mostraLetras(); }); }
     fixo = { ba, bl }; desenhado = "";
     // etiquetas: uma por palavra, na ordem do tamanho; vira a palavra quando achada
     const ordem = P.w.map((_, k) => k).sort((a, b) => P.w[b].w.length - P.w[a].w.length || a - b);
@@ -693,9 +701,9 @@
   $("againBtn").addEventListener("click", () => sorteia());
 })();
 </script>
-<script src="../comum/catalogo.js?v=145"></script>
-<script src="../comum/celebra.js?v=145"></script>
-<script src="../comum/recorde.js?v=145"></script>
-<script src="../comum/proximo.js?v=145" data-jogo="cordel"></script>
+<script src="../comum/catalogo.js?v=146"></script>
+<script src="../comum/celebra.js?v=146"></script>
+<script src="../comum/recorde.js?v=146"></script>
+<script src="../comum/proximo.js?v=146" data-jogo="cordel"></script>
 </body>
 </html>
