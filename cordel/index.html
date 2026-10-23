@@ -504,7 +504,7 @@
     const t = $("tip");
     if (finished) { t.innerHTML = `Próximo Cordel em <b data-contagem>${$("countdown").textContent}</b>`; return; }
     t.innerHTML = `<b>${achadas.size}</b> de ${P.w.length} palavras` +
-      (alvo >= 0 && !achadas.has(alvo) ? "<br>A palavra da dica começa e termina nas letras marcadas." : "");
+      (alvo >= 0 && !achadas.has(alvo) ? " · dica: começo e fim marcados" : "");
   }
 
   // ---------- mensagem em cima do tabuleiro ----------
