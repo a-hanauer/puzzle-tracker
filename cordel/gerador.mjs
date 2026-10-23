@@ -21,7 +21,7 @@ import { mantidos, escolher } from "../comum/selecao.mjs";
 
 const DIR = dirname(fileURLToPath(import.meta.url));
 export const EPOCH = [2026, 9, 4];              // #1 = domingo, 04/10/2026
-export const INICIO = 21;                       // #21 (24/10/2026) é o primeiro no formato novo
+export const INICIO = 20;                       // #20 (23/10/2026) é o primeiro no formato novo
 const RESP = JSON.parse(readFileSync(join(DIR, "respostas.json"), "utf8"));      // tabuleiro -> escrita
 const ALT = JSON.parse(readFileSync(join(DIR, "alternativas.json"), "utf8"));
 
@@ -168,7 +168,7 @@ export function desafio(nivel) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const DIAS = +(process.argv[2] || 365);
   if (process.argv[3]) seed = +process.argv[3];
-  const old = mantidos(DIR, EPOCH);              // até hoje (os de antes de #21 são do formato de temas)
+  const old = mantidos(DIR, EPOCH, !!process.env.HOJE);   // até hoje (HOJE=1: até ontem, refaz o de hoje); antes de #20, formato de temas
   const nivelDe = k => (new Date(EPOCH[0], EPOCH[1], EPOCH[2] + k).getDay() + 6) % 7 + 1;
   const vistos = new Set(old.map(p => p.g)), fila = {}, t0 = Date.now();
   for (let l = 1; l <= 7; l++) {

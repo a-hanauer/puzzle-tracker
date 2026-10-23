@@ -271,7 +271,6 @@
     DADOS = data;
     dayNum = dayNumber(data.epoch);
     const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
-    if (!puzzle.n) { location.replace("folheto.html"); return; }      // último dia do formato de temas
     let saved = load("dia:" + dayNum, null);
     if (saved && saved.pid !== pid(puzzle)) saved = null;
     setup(puzzle, saved);

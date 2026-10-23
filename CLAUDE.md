@@ -44,13 +44,13 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   literatura, música, geografia, mitologia) a temas infantis; bichos, expressões e gramática só de vez em quando.
 - Sando e 5PILA: o desafio do dia segue a semana pelas tentativas: seg–ter Fácil (20 / 10), qua–sex Normal (14 / 8),
   sáb–dom Difícil (10 / 6). Partida já começada guarda o seu `max`.
-- Cordel: desde #21 (24/10/2026) é no estilo do Wend (LinkedIn): grade 5×5 (seg) a 7×7 (dom) com florzinhas (casas
+- Cordel: desde #20 (23/10/2026) é no estilo do Wend (LinkedIn): grade 5×5 (seg) a 7×7 (dom) com florzinhas (casas
   bloqueadas); as letras se dividem em palavras ligadas só na horizontal/vertical, todas usadas uma vez; embaixo, uma
   etiqueta com o tamanho de cada palavra. Palavras de resposta em `cordel/respostas.json` (comuns: substantivos e
   adjetivos no masculino singular e verbos no infinitivo; sem nomes próprios, plurais, conjugações). `cordel/gerador.mjs`
   confere com `alternativas.json` (lista larga, com plurais e conjugações) que a divisão é única e sai sem chute (sempre
   há uma casa que só cabe numa palavra). Dica comum (uma por dia): começo e fim da próxima palavra. O formato de temas
-  ficou em `folheto.html` (só para o #20) e em `gerador-temas.mjs`/`temas-novos.mjs`.
+  ficou em `gerador-temas.mjs`/`temas-novos.mjs` (até o #19).
 - `comum/acervo.mjs`: temas do Cordel (campo `c`; os campos da Panelinha, que saiu, ficaram). Área (`a`) para o rodízio;
   família (`f`) para não pôr dois temas parecidos no mesmo dia.
 - Ponto Cruz (pasta `cruzadinha`): desde 16/10/2026 é um **sudoku 6×6 de dados** (blocos 2×3), faces do dado em
