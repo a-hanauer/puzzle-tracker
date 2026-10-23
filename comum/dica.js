@@ -43,7 +43,8 @@
     document.body.append(balao);
     let timer = 0;
     const fecha = () => { balao.hidden = true; clearTimeout(timer); };
-    const mostra = (html, ms) => { balao.innerHTML = html; balao.hidden = false; clearTimeout(timer); if (ms) timer = setTimeout(fecha, ms); };
+    const mostra = (html, ms) => { balao.innerHTML = html; balao.hidden = false; balao.style.pointerEvents = balao.querySelector("button") ? "" : "none";   // explicação: o toque passa para o tabuleiro
+      clearTimeout(timer); if (ms) timer = setTimeout(fecha, ms); };
 
     function atualiza() {
       const usada = !!opts.usada(), bloq = !!(opts.bloqueada && opts.bloqueada());
