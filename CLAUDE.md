@@ -47,8 +47,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Cordel: desde #20 (23/10/2026) é no estilo do Wend (LinkedIn): tabuleiro em pé, com forma sorteada (retângulo, cruz, losango,
   ampulheta, vaso, escada, ferradura, anel, halteres, zigue-zague, degraus; não repete de um dia para o outro; desde #21
   — o #20 é 6×6) e estrelas de cordel desenhadas à mão, cada uma diferente (casas bloqueadas); fora da forma não se desenha nada (só as letras mostram o contorno);
-  a semana sobe de 19–23 letras (seg) a 42–48 (dom); as letras se dividem em palavras ligadas na horizontal, vertical ou diagonal (dois traços diagonais não se cruzam), todas
-  usadas uma vez; palavra achada = bloco entalhado justo no formato do rastro (sem contorno), borda de goiva, pontinhos de
+  a semana sobe de 27–31 letras (seg) a 45–50 (dom) (desde 24/10/2026; antes 19–23 a 42–48); as letras se dividem em palavras ligadas na horizontal, vertical ou diagonal (dois traços diagonais não se cruzam), todas
+  usadas uma vez; palavra achada = bloco entalhado cheio, numa curva suave pelo rastro (sem contorno), borda de goiva, pontinhos de
   falha e lascas de goiva (pontudas nas duas pontas) na direção do traço; blocos e estrelas são desenhados numa imagem
   (canvas) uma vez por palavra achada, para não pesar no iPhone; letras por cima em SVG vivo, em Caesar Dressing (`cordel/fontes`, OFL); embaixo, uma
   etiqueta com o tamanho de cada palavra. Palavras de resposta em `cordel/respostas.json` (comuns: substantivos e

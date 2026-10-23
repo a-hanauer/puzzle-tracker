@@ -51,14 +51,15 @@ const FORMAS = {
 export const NOMES_FORMA = Object.keys(FORMAS);
 
 // tela (colunas × linhas), letras (casas usadas) e tamanho das palavras por nível
+// 23/10/2026: o nível 1 passou a ser o antigo 3 e a semana sobe daí (até 45–50 letras no domingo)
 export const NIVEL = {
-  1: { telas: [[5, 6], [5, 7], [4, 7]], letras: [19, 23], tam: [4, 6], faixa: [0, .7] },
-  2: { telas: [[5, 7], [6, 7], [5, 8]], letras: [23, 27], tam: [4, 7], faixa: [.2, .9] },
-  3: { telas: [[6, 7], [5, 8], [6, 8]], letras: [27, 31], tam: [4, 7], faixa: [0, .7] },
-  4: { telas: [[6, 8], [6, 7], [5, 9]], letras: [30, 34], tam: [5, 8], faixa: [.2, .9] },
-  5: { telas: [[6, 8], [6, 9], [7, 8]], letras: [33, 38], tam: [5, 8], faixa: [.3, 1] },
-  6: { telas: [[7, 8], [6, 9], [7, 9]], letras: [38, 43], tam: [5, 8], faixa: [.2, .9] },
-  7: { telas: [[7, 9], [7, 8], [6, 10]], letras: [42, 48], tam: [6, 8], faixa: [.4, 1] },
+  1: { telas: [[6, 7], [5, 8], [6, 8]], letras: [27, 31], tam: [4, 7], faixa: [0, .7] },
+  2: { telas: [[6, 8], [6, 7], [5, 9]], letras: [30, 34], tam: [4, 8], faixa: [.2, .9] },
+  3: { telas: [[6, 8], [6, 9], [7, 8]], letras: [33, 37], tam: [5, 8], faixa: [.2, .9] },
+  4: { telas: [[6, 9], [7, 8], [7, 9]], letras: [36, 40], tam: [5, 8], faixa: [.3, 1] },
+  5: { telas: [[7, 8], [6, 9], [7, 9], [6, 10]], letras: [39, 43], tam: [5, 8], faixa: [.3, 1] },
+  6: { telas: [[7, 9], [6, 10], [7, 10]], letras: [42, 46], tam: [5, 8], faixa: [.3, 1] },
+  7: { telas: [[7, 9], [7, 10], [6, 10]], letras: [45, 50], tam: [6, 8], faixa: [.4, 1] },
 };
 
 // trie das palavras que valem para conferir
