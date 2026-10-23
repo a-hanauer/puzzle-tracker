@@ -379,23 +379,40 @@
   const LARG = 29;                             // meia largura do bloco (unidades do tabuleiro; casa = 100)
   function pintaBloco(g, p, k, cor, fundo) {
     const r = sorte(P.w[k].w + k), seg = curva(p);
-    g.fillStyle = g.strokeStyle = cor; g.lineCap = g.lineJoin = "round"; g.lineWidth = LARG * 2;
+    g.fillStyle = g.strokeStyle = cor; g.lineCap = g.lineJoin = "round"; g.lineWidth = (LARG - 3) * 2;
     g.beginPath(); g.moveTo(...seg.length ? seg[0][0] : xy(p[0]));
     for (const s of seg) g.bezierCurveTo(...s[1], ...s[2], ...s[3]);
     if (!seg.length) g.lineTo(...xy(p[0]));
     g.stroke();
+    const base = new Path2D(); base.moveTo(...(seg.length ? seg[0][0] : xy(p[0]))); for (const s2 of seg) base.bezierCurveTo(...s2[1], ...s2[2], ...s2[3]);
     // amostra a curva (ponto e direção) a cada ~7 unidades
     const am = [];
     for (const s of seg) { const L = Math.hypot(s[3][0] - s[0][0], s[3][1] - s[0][1]), n = Math.max(4, Math.round(L / 7));
       for (let q = 0; q < n; q++) { const a = bez(s, q / n), b = bez(s, (q + .5) / n), dx = b[0] - a[0], dy = b[1] - a[1], m = Math.hypot(dx, dy) || 1; am.push([a, dx / m, dy / m]); } }
-    // borda de goiva: calombos para fora e cortes para dentro
-    const fase = [r() * 6, r() * 6];
-    for (const [[x, y], ux, uy] of am) for (const lado of [-1, 1]) {
-      const nx = -uy * lado, ny = ux * lado;
-      // ondulação suave: a borda sobe e desce devagar (onda sorteada), não em bolinhas
-      const onda = Math.sin(fase[lado > 0 ? 0 : 1] += .55 + r() * .5) * 1.8 + (r() - .5) * 1.2;
-      g.fillStyle = onda > 0 ? cor : fundo;
-      g.beginPath(); g.arc(x + nx * (LARG + (onda > 0 ? -2 : 3.4)), y + ny * (LARG + (onda > 0 ? -2 : 3.4)), 2.2 + Math.abs(onda) * 1.4, 0, 7); g.fill();
+    // borda de goiva: contorno liso que ondula devagar (ruído suave ao longo do comprimento), como o corte da faca;
+    // o traço de base, um pouco mais estreito, garante o miolo cheio mesmo nas curvas fechadas
+    const fx = [r() * 6, r() * 6, r() * 6, r() * 6, r() * 6, r() * 6];
+    const ruido = (sv, l) => 2.4 * Math.sin(sv * .07 + fx[l]) + 1.3 * Math.sin(sv * .19 + fx[l + 2]) + .7 * Math.sin(sv * .43 + fx[l + 4]);
+    const esq = [], dir = []; let sv = 0;
+    am.forEach(([[x, y], ux, uy], q) => {
+      if (q) sv += Math.hypot(x - am[q - 1][0][0], y - am[q - 1][0][1]);
+      const a = LARG + ruido(sv, 0), b = LARG + ruido(sv, 1);
+      esq.push([x - uy * a, y + ux * a]); dir.push([x + uy * b, y - ux * b]);
+    });
+    const tampa = (c, ux, uy, sinal) => {          // ponta arredondada (meia-volta irregular)
+      const o = [], a0 = Math.atan2(ux, -uy);
+      for (let q = 1; q < 8; q++) { const a = a0 - sinal * q / 8 * Math.PI, rr = LARG + (r() - .5) * 3; o.push([c[0] + Math.cos(a) * rr, c[1] + Math.sin(a) * rr]); }
+      return o;
+    };
+    if (am.length) {
+      const fim = seg.length ? seg.at(-1)[3] : xy(p[0]), [, ux1, uy1] = am.at(-1), [c0, ux0, uy0] = am[0];
+      const ePf = [fim[0] - uy1 * LARG, fim[1] + ux1 * LARG], dPf = [fim[0] + uy1 * LARG, fim[1] - ux1 * LARG];
+      const anel = [...esq, ePf, ...tampa(fim, ux1, uy1, 1).reverse(), dPf, ...dir.slice().reverse(), ...tampa(c0, -ux0, -uy0, 1).reverse()];
+      g.fillStyle = cor; g.beginPath();
+      const m = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], n = anel.length;
+      g.moveTo(...m(anel[n - 1], anel[0]));
+      for (let q = 0; q < n; q++) g.quadraticCurveTo(...anel[q], ...m(anel[q], anel[(q + 1) % n]));
+      g.fill();
     }
     // lascas pontudas nas duas pontas, na direção do traço, e pontinhos de falha
     g.fillStyle = fundo;
@@ -406,7 +423,7 @@
         const sx = x + nx * off, sy = y + ny * off, ex = sx + ux * len, ey = sy + uy * len, mx = (sx + ex) / 2, my = (sy + ey) / 2;
         g.beginPath(); g.moveTo(sx, sy); g.quadraticCurveTo(mx + nx * lw, my + ny * lw, ex, ey); g.quadraticCurveTo(mx - nx * lw, my - ny * lw, sx, sy); g.fill();
       }
-      if (r() < .15) { g.beginPath(); g.arc(x + nx * (r() - .5) * 46, y + ny * (r() - .5) * 46, .8 + r() * 1.3, 0, 7); g.fill(); }
+      if (r() < .1) { g.beginPath(); g.arc(x + nx * (r() - .5) * 40, y + ny * (r() - .5) * 40, 1.2 + r() * 1.2, 0, 7); g.fill(); }
     }
   }
   function pintaEstrela(g, i, cor) {
