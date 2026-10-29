@@ -628,6 +628,8 @@ header{
   // sem repetir até a lista acabar. O sorteio antigo (hash da data) dava palavras parecidas em dias seguidos,
   // porque datas vizinhas viravam números vizinhos. Os dias anteriores continuam como saíram.
   var ORDEM_INICIO = new Date(2026, 9, 14);
+  var COMUNS_INICIO = new Date(2026, 9, 30);
+  var COMUNS = "preto virus botar forca metal sabio pardo pista preco horta epico prazo credo corte certo bruto nivel busca laudo optar fugir bravo norma linha bater haste baile filho chute chale monte verso costa amigo frita juizo noite parte conta custo copia ganho folga macio lunar ordem audio pleno pilar nervo hotel cargo notar briga grife patio cobra lucro pedir usina nobre lidar visto jogar tribo rival heroi pisar icone tenis primo santo duzia bolsa padre punho gripe grito pudor tomar verao chave etico apice facil volta cesta troca saude solar multa monge serio justo lugar fusao calmo pilha sorte odiar prosa largo turno tedio berco fonte levar lesao bonde feira exito afeto porte setor genro recuo ritmo molde terco filme obter sinal maior madre terno pesar negar autor cheio telha pulso pedra lapis tenso litro ronda torax cruel vetor sonda prima velho ponte golfe peito valer renda bicho vasto jovem navio licao bando ganso omega fruto gruta resto atriz cesto crise cravo renal dolar pique bolha brisa mundo banho grupo salto humor apelo visao subir supor saber frase vilao termo folha habil chato firme brega fator forte bispo farol regua saldo ligar astro vinho culto acido seita surto album secar asilo brejo lutar queda lenda tunel mudar amplo exato somar tempo vazio clero curto mover farto sobra gesto galho leito culpa pobre grato coral dupla fenda feito trico denso macho rocha fluxo livro chuva norte anexo agudo tenda cofre dizer apito fundo plano servo serao poste ciume zinco lento abril ativo pular suave cobre manto animo comer surdo traje ideal fecho honra coisa final feliz podre dieta rosca radio furia impor magro veloz trago guiar turco lindo lista turma tropa duplo expor puxar banco citar cento ouvir traco uniao campo canto busto claro vacuo curso censo vital prato aviso ducha gasto estar clima boate poeta furto loira solta fibra letra salmo etica forum otica toque apego cifra saque secao milho valor cinza fluir sumir moral sabor limao flora poema nicho frota utero forma aluno barco tigre trigo pinho ficha garfo pegar ruido vigor firma abuso esqui canil golpe festa vista nuvem votar lazer fraco fixar fardo balde jeito cunha trave digno verbo deusa epoca beira beijo tarde preso ficar linda perda braco temor feroz nariz prova grave poder falso pacto lider junto misto roupa marco freio manso duelo olhar extra unico imune igual movel sigla livre calor baixo longe blusa sigma medir reino disco ontem irmao signo selva salvo geral delta impar metro prado batom zelar vidro haver fazer genio cunho sutil cinto tocar couve".split(" ");
   var ORDEM = (function(){
     var a = BOAS.slice(), x = 20261014 >>> 0;
     var r = function(){ x = (x + 0x6D2B79F5) >>> 0; var t = Math.imul(x ^ (x >>> 15), 1 | x); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
@@ -646,8 +648,8 @@ header{
     var pool = POOLS[diff];
     var secret, secretIdx;
     if(practiceMode){
-      secretIdx = Math.floor(Math.random()*BOAS.length);
-      secret = BOAS[secretIdx];
+      secretIdx = Math.floor(Math.random()*COMUNS.length);   // jogo livre: só as comuns
+      secret = COMUNS[secretIdx];
     } else {
       secretIdx = todayIndexFor(pool);
       secret = pool[secretIdx];
@@ -661,6 +663,12 @@ header{
       if(hoje0 >= ORDEM_INICIO){
         var k = Math.round((hoje0 - ORDEM_INICIO) / 86400000);
         secret = ORDEM[k % ORDEM.length];
+      }
+      // a partir de 30/10/2026: só palavras de uso comum (substantivos, adjetivos e verbos no infinitivo; nada de
+      // regionalismo, conjugação, feminino de adjetivo, estrangeirismo nem palavra pesada), na mesma ordem embaralhada
+      if(hoje0 >= COMUNS_INICIO){
+        var k2 = Math.round((hoje0 - COMUNS_INICIO) / 86400000);
+        secret = COMUNS[k2 % COMUNS.length];
       }
     }
 

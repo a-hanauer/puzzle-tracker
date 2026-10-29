@@ -42,6 +42,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 - Público: gente com boa formação. Preferir conhecimentos gerais densos (história, artes, ciência,
   literatura, música, geografia, mitologia) a temas infantis; bichos, expressões e gramática só de vez em quando.
+- 5PILA: desde 30/10/2026 a palavra do dia sai de `COMUNS` (só uso comum; nada de regionalismo, conjugação, feminino de
+  adjetivo, estrangeirismo ou palavra pesada).
 - Sando e 5PILA: o desafio do dia segue a semana pelas tentativas: seg–ter Fácil (20 / 10), qua–sex Normal (14 / 8),
   sáb–dom Difícil (10 / 6). Partida já começada guarda o seu `max`.
 - Cordel: desde #20 (23/10/2026) é no estilo do Wend (LinkedIn): tabuleiro em pé, com forma sorteada (retângulo, cruz, losango,
