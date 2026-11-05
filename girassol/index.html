@@ -4,46 +4,46 @@
 <meta charset="UTF-8">
 <meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#f4f1e6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#12140f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f1ea" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141110" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Girassol">
-<title>GIRASSOL — palavras com as letras da flor</title>
-<link rel="icon" type="image/png" href="icon.png?v=1">
-<script src="../comum/tema.js?v=148"></script>
-<script src="../comum/cabecalho.js?v=148"></script>
-<script src="../comum/dica.js?v=148"></script>
-<link rel="apple-touch-icon" href="icon.png?v=1">
+<meta name="apple-mobile-web-app-title" content="Gerânio">
+<title>GERÂNIO — palavras com as letras da flor</title>
+<link rel="icon" type="image/png" href="icon.png?v=2">
+<script src="../comum/tema.js?v=149"></script>
+<script src="../comum/cabecalho.js?v=149"></script>
+<script src="../comum/dica.js?v=149"></script>
+<link rel="apple-touch-icon" href="icon.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <style>
-  /* girassol: papel claro; flor simples — 6 pétalas em gomo, de ponta redonda (as letras), e o miolo marrom (a obrigatória) */
+  /* Gerânio (pasta e id "girassol", o nome antigo): papel claro; 6 pétalas vermelhas em gomo, de ponta redonda (as letras), e o miolo amarelo (a obrigatória) */
   :root {
-    --bg: #f4f1e6; --surface: #fffdf6; --surface-2: #e9e3cf; --ink: #2a2416; --muted: #7f775f; --line: #e3dcc4;
-    --acc: #9a5d1c; --folha: #5f9a3a; --bom: #3f7f26;
-    --petala: #fbcf3a; --petala-b: #e49b12; --petala-c: #ffe27a; --petala-d: #c97a0c;
-    --miolo: #5a3519; --miolo-b: #3a200c; --miolo-c: #7a4a22; --semente: #2c1607; --miolo-txt: #ffe08a; --letra: #3b2208;
-    --kb-bg: #e7e1cc; --kb-ink: #2a2416; --kb-dim: #7f775f;
+    --bg: #f6f1ea; --surface: #fffcf9; --surface-2: #ece2da; --ink: #2a1c18; --muted: #85716a; --line: #e6d9d0;
+    --acc: #c8342f; --folha: #c8342f; --bom: #3f7f26;
+    --petala: #e2433f; --petala-b: #e49b12; --petala-c: #ffe27a; --petala-d: #c97a0c;
+    --miolo: #f6d77a; --miolo-b: #3a200c; --miolo-c: #7a4a22; --semente: #2c1607; --miolo-txt: #7a1d12; --letra: #ffffff;
+    --kb-bg: #ece2da; --kb-ink: #2a1c18; --kb-dim: #85716a;
     --shadow: 0 1px 2px rgba(60, 45, 15, .07), 0 6px 18px rgba(60, 45, 15, .08);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #12140f; --surface: #1c1f17; --surface-2: #272b21; --ink: #f1eedf; --muted: #9a9a84; --line: #30342a;
-      --acc: #f2c440; --folha: #7fb85a; --bom: #9ad276;
-      --petala: #efbd2a; --petala-b: #c47f0a; --petala-c: #ffd65c; --petala-d: #8a5506;
-      --miolo: #4a2b13; --miolo-b: #2a1708; --miolo-c: #6a3f1c; --semente: #1a0d04; --miolo-txt: #ffd86a; --letra: #3b2208;
-      --kb-bg: #272b21; --kb-ink: #f1eedf; --kb-dim: #9a9a84;
+      --bg: #141110; --surface: #201a19; --surface-2: #2c2524; --ink: #f5ece8; --muted: #a8958f; --line: #382e2c;
+      --acc: #ff6b5f; --folha: #ff6b5f; --bom: #9ad276;
+      --petala: #d93a37; --petala-b: #c47f0a; --petala-c: #ffd65c; --petala-d: #8a5506;
+      --miolo: #f3cd62; --miolo-b: #2a1708; --miolo-c: #6a3f1c; --semente: #1a0d04; --miolo-txt: #6b170f; --letra: #ffffff;
+      --kb-bg: #2c2524; --kb-ink: #f5ece8; --kb-dim: #a8958f;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
     }
   }
   :root[data-theme="dark"] {
-      --bg: #12140f; --surface: #1c1f17; --surface-2: #272b21; --ink: #f1eedf; --muted: #9a9a84; --line: #30342a;
-      --acc: #f2c440; --folha: #7fb85a; --bom: #9ad276;
-      --petala: #efbd2a; --petala-b: #c47f0a; --petala-c: #ffd65c; --petala-d: #8a5506;
-      --miolo: #4a2b13; --miolo-b: #2a1708; --miolo-c: #6a3f1c; --semente: #1a0d04; --miolo-txt: #ffd86a; --letra: #3b2208;
-      --kb-bg: #272b21; --kb-ink: #f1eedf; --kb-dim: #9a9a84;
+      --bg: #141110; --surface: #201a19; --surface-2: #2c2524; --ink: #f5ece8; --muted: #a8958f; --line: #382e2c;
+      --acc: #ff6b5f; --folha: #ff6b5f; --bom: #9ad276;
+      --petala: #d93a37; --petala-b: #c47f0a; --petala-c: #ffd65c; --petala-d: #8a5506;
+      --miolo: #f3cd62; --miolo-b: #2a1708; --miolo-c: #6a3f1c; --semente: #1a0d04; --miolo-txt: #6b170f; --letra: #ffffff;
+      --kb-bg: #2c2524; --kb-ink: #f5ece8; --kb-dim: #a8958f;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -158,7 +158,7 @@
   .botoes .gh-kb-key svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
   .botoes .gh-kb-key.enter { flex: 1; max-width: none; background: var(--kb-ink); color: var(--kb-bg); }
 
-  /* ---------- faixa de fim (aparece ao chegar a Girassol; o jogo continua) ---------- */
+  /* ---------- faixa de fim (aparece ao chegar a Gerânio; o jogo continua) ---------- */
   .rodape { flex: none; }
   .controls { display: flex; gap: 10px; padding-top: 10px; }
   .controls:not(.done) { display: none; }
@@ -189,7 +189,7 @@
   .niveis .hj { font-weight: 800; color: var(--ink) !important; }
   .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--ink); color: var(--bg); font: inherit; font-weight: 700; font-size: .95rem; }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=148">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=149">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--acc); --gh-line: var(--line); }
   header.gh { flex: none; } .gh-meta { flex: none; }
@@ -199,7 +199,7 @@
 
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Girassol — recarregar"><img src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt=""><b>GIRASSOL</b></a>
+  <a class="gh-brand" href="./" aria-label="Gerânio — recarregar"><img src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt=""><b>GERÂNIO</b></a>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
 
@@ -222,8 +222,8 @@
 <div class="rodape" data-tabuleiro>
   <div class="controls" id="controls">
     <div class="prog">
-      <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Girassol: ver resultado">
-        <img class="ic" src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt="">
+      <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Gerânio: ver resultado">
+        <img class="ic" src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt="">
         <span class="txt"><b id="doneTitle">0 pts</b><span id="doneSub"></span></span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
       </button>
@@ -244,7 +244,7 @@
       <li>Palavra de 4 letras vale 1 ponto; mais longa, 1 ponto por letra. A que usa <b>as 7 letras</b> (o pangrama) ganha mais 7. Todo dia tem pelo menos uma.</li>
       <li>Na barra das achadas, quantas palavras do dia faltam por tamanho e por letra inicial. A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma delas. Uma por dia.</li>
     </ul>
-    <p>Chegando a <b>Girassol</b>, o dia está feito; dá para continuar até achar todas as do dia (Girassol pleno). Ao longo da semana a lista do dia cresce.</p>
+    <p>Chegando a <b>Gerânio</b>, o dia está feito; dá para continuar até achar todas as do dia (Gerânio pleno). Ao longo da semana a lista do dia cresce.</p>
     <div class="niveis" id="niveis"></div>
     <p class="fonte">Lista de palavras: <a href="https://github.com/fserb/pt-br" target="_blank" rel="noopener">fserb/pt-br</a> (licença MIT).</p>
     <button class="btn-main" data-close>Jogar</button>
@@ -255,11 +255,11 @@
 <div class="overlay" id="endOverlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,30,20,.15)"></div>
-    <h2 class="fim-title" id="endTitle">Girassol!</h2>
+    <div class="fim-art"><img src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,30,20,.15)"></div>
+    <h2 class="fim-title" id="endTitle">Gerânio!</h2>
     <div class="fim-result"><div class="fim-time" id="endPts">0 pts</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="endSub"></p>
-    <div class="fim-count" id="nextBox">Próximo Girassol em <b id="countdown" data-contagem>--:--:--</b></div>
+    <div class="fim-count" id="nextBox">Próximo Gerânio em <b id="countdown" data-contagem>--:--:--</b></div>
     <button class="fim-btn" id="againBtn" hidden>Jogar outro</button>
     <div data-proximo hidden></div>
   </div>
@@ -281,9 +281,9 @@
   const ehPang = n => new Set(n).size === 7;
   const pontosDe = n => (n.length === 4 ? 1 : n.length) + (ehPang(n) ? 7 : 0);
 
-  // níveis: fração dos pontos possíveis (só as palavras do dia); Girassol fecha o dia
-  const NIVEIS = [["Semente", 0], ["Broto", .02], ["Muda", .05], ["Botão", .12], ["Flor", .22], ["Girassol", .35]];
-  const META = .35;   // Girassol: metade dos pontos das palavras do dia (com as flexões, a lista é longa)
+  // níveis: fração dos pontos possíveis (só as palavras do dia); Gerânio fecha o dia
+  const NIVEIS = [["Semente", 0], ["Broto", .02], ["Muda", .05], ["Botão", .12], ["Flor", .22], ["Gerânio", .35]];
+  const META = .35;   // Gerânio: 35% dos pontos das palavras do dia (com as flexões, a lista é longa)
   const corte = f => Math.ceil(P.m * f);
 
   // ---------- estado ----------
@@ -426,7 +426,7 @@
     nivelAntes = k;
     $("nAch").textContent = achadas.length + raras.length; $("nAchL").textContent = achadas.length + raras.length === 1 ? "palavra" : "palavras";
     $("ultimas").textContent = (DADOS && ultimasOrdem.length ? ultimasOrdem : [...achadas, ...raras]).filter(n => achadas.includes(n) || raras.includes(n)).slice().reverse().map(nomeDe).join(", ");
-    // o Girassol continua depois de feito (dá para tentar zerar): a faixa de fim embaixo não aparece, para a flor não
+    // o Gerânio continua depois de feito (dá para tentar zerar): a faixa de fim embaixo não aparece, para a flor não
     // encolher; o resultado e o próximo jogo ficam na bandeja de fim, que a régua reabre (com a setinha)
     $("rank").classList.toggle("feito", finished);
     $("rank").setAttribute("aria-label", finished ? "Ver o resultado do dia" : "Níveis de pontos");
@@ -474,7 +474,7 @@
     h += `<h3>Achadas <em>${achadas.length} do dia${raras.length ? ` · ${raras.length} rara${raras.length > 1 ? "s" : ""}` : ""}</em></h3>`;
     h += ach.length || rar.length ? `<div class="cols">${ach.map(n => `<div class="${ehPang(n) ? "pg" : ""}">${RESP.get(n)}</div>`).join("")}${rar.map(n => `<div class="ra${ehPang(n) ? " pg" : ""}">${nomeDe(n)} ×2</div>`).join("")}</div>`
       : `<div class="vazio">As palavras que você achar aparecem aqui.</div>`;
-    if (finished && pleno()) h += `<div class="vazio">Achou todas as do dia. Girassol pleno!</div>`;
+    if (finished && pleno()) h += `<div class="vazio">Achou todas as do dia. Gerânio pleno!</div>`;
     // ontem: as palavras do dia, as achadas em destaque (só no desafio do dia)
     if (!teste && DADOS && dayNum > 1) {
       const ontem = DADOS.puzzles[(dayNum - 2) % DADOS.puzzles.length], sv = load("dia:" + (dayNum - 1), null);
@@ -569,7 +569,7 @@
   }
   dica = ghDica({ usada: () => dicaUsada, bloqueada: () => !P || pleno(), pedir: pedirDica });
 
-  // ---------- Girassol: o dia está feito (o jogo continua até achar todas) ----------
+  // ---------- Gerânio: o dia está feito (o jogo continua até achar todas) ----------
   function confere() {
     const pts = pontos();
     if (!teste) {
@@ -585,7 +585,7 @@
   }
   function showEnd() {
     const pts = pontos();
-    $("endTitle").textContent = pleno() ? "Girassol pleno!" : "Girassol!";
+    $("endTitle").textContent = pleno() ? "Gerânio pleno!" : "Gerânio!";
     $("endPts").textContent = `${pts} pts`;
     $("endSub").textContent = `${teste ? "Extra" : "#" + dayNum} · nível ${P.l}/7 · ${achadas.length} de ${P.w.length} do dia` + (raras.length ? ` · ${raras.length} rara${raras.length > 1 ? "s" : ""}` : "") + (dicaUsada ? " · com dica" : "");
     if (window.semanaFim) {
@@ -598,8 +598,8 @@
     openModal("endOverlay");
   }
   $("shareBtn").addEventListener("click", () => {
-    const k = nivelIdx(pontos()), barra = NIVEIS.map((_, i) => (i <= k ? "🌻" : "🟫")).join("");
-    const text = `GIRASSOL #${dayNum} · nível ${P.l}\n${barra}\n${NIVEIS[k][0]}${pleno() ? " pleno" : ""} · ${pontos()} pts · ${achadas.length}/${P.w.length} do dia${raras.length ? ` · ${raras.length} raras` : ""}${dicaUsada ? " · com dica" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/girassol/`;
+    const k = nivelIdx(pontos()), barra = NIVEIS.map((_, i) => (i <= k ? "🌺" : "🟫")).join("");
+    const text = `GERÂNIO #${dayNum} · nível ${P.l}\n${barra}\n${NIVEIS[k][0]}${pleno() ? " pleno" : ""} · ${pontos()} pts · ${achadas.length}/${P.w.length} do dia${raras.length ? ` · ${raras.length} raras` : ""}${dicaUsada ? " · com dica" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/girassol/`;
     ghCompartilhar($("shareBtn"), text);
   });
   $("doneBar").addEventListener("click", () => { if (finished) showEnd(); });
@@ -609,7 +609,7 @@
     if (!P) return "";
     const k = nivelIdx(pontos());
     return NIVEIS.map(([nome, f], i) => `<span class="${i === k ? "hj" : ""}">${nome}</span><span class="${i === k ? "hj" : ""}">${corte(f)} pts</span>`).join("") +
-      `<span>Girassol pleno (todas do dia)</span><span>${P.m} pts</span>`;
+      `<span>Gerânio pleno (todas do dia)</span><span>${P.m} pts</span>`;
   }
   function openModal(id) { if (id === "helpOverlay") $("niveis").innerHTML = niveisHTML(); $(id).classList.add("open"); }
   function closeModal(el) { el.classList.remove("open"); }
@@ -645,9 +645,9 @@
   $("againBtn").addEventListener("click", () => sorteia());
 })();
 </script>
-<script src="../comum/catalogo.js?v=148"></script>
-<script src="../comum/celebra.js?v=148"></script>
-<script src="../comum/recorde.js?v=148"></script>
-<script src="../comum/proximo.js?v=148" data-jogo="girassol"></script>
+<script src="../comum/catalogo.js?v=149"></script>
+<script src="../comum/celebra.js?v=149"></script>
+<script src="../comum/recorde.js?v=149"></script>
+<script src="../comum/proximo.js?v=149" data-jogo="girassol"></script>
 </body>
 </html>

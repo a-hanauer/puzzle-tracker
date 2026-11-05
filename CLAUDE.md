@@ -82,9 +82,14 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   inclinações mínimas na segunda (o antigo nível 3) a 4 doces e 10–13 no domingo; sábado e domingo como antes.
   A dica faz a próxima inclinação ótima; se travou, volta até ter saída.
 
-## Girassol (jogo de palavras no estilo Spelling Bee, desde 04/11/2026)
+## Gerânio (jogo de palavras no estilo Spelling Bee, desde 04/11/2026; chamou-se Girassol até 05/11/2026)
 
-- 7 letras numa flor simples: 6 pétalas em gomo (escolha "mais redonda", 05/11/2026) em volta do miolo marrom liso com um
+- A pasta, o id (`girassol`) e as chaves salvas (`girassol:`) ficaram com o nome antigo, para não perder progresso.
+  Cores (opção "A"): pétalas vermelhas (#e2433f / escuro #d93a37) com letras brancas, miolo amarelo (#f6d77a) com letra
+  vinho; no painel, cartão rosado (#f7cdc6 / escuro #3c2220). Último nível da régua e "pleno" = "Gerânio". Celebração e
+  ícone = o gerânio abrindo, com as mesmas pétalas do jogo (comum/celebra.js, ARTE.girassol).
+
+- 7 letras numa flor simples: 6 pétalas em gomo (escolha "mais redonda", 05/11/2026) em volta do miolo liso com um
   pontilhado (a letra obrigatória). Pétala: laterais paralelas (fresta de largura constante), borda de dentro no arco do miolo,
   ponta de fora numa curva contínua tangente às laterais; cantos de dentro arredondados de leve pelo traço. As pétalas são
   calculadas já giradas (sem `transform`). Régua = barra fina contínua; barra das achadas só em texto.
@@ -97,7 +102,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   do VERO com icf ≤ 12,5 (teia, dita, tina), verbetes minúsculos do VERO até icf 13,5 (a frequência da internet subestima substantivos: anta, nata, tear), conjugações frequentes e o
   plural/feminino de cada uma pelas regras do VERO; grafia pelo VERO) medem a régua, o "pleno" e as dicas. Palavra válida fora
   delas é **rara** e vale o **dobro** (escolha do dono: premiar vocabulário).
-- Níveis: Semente, Broto, Muda, Botão, Flor, Girassol (2/5/12/22/35% dos pontos das palavras do dia). Chegar a Girassol = dia
+- Níveis: Semente, Broto, Muda, Botão, Flor, Gerânio (2/5/12/22/35% dos pontos das palavras do dia). Chegar a Gerânio = dia
   feito (celebração + bandeja de fim); continua até achar todas as do dia ("pleno" = troféu no painel). Depois de feito
   não aparece a faixa de fim embaixo (a flor não encolhe): a régua ganha uma setinha e reabre a bandeja de fim.
 - Dicas na barra das achadas, com chave Resumo | Grade (a escolha fica guardada): Resumo = quadradinhos por tamanho
