@@ -88,7 +88,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   com o nome antigo, para não perder progresso.
   Cores (opção "A"): pétalas vermelhas (#e2433f / escuro #d93a37) com letras brancas, miolo amarelo (#f6d77a) com letra
   vinho; no painel, cartão rosado (#f7cdc6 / escuro #3c2220). Último nível da régua e "pleno" = "Gerânio". Celebração e
-  ícone = o gerânio abrindo, com as mesmas pétalas do jogo (comum/celebra.js, ARTE.girassol).
+  ícone (opção "A"): duas folhas de gerânio (recortadas, com o anel escuro) e a flor com as pétalas do jogo em degradê, nervuras,
+  brilho na borda e estames no miolo; sombra embaixo, no estilo dos outros ícones (comum/celebra.js, ARTE.girassol).
 
 - 7 letras numa flor simples: 6 pétalas em gomo (escolha "mais redonda", 05/11/2026) em volta do miolo liso com um
   pontilhado (a letra obrigatória). Pétala: laterais paralelas (fresta de largura constante), borda de dentro no arco do miolo,
