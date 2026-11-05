@@ -84,13 +84,16 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 ## Girassol (jogo de palavras no estilo Spelling Bee, desde 04/11/2026)
 
-- 7 letras numa flor (pétala estilo "1": três camadas, degradê laranja→amarelo, miolo com sementes em espiral); a do miolo
-  é obrigatória; palavras de 4+ letras, letras podem repetir; acentos e ç não contam. Pontos: 4 letras = 1, mais longa = 1 por
+- 7 letras numa flor simples (desde 05/11/2026, opção "D"): só as 6 pétalas das letras, redondas e separadas como botões, e o
+  miolo marrom liso com um pontilhado (a letra obrigatória). Régua = barra fina contínua; barra das achadas só em texto.
+  Palavras de 4+ letras, letras podem repetir; acentos e ç não contam. Pontos: 4 letras = 1, mais longa = 1 por
   letra, pangrama (as 7 letras) +7. Sem cronômetro: o resultado são os pontos.
-- Desde 05/11/2026 **vale qualquer palavra** do dicionário largo (`cordel/palavras.txt`, com plurais, femininos e conjugações),
-  menos palavrões (`bloq` em desafios.json). As **palavras do dia** (comuns + flexões comuns delas: `girassol/base.json`, feito por
-  `girassol/comuns.mjs` a partir do fserb/pt-br, com lista `STOP` de nomes próprios e estrangeirismos) medem a régua, o "pleno" e as
-  dicas. Palavra válida fora delas é **rara** e vale o **dobro** (escolha do dono: premiar vocabulário).
+- **Vale toda palavra que existe** (não se julga se é comum — isso só muda os pontos): dicionário `girassol/palavras.txt` =
+  hunspell pt-BR do LibreOffice (VERO) expandido em todas as flexões por `girassol/dicionario.py` (só palavras com até 7 letras
+  diferentes), menos palavrões (`bloq` em desafios.json). As **palavras do dia** (comuns + flexões: `girassol/base.json`, feito por
+  `girassol/comuns.mjs` — respostas do Cordel, palavras frequentes do fserb/pt-br sem nomes/estrangeirismos (`STOP`), conjugações
+  frequentes e o plural/feminino de cada uma pelas regras do VERO) medem a régua, o "pleno" e as dicas. Palavra válida fora
+  delas é **rara** e vale o **dobro** (escolha do dono: premiar vocabulário).
 - Níveis: Semente, Broto, Muda, Botão, Flor, Girassol (2/7/15/30/50% dos pontos das palavras do dia). Chegar a Girassol = dia
   feito (celebração + bandeja de fim); continua até achar todas as do dia ("pleno" = troféu no painel).
 - Dicas na barra das achadas (opção "2"): quadradinhos por tamanho (achadas/total) e quantas faltam por letra inicial; a lâmpada

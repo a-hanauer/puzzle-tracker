@@ -1,5 +1,6 @@
 // palavras do dia do Girassol: as respostas curadas do Cordel + as flexões comuns delas (plural, feminino, conjugações)
-// Uso: node girassol/comuns.mjs <pasta src do fserb/pt-br> girassol/base.json   (depois: node girassol/gerador.mjs)
+// Uso: node girassol/comuns.mjs <pasta src do fserb/pt-br> girassol/base.json <formas com acento do VERO, de dicionario.py>
+//      (depois: node girassol/gerador.mjs)
 import fs from 'fs';
 const S=process.argv[2]+'/';const rd=f=>fs.readFileSync(S+f,'utf8').split('\n').map(s=>s.trim()).filter(Boolean);
 const norm=w=>w.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
@@ -39,6 +40,19 @@ for(const [n,f] of icf){
   if(!(nominal(n)||verbal(n))) continue;
   const a=acento.get(n); if(!/^[a-zà-üç]+$/.test(a)) continue;
   out[n]=a;
+}
+// plural e feminino de toda palavra-base que o VERO dá pelas regras da própria palavra (eterno -> eterna, eternos,
+// eternas; ação -> ações): entram sempre, sem olhar a frequência. Só terminações de número e gênero (nada de -mente, -inho…).
+if(process.argv[4]){
+  const flex=new Map(); for(const l of fs.readFileSync(process.argv[4],'utf8').split('\n')){const [w,...fs2]=l.split(' '); if(w) flex.set(w,fs2);}
+  const nominal2=(b,x)=>{const B=norm(b),X=norm(x); return [B+'s',B+'es',B.replace(/o$/,'a'),B.replace(/o$/,'os'),B.replace(/o$/,'as'),B.replace(/ao$/,'oes'),B.replace(/ao$/,'aes'),
+    B.replace(/ao$/,'aos'),B.replace(/l$/,'is'),B.replace(/m$/,'ns'),B.replace(/or$/,'ora'),B.replace(/or$/,'oras'),B.replace(/or$/,'ores'),B.replace(/es$/,'esa'),B.replace(/es$/,'esas'),
+    B.replace(/eu$/,'eia'),B.replace(/eu$/,'eias'),B.replace(/ao$/,'a'),B.replace(/ao$/,'as')].some(c=>c!==B&&c===X);};
+  for(const [n,w] of [...base]){
+    if(conj.has(n)&&/(ar|er|ir)$/.test(n)) continue;          // verbo: as conjugações já entram pela frequência
+    for(const x of flex.get(w)||[]){ const k=norm(x);
+      if(out[k]||STOP.has(k)||neg.has(k)||k.length<4||new Set(k).size>7||!nominal2(w,x)) continue; out[k]=x; }
+  }
 }
 fs.writeFileSync(process.argv[3],JSON.stringify({comuns:out,bloq:[...neg].filter(n=>/^[a-z]{4,}$/.test(n)).sort()}));
 const ex=Object.keys(out).filter(n=>!base.has(n));

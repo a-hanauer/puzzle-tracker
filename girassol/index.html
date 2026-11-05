@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <style>
-  /* girassol: papel claro, pétalas em degradê do laranja ao amarelo claro, miolo marrom com sementes em espiral */
+  /* girassol: papel claro; flor simples — 6 pétalas redondas amarelas (as letras) e o miolo marrom (a obrigatória) */
   :root {
     --bg: #f4f1e6; --surface: #fffdf6; --surface-2: #e9e3cf; --ink: #2a2416; --muted: #7f775f; --line: #e3dcc4;
     --acc: #9a5d1c; --folha: #5f9a3a; --bom: #3f7f26;
@@ -62,20 +62,17 @@
   .rank { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; text-align: left; }
   .rank b { font-size: 1.05rem; font-weight: 800; white-space: nowrap; min-width: 4.6em; }
   .rank .pts { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 700; font-size: .9rem; white-space: nowrap; }
-  .trilha { flex: 1; min-width: 0; position: relative; height: 22px; display: flex; align-items: center; justify-content: space-between; }
-  .trilha::before { content: ""; position: absolute; left: 4px; right: 4px; top: 50%; height: 3px; margin-top: -1.5px; border-radius: 2px; background: var(--line); }
-  .trilha .haste { position: absolute; left: 4px; top: 50%; height: 3px; margin-top: -1.5px; border-radius: 2px; background: var(--folha); width: 0; transition: width .45s cubic-bezier(.3, .8, .3, 1); }
-  .trilha .no { position: relative; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); transition: background .3s, border-color .3s; }
-  .trilha .no.on { background: var(--folha); border-color: var(--folha); }
-  .trilha .no:last-child { width: 16px; height: 16px; }
-  .trilha .no:last-child.on { background: var(--petala); border-color: var(--petala-b); }
+  .trilha { flex: 1; min-width: 0; position: relative; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .trilha .haste { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--folha); width: 0; transition: width .45s cubic-bezier(.3, .8, .3, 1); }
   .rank.sobe b { animation: sobe .5s cubic-bezier(.3, 1.6, .5, 1); }
   @keyframes sobe { 40% { transform: scale(1.18); color: var(--bom); } }
 
   /* ---------- palavras achadas: barra que abre a lista ---------- */
-  .achadas { display: flex; gap: 8px; align-items: center; width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line);
-    background: var(--surface); color: var(--muted); font: inherit; font-size: .92rem; white-space: nowrap; overflow: hidden; cursor: pointer; text-align: left; }
+  .achadas { display: flex; gap: 8px; align-items: center; width: 100%; padding: 6px 2px; border: 0; border-radius: 0;
+    background: none; color: var(--muted); font: inherit; font-size: .92rem; white-space: nowrap; overflow: hidden; cursor: pointer; text-align: left; }
   .achadas b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .achadas small { font-size: inherit; color: var(--muted); margin-left: -4px; }
+  .achadas small::after { content: " ·"; }
   .achadas span { overflow: hidden; text-overflow: ellipsis; color: var(--ink); flex: 1; min-width: 0; }
   .achadas span:empty::before { content: "Nenhuma palavra ainda"; color: var(--muted); }
   .achadas svg { width: 16px; height: 16px; flex: none; transition: transform .25s; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -190,7 +187,7 @@
 
 <button class="rank" id="rank" aria-label="Níveis de pontos"><b id="rkNome">Semente</b><span class="trilha" id="trilha"></span><span class="pts" id="rkPts">0 pts</span></button>
 <div id="wrap" style="display:contents">
-  <button class="achadas" id="achadasBtn" aria-expanded="false"><b id="nAch">0</b><span id="ultimas"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+  <button class="achadas" id="achadasBtn" aria-expanded="false"><b id="nAch">0</b><small id="nAchL">palavras</small><span id="ultimas"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
   <div class="palco" id="palco">
     <div class="palavra" id="palavra" aria-live="polite"></div>
     <div class="flor" id="flor"></div>
@@ -317,10 +314,10 @@
     if (!finished && !load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
   }).catch(() => { $("palco").innerHTML = '<p class="palavra msg">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
 
-  // dicionário largo (com plurais e conjugações), o mesmo do Cordel: só para dizer "existe, mas não vale"
+  // dicionário completo (VERO, o corretor pt-BR do LibreOffice, com todas as flexões; girassol/dicionario.py): diz se a palavra existe
   async function dicionario() {
     if (DICIO) return DICIO;
-    const txt = await fetch("../cordel/palavras.txt").then(r => r.text());
+    const txt = await fetch("palavras.txt").then(r => r.text());
     const set = new Set(); let prev = "", cur = null;
     for (const ch of txt) {
       if (ch >= "a" && ch <= "z") { cur += ch; continue; }
@@ -332,29 +329,18 @@
   }
   setTimeout(() => dicionario().catch(() => {}), 300);   // toda palavra precisa dele: carrega logo
 
-  // ---------- a flor (SVG): 12 pétalas finas atrás, 6 de fundo e as 6 das letras; miolo com sementes em espiral ----------
+  // ---------- a flor (SVG): só as 6 pétalas das letras (redondas, separadas, como botões) e o miolo com a letra obrigatória ----------
   const petala = (r0, r1, w) => { const L = r1 - r0;
-    return `M${-w * .22} ${-r0} C ${-w} ${-r0 - L * .32}, ${-w * .85} ${-r0 - L * .8}, 0 ${-r1} C ${w * .85} ${-r0 - L * .8}, ${w} ${-r0 - L * .32}, ${w * .22} ${-r0} Z`; };
+    return `M${-w * .35} ${-r0} C ${-w * 1.15} ${-r0 - L * .2}, ${-w * 1.1} ${-r1}, 0 ${-r1} C ${w * 1.1} ${-r1}, ${w * 1.15} ${-r0 - L * .2}, ${w * .35} ${-r0} Z`; };
   const pos = (i, d) => { const a = Math.PI / 180 * (-90 + 60 * i); return [d * Math.cos(a), d * Math.sin(a)]; };
-  let sementes = "";
-  for (let k = 1; k < 400; k++) { const r = 3.1 * Math.sqrt(k), t = k * 2.39996; if (r > 57) break; const z = 1.1 + r / 60 * 1.2;
-    sementes += `<circle cx="${(r * Math.cos(t)).toFixed(1)}" cy="${(r * Math.sin(t)).toFixed(1)}" r="${z.toFixed(2)}" opacity="${(.45 + r / 60 * .5).toFixed(2)}"/>`; }
   function desenhaFlor() {
-    let s = `<svg id="florSvg" viewBox="-172 -172 344 344" role="group" aria-label="Letras da flor"><defs>
-      <linearGradient id="pg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="var(--petala-b)"/><stop offset=".45" stop-color="var(--petala)"/><stop offset="1" stop-color="var(--petala-c)"/></linearGradient>
-      <linearGradient id="pg2" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="var(--petala-d)"/><stop offset="1" stop-color="var(--petala-b)"/></linearGradient>
-      <radialGradient id="mg"><stop offset="0" stop-color="var(--miolo-c)"/><stop offset=".55" stop-color="var(--miolo)"/><stop offset="1" stop-color="var(--miolo-b)"/></radialGradient></defs>`;
-    const desv = [2, -3, 1, -2, 3, -1, 2, -2, 1, 3, -3, 0];
-    for (let i = 0; i < 12; i++) s += `<path d="${petala(40, 150, 22)}" transform="rotate(${15 + 30 * i + desv[i]})" fill="url(#pg2)" opacity=".9"/>`;
-    for (let i = 0; i < 6; i++) s += `<path d="${petala(46, 138, 34)}" transform="rotate(${30 + 60 * i})" fill="url(#pg2)"/>`;
+    let s = `<svg id="florSvg" viewBox="-168 -168 336 336" role="group" aria-label="Letras da flor">`;
     for (let i = 0; i < 6; i++) {
-      const [x, y] = pos(i, 108);
-      s += `<g class="pt" data-i="${i}"><g transform="rotate(${60 * i})"><path class="lu" d="${petala(48, 166, 50)}" fill="url(#pg)"/>
-        <path d="M0 -62 Q 3 -110 0 -152" stroke="var(--petala-b)" stroke-width="1.6" fill="none" opacity=".55"/>
-        <path d="M-14 -70 Q -16 -110 -7 -140 M14 -70 Q 16 -110 7 -140" stroke="var(--petala-b)" stroke-width="1" fill="none" opacity=".35"/></g>
+      const [x, y] = pos(i, 112);
+      s += `<g class="pt" data-i="${i}"><path class="lu" d="${petala(62, 160, 46)}" transform="rotate(${60 * i})" fill="var(--petala)"/>
         <text class="le" x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="var(--letra)"></text></g>`;
     }
-    s += `<g class="pt" data-i="c"><circle r="64" fill="var(--miolo-b)"/><circle r="60" fill="url(#mg)"/><g fill="var(--semente)">${sementes}</g>
+    s += `<g class="pt" data-i="c"><circle r="54" fill="var(--miolo)"/><circle r="46" fill="none" stroke="var(--miolo-txt)" stroke-opacity=".25" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round"/>
       <text x="0" y="0" fill="var(--miolo-txt)" style="font-size:37px">${P.c}</text></g></svg>`;
     $("flor").innerHTML = s;
     letrasPetalas();
@@ -393,15 +379,14 @@
     $("rkNome").textContent = NIVEIS[k][0];
     $("rkPts").textContent = `${pts} pts`;
     const tr = $("trilha");
-    if (!tr.children.length) tr.innerHTML = `<i class="haste"></i>` + NIVEIS.map(() => `<i class="no"></i>`).join("");
-    [...tr.querySelectorAll(".no")].forEach((n, i) => n.classList.toggle("on", i <= k));
+    if (!tr.children.length) tr.innerHTML = `<i class="haste"></i>`;
     // haste: até o nó do nível atual, mais a fração até o próximo
     const prox = k + 1 < NIVEIS.length ? corte(NIVEIS[k + 1][1]) : null, base = corte(NIVEIS[k][1]);
     const frac = prox == null ? 1 : (k + Math.min(1, (pts - base) / Math.max(1, prox - base))) / (NIVEIS.length - 1);
-    tr.querySelector(".haste").style.width = `calc(${(frac * 100).toFixed(1)}% - ${(frac * 8).toFixed(1)}px)`;
+    tr.querySelector(".haste").style.width = `${(frac * 100).toFixed(1)}%`;
     if (animar && nivelAntes >= 0 && k > nivelAntes) { const r = $("rank"); r.classList.remove("sobe"); void r.offsetWidth; r.classList.add("sobe"); }
     nivelAntes = k;
-    $("nAch").textContent = achadas.length + raras.length;
+    $("nAch").textContent = achadas.length + raras.length; $("nAchL").textContent = achadas.length + raras.length === 1 ? "palavra" : "palavras";
     $("ultimas").textContent = (DADOS && ultimasOrdem.length ? ultimasOrdem : [...achadas, ...raras]).filter(n => achadas.includes(n) || raras.includes(n)).slice().reverse().map(nomeDe).join(", ");
     $("controls").classList.toggle("done", finished);
     if (!finished) $("controls").classList.remove("play");
