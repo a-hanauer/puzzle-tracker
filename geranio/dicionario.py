@@ -1,8 +1,8 @@
 # Dicionário do Girassol: expande o hunspell pt-BR do LibreOffice (VERO, https://github.com/wooorm/dictionaries,
 # pasta dictionaries/pt, licença LGPL/MPL) em todas as formas: plurais, femininos, conjugações, prefixos.
 # Fica só o que serve ao jogo: palavras simples em minúsculas (sem nomes próprios nem siglas), 4+ letras, sem acento.
-# Uso: python3 girassol/dicionario.py <pasta com index.aff e index.dic> formas.txt [formas-com-acento.txt flexoes.txt]
-#      depois, no node, filtrar até 7 letras diferentes e gravar girassol/palavras.txt no formato com prefixo comum
+# Uso: python3 geranio/dicionario.py <pasta com index.aff e index.dic> formas.txt [formas-com-acento.txt flexoes.txt]
+#      depois, no node, filtrar até 7 letras diferentes e gravar geranio/palavras.txt no formato com prefixo comum
 #      (cada palavra começa com um caractere 0-9/A-Z = quantas letras repete da anterior), como o cordel/palavras.txt.
 import re, sys, unicodedata
 D=sys.argv[1].rstrip('/')+'/'

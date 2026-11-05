@@ -1,4 +1,4 @@
-// Girassol — gerador dos desafios (node girassol/gerador.mjs [dias])
+// Gerânio (id "girassol") — gerador dos desafios (node geranio/gerador.mjs [dias])
 //
 // Sete letras numa flor: a do miolo é obrigatória; valem palavras de 4 letras ou mais feitas só com as letras
 // da flor (letra pode repetir). Acentos e ç não contam (AÇÃO = ACAO). Todo dia há ao menos um pangrama
@@ -6,7 +6,7 @@
 //
 // Vale qualquer palavra do dicionário largo (cordel/palavras.txt: com plurais, femininos e conjugações), menos as
 // bloqueadas (palavrões). As "palavras do dia" (a régua, o pleno e as dicas contam só elas) são as comuns: as respostas
-// curadas do Cordel e as flexões comuns delas — girassol/base.json, feito por girassol/comuns.mjs a partir do fserb/pt-br.
+// curadas do Cordel e as flexões comuns delas — geranio/base.json, feito por geranio/comuns.mjs a partir do fserb/pt-br.
 // Palavra válida fora das do dia é "rara" e vale o dobro (a página faz a conta).
 //
 // Nível = dia da semana (segunda = 1 … domingo = 7): o número de palavras do dia vai crescendo (faixas em NIVEL).

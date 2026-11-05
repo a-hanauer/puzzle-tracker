@@ -84,7 +84,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 ## Gerânio (jogo de palavras no estilo Spelling Bee, desde 04/11/2026; chamou-se Girassol até 05/11/2026)
 
-- A pasta, o id (`girassol`) e as chaves salvas (`girassol:`) ficaram com o nome antigo, para não perder progresso.
+- Pasta `geranio/` desde 05/11/2026 (`geranio/` só redireciona). O id (`girassol`) e as chaves salvas (`girassol:`) ficaram
+  com o nome antigo, para não perder progresso.
   Cores (opção "A"): pétalas vermelhas (#e2433f / escuro #d93a37) com letras brancas, miolo amarelo (#f6d77a) com letra
   vinho; no painel, cartão rosado (#f7cdc6 / escuro #3c2220). Último nível da régua e "pleno" = "Gerânio". Celebração e
   ícone = o gerânio abrindo, com as mesmas pétalas do jogo (comum/celebra.js, ARTE.girassol).
@@ -95,10 +96,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   calculadas já giradas (sem `transform`). Régua = barra fina contínua; barra das achadas só em texto.
   Palavras de 4+ letras, letras podem repetir; acentos e ç não contam. Pontos: 4 letras = 1, mais longa = 1 por
   letra, pangrama (as 7 letras) +7. Sem cronômetro: o resultado são os pontos.
-- **Vale toda palavra que existe** (não se julga se é comum — isso só muda os pontos): dicionário `girassol/palavras.txt` =
-  hunspell pt-BR do LibreOffice (VERO) expandido em todas as flexões por `girassol/dicionario.py` (só palavras com até 7 letras
-  diferentes), menos palavrões (`bloq` em desafios.json). As **palavras do dia** (comuns + flexões: `girassol/base.json`, feito por
-  `girassol/comuns.mjs` — respostas do Cordel, palavras frequentes do fserb/pt-br sem nomes/estrangeirismos (`STOP`), qualquer forma
+- **Vale toda palavra que existe** (não se julga se é comum — isso só muda os pontos): dicionário `geranio/palavras.txt` =
+  hunspell pt-BR do LibreOffice (VERO) expandido em todas as flexões por `geranio/dicionario.py` (só palavras com até 7 letras
+  diferentes), menos palavrões (`bloq` em desafios.json). As **palavras do dia** (comuns + flexões: `geranio/base.json`, feito por
+  `geranio/comuns.mjs` — respostas do Cordel, palavras frequentes do fserb/pt-br sem nomes/estrangeirismos (`STOP`), qualquer forma
   do VERO com icf ≤ 12,5 (teia, dita, tina), verbetes minúsculos do VERO até icf 13,5 (a frequência da internet subestima substantivos: anta, nata, tear), conjugações frequentes e o
   plural/feminino de cada uma pelas regras do VERO; grafia pelo VERO) medem a régua, o "pleno" e as dicas. Palavra válida fora
   delas é **rara** e vale o **dobro** (escolha do dono: premiar vocabulário).
@@ -108,6 +109,6 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Dicas na barra das achadas, com chave Resumo | Grade (a escolha fica guardada): Resumo = quadradinhos por tamanho
   (achadas/total; as raras entram como quadradinhos a mais, em outro tom, com "+N" — toda palavra achada aparece) e quantas faltam por letra inicial; Grade = tabela letra inicial × tamanho (faltam) e começos de duas letras; a lâmpada
   (uma por dia) dá começo (2 letras) e tamanho da mais curta que falta. Também mostra as palavras de ontem.
-- `girassol/gerador.mjs`: flores a partir de pangramas das palavras do dia; nível = dia da semana pelo tamanho da lista (seg 30–45 …
+- `geranio/gerador.mjs`: flores a partir de pangramas das palavras do dia; nível = dia da semana pelo tamanho da lista (seg 30–45 …
   dom 105–150); as mesmas 7 letras não voltam em 150 dias; o miolo não repete o do dia anterior. Dias já publicados guardam as
   letras (a lista é refeita; o que o jogador achou passa para o lado certo — do dia ou rara — e nunca some). Jogo livre: `livre[nível]`.

@@ -1,6 +1,6 @@
 // palavras do dia do Girassol: as respostas curadas do Cordel + as flexões comuns delas (plural, feminino, conjugações)
-// Uso: node girassol/comuns.mjs <pasta src do fserb/pt-br> girassol/base.json <flexoes.txt de dicionario.py> <index.dic do VERO> <formas-com-acento.txt de dicionario.py>
-//      (depois: node girassol/gerador.mjs)
+// Uso: node geranio/comuns.mjs <pasta src do fserb/pt-br> geranio/base.json <flexoes.txt de dicionario.py> <index.dic do VERO> <formas-com-acento.txt de dicionario.py>
+//      (depois: node geranio/gerador.mjs)
 import fs from 'fs';
 const S=process.argv[2]+'/';const rd=f=>fs.readFileSync(S+f,'utf8').split('\n').map(s=>s.trim()).filter(Boolean);
 const norm=w=>w.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
