@@ -26,7 +26,7 @@ export const EPOCH = [2026, 10, 4];                 // #1 = quarta, 04/11/2026
 const LETRAS = 6, DESDE = 2;                       // índice do primeiro dia no formato novo (#3)
 const NIVEL = { 1: [10, 14], 2: [13, 17], 3: [16, 21], 4: [19, 25], 5: [23, 30], 6: [28, 36], 7: [33, 50] };
 
-export const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
+export const norm = w => w.split(" · ")[0].normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();   // "país · pais" = uma jogada
 export const pontos = (w, pangrama) => (w.length === 4 ? 1 : w.length) + (pangrama ? new Set(w).size : 0);   // pangrama: + nº de letras da flor
 
 function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }

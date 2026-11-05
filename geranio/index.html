@@ -248,7 +248,7 @@
       <li>Toda palavra usa a letra do <b>miolo</b> e tem <b>4 letras ou mais</b>. As letras podem se repetir.</li>
       <li>Vale <b>qualquer palavra</b> do português, com plurais, femininos e todas as conjugações (sem nomes próprios, de pessoas ou lugares, estrangeirismos nem palavrões).</li>
       <li>A régua conta as <b>palavras do dia</b>: palavras de dicionário de uso corrente, na forma de verbete (verbo no infinitivo, sem plural nem feminino). Qualquer outra palavra válida (plural, conjugação, termo raro) vale o <b>dobro</b>, como bônus.</li>
-      <li>Acentos e ç não contam: <b>ACAO</b> vale "ação".</li>
+      <li>Acentos e ç não contam: <b>ACAO</b> vale "ação". Palavras que só mudam no acento são uma jogada só: <b>PAIS</b> vale "país · pais", uma vez.</li>
       <li>Palavra de 4 letras vale 1 ponto; mais longa, 1 ponto por letra. A que usa <b>todas as letras</b> da flor (o pangrama) ganha mais 1 ponto por letra da flor. Todo dia tem pelo menos uma.</li>
       <li>Na barra das achadas, quantas palavras do dia faltam por tamanho e por letra inicial. A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma delas. Uma por dia.</li>
     </ul>
@@ -286,6 +286,7 @@
   const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
   const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
   const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
+  const chave = w => norm(w.split(" · ")[0]);   // a jogada: letras sem acento ("país · pais" → PAIS; vale uma vez só)
   const ehPang = n => !!P && new Set(n).size === P.f.length + 1;   // usa todas as letras da flor
   const pontosDe = n => (n.length === 4 ? 1 : n.length) + (ehPang(n) ? P.f.length + 1 : 0);   // pangrama: + 1 ponto por letra da flor
 
@@ -297,10 +298,10 @@
   // ---------- estado ----------
   // P = { l: nível, c: miolo, f: as 6 pétalas, w: respostas (com acento), m: pontos possíveis }
   let P = null, dayNum = 0, RESP = new Map(), achadas = [], raras = [], BLOQ = new Set(), ordem = [], digitado = "", dicaUsada = false, alvo = null, finished = false;
-  let DICIO = null, dica = null;
+  let DICIO = null, dica = null, GRAF = new Map();   // GRAF: chave sem acento → grafia (só quando difere)
   const pid = p => p.c + p.f;
   const pontos = () => achadas.reduce((t, n) => t + pontosDe(n), 0) + raras.reduce((t, n) => t + 2 * pontosDe(n), 0);   // rara vale o dobro
-  const nomeDe = n => RESP.get(n) || n.toLowerCase();
+  const nomeDe = n => RESP.get(n) || GRAF.get(n.toLowerCase()) || n.toLowerCase();
   const nivelIdx = pts => { let k = 0; NIVEIS.forEach(([, f], i) => { if (pts >= corte(f)) k = i; }); return k; };
   const pleno = () => P && achadas.length === P.w.length;
 
@@ -313,7 +314,7 @@
   }
 
   function setup(puzzle, saved) {
-    P = puzzle; RESP = new Map(P.w.map(w => [norm(w), w]));
+    P = puzzle; RESP = new Map(P.w.map(w => [chave(w), w]));   // "país · pais": duas palavras, uma jogada
     // a lista do dia pode ter sido refeita: o que foi achado continua valendo, do lado certo (do dia ou rara)
     const ja = [...new Set([...(saved?.found || []), ...(saved?.raras || [])])].filter(n => n.includes(P.c));
     achadas = ja.filter(n => RESP.has(n)); raras = ja.filter(n => !RESP.has(n));
@@ -346,14 +347,19 @@
   // dicionário completo (VERO, o corretor pt-BR do LibreOffice, com todas as flexões; geranio/dicionario.py): diz se a palavra existe
   async function dicionario() {
     if (DICIO) return DICIO;
+    // gravado com a grafia (vídeo, pães, coração); a chave é sem acento. Duas grafias da mesma chave (país · pais) vêm
+    // em linhas seguidas, a mais usada antes: é uma jogada só, mostrada com as duas (geranio/grafia.py)
     const txt = await fetch("palavras.txt").then(r => r.text());
     const set = new Set(); let prev = "", cur = null;
+    const guarda = w => { const k = norm(w).toLowerCase(); if (set.has(k)) { if (GRAF.has(k)) GRAF.set(k, GRAF.get(k) + " · " + w); } else { set.add(k); if (w !== k) GRAF.set(k, w); } };
     for (const ch of txt) {
-      if (ch >= "a" && ch <= "z") { cur += ch; continue; }
-      if (cur !== null) { set.add(cur); prev = cur; }
+      const c = ch.charCodeAt(0);
+      if ((c >= 97 && c <= 122) || c >= 0xe0) { cur += ch; continue; }
+      if (cur !== null) { guarda(cur); prev = cur; }
       cur = prev.slice(0, parseInt(ch, 36));
     }
-    if (cur) set.add(cur);
+    if (cur) guarda(cur);
+    if (raras.length && P) render(false);   // as raras já achadas ganham a grafia
     return (DICIO = set);
   }
   setTimeout(() => dicionario().catch(() => {}), 300);   // toda palavra precisa dele: carrega logo
@@ -463,7 +469,7 @@
   // ---------- lista das achadas ----------
   const wrapEl = () => document.body;
   function montaLista() {
-    const todas = P.w.map(norm), falta = todas.filter(n => !achadas.includes(n));
+    const todas = P.w.map(chave), falta = todas.filter(n => !achadas.includes(n));
     let h = `<h3>Faltam ${falta.length} palavras do dia <em>${achadas.length} de ${todas.length}</em></h3>`;
     if (alvo && !achadas.includes(alvo)) h += `<div class="dica-l">Dica: <b>${alvo.slice(0, 2)}${"·".repeat(alvo.length - 2)}</b> · ${alvo.length} letras</div>`;
     // dois jeitos de ver as dicas (a escolha fica guardada): "resumo" = quadradinhos por tamanho e faltas por letra inicial;
@@ -500,7 +506,7 @@
     if (!teste && DADOS && dayNum > 1) {
       const ontem = DADOS.puzzles[(dayNum - 2) % DADOS.puzzles.length], sv = load("dia:" + (dayNum - 1), null);
       const ach2 = new Set(sv && sv.pid === pid(ontem) ? sv.found : []);
-      h += `<h3>Ontem · ${ontem.c} + ${ontem.f.split("").join(" ")}</h3><div class="cols">${ontem.w.map(w => { const n = norm(w);
+      h += `<h3>Ontem · ${ontem.c} + ${ontem.f.split("").join(" ")}</h3><div class="cols">${ontem.w.map(w => { const n = chave(w);
         return `<div class="${ehPang(n) ? "pg" : ""}${ach2.has(n) ? "" : " falta"}">${w}</div>`; }).join("")}</div>`;
     }
     $("lista").innerHTML = h;
@@ -565,7 +571,7 @@
       const p = pontosDe(n);
       if (window.jogosHaptico) jogosHaptico(true);
       // fechou um tamanho (todas as palavras do dia com esse número de letras): um pequeno marco
-      const fechou = P.w.map(norm).filter(x => x.length === n.length).every(x => achadas.includes(x));
+      const fechou = P.w.map(chave).filter(x => x.length === n.length).every(x => achadas.includes(x));
       aviso(`<b>${RESP.get(n).toUpperCase()}</b>${pg ? "Pangrama! " : ""}+${p}${fechou ? ` · todas de ${n.length} letras!` : ""}`, "ok" + (pg ? " pang" : ""), fechou ? 2200 : 1500);
       render(); persist(); confere();
       return;
@@ -576,13 +582,13 @@
     if (achadas.includes(n) || raras.includes(n)) return;   // mandou duas vezes enquanto o dicionário carregava
     raras.push(n); ultimasOrdem.push(n);
     if (window.jogosHaptico) jogosHaptico(true);
-    aviso(`<b>${n}</b>${pg ? "Pangrama raro! " : "Rara! "}+${2 * pontosDe(n)}`, "ok rara" + (pg ? " pang" : ""), 1600);
+    aviso(`<b>${nomeDe(n).toUpperCase()}</b>${pg ? "Pangrama raro! " : "Rara! "}+${2 * pontosDe(n)}`, "ok rara" + (pg ? " pang" : ""), 1600);
     render(); persist(); confere();
   }
 
   // ---------- dica (uma por dia, comum/dica.js): começo e tamanho de uma palavra que falta ----------
   async function pedirDica() {
-    const falta = P.w.map(norm).filter(n => !achadas.includes(n));
+    const falta = P.w.map(chave).filter(n => !achadas.includes(n));
     if (!falta.length) return "Já está tudo achado.";
     // a mais curta das que faltam (a mais fácil de completar), em ordem alfabética
     falta.sort((a, b) => a.length - b.length || a.localeCompare(b));

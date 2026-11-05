@@ -90,6 +90,12 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   infinitivo, sem plural/feminino flexionado/conjugação; grafia exata com icf ≤ 14 ou no Cordel; sem estrangeirismos,
   `nomes-proprios.txt` e lugares). Todo o resto do vocabulário continua valendo como rara (dobro). Listas: seg 10–14 … dom 33–50.
   Pangrama: + 1 ponto por letra da flor. A página desenha quantas pétalas o desafio tiver (os #1 e #2 têm 6).
+  **Grafia** (`geranio/grafia.py`, 05/11/2026): a jogada é a sequência de letras sem acento (vale e conta uma vez). Para mostrar:
+  a grafia mais usada (icf exato: vídeo, século, colônia — não a versão sem acento da internet); palavra do dia = a grafia do
+  verbete (verbetes.py: icf exato ≤ 14 ou como o Cordel escreve: jogo, não jogó; sem grafias pré-Acordo como pára); se outra
+  grafia da mesma chave é outra palavra corrente (icf ≤ 12,3, no `lexico` do fserb, não verbo nem nome próprio), as duas com
+  " · ", a mais usada antes (país · pais, março · marco, metro · metrô). `palavras.txt` guarda a grafia (as raras aparecem
+  acentuadas); duas grafias = duas linhas seguidas. Ordem: verbetes.py → grafia.py → gerador.mjs.
   **Versão 6.1** (7 letras, palavras do dia = comuns + flexões, base.json/comuns.mjs) guardada no ramo `geranio-6.1`.
 
 - Pasta `geranio/` desde 05/11/2026 (`girassol/` só redireciona). O id (`girassol`) e as chaves salvas (`girassol:`) ficaram
