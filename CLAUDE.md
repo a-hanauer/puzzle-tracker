@@ -109,7 +109,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   feito (celebração + bandeja de fim); continua até achar todas as do dia ("pleno" = troféu no painel). Depois de feito
   não aparece a faixa de fim embaixo (a flor não encolhe): a régua ganha uma setinha e reabre a bandeja de fim.
 - Dicas na barra das achadas, com chave Resumo | Grade (a escolha fica guardada): Resumo = quadradinhos por tamanho
-  (achadas/total; as raras entram como quadradinhos a mais, em outro tom, com "+N" — toda palavra achada aparece) e quantas faltam por letra inicial; Grade = tabela letra inicial × tamanho (faltam) e começos de duas letras; a lâmpada
+  (achadas/total, em vermelho; as raras entram como quadradinhos a mais, em amarelo (--rara), com "+N" — toda palavra achada aparece) e quantas faltam por letra inicial; Grade = tabela letra inicial × tamanho (faltam) e começos de duas letras; a lâmpada
   (uma por dia) dá começo (2 letras) e tamanho da mais curta que falta. Também mostra as palavras de ontem.
 - `geranio/gerador.mjs`: flores a partir de pangramas das palavras do dia; nível = dia da semana pelo tamanho da lista (seg 30–45 …
   dom 105–150); as mesmas 7 letras não voltam em 150 dias; o miolo não repete o do dia anterior. Dias já publicados guardam as

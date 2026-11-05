@@ -24,7 +24,7 @@
     --bg: #f6f1ea; --surface: #fffcf9; --surface-2: #ece2da; --ink: #2a1c18; --muted: #85716a; --line: #e6d9d0;
     --acc: #c8342f; --folha: #c8342f; --bom: #3f7f26;
     --petala: #e2433f; --petala-b: #e49b12; --petala-c: #ffe27a; --petala-d: #c97a0c;
-    --miolo: #f6d77a; --miolo-b: #3a200c; --miolo-c: #7a4a22; --semente: #2c1607; --miolo-txt: #7a1d12; --letra: #ffffff;
+    --miolo: #f6d77a; --rara: #e8b931; --rara-txt: #b07f0a; --miolo-b: #3a200c; --miolo-c: #7a4a22; --semente: #2c1607; --miolo-txt: #7a1d12; --letra: #ffffff;
     --kb-bg: #ece2da; --kb-ink: #2a1c18; --kb-dim: #85716a;
     --shadow: 0 1px 2px rgba(60, 45, 15, .07), 0 6px 18px rgba(60, 45, 15, .08);
   }
@@ -33,7 +33,7 @@
       --bg: #141110; --surface: #201a19; --surface-2: #2c2524; --ink: #f5ece8; --muted: #a8958f; --line: #382e2c;
       --acc: #ff6b5f; --folha: #ff6b5f; --bom: #9ad276;
       --petala: #d93a37; --petala-b: #c47f0a; --petala-c: #ffd65c; --petala-d: #8a5506;
-      --miolo: #f3cd62; --miolo-b: #2a1708; --miolo-c: #6a3f1c; --semente: #1a0d04; --miolo-txt: #6b170f; --letra: #ffffff;
+      --miolo: #f3cd62; --rara: #f3cd62; --rara-txt: #f3cd62; --miolo-b: #2a1708; --miolo-c: #6a3f1c; --semente: #1a0d04; --miolo-txt: #6b170f; --letra: #ffffff;
       --kb-bg: #2c2524; --kb-ink: #f5ece8; --kb-dim: #a8958f;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
     }
@@ -42,7 +42,7 @@
       --bg: #141110; --surface: #201a19; --surface-2: #2c2524; --ink: #f5ece8; --muted: #a8958f; --line: #382e2c;
       --acc: #ff6b5f; --folha: #ff6b5f; --bom: #9ad276;
       --petala: #d93a37; --petala-b: #c47f0a; --petala-c: #ffd65c; --petala-d: #8a5506;
-      --miolo: #f3cd62; --miolo-b: #2a1708; --miolo-c: #6a3f1c; --semente: #1a0d04; --miolo-txt: #6b170f; --letra: #ffffff;
+      --miolo: #f3cd62; --rara: #f3cd62; --rara-txt: #f3cd62; --miolo-b: #2a1708; --miolo-c: #6a3f1c; --semente: #1a0d04; --miolo-txt: #6b170f; --letra: #ffffff;
       --kb-bg: #2c2524; --kb-ink: #f5ece8; --kb-dim: #a8958f;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
   }
@@ -121,8 +121,8 @@
   .tam .bar { display: flex; gap: 3px; flex-wrap: wrap; }
   .tam .bar i { width: 10px; height: 10px; border-radius: 3px; background: var(--line); }
   .tam .bar i.on { background: var(--folha); }
-  .tam .bar i.ra { background: var(--acc); }
-  .tam span small { font-size: inherit; color: var(--acc); }
+  .tam .bar i.ra { background: var(--rara); }   /* raras: amarelo do miolo, para não confundir com as do dia (vermelho) */
+  .tam span small { font-size: inherit; color: var(--rara-txt); }
   .tam span { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 700; }
   .ini { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; padding: 0 4px; }
   .ini div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 7px 0 6px; text-align: center; }
@@ -130,7 +130,7 @@
   .ini div small { display: block; color: var(--muted); font-weight: 700; font-size: .8rem; font-variant-numeric: tabular-nums; }
   .ini div.c b { color: var(--acc); }
   .ini div.ok { opacity: .4; }
-  .lista .cols div.ra { color: var(--muted); font-style: italic; }
+  .lista .cols div.ra { color: var(--rara-txt); font-style: italic; }
   .modo { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; margin: 2px 4px 10px; border-radius: 11px; background: var(--surface-2); }
   .modo button { border: 0; border-radius: 9px; padding: 6px 0; font: inherit; font-size: .84rem; font-weight: 700; color: var(--muted); background: none; cursor: pointer; }
   .modo button[aria-checked="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .1); }
