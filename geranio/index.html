@@ -143,8 +143,11 @@
   .modo button { border: 0; border-radius: 9px; padding: 6px 0; font: inherit; font-size: .84rem; font-weight: 700; color: var(--muted); background: none; cursor: pointer; }
   .modo button[aria-checked="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .1); }
   .grade { width: calc(100% - 8px); margin: 0 4px; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; font-size: .9rem;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; table-layout: fixed; }
-  .grade th, .grade td { text-align: center; padding: 6px 0; }
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; table-layout: auto; }
+  .grade th, .grade td { text-align: center; padding: 6px 0; white-space: nowrap; }
+  .grade.densa { font-size: .7rem; letter-spacing: -.03em; }       /* muitos tamanhos e números de 3–4 algarismos: tudo cabe na largura */
+  .grade.densa th, .grade.densa td { padding: 6px 1px; }
+  .grade.densa th { font-size: .66rem; }
   .grade th { color: var(--muted); font-weight: 700; font-size: .76rem; }
   .grade td:first-child { font-weight: 800; width: 2em; }
   .grade td:first-child.c { color: var(--acc); }
@@ -470,15 +473,23 @@
       `<button type="button" role="radio" data-modo="${v}" aria-checked="${modoDicas === v}">${r}</button>`).join("")}</div>`;
     const tams = [...new Set(todas.map(n => n.length))].sort((x, y) => x - y), ini = [...new Set(todas.map(n => n[0]))].sort();
     if (modoDicas === "grade") {
-      const cel = n => `<td class="${n ? "" : "z"}">${n || "–"}</td>`;
-      h += `<table class="grade"><tr><th></th>${tams.map(t => `<th>${t}</th>`).join("")}<th class="s">Σ</th></tr>` +
-        ini.map(c => { const r = tams.map(t => falta.filter(n => n[0] === c && n.length === t).length);
-          return `<tr><td class="${c === P.c ? "c" : ""}">${c}</td>${r.map(cel).join("")}<td class="s">${r.reduce((x, y) => x + y, 0)}</td></tr>`; }).join("") +
-        `<tr class="s"><td>Σ</td>${tams.map(t => `<td>${falta.filter(n => n.length === t).length}</td>`).join("")}<td class="s">${falta.length}</td></tr></table>`;
-      const pares = [...new Set(todas.map(n => n.slice(0, 2)))].sort();
-      if (raras.length) h += `<div class="vazio">+ ${raras.length} rara${raras.length > 1 ? "s" : ""} achada${raras.length > 1 ? "s" : ""} (valem o dobro; a grade conta só as do dia)</div>`;
-      h += `<h3>Começos</h3><div class="duas">${pares.map(pr => { const f = falta.filter(n => n.startsWith(pr)).length;
-        return `<span class="${f ? "" : "ok"}">${pr}${f ? `<b>${f}</b>` : ""}</span>`; }).join("")}</div>`;
+      // a grade conta TODAS as palavras válidas da flor (do dia e raras, pelo dicionário), não só as do dia:
+      // o total fecha com tudo o que dá para achar, e cada palavra achada (rara também) desconta
+      const val = validas();
+      if (!val) { h += `<div class="vazio">Carregando o dicionário…</div>`; dicionario().then(() => montaLista()).catch(() => {}); }
+      else {
+        const ja = new Set([...achadas, ...raras]), faltaT = val.filter(n => !ja.has(n));
+        const tamsT = [...new Set(val.map(n => n.length))].sort((x, y) => x - y), iniT = [...new Set(val.map(n => n[0]))].sort();
+        const cel = n => `<td class="${n ? "" : "z"}">${n || "–"}</td>`;
+        h += `<div class="vazio" style="padding-top:0">Todas as palavras válidas: faltam <b>${faltaT.length}</b> de ${val.length}</div>`;
+        h += `<table class="grade${tamsT.length > 8 || val.length > 999 ? " densa" : ""}"><tr><th></th>${tamsT.map(t => `<th>${t}</th>`).join("")}<th class="s">Σ</th></tr>` +
+          iniT.map(c => { const r = tamsT.map(t => faltaT.filter(n => n[0] === c && n.length === t).length);
+            return `<tr><td class="${c === P.c ? "c" : ""}">${c}</td>${r.map(cel).join("")}<td class="s">${r.reduce((x, y) => x + y, 0)}</td></tr>`; }).join("") +
+          `<tr class="s"><td>Σ</td>${tamsT.map(t => `<td>${faltaT.filter(n => n.length === t).length}</td>`).join("")}<td class="s">${faltaT.length}</td></tr></table>`;
+        const pares = [...new Set(val.map(n => n.slice(0, 2)))].sort();
+        h += `<h3>Começos</h3><div class="duas">${pares.map(pr => { const f = faltaT.filter(n => n.startsWith(pr)).length;
+          return `<span class="${f ? "" : "ok"}">${pr}${f ? `<b>${f}</b>` : ""}</span>`; }).join("")}</div>`;
+      }
     } else {
       // por tamanho: um quadradinho por palavra (verde = achada)
       // as raras também aparecem no tamanho delas (quadradinho a mais, em outro tom, e "+N"): toda palavra achada conta
@@ -502,6 +513,16 @@
         return `<div class="${ehPang(n) ? "pg" : ""}${ach2.has(n) ? "" : " falta"}">${w}</div>`; }).join("")}</div>`;
     }
     $("lista").innerHTML = h;
+  }
+  let validasCache = null;
+  function validas() {
+    if (!DICIO || !P) return null;
+    if (validasCache && validasCache.pid === pid(P)) return validasCache.ws;
+    const L = new Set((P.c + P.f).toLowerCase()), c = P.c.toLowerCase(), ws = [];
+    for (const w of DICIO) if (w.length >= 4 && w.includes(c) && !BLOQ.has(w) && [...w].every(x => L.has(x))) ws.push(w.toUpperCase());
+    for (const n of P.w.map(norm)) if (!ws.includes(n)) ws.push(n);   // as do dia sempre contam
+    validasCache = { pid: pid(P), ws };
+    return ws;
   }
   let modoDicas = load("modo-dicas", "resumo") === "grade" ? "grade" : "resumo";
   $("lista").addEventListener("click", e => {
