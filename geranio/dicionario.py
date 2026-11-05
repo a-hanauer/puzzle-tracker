@@ -45,28 +45,47 @@ def pfx(w,flags):
             if strip and not w.startswith(strip): continue
             out.append((add+(w[len(strip):] if strip else w),r[1]))
     return out
+# fora: estrangeirismos (k/w/y, consoantes dobradas que o português não usa, sh/th/ph/gh/ck, "s" + consoante no começo,
+# final em consoante estranha) e nomes próprios que o VERO traz em minúsculas (países e nomes de gente); os que também
+# são palavras comuns ficam (rocha, oliveira, carvalho, vitória, marcos, deus, peru, natal…)
+ESTR=re.compile(r'[kwy]|^s[^aeiouáéíóúâêôãõ]|ll|tt|pp|ff|mm|nn|dd|gg|zz|bb|sh|th|ph|gh|ck|[bcdfghjkpqtvw]$')
+NOMES=set("""angola antônio barém benim brasil cabreúva cacá cachoeirinha celão chile comercinho cracolândia emílio frança gabão
+gâmbia guiana guiné guiratinga irlanda israel jamaica japão judeia lesoto madagáscar mangueirinha maurícia moçambique monserrate
+nepal panamá piraquera politefe portland ruanda senegal sudão turquia vaticano zezinho zoilo ícaro édipo mali catar equador
+maria joão aná antônio francisco paúlo luís mateus leandro ricardo márcio jorge roberto vítor manuel miguel benedito
+sebastião camila letícia luciana vanessa raquel sílvia isabel sofia souza almeida cristo jesus""".split())
+# estrangeirismos que passam pelas regras acima (achados cruzando com o dicionário de inglês do mesmo repositório)
+ESTRANG=set("""apartheid atelier backup bang beguine blog boar break brie bureau caddie chat chip clear clearance cocoa copyleft
+copyright croissant croupier curie curry deadline dealer diesel diet doping dossier download ecstasy entourage escargot flash
+funk gear glamour golf gourde gourmet hippie hobby iceberg jeans jeep ketchup laptop layout light lingerie link lobby logout
+lounge mainstream marketing marquise merchandising milieu nerd netbook notebook outdoor outdoors ouzo peal pear plateau
+playboy playground plush premier punk quark quire ranking roadie roadster rock rouge round router royalties royalty rush sapiens
+sexy shop shopping short show skinhead soul souvenir split spray step stout surf tease telemarketing terrier tomahawk trousseau
+viking voucher yang yuppie zombie mouse design online site game mail email internet videogame""".split())
+fora=lambda w: bool(ESTR.search(w)) or w in NOMES or w in ESTRANG
 forms=set()
 dic=open(D+'index.dic',encoding='utf8').read().splitlines()[1:]
 for line in dic:
     w,_,fl=line.partition('/')
     fl=fl.split()[0] if fl else ''
     if FORB in fl or NOSUG in fl: continue
-    if not w or not w[0].islower(): continue   # nomes próprios e siglas começam com maiúscula
-    base=[w]+[x for x,_ in sfx(w,fl)]
+    if not w or not w[0].islower() or fora(w): continue   # nomes próprios e siglas começam com maiúscula
+    base=[w]+[x for x,_ in sfx(w,fl) if not ESTR.search(x)]
     for b in list(base):
         pass
     forms.update(base)
     for pw,cross in pfx(w,fl):
+        if ESTR.search(pw): continue
         forms.add(pw)
         if cross:
             for x,f in sfx(pw,fl):
-                if R[f][1]: forms.add(x)
+                if R[f][1] and not ESTR.search(x): forms.add(x)
 # flexões de cada palavra pelas regras dela mesma (só sufixos, um nível): para o plural e o feminino das palavras do dia
 flex={}
 for line in dic:
     w,_,fl=line.partition('/')
     fl=fl.split()[0] if fl else ''
-    if FORB in fl or NOSUG in fl or not w or not w[0].islower(): continue
+    if FORB in fl or NOSUG in fl or not w or not w[0].islower() or fora(w): continue
     fs=sorted({x for x,_ in sfx(w,fl) if re.fullmatch(r'[a-zà-üç]+',x)})
     if fs: flex.setdefault(w,set()).update(fs)
 norm=lambda s: unicodedata.normalize('NFD',s).encode('ascii','ignore').decode().lower()

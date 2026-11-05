@@ -100,7 +100,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   letra, pangrama (as 7 letras) +7. Sem cronômetro: o resultado são os pontos.
 - **Vale toda palavra que existe** (não se julga se é comum — isso só muda os pontos): dicionário `geranio/palavras.txt` =
   hunspell pt-BR do LibreOffice (VERO) expandido em todas as flexões por `geranio/dicionario.py` (só palavras com até 7 letras
-  diferentes), menos palavrões (`bloq` em desafios.json). As **palavras do dia** (comuns + flexões: `geranio/base.json`, feito por
+  diferentes; todas as flexões e conjugações), **sem estrangeirismos** (regra `ESTR`: k/w/y, consoantes dobradas, sh/th/ph/ck,
+  "s"+consoante no começo, final em consoante estranha; mais a lista `ESTRANG`, achada cruzando com o hunspell de inglês) e
+  **sem nomes próprios** (maiúsculas fora; os que o VERO traz em minúsculas — países, nomes de gente — na lista `NOMES`),
+  menos palavrões (`bloq` em desafios.json). Tudo isso sai já no verbete, com plurais e flexões. As **palavras do dia** (comuns + flexões: `geranio/base.json`, feito por
   `geranio/comuns.mjs` — respostas do Cordel, palavras frequentes do fserb/pt-br sem nomes/estrangeirismos (`STOP`), qualquer forma
   do VERO com icf ≤ 12,5 (teia, dita, tina), verbetes minúsculos do VERO até icf 13,5 (a frequência da internet subestima substantivos: anta, nata, tear), conjugações frequentes e o
   plural/feminino de cada uma pelas regras do VERO; grafia pelo VERO) medem a régua, o "pleno" e as dicas. Palavra válida fora
