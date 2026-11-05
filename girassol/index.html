@@ -127,6 +127,22 @@
   .ini div.c b { color: var(--acc); }
   .ini div.ok { opacity: .4; }
   .lista .cols div.ra { color: var(--muted); font-style: italic; }
+  .modo { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; margin: 2px 4px 10px; border-radius: 11px; background: var(--surface-2); }
+  .modo button { border: 0; border-radius: 9px; padding: 6px 0; font: inherit; font-size: .84rem; font-weight: 700; color: var(--muted); background: none; cursor: pointer; }
+  .modo button[aria-checked="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .1); }
+  .grade { width: calc(100% - 8px); margin: 0 4px; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; font-size: .9rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; table-layout: fixed; }
+  .grade th, .grade td { text-align: center; padding: 6px 0; }
+  .grade th { color: var(--muted); font-weight: 700; font-size: .76rem; }
+  .grade td:first-child { font-weight: 800; width: 2em; }
+  .grade td:first-child.c { color: var(--acc); }
+  .grade td.z { color: var(--line); }
+  .grade .s { color: var(--muted); font-weight: 700; border-left: 1px solid var(--line); }
+  .grade tr.s td { border-top: 1px solid var(--line); color: var(--muted); font-weight: 700; }
+  .duas { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 4px; }
+  .duas span { padding: 4px 9px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); font-size: .84rem; font-weight: 700; letter-spacing: .04em; }
+  .duas span b { color: var(--acc); margin-left: 4px; }
+  .duas span.ok { opacity: .38; text-decoration: line-through; }
   .lista .dica-l { margin: 8px 4px; padding: 10px 12px; border-radius: 12px; background: var(--surface); font-size: .9rem; }
   .lista .dica-l b { letter-spacing: .12em; }
 
@@ -405,14 +421,28 @@
     const todas = P.w.map(norm), falta = todas.filter(n => !achadas.includes(n));
     let h = `<h3>Faltam ${falta.length} palavras do dia <em>${achadas.length} de ${todas.length}</em></h3>`;
     if (alvo && !achadas.includes(alvo)) h += `<div class="dica-l">Dica: <b>${alvo.slice(0, 2)}${"·".repeat(alvo.length - 2)}</b> · ${alvo.length} letras</div>`;
-    // por tamanho: um quadradinho por palavra (verde = achada)
-    const tams = [...new Set(todas.map(n => n.length))].sort((x, y) => x - y);
-    h += tams.map(t => { const ws = todas.filter(n => n.length === t), a = ws.filter(n => achadas.includes(n)).length;
-      return `<div class="tam"><b>${t} letras</b><span class="bar">${ws.map((_, k) => `<i class="${k < a ? "on" : ""}"></i>`).join("")}</span><span>${a}/${ws.length}</span></div>`; }).join("");
-    // por letra inicial: quantas faltam
-    const ini = [...new Set(todas.map(n => n[0]))].sort();
-    h += `<h3>Faltam por letra inicial</h3><div class="ini">${ini.map(c => { const f = falta.filter(n => n[0] === c).length;
-      return `<div class="${c === P.c ? "c" : ""}${f ? "" : " ok"}"><b>${c}</b><small>${f || "✓"}</small></div>`; }).join("")}</div>`;
+    // dois jeitos de ver as dicas (a escolha fica guardada): "resumo" = quadradinhos por tamanho e faltas por letra inicial;
+    // "grade" = tabela letra inicial × tamanho (quantas faltam) e os começos de duas letras, como no spellbee.org
+    h += `<div class="modo" role="radiogroup" aria-label="Jeito de ver as dicas">${[["resumo", "Resumo"], ["grade", "Grade"]].map(([v, r]) =>
+      `<button type="button" role="radio" data-modo="${v}" aria-checked="${modoDicas === v}">${r}</button>`).join("")}</div>`;
+    const tams = [...new Set(todas.map(n => n.length))].sort((x, y) => x - y), ini = [...new Set(todas.map(n => n[0]))].sort();
+    if (modoDicas === "grade") {
+      const cel = n => `<td class="${n ? "" : "z"}">${n || "–"}</td>`;
+      h += `<table class="grade"><tr><th></th>${tams.map(t => `<th>${t}</th>`).join("")}<th class="s">Σ</th></tr>` +
+        ini.map(c => { const r = tams.map(t => falta.filter(n => n[0] === c && n.length === t).length);
+          return `<tr><td class="${c === P.c ? "c" : ""}">${c}</td>${r.map(cel).join("")}<td class="s">${r.reduce((x, y) => x + y, 0)}</td></tr>`; }).join("") +
+        `<tr class="s"><td>Σ</td>${tams.map(t => `<td>${falta.filter(n => n.length === t).length}</td>`).join("")}<td class="s">${falta.length}</td></tr></table>`;
+      const pares = [...new Set(todas.map(n => n.slice(0, 2)))].sort();
+      h += `<h3>Começos</h3><div class="duas">${pares.map(pr => { const f = falta.filter(n => n.startsWith(pr)).length;
+        return `<span class="${f ? "" : "ok"}">${pr}${f ? `<b>${f}</b>` : ""}</span>`; }).join("")}</div>`;
+    } else {
+      // por tamanho: um quadradinho por palavra (verde = achada)
+      h += tams.map(t => { const ws = todas.filter(n => n.length === t), a = ws.filter(n => achadas.includes(n)).length;
+        return `<div class="tam"><b>${t} letras</b><span class="bar">${ws.map((_, k) => `<i class="${k < a ? "on" : ""}"></i>`).join("")}</span><span>${a}/${ws.length}</span></div>`; }).join("");
+      // por letra inicial: quantas faltam
+      h += `<h3>Faltam por letra inicial</h3><div class="ini">${ini.map(c => { const f = falta.filter(n => n[0] === c).length;
+        return `<div class="${c === P.c ? "c" : ""}${f ? "" : " ok"}"><b>${c}</b><small>${f || "✓"}</small></div>`; }).join("")}</div>`;
+    }
     const ach = achadas.slice().sort((x, y) => x.localeCompare(y)), rar = raras.slice().sort((x, y) => x.localeCompare(y));
     h += `<h3>Achadas <em>${achadas.length} do dia${raras.length ? ` · ${raras.length} rara${raras.length > 1 ? "s" : ""}` : ""}</em></h3>`;
     h += ach.length || rar.length ? `<div class="cols">${ach.map(n => `<div class="${ehPang(n) ? "pg" : ""}">${RESP.get(n)}</div>`).join("")}${rar.map(n => `<div class="ra${ehPang(n) ? " pg" : ""}">${nomeDe(n)} ×2</div>`).join("")}</div>`
@@ -427,6 +457,12 @@
     }
     $("lista").innerHTML = h;
   }
+  let modoDicas = load("modo-dicas", "resumo") === "grade" ? "grade" : "resumo";
+  $("lista").addEventListener("click", e => {
+    const b = e.target.closest("[data-modo]");
+    if (!b || b.dataset.modo === modoDicas) return;
+    modoDicas = b.dataset.modo; save("modo-dicas", modoDicas); montaLista();
+  });
   function abreLista() { montaLista(); $("wrap").classList.add("aberta"); document.body.classList.add("aberta"); $("achadasBtn").setAttribute("aria-expanded", "true"); $("lista").scrollTop = 0; }
   function fechaLista() { $("wrap").classList.remove("aberta"); document.body.classList.remove("aberta"); $("achadasBtn").setAttribute("aria-expanded", "false"); }
   $("achadasBtn").addEventListener("click", () => (document.body.classList.contains("aberta") ? fechaLista() : abreLista()));
