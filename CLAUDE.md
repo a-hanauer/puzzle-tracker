@@ -108,6 +108,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   do VERO com icf ≤ 12,5 (teia, dita, tina), verbetes minúsculos do VERO até icf 13,5 (a frequência da internet subestima substantivos: anta, nata, tear), conjugações frequentes e o
   plural/feminino de cada uma pelas regras do VERO; grafia pelo VERO) medem a régua, o "pleno" e as dicas. Palavra válida fora
   delas é **rara** e vale o **dobro** (escolha do dono: premiar vocabulário).
+- Dois jeitos de jogar (casual = meta; completista = todas), régua em **duas fases** (opção "A", 05/11/2026): até Gerânio, régua
+  de pontos com uma marca por nível e "faltam N pts para Gerânio · próximo: X em M"; depois de feito, a régua fica amarela e
+  conta as palavras do dia ("Gerânio ✓ · 49/131 · rumo ao pleno · faltam 82 palavras · +N raras"). Tela de fim: "N de T palavras
+  do dia (P%)"; pílula do painel "✓ pts · P%"; ao fechar um tamanho, "todas de N letras!".
 - Níveis: Semente, Broto, Muda, Botão, Flor, Gerânio (2/5/12/22/35% dos pontos das palavras do dia). Chegar a Gerânio = dia
   feito (celebração + bandeja de fim); continua até achar todas as do dia ("pleno" = troféu no painel). Depois de feito
   não aparece a faixa de fim embaixo (a flor não encolhe): a régua ganha uma setinha e reabre a bandeja de fim.

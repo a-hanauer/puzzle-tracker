@@ -13,10 +13,10 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=151"></script>
-<script src="comum/catalogo.js?v=151"></script>
-<script src="comum/celebra.js?v=151"></script>
-<script src="comum/recorde.js?v=151"></script>
+<script src="comum/tema.js?v=152"></script>
+<script src="comum/catalogo.js?v=152"></script>
+<script src="comum/celebra.js?v=152"></script>
+<script src="comum/recorde.js?v=152"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -1026,7 +1026,7 @@ function statusText(g, p, isDone) {
   if (!p.finished && p.pts != null) return `<span class="pl leve">${ST_ICON.meio}${p.pts}/${p.max}<span class="dim">&nbsp;pts</span></span>`;
   if (!p.finished) return `<span class="pl leve">${ST_ICON.meio}${p.tries}/${p.max}</span>`;
   const extra = (p.won && recordeHoje(g, p) ? ST_ICON.trofeu : "") + (p.dica ? ST_ICON.dica : "");
-  if (p.pts != null) return `<span class="pl">${ST_ICON.ok}${p.pts}<span class="dim">&nbsp;pts</span>${extra}</span>`;   // Gerânio
+  if (p.pts != null) return `<span class="pl">${ST_ICON.ok}${p.pts}<span class="dim">&nbsp;pts${p.pct != null ? ` · ${p.pct}%` : ""}</span>${extra}</span>`;   // Gerânio: pontos e % das palavras do dia
   if (p.inc != null) return `<span class="pl">${ST_ICON.ok}${p.inc}<span class="dim">&nbsp;· mín ${p.min}</span>${extra}</span>`;   // Brigadeiro
   if (p.time != null) return `<span class="pl">${ST_ICON.tempo}${fmtTime(p.time)}${extra}</span>`;
   return p.won

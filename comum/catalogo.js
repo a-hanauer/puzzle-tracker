@@ -87,7 +87,8 @@ const LOCAL_PROGRESS = {
     const today0 = new Date(); today0.setHours(0, 0, 0, 0);
     const p = readJSON(`girassol:dia:${Math.round((today0 - new Date(2026, 10, 4)) / 86400000) + 1}`);
     if (!p || (!p.done && !p.started)) return null;
-    return { tries: p.pts || 0, max: p.meta || 1, won: !!p.done, finished: !!p.done, time: null, dica: !!p.dica, pts: p.pts || 0, pleno: !!p.pleno };
+    return { tries: p.pts || 0, max: p.meta || 1, won: !!p.done, finished: !!p.done, time: null, dica: !!p.dica, pts: p.pts || 0, pleno: !!p.pleno,
+      pct: p.nTot ? Math.round(100 * (p.nAch || 0) / p.nTot) : null };
   },
   // Brigadeiro (entrou no lugar da Panelinha): desafio #1 = 17/10/2026; prog = [doces nas forminhas, total]
   // o resultado é o número de inclinações (sem tempo): inc e min aparecem na pílula do painel

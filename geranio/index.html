@@ -11,9 +11,9 @@
 <meta name="apple-mobile-web-app-title" content="Gerânio">
 <title>GERÂNIO — palavras com as letras da flor</title>
 <link rel="icon" type="image/png" href="icon.png?v=3">
-<script src="../comum/tema.js?v=151"></script>
-<script src="../comum/cabecalho.js?v=151"></script>
-<script src="../comum/dica.js?v=151"></script>
+<script src="../comum/tema.js?v=152"></script>
+<script src="../comum/cabecalho.js?v=152"></script>
+<script src="../comum/dica.js?v=152"></script>
 <link rel="apple-touch-icon" href="icon.png?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,6 +66,14 @@
   .trilha .haste { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--folha); width: 0; transition: width .45s cubic-bezier(.3, .8, .3, 1); }
   .rank.feito .pts::after { content: ""; display: inline-block; width: 7px; height: 7px; margin-left: 7px; border: solid currentColor; border-width: 2px 2px 0 0; transform: translateY(-1px) rotate(45deg); }
   .rank.feito .pts { color: var(--ink); }
+  /* duas fases: até Gerânio, pontos (marcas nos níveis); depois, palavras do dia rumo ao pleno (régua amarela) */
+  .rank { flex-wrap: wrap; row-gap: 4px; }
+  .rk2 { flex-basis: 100%; display: flex; justify-content: space-between; gap: 10px; font-size: .82rem; color: var(--muted); font-weight: 600; white-space: nowrap; min-width: 0; }
+  .rk2 span { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .rk2 b { font-size: inherit; font-weight: 800; color: var(--ink); min-width: 0; }
+  .rk2 .r { color: var(--rara-txt); flex: none; }
+  .trilha .tk { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--bg); z-index: 1; }
+  .trilha.pal .haste { background: var(--rara); }
   .rank.sobe b { animation: sobe .5s cubic-bezier(.3, 1.6, .5, 1); }
   @keyframes sobe { 40% { transform: scale(1.18); color: var(--bom); } }
 
@@ -189,7 +197,7 @@
   .niveis .hj { font-weight: 800; color: var(--ink) !important; }
   .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--ink); color: var(--bg); font: inherit; font-weight: 700; font-size: .95rem; }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=151">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=152">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--acc); --gh-line: var(--line); }
   header.gh { flex: none; } .gh-meta { flex: none; }
@@ -205,7 +213,7 @@
 
 <div class="gh-meta"><span class="gh-info" id="dayInfo"></span><label class="gh-free" hidden><input type="checkbox" id="livreChk" autocomplete="off"></label></div>
 
-<button class="rank" id="rank" aria-label="Níveis de pontos"><b id="rkNome">Semente</b><span class="trilha" id="trilha"></span><span class="pts" id="rkPts">0 pts</span></button>
+<button class="rank" id="rank" aria-label="Níveis de pontos"><b id="rkNome">Semente</b><span class="trilha" id="trilha"></span><span class="pts" id="rkPts">0 pts</span><span class="rk2" id="rk2"></span></button>
 <div id="wrap" style="display:contents">
   <button class="achadas" id="achadasBtn" aria-expanded="false"><b id="nAch">0</b><small id="nAchL">palavras</small><span id="ultimas"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
   <div class="palco" id="palco">
@@ -320,7 +328,7 @@
     if (!P || teste) return;
     const pts = pontos();
     save("dia:" + dayNum, { pid: pid(P), found: achadas, raras, ordem, dica: dicaUsada, alvo, done: finished, started: achadas.length + raras.length > 0,
-      pts, max: P.m, meta: corte(META), pleno: pleno(), prog: [pts, corte(META)] });
+      pts, max: P.m, meta: corte(META), pleno: pleno(), nAch: achadas.length, nTot: P.w.length, nRar: raras.length, prog: [pts, corte(META)] });
   }
 
   fetch("desafios.json").then(r => r.json()).then(data => {
@@ -414,14 +422,25 @@
   function render(animar = true) {
     if (!P) return;
     const pts = pontos(), k = nivelIdx(pts);
-    $("rkNome").textContent = NIVEIS[k][0];
-    $("rkPts").textContent = `${pts} pts`;
-    const tr = $("trilha");
-    if (!tr.children.length) tr.innerHTML = `<i class="haste"></i>`;
-    // haste: até o nó do nível atual, mais a fração até o próximo
-    const prox = k + 1 < NIVEIS.length ? corte(NIVEIS[k + 1][1]) : null, base = corte(NIVEIS[k][1]);
-    const frac = prox == null ? 1 : (k + Math.min(1, (pts - base) / Math.max(1, prox - base))) / (NIVEIS.length - 1);
-    tr.querySelector(".haste").style.width = `${(frac * 100).toFixed(1)}%`;
+    // fase 1 (até Gerânio): régua de pontos com uma marca em cada nível; embaixo, quanto falta
+    // fase 2 (Gerânio feito): a régua conta as palavras do dia, rumo ao pleno; embaixo, quantas faltam e as raras
+    const tr = $("trilha"), meta = corte(META), tot = P.w.length, ach = achadas.length;
+    tr.classList.toggle("pal", finished);
+    if (!finished) {
+      $("rkNome").textContent = NIVEIS[k][0];
+      $("rkPts").textContent = `${pts} pts`;
+      tr.innerHTML = `<i class="haste" style="width:${Math.min(100, 100 * pts / meta).toFixed(1)}%"></i>` +
+        NIVEIS.slice(1, -1).map(([, fr]) => `<i class="tk" style="left:${(100 * fr / META).toFixed(1)}%"></i>`).join("");
+      const prox = NIVEIS[k + 1];
+      $("rk2").innerHTML = `<span>faltam <b>${meta - pts} pts</b> para Gerânio</span>` +
+        (prox && prox[0] !== "Gerânio" ? `<span>próximo: ${prox[0]} em ${corte(prox[1]) - pts}</span>` : "");
+    } else {
+      $("rkNome").textContent = pleno() ? "Pleno ✓" : "Gerânio ✓";
+      $("rkPts").textContent = `${ach}/${tot}`;
+      tr.innerHTML = `<i class="haste" style="width:${(100 * ach / tot).toFixed(1)}%"></i>`;
+      $("rk2").innerHTML = (pleno() ? `<span>todas as <b>${tot} palavras</b> do dia · ${pts} pts</span>` : `<span>rumo ao pleno · faltam <b>${tot - ach} palavras</b></span>`) +
+        (raras.length ? `<span class="r">+${raras.length} rara${raras.length > 1 ? "s" : ""}</span>` : "");
+    }
     if (animar && nivelAntes >= 0 && k > nivelAntes) { const r = $("rank"); r.classList.remove("sobe"); void r.offsetWidth; r.classList.add("sobe"); }
     nivelAntes = k;
     $("nAch").textContent = achadas.length + raras.length; $("nAchL").textContent = achadas.length + raras.length === 1 ? "palavra" : "palavras";
@@ -543,7 +562,9 @@
       achadas.push(n); ultimasOrdem.push(n);
       const p = pontosDe(n);
       if (window.jogosHaptico) jogosHaptico(true);
-      aviso(`<b>${RESP.get(n).toUpperCase()}</b>${pg ? "Pangrama! " : ""}+${p}`, "ok" + (pg ? " pang" : ""), 1500);
+      // fechou um tamanho (todas as palavras do dia com esse número de letras): um pequeno marco
+      const fechou = P.w.map(norm).filter(x => x.length === n.length).every(x => achadas.includes(x));
+      aviso(`<b>${RESP.get(n).toUpperCase()}</b>${pg ? "Pangrama! " : ""}+${p}${fechou ? ` · todas de ${n.length} letras!` : ""}`, "ok" + (pg ? " pang" : ""), fechou ? 2200 : 1500);
       render(); persist(); confere();
       return;
     }
@@ -587,7 +608,9 @@
     const pts = pontos();
     $("endTitle").textContent = pleno() ? "Gerânio pleno!" : "Gerânio!";
     $("endPts").textContent = `${pts} pts`;
-    $("endSub").textContent = `${teste ? "Extra" : "#" + dayNum} · nível ${P.l}/7 · ${achadas.length} de ${P.w.length} do dia` + (raras.length ? ` · ${raras.length} rara${raras.length > 1 ? "s" : ""}` : "") + (dicaUsada ? " · com dica" : "");
+    const pct = Math.round(100 * achadas.length / P.w.length);
+    $("endSub").innerHTML = `<b>${achadas.length} de ${P.w.length}</b> palavras do dia (${pct}%)` + (raras.length ? ` · +${raras.length} rara${raras.length > 1 ? "s" : ""}` : "") +
+      `<br>${teste ? "Extra" : "#" + dayNum} · nível ${P.l}/7${dicaUsada ? " · com dica" : ""}`;
     if (window.semanaFim) {
       if (teste) semanaFim($("endSub"), null);
       else {
@@ -645,9 +668,9 @@
   $("againBtn").addEventListener("click", () => sorteia());
 })();
 </script>
-<script src="../comum/catalogo.js?v=151"></script>
-<script src="../comum/celebra.js?v=151"></script>
-<script src="../comum/recorde.js?v=151"></script>
-<script src="../comum/proximo.js?v=151" data-jogo="girassol"></script>
+<script src="../comum/catalogo.js?v=152"></script>
+<script src="../comum/celebra.js?v=152"></script>
+<script src="../comum/recorde.js?v=152"></script>
+<script src="../comum/proximo.js?v=152" data-jogo="girassol"></script>
 </body>
 </html>
