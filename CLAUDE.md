@@ -84,8 +84,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 ## Girassol (jogo de palavras no estilo Spelling Bee, desde 04/11/2026)
 
-- 7 letras numa flor simples (desde 05/11/2026, opção "D"): só as 6 pétalas das letras, redondas e separadas como botões, e o
-  miolo marrom liso com um pontilhado (a letra obrigatória). Régua = barra fina contínua; barra das achadas só em texto.
+- 7 letras numa flor simples: 6 pétalas em gomo (escolha "mais redonda", 05/11/2026) em volta do miolo marrom liso com um
+  pontilhado (a letra obrigatória). Pétala: laterais paralelas (fresta de largura constante), borda de dentro no arco do miolo,
+  ponta de fora numa curva contínua tangente às laterais; cantos de dentro arredondados de leve pelo traço. As pétalas são
+  calculadas já giradas (sem `transform`). Régua = barra fina contínua; barra das achadas só em texto.
   Palavras de 4+ letras, letras podem repetir; acentos e ç não contam. Pontos: 4 letras = 1, mais longa = 1 por
   letra, pangrama (as 7 letras) +7. Sem cronômetro: o resultado são os pontos.
 - **Vale toda palavra que existe** (não se julga se é comum — isso só muda os pontos): dicionário `girassol/palavras.txt` =

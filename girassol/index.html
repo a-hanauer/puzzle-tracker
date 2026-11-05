@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <style>
-  /* girassol: papel claro; flor simples — 6 pétalas redondas amarelas (as letras) e o miolo marrom (a obrigatória) */
+  /* girassol: papel claro; flor simples — 6 pétalas em gomo, de ponta redonda (as letras), e o miolo marrom (a obrigatória) */
   :root {
     --bg: #f4f1e6; --surface: #fffdf6; --surface-2: #e9e3cf; --ink: #2a2416; --muted: #7f775f; --line: #e3dcc4;
     --acc: #9a5d1c; --folha: #5f9a3a; --bom: #3f7f26;
@@ -350,16 +350,33 @@
   }
   setTimeout(() => dicionario().catch(() => {}), 300);   // toda palavra precisa dele: carrega logo
 
-  // ---------- a flor (SVG): só as 6 pétalas das letras (redondas, separadas, como botões) e o miolo com a letra obrigatória ----------
-  const petala = (r0, r1, w) => { const L = r1 - r0;
-    return `M${-w * .35} ${-r0} C ${-w * 1.15} ${-r0 - L * .2}, ${-w * 1.1} ${-r1}, 0 ${-r1} C ${w * 1.1} ${-r1}, ${w * 1.15} ${-r0 - L * .2}, ${w * .35} ${-r0} Z`; };
+  // ---------- a flor (SVG): 6 pétalas em gomo em volta do miolo (a letra obrigatória) ----------
+  // Cada pétala: laterais paralelas (fresta de largura constante), borda de dentro no arco do miolo e ponta de fora numa
+  // curva contínua, tangente às laterais (a "mais redonda"). Cantos de dentro arredondados de leve pelo traço da mesma cor.
+  // As pétalas são calculadas já giradas (sem transform), para nenhuma ficar com a ponta cortada no iPhone.
+  const f1 = n => n.toFixed(2);
+  function petala(ri, ro, g, rc, k) {
+    const d = g / 2 + rc, u = [.5, -Math.sqrt(3) / 2], n = [-Math.sqrt(3) / 2, -.5], r1 = ri + rc, R = ro - rc;
+    const P = (t, s) => [s * (d * n[0] + t * u[0]), d * n[1] + t * u[1]];
+    const tb = Math.sqrt(R * R - d * d) - k, B = P(tb, 1), C = P(tb, -1), uL = [-u[0], u[1]];
+    const ponta = h => [[B[0] + u[0] * h, B[1] + u[1] * h], [C[0] + uL[0] * h, C[1] + uL[1] * h]];
+    const alto = h => { const [c1, c2] = ponta(h); return -(.125 * B[1] + .375 * c1[1] + .375 * c2[1] + .125 * C[1]); };
+    let lo = 0, hi = 400; for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2; alto(m) < R ? (lo = m) : (hi = m); }
+    const [c1, c2] = ponta(lo), A = P(Math.sqrt(r1 * r1 - d * d), 1), D = [-A[0], A[1]];
+    return [["M", A], ["L", B], ["C", c1, c2, C], ["L", D], ["A", r1, A]];
+  }
+  const PETALA = petala(60, 162, 9, 5, 44), RAIO_LETRA = 109;
+  function petalaGirada(graus) {
+    const a = graus * Math.PI / 180, c = Math.cos(a), s = Math.sin(a), R = ([x, y]) => `${f1(x * c - y * s)} ${f1(x * s + y * c)}`;
+    return PETALA.map(([k, ...p]) => k === "A" ? `A${f1(p[0])} ${f1(p[0])} 0 0 1 ${R(p[1])}` : k + p.map(R).join(" ")).join(" ") + " Z";
+  }
   const pos = (i, d) => { const a = Math.PI / 180 * (-90 + 60 * i); return [d * Math.cos(a), d * Math.sin(a)]; };
   function desenhaFlor() {
     let s = `<svg id="florSvg" viewBox="-184 -184 368 368" role="group" aria-label="Letras da flor">`;
     for (let i = 0; i < 6; i++) {
-      const [x, y] = pos(i, 112);
-      s += `<g class="pt" data-i="${i}"><path class="lu" d="${petala(62, 160, 46)}" transform="rotate(${60 * i})" fill="var(--petala)"/>
-        <text class="le" x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="var(--letra)"></text></g>`;
+      const [x, y] = pos(i, RAIO_LETRA);
+      s += `<g class="pt" data-i="${i}"><path class="lu" d="${petalaGirada(60 * i)}" fill="var(--petala)" stroke="var(--petala)" stroke-width="10" stroke-linejoin="round"/>
+        <text class="le" x="${f1(x)}" y="${f1(y)}" fill="var(--letra)"></text></g>`;
     }
     s += `<g class="pt" data-i="c"><circle r="54" fill="var(--miolo)"/><circle r="46" fill="none" stroke="var(--miolo-txt)" stroke-opacity=".25" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round"/>
       <text x="0" y="0" fill="var(--miolo-txt)" style="font-size:37px">${P.c}</text></g></svg>`;
