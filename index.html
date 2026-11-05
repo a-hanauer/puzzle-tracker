@@ -1873,7 +1873,7 @@ function renderNative(t0) {
     const bars = days.map(d => {
       const v = m[dnum(d)], pl = v && v[2] >= v[3];
       const lab = !v ? "sem partida" : `${v[0]} de ${v[1]} pts · ${v[2]} de ${v[3]} palavras${pl ? " · todas" : ""}`;
-      return `<button class="vbar ${!v ? "none" : "full"}${pl ? " rec" : ""}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${!v ? 0 : Math.max(6, 100 * v[0] / v[1])}%"></i></button>`;
+      return `<button class="vbar ${!v ? "none" : "full"}${pl ? " rec" : ""}" data-lab="${esc(fmtDay(d) + " · " + lab)}" aria-label="${esc(fmtDay(d) + ": " + lab)}"><i style="height:${!v ? 0 : Math.min(100, Math.max(6, 100 * v[0] / v[1]))}%"></i></button>`;
     }).join("");
     const pc = v => Math.round(v) + "%";
     blocks.girassol = `

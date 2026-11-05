@@ -86,12 +86,15 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 - 7 letras numa flor (pétala estilo "1": três camadas, degradê laranja→amarelo, miolo com sementes em espiral); a do miolo
   é obrigatória; palavras de 4+ letras, letras podem repetir; acentos e ç não contam. Pontos: 4 letras = 1, mais longa = 1 por
-  letra, pangrama (as 7 letras) +7. Níveis: Semente, Broto, Muda, Botão, Flor, Girassol (2/8/20/40/70% dos pontos).
-  Chegar a Girassol = dia feito (celebração + bandeja de fim); dá para continuar até achar todas ("pleno" = troféu no painel).
-  Sem cronômetro: o resultado são os pontos.
-- Respostas: só a lista curada do Cordel (`cordel/respostas.json`), menos o que estiver em `FORA` no gerador. Palavra que existe
-  no dicionário largo (`cordel/palavras.txt`) mas não é resposta: "não está na lista do dia".
-- `girassol/gerador.mjs`: flores a partir de pangramas; nível = dia da semana pelo tamanho da lista (seg 13–18 … dom 37–60
-  palavras); as mesmas 7 letras não voltam em 150 dias; o miolo não repete o do dia anterior. Jogo livre: `livre[nível]`.
-- Dica (uma por dia): começo (2 letras) e tamanho da palavra mais curta que falta. A lista das achadas mostra também as
-  respostas de ontem.
+  letra, pangrama (as 7 letras) +7. Sem cronômetro: o resultado são os pontos.
+- Desde 05/11/2026 **vale qualquer palavra** do dicionário largo (`cordel/palavras.txt`, com plurais, femininos e conjugações),
+  menos palavrões (`bloq` em desafios.json). As **palavras do dia** (comuns + flexões comuns delas: `girassol/base.json`, feito por
+  `girassol/comuns.mjs` a partir do fserb/pt-br, com lista `STOP` de nomes próprios e estrangeirismos) medem a régua, o "pleno" e as
+  dicas. Palavra válida fora delas é **rara** e vale o **dobro** (escolha do dono: premiar vocabulário).
+- Níveis: Semente, Broto, Muda, Botão, Flor, Girassol (2/7/15/30/50% dos pontos das palavras do dia). Chegar a Girassol = dia
+  feito (celebração + bandeja de fim); continua até achar todas as do dia ("pleno" = troféu no painel).
+- Dicas na barra das achadas (opção "2"): quadradinhos por tamanho (achadas/total) e quantas faltam por letra inicial; a lâmpada
+  (uma por dia) dá começo (2 letras) e tamanho da mais curta que falta. Também mostra as palavras de ontem.
+- `girassol/gerador.mjs`: flores a partir de pangramas das palavras do dia; nível = dia da semana pelo tamanho da lista (seg 20–30 …
+  dom 70–130); as mesmas 7 letras não voltam em 150 dias; o miolo não repete o do dia anterior. Dias já publicados guardam as
+  letras (a lista é refeita). Jogo livre: `livre[nível]`.

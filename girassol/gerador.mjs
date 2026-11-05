@@ -4,13 +4,14 @@
 // da flor (letra pode repetir). Acentos e ç não contam (AÇÃO = ACAO). Todo dia há ao menos um pangrama
 // (palavra que usa as 7 letras).
 //
-// Respostas: só palavras de uso comum — a lista curada do Cordel (cordel/respostas.json: substantivos e adjetivos
-// no masculino singular e verbos no infinitivo; sem nomes próprios, plurais nem conjugações).
+// Vale qualquer palavra do dicionário largo (cordel/palavras.txt: com plurais, femininos e conjugações), menos as
+// bloqueadas (palavrões). As "palavras do dia" (a régua, o pleno e as dicas contam só elas) são as comuns: as respostas
+// curadas do Cordel e as flexões comuns delas — girassol/base.json, feito por girassol/comuns.mjs a partir do fserb/pt-br.
+// Palavra válida fora das do dia é "rara" e vale o dobro (a página faz a conta).
 //
-// Nível = dia da semana (segunda = 1 … domingo = 7): a lista do dia vai crescendo (faixas em NIVEL).
+// Nível = dia da semana (segunda = 1 … domingo = 7): o número de palavras do dia vai crescendo (faixas em NIVEL).
 // Para variar: as mesmas 7 letras não voltam em 150 dias (nem com outro miolo) e o miolo não repete a
-// letra do dia anterior.
-// Os desafios já publicados (até hoje) nunca mudam (comum/selecao.mjs).
+// letra do dia anterior. Dias já publicados mantêm as letras (a lista é refeita pelas regras de hoje).
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -20,8 +21,7 @@ import { mantidos } from "../comum/selecao.mjs";
 const DIR = dirname(fileURLToPath(import.meta.url));
 export const EPOCH = [2026, 10, 4];                 // #1 = quarta, 04/11/2026
 // quantas palavras tem a lista do dia, por nível
-const NIVEL = { 1: [13, 18], 2: [17, 22], 3: [21, 26], 4: [25, 30], 5: [28, 34], 6: [32, 39], 7: [37, 60] };
-const FORA = new Set(["tour", "shampoo", "marte"]);   // estrangeirismos e nomes próprios que escaparam da lista
+const NIVEL = { 1: [20, 30], 2: [26, 36], 3: [32, 44], 4: [40, 52], 5: [48, 62], 6: [58, 76], 7: [70, 130] };
 
 export const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
 export const pontos = (w, pangrama) => (w.length === 4 ? 1 : w.length) + (pangrama ? 7 : 0);
@@ -29,15 +29,8 @@ export const pontos = (w, pangrama) => (w.length === 4 ? 1 : w.length) + (pangra
 function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
 
 export function palavras() {
-  const R = JSON.parse(readFileSync(join(DIR, "../cordel/respostas.json"), "utf8"));
-  const m = new Map();
-  for (const w of Object.values(R)) {
-    if (FORA.has(w) || w.length < 4 || !/^[a-zà-üç]+$/.test(w)) continue;
-    const n = norm(w);
-    if (!/^[A-Z]+$/.test(n) || new Set(n).size > 7 || m.has(n)) continue;
-    m.set(n, w);
-  }
-  return m;                                         // MAIUSCULA -> escrita com acento
+  const { comuns } = JSON.parse(readFileSync(join(DIR, "base.json"), "utf8"));
+  return new Map(Object.entries(comuns).map(([n, w]) => [n.toUpperCase(), w]));   // MAIUSCULA -> escrita com acento
 }
 
 // todas as flores possíveis: 7 letras de algum pangrama × cada letra no miolo
@@ -68,6 +61,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const ws = f.ws.slice().sort((a, b) => a.localeCompare(b));
     return { l: 0, c: f.c, f: fora.join(""), w: ws.map(n => m.get(n)), m: f.max };
   };
+  const refaz = p => { const L = new Set(p.c + p.f), ws = [...m.keys()].filter(n => n.includes(p.c) && [...n].every(c => L.has(c))).sort((x, y) => x.localeCompare(y));
+    return { ...p, w: ws.map(n => m.get(n)), m: ws.reduce((t, n) => t + pontos(n, new Set(n).size === 7), 0) }; };
+  old.forEach((p, k) => (old[k] = refaz(p)));
   const out = old.slice(), usadaEm = new Map(), pangUsado = new Set();
   out.forEach((p, k) => { usadaEm.set([p.c, ...p.f].sort().join(""), k); p.w.forEach(w => { const n = norm(w); if (new Set(n).size === 7) pangUsado.add(n); }); });
   for (let k = out.length; k < DIAS; k++) {
@@ -88,9 +84,10 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const [a, b] = NIVEL[l];
     const c = todas.filter(f => f.ws.length >= a && f.ws.length <= b && !doDia.has(f.k + f.c));
     for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; }
-    livre[l] = c.slice(0, 60).map(f => ({ ...monta(f), l }));
+    livre[l] = c.slice(0, 40).map(f => ({ ...monta(f), l }));
   }
-  writeFileSync(join(DIR, "desafios.json"), JSON.stringify({ epoch: EPOCH, puzzles: out, livre }));
+  const { bloq } = JSON.parse(readFileSync(join(DIR, "base.json"), "utf8"));
+  writeFileSync(join(DIR, "desafios.json"), JSON.stringify({ epoch: EPOCH, bloq, puzzles: out, livre }));
   const cont = {}; for (const p of out.slice(0, 7)) console.log(`#${out.indexOf(p) + 1} nível ${p.l}: ${p.c} + ${p.f} · ${p.w.length} palavras · ${p.m} pts · ${p.w.filter(w => new Set(norm(w)).size === 7).join(", ")}`);
   for (let l = 1; l <= 7; l++) cont[l] = todas.filter(f => f.ws.length >= NIVEL[l][0] && f.ws.length <= NIVEL[l][1]).length;
   console.log("flores por nível:", cont, "· livre:", Object.fromEntries(Object.entries(livre).map(([l, v]) => [l, v.length])));

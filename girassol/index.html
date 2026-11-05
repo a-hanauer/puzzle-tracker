@@ -93,6 +93,7 @@
   .palavra.ok { color: var(--bom); font-size: 1.15rem; letter-spacing: .02em; }
   .palavra.ok b { color: var(--ink); font-size: 1.5rem; letter-spacing: .06em; margin-right: 8px; }
   .palavra.pang b { color: var(--acc); }
+  .palavra.rara { color: var(--acc); }
   .palavra.treme { animation: treme .3s ease; }
   @keyframes treme { 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
   .flor { flex: 1 1 0; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; }
@@ -115,13 +116,27 @@
   .lista .cols div.falta { color: var(--muted); }
   .lista .cols div.falta.pg { color: color-mix(in srgb, var(--acc) 60%, var(--muted)); }
   .lista .vazio { color: var(--muted); padding: 8px 4px; font-size: .92rem; }
+  .lista h3 em { font-style: normal; text-transform: none; letter-spacing: 0; font-weight: 600; float: right; }
+  .tam { display: grid; grid-template-columns: 4.8em minmax(0, 1fr) 3.4em; align-items: center; gap: 8px; margin: 6px 4px; font-size: .88rem; }
+  .tam b { font-weight: 800; }
+  .tam .bar { display: flex; gap: 3px; flex-wrap: wrap; }
+  .tam .bar i { width: 10px; height: 10px; border-radius: 3px; background: var(--line); }
+  .tam .bar i.on { background: var(--folha); }
+  .tam span { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 700; }
+  .ini { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; padding: 0 4px; }
+  .ini div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 7px 0 6px; text-align: center; }
+  .ini div b { display: block; font-size: 1.15rem; font-weight: 800; }
+  .ini div small { display: block; color: var(--muted); font-weight: 700; font-size: .8rem; font-variant-numeric: tabular-nums; }
+  .ini div.c b { color: var(--acc); }
+  .ini div.ok { opacity: .4; }
+  .lista .cols div.ra { color: var(--muted); font-style: italic; }
   .lista .dica-l { margin: 8px 4px; padding: 10px 12px; border-radius: 12px; background: var(--surface); font-size: .9rem; }
   .lista .dica-l b { letter-spacing: .12em; }
 
   /* ---------- botões: apagar · embaralhar · enviar (o teclado comum, .gh-kb-key) ---------- */
   :root { --kb-h: 52px; --kb-r: 12px; --kb-font: "Noto Sans", -apple-system, BlinkMacSystemFont, sans-serif; --kb-stretch: 87.5%; --kb-weight: 800; --kb-fs: 15px; }
   .botoes { display: flex; gap: 10px; margin-top: 8px; flex: none; }
-  .botoes .gh-kb-key { flex: 1; max-width: none; letter-spacing: .08em; box-shadow: var(--shadow); }
+  .botoes .gh-kb-key { flex: 1; max-width: none; letter-spacing: .08em; font-size: 15px; box-shadow: var(--shadow); }
   .botoes .gh-kb-key.mid { flex: 0 0 64px; }
   .botoes .gh-kb-key svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
   .botoes .gh-kb-key.enter { flex: 1; max-width: none; background: var(--kb-ink); color: var(--kb-bg); }
@@ -206,12 +221,13 @@
     <p>Forme palavras com as letras da flor.</p>
     <ul>
       <li>Toda palavra usa a letra do <b>miolo</b> e tem <b>4 letras ou mais</b>. As letras podem se repetir.</li>
-      <li>Valem palavras comuns: substantivos, adjetivos e verbos no infinitivo. Sem plurais, conjugações nem nomes próprios.</li>
+      <li>Vale <b>qualquer palavra</b> do português, com plurais, femininos e conjugações (sem nomes próprios nem palavrões).</li>
+      <li>A régua conta as <b>palavras do dia</b>: as comuns e as flexões comuns delas. Uma palavra válida fora delas é <b>rara</b> e vale o <b>dobro</b>.</li>
       <li>Acentos e ç não contam: <b>ACAO</b> vale "ação".</li>
       <li>Palavra de 4 letras vale 1 ponto; mais longa, 1 ponto por letra. A que usa <b>as 7 letras</b> (o pangrama) ganha mais 7. Todo dia tem pelo menos uma.</li>
-      <li>A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma palavra que falta. Uma por dia.</li>
+      <li>Na barra das achadas, quantas palavras do dia faltam por tamanho e por letra inicial. A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma delas. Uma por dia.</li>
     </ul>
-    <p>Chegando a <b>Girassol</b>, o dia está feito; dá para continuar até achar todas. Ao longo da semana a lista do dia cresce.</p>
+    <p>Chegando a <b>Girassol</b>, o dia está feito; dá para continuar até achar todas as do dia (Girassol pleno). Ao longo da semana a lista do dia cresce.</p>
     <div class="niveis" id="niveis"></div>
     <p class="fonte">Lista de palavras: <a href="https://github.com/fserb/pt-br" target="_blank" rel="noopener">fserb/pt-br</a> (licença MIT).</p>
     <button class="btn-main" data-close>Jogar</button>
@@ -248,16 +264,18 @@
   const ehPang = n => new Set(n).size === 7;
   const pontosDe = n => (n.length === 4 ? 1 : n.length) + (ehPang(n) ? 7 : 0);
 
-  // níveis: fração dos pontos possíveis; Girassol (70%) fecha o dia
-  const NIVEIS = [["Semente", 0], ["Broto", .02], ["Muda", .08], ["Botão", .2], ["Flor", .4], ["Girassol", .7]];
+  // níveis: fração dos pontos possíveis (só as palavras do dia); Girassol fecha o dia
+  const NIVEIS = [["Semente", 0], ["Broto", .02], ["Muda", .07], ["Botão", .15], ["Flor", .3], ["Girassol", .5]];
+  const META = .5;   // Girassol: metade dos pontos das palavras do dia (com as flexões, a lista é longa)
   const corte = f => Math.ceil(P.m * f);
 
   // ---------- estado ----------
   // P = { l: nível, c: miolo, f: as 6 pétalas, w: respostas (com acento), m: pontos possíveis }
-  let P = null, dayNum = 0, RESP = new Map(), achadas = [], ordem = [], digitado = "", dicaUsada = false, alvo = null, finished = false;
+  let P = null, dayNum = 0, RESP = new Map(), achadas = [], raras = [], BLOQ = new Set(), ordem = [], digitado = "", dicaUsada = false, alvo = null, finished = false;
   let DICIO = null, dica = null;
   const pid = p => p.c + p.f;
-  const pontos = () => achadas.reduce((t, n) => t + pontosDe(n), 0);
+  const pontos = () => achadas.reduce((t, n) => t + pontosDe(n), 0) + raras.reduce((t, n) => t + 2 * pontosDe(n), 0);   // rara vale o dobro
+  const nomeDe = n => RESP.get(n) || n.toLowerCase();
   const nivelIdx = pts => { let k = 0; NIVEIS.forEach(([, f], i) => { if (pts >= corte(f)) k = i; }); return k; };
   const pleno = () => P && achadas.length === P.w.length;
 
@@ -272,9 +290,10 @@
   function setup(puzzle, saved) {
     P = puzzle; RESP = new Map(P.w.map(w => [norm(w), w]));
     achadas = (saved?.found || []).filter(n => RESP.has(n));
+    raras = (saved?.raras || []).filter(n => !RESP.has(n) && n.includes(P.c));
     ordem = saved?.ordem && saved.ordem.length === 6 ? saved.ordem : [...P.f];
     dicaUsada = !!saved?.dica; alvo = saved?.alvo || null;
-    finished = !!saved?.done; digitado = "";
+    finished = !!saved?.done; digitado = ""; ultimasOrdem = [...achadas, ...raras];
     if (!teste) { const now = new Date(); $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`; }
     fechaLista(); desenhaFlor(); fit(); render(false);
     if (dica) dica.atualiza();
@@ -282,12 +301,12 @@
   function persist() {
     if (!P || teste) return;
     const pts = pontos();
-    save("dia:" + dayNum, { pid: pid(P), found: achadas, ordem, dica: dicaUsada, alvo, done: finished, started: achadas.length > 0,
-      pts, max: P.m, meta: corte(.7), pleno: pleno(), prog: [pts, corte(.7)] });
+    save("dia:" + dayNum, { pid: pid(P), found: achadas, raras, ordem, dica: dicaUsada, alvo, done: finished, started: achadas.length + raras.length > 0,
+      pts, max: P.m, meta: corte(META), pleno: pleno(), prog: [pts, corte(META)] });
   }
 
   fetch("desafios.json").then(r => r.json()).then(data => {
-    DADOS = data;
+    DADOS = data; BLOQ = new Set(data.bloq || []);
     dayNum = dayNumber(data.epoch);
     const puzzle = data.puzzles[(dayNum - 1) % data.puzzles.length];
     let saved = load("dia:" + dayNum, null);
@@ -311,7 +330,7 @@
     if (cur) set.add(cur);
     return (DICIO = set);
   }
-  setTimeout(() => dicionario().catch(() => {}), 1500);
+  setTimeout(() => dicionario().catch(() => {}), 300);   // toda palavra precisa dele: carrega logo
 
   // ---------- a flor (SVG): 12 pétalas finas atrás, 6 de fundo e as 6 das letras; miolo com sementes em espiral ----------
   const petala = (r0, r1, w) => { const L = r1 - r0;
@@ -367,7 +386,7 @@
   }
   function treme() { const el = $("palavra"); el.classList.remove("treme"); void el.offsetWidth; el.classList.add("treme"); }
 
-  let nivelAntes = -1;
+  let nivelAntes = -1, ultimasOrdem = [];
   function render(animar = true) {
     if (!P) return;
     const pts = pontos(), k = nivelIdx(pts);
@@ -382,14 +401,14 @@
     tr.querySelector(".haste").style.width = `calc(${(frac * 100).toFixed(1)}% - ${(frac * 8).toFixed(1)}px)`;
     if (animar && nivelAntes >= 0 && k > nivelAntes) { const r = $("rank"); r.classList.remove("sobe"); void r.offsetWidth; r.classList.add("sobe"); }
     nivelAntes = k;
-    $("nAch").textContent = achadas.length;
-    $("ultimas").textContent = achadas.slice().reverse().map(n => RESP.get(n)).join(", ");
+    $("nAch").textContent = achadas.length + raras.length;
+    $("ultimas").textContent = (DADOS && ultimasOrdem.length ? ultimasOrdem : [...achadas, ...raras]).filter(n => achadas.includes(n) || raras.includes(n)).slice().reverse().map(nomeDe).join(", ");
     $("controls").classList.toggle("done", finished);
     if (!finished) $("controls").classList.remove("play");
     $("doneBar").tabIndex = finished ? 0 : -1;
     if (finished) {
       $("doneTitle").textContent = `${pts} pts${pleno() ? " · pleno" : ""}`;
-      $("doneSub").textContent = `${NIVEIS[k][0]} · ${achadas.length} de ${P.w.length} palavras${dicaUsada ? " · com dica" : ""}`;
+      $("doneSub").textContent = `${NIVEIS[k][0]} · ${achadas.length} de ${P.w.length} do dia${raras.length ? ` · ${raras.length} raras` : ""}`;
     }
     if ($("wrap").classList.contains("aberta")) montaLista();
     mostraPalavra();
@@ -398,13 +417,23 @@
   // ---------- lista das achadas ----------
   const wrapEl = () => document.body;
   function montaLista() {
-    const ach = achadas.slice().sort((a, b) => a.localeCompare(b));
-    let h = `<h3>${achadas.length} de ${P.w.length} palavras</h3>`;
+    const todas = P.w.map(norm), falta = todas.filter(n => !achadas.includes(n));
+    let h = `<h3>Faltam ${falta.length} palavras do dia <em>${achadas.length} de ${todas.length}</em></h3>`;
     if (alvo && !achadas.includes(alvo)) h += `<div class="dica-l">Dica: <b>${alvo.slice(0, 2)}${"·".repeat(alvo.length - 2)}</b> · ${alvo.length} letras</div>`;
-    h += ach.length ? `<div class="cols">${ach.map(n => `<div class="${ehPang(n) ? "pg" : ""}">${RESP.get(n)}</div>`).join("")}</div>`
+    // por tamanho: um quadradinho por palavra (verde = achada)
+    const tams = [...new Set(todas.map(n => n.length))].sort((x, y) => x - y);
+    h += tams.map(t => { const ws = todas.filter(n => n.length === t), a = ws.filter(n => achadas.includes(n)).length;
+      return `<div class="tam"><b>${t} letras</b><span class="bar">${ws.map((_, k) => `<i class="${k < a ? "on" : ""}"></i>`).join("")}</span><span>${a}/${ws.length}</span></div>`; }).join("");
+    // por letra inicial: quantas faltam
+    const ini = [...new Set(todas.map(n => n[0]))].sort();
+    h += `<h3>Faltam por letra inicial</h3><div class="ini">${ini.map(c => { const f = falta.filter(n => n[0] === c).length;
+      return `<div class="${c === P.c ? "c" : ""}${f ? "" : " ok"}"><b>${c}</b><small>${f || "✓"}</small></div>`; }).join("")}</div>`;
+    const ach = achadas.slice().sort((x, y) => x.localeCompare(y)), rar = raras.slice().sort((x, y) => x.localeCompare(y));
+    h += `<h3>Achadas <em>${achadas.length} do dia${raras.length ? ` · ${raras.length} rara${raras.length > 1 ? "s" : ""}` : ""}</em></h3>`;
+    h += ach.length || rar.length ? `<div class="cols">${ach.map(n => `<div class="${ehPang(n) ? "pg" : ""}">${RESP.get(n)}</div>`).join("")}${rar.map(n => `<div class="ra${ehPang(n) ? " pg" : ""}">${nomeDe(n)} ×2</div>`).join("")}</div>`
       : `<div class="vazio">As palavras que você achar aparecem aqui.</div>`;
-    if (finished && pleno()) h += `<div class="vazio">Achou todas. Girassol pleno!</div>`;
-    // ontem: todas as respostas, as achadas em destaque (só no desafio do dia)
+    if (finished && pleno()) h += `<div class="vazio">Achou todas as do dia. Girassol pleno!</div>`;
+    // ontem: as palavras do dia, as achadas em destaque (só no desafio do dia)
     if (!teste && DADOS && dayNum > 1) {
       const ontem = DADOS.puzzles[(dayNum - 2) % DADOS.puzzles.length], sv = load("dia:" + (dayNum - 1), null);
       const ach2 = new Set(sv && sv.pid === pid(ontem) ? sv.found : []);
@@ -460,18 +489,24 @@
     digitado = "";
     if (n.length < 4) { aviso("Curta demais: <b>4 letras</b> ou mais"); treme(); return; }
     if (!n.includes(P.c)) { aviso(`Falta o miolo: <b>${P.c}</b>`); treme(); return; }
-    if (achadas.includes(n)) { aviso(`<b>${RESP.get(n).toUpperCase()}</b> já foi`); treme(); return; }
+    if (achadas.includes(n) || raras.includes(n)) { aviso(`<b>${nomeDe(n).toUpperCase()}</b> já foi`); treme(); return; }
+    const pg = ehPang(n);
     if (RESP.has(n)) {
-      achadas.push(n);
-      const p = pontosDe(n), pg = ehPang(n);
+      achadas.push(n); ultimasOrdem.push(n);
+      const p = pontosDe(n);
       if (window.jogosHaptico) jogosHaptico(true);
       aviso(`<b>${RESP.get(n).toUpperCase()}</b>${pg ? "Pangrama! " : ""}+${p}`, "ok" + (pg ? " pang" : ""), 1500);
       render(); persist(); confere();
       return;
     }
     let ok = false;
-    try { ok = (await dicionario()).has(n.toLowerCase()); } catch {}
-    aviso(ok ? `<b>${n}</b> não está na lista do dia` : `Não conheço <b>${n}</b>`, "msg", 1500); treme();
+    try { const d = await dicionario(); ok = d.has(n.toLowerCase()) && !BLOQ.has(n.toLowerCase()); } catch {}
+    if (!ok) { aviso(`Não conheço <b>${n}</b>`, "msg", 1500); treme(); return; }
+    if (achadas.includes(n) || raras.includes(n)) return;   // mandou duas vezes enquanto o dicionário carregava
+    raras.push(n); ultimasOrdem.push(n);
+    if (window.jogosHaptico) jogosHaptico(true);
+    aviso(`<b>${n}</b>${pg ? "Pangrama raro! " : "Rara! "}+${2 * pontosDe(n)}`, "ok rara" + (pg ? " pang" : ""), 1600);
+    render(); persist(); confere();
   }
 
   // ---------- dica (uma por dia, comum/dica.js): começo e tamanho de uma palavra que falta ----------
@@ -492,10 +527,10 @@
     if (!teste) {
       const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, pts: {} });
       st.pts ||= {};
-      if (finished || pts >= corte(.7)) { st.pts[dayNum] = [pts, P.m, achadas.length, P.w.length]; save("stats", recomputeStats(st)); }
+      if (finished || pts >= corte(META)) { st.pts[dayNum] = [pts, P.m, achadas.length, P.w.length, raras.length]; save("stats", recomputeStats(st)); }
     }
     if (pleno() && finished) { render(); celebrar("girassol", { alvo: $("palco"), esmaecer: $("flor") }).then(() => setTimeout(showEnd, 200)); return; }
-    if (finished || pts < corte(.7)) return;
+    if (finished || pts < corte(META)) return;
     finished = true;
     $("controls").classList.add("play");
     persist(); render();
@@ -505,7 +540,7 @@
     const pts = pontos();
     $("endTitle").textContent = pleno() ? "Girassol pleno!" : "Girassol!";
     $("endPts").textContent = `${pts} pts`;
-    $("endSub").textContent = `${teste ? "Extra" : "#" + dayNum} · nível ${P.l}/7 · ${achadas.length} de ${P.w.length} palavras` + (dicaUsada ? " · com dica" : " · sem dica");
+    $("endSub").textContent = `${teste ? "Extra" : "#" + dayNum} · nível ${P.l}/7 · ${achadas.length} de ${P.w.length} do dia` + (raras.length ? ` · ${raras.length} rara${raras.length > 1 ? "s" : ""}` : "") + (dicaUsada ? " · com dica" : "");
     if (window.semanaFim) {
       if (teste) semanaFim($("endSub"), null);
       else {
@@ -517,7 +552,7 @@
   }
   $("shareBtn").addEventListener("click", () => {
     const k = nivelIdx(pontos()), barra = NIVEIS.map((_, i) => (i <= k ? "🌻" : "🟫")).join("");
-    const text = `GIRASSOL #${dayNum} · nível ${P.l}\n${barra}\n${NIVEIS[k][0]}${pleno() ? " pleno" : ""} · ${pontos()} pts · ${achadas.length}/${P.w.length} palavras${dicaUsada ? " · com dica" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/girassol/`;
+    const text = `GIRASSOL #${dayNum} · nível ${P.l}\n${barra}\n${NIVEIS[k][0]}${pleno() ? " pleno" : ""} · ${pontos()} pts · ${achadas.length}/${P.w.length} do dia${raras.length ? ` · ${raras.length} raras` : ""}${dicaUsada ? " · com dica" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/girassol/`;
     ghCompartilhar($("shareBtn"), text);
   });
   $("doneBar").addEventListener("click", () => { if (finished) showEnd(); });
@@ -527,7 +562,7 @@
     if (!P) return "";
     const k = nivelIdx(pontos());
     return NIVEIS.map(([nome, f], i) => `<span class="${i === k ? "hj" : ""}">${nome}</span><span class="${i === k ? "hj" : ""}">${corte(f)} pts</span>`).join("") +
-      `<span>Girassol pleno (todas)</span><span>${P.m} pts</span>`;
+      `<span>Girassol pleno (todas do dia)</span><span>${P.m} pts</span>`;
   }
   function openModal(id) { if (id === "helpOverlay") $("niveis").innerHTML = niveisHTML(); $(id).classList.add("open"); }
   function closeModal(el) { el.classList.remove("open"); }
