@@ -15,7 +15,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - **Vibração** (`comum/tema.js`, `<label data-haptic-trigger>`): não recriar o botão durante o próprio
   toque; rodar a ação em `setTimeout(…, 0)`.
 - **Telas dos jogos** (`<html data-fixa>`): sem zoom e sem rolar a página.
-- **Painel**: nunca rola para o lado. Grades com `minmax(0, 1fr)` (nunca `1fr` puro) e `html, body { overflow-x: clip }`;
+- **Painel**: jogos da casa em lista (um cartão só, linhas com fio; desde 04/11/2026), não em grade. Nunca rola para o lado. Grades com `minmax(0, 1fr)` (nunca `1fr` puro) e `html, body { overflow-x: clip }`;
   conferir em 320–430 px que `document.documentElement.scrollWidth === innerWidth`.
 - **Área segura**: respeitar `env(safe-area-inset-*)` em cima (notch) e embaixo (barra de gestos).
 

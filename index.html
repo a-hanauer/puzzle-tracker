@@ -369,6 +369,25 @@
   .pl .nv i.on { opacity: 1; }
   .pl { max-width: 100%; min-width: 0; overflow: hidden; }
   @container (max-width: 112px) { .pl .nv { display: none; } }   /* cartão estreito (celular pequeno): sai a régua do nível */
+
+  /* Jogos da casa em LISTA (desde 04/11/2026, no lugar da grade de 3 colunas: nenhum número de jogos deixa buraco).
+     Um cartão só, linhas separadas por um fio; a cor de cada jogo fica no ícone e na pílula do nível. */
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 0; background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+  .grid .app, .grid .app.done, .grid .app[data-g], .grid .app[data-g].done {
+    background: transparent; border: 0; border-radius: 0; box-shadow: none; color: var(--text); container-type: normal; }
+  .grid .app + .app { border-top: 1px solid var(--border); }
+  .grid .app:active { transform: none; background: color-mix(in srgb, var(--text) 5%, transparent); }
+  .grid .app a.game { flex-direction: row; align-items: center; gap: 12px; text-align: left; padding: 10px 50px 10px 10px; }
+  .grid .app .icon, .grid .app[data-g] .icon { width: 46px; height: 46px; border-radius: 12px; background: var(--tile-bg, var(--surface-2)); }
+  .grid .app .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .grid .app .name { font-size: 1rem; }
+  .grid .app .ds { font-size: .78rem; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .grid .app .status, .grid .app[data-g] .status { flex: none; min-height: 0; margin: 0; justify-content: flex-end; }
+  .grid .app .pl, .grid .app .pl.leve { background: var(--tile-bg, var(--surface-2)); color: var(--tile-ink, var(--text)); box-shadow: none; }
+  .grid .app .pl.leve .nv { color: var(--tile-ink, var(--text)); }
+  .grid .app .badge { top: 50%; right: 12px; transform: translateY(-50%); }
+  .grid .app .mr-track { stroke: var(--border); }
+  @media (max-width: 359px) { .grid .app .pl .nv { display: none; } .grid .app a.game { gap: 10px; } }
   /* a página inicial nunca rola para o lado */
   html, body { overflow-x: hidden; overflow-x: clip; overscroll-behavior-x: none; }
   .tag {
@@ -916,7 +935,7 @@ function buildCard(g) {
   li.innerHTML = `
     <a class="game" href="${g.url}" title="${g.desc || ""}">
       <span class="icon">${g.emoji}</span>
-      <span class="name">${g.name}</span>
+      <span class="txt"><span class="name">${g.name}</span><span class="ds">${escHTML(g.desc || "")}</span></span>
       <span class="status"></span>
     </a>`;
   loadIcon(g, li.querySelector(".icon"));
