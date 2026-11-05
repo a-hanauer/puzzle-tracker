@@ -85,6 +85,13 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 ## Gerânio (jogo de palavras no estilo Spelling Bee, desde 04/11/2026; chamou-se Girassol até 05/11/2026)
 
+- **Versão 6.2 (em teste, desde o #3 = 06/11/2026):** flor de **5 pétalas** (6 letras); palavras do dia = só **verbetes** de
+  dicionário de uso corrente (`geranio/verbetes.json`, feito por `geranio/verbetes.py`: verbete minúsculo do VERO, verbo no
+  infinitivo, sem plural/feminino flexionado/conjugação; grafia exata com icf ≤ 14 ou no Cordel; sem estrangeirismos,
+  `nomes-proprios.txt` e lugares). Todo o resto do vocabulário continua valendo como rara (dobro). Listas: seg 10–14 … dom 33–50.
+  Pangrama: + 1 ponto por letra da flor. A página desenha quantas pétalas o desafio tiver (os #1 e #2 têm 6).
+  **Versão 6.1** (7 letras, palavras do dia = comuns + flexões, base.json/comuns.mjs) guardada no ramo `geranio-6.1`.
+
 - Pasta `geranio/` desde 05/11/2026 (`girassol/` só redireciona). O id (`girassol`) e as chaves salvas (`girassol:`) ficaram
   com o nome antigo, para não perder progresso.
   Cores (opção "A"): pétalas vermelhas (#e2433f / escuro #d93a37) com letras brancas, miolo amarelo (#f6d77a) com letra

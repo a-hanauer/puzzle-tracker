@@ -185,8 +185,9 @@
     // amarelo com os estames
     girassol: () => {
       const f = n => n.toFixed(1);
+      const NP = 5, th = Math.PI / NP;   // 5 pétalas, como a flor do jogo (desde o #3)
       const gomo = (ri, ro, g, k, rc) => {
-        const d = g / 2 + rc, u = [.5, -Math.sqrt(3) / 2], n = [-Math.sqrt(3) / 2, -.5], r1 = ri + rc, R = ro - rc;
+        const d = g / 2 + rc, u = [Math.sin(th), -Math.cos(th)], n = [-Math.cos(th), -Math.sin(th)], r1 = ri + rc, R = ro - rc;
         const P = (t, s) => [s * (d * n[0] + t * u[0]), d * n[1] + t * u[1]];
         const tb = Math.sqrt(R * R - d * d) - k, B = P(tb, 1), C = P(tb, -1), uL = [-u[0], u[1]];
         const ctl = h => [[B[0] + u[0] * h, B[1] + u[1] * h], [C[0] + uL[0] * h, C[1] + uL[1] * h]];
@@ -194,7 +195,7 @@
         const [c1, c2] = ctl(lo), A = P(Math.sqrt(r1 * r1 - d * d), 1); return { A, B, c1, c2, C, D: [-A[0], A[1]], r1 };
       };
       const gira = (p, g) => { const a = g * Math.PI / 180; return `${f(p[0] * Math.cos(a) - p[1] * Math.sin(a))} ${f(p[0] * Math.sin(a) + p[1] * Math.cos(a))}`; };
-      const G = gomo(14, 74, 5, 22, 2);
+      const G = gomo(14, 74, 5, 27, 2);
       const pet = g => `M${gira(G.A, g)} L${gira(G.B, g)} C${gira(G.c1, g)} ${gira(G.c2, g)} ${gira(G.C, g)} L${gira(G.D, g)} A${G.r1} ${G.r1} 0 0 1 ${gira(G.A, g)}Z`;
       const folha = (cx, cy, r, rot) => {
         let p = ""; const L = 7;
@@ -210,10 +211,10 @@
         <ellipse cx="0" cy="84" rx="62" ry="7" fill="rgba(90,30,20,.16)"/>
         <g class="entra">${folha(-50, 46, 40, 20)}</g><g class="entra" style="--d:.08s">${folha(52, 40, 36, -30)}</g>
         <g class="gira-flor" filter="url(#cel-gs)">`;
-      for (let i = 0; i < 6; i++) {
-        const g = 60 * i; let nerv = "";
-        for (const dx of [-7, 0, 7]) nerv += `<path d="M${gira([dx * .3, -18], g)} Q${gira([dx, -40], g)} ${gira([dx * 1.6, -56], g)}" stroke="#9e1a22" stroke-opacity=".35" stroke-width="1.3" fill="none" stroke-linecap="round"/>`;
-        s += `<g class="gira-p" style="--d:${(.12 + i * .07).toFixed(2)}s"><path d="${pet(g)}" fill="url(#cel-gp)" stroke="#e2433f" stroke-width="3" stroke-linejoin="round"/>${nerv}<path d="M${gira([-10, -62], g)} Q${gira([0, -70], g)} ${gira([10, -62], g)}" stroke="#ff9a8a" stroke-opacity=".7" stroke-width="2.2" fill="none" stroke-linecap="round"/></g>`;
+      for (let i = 0; i < NP; i++) {
+        const g = 360 / NP * i; let nerv = "";
+        for (const dx of [-9, 0, 9]) nerv += `<path d="M${gira([dx * .3, -18], g)} Q${gira([dx, -40], g)} ${gira([dx * 1.6, -56], g)}" stroke="#9e1a22" stroke-opacity=".35" stroke-width="1.3" fill="none" stroke-linecap="round"/>`;
+        s += `<g class="gira-p" style="--d:${(.12 + i * .07).toFixed(2)}s"><path d="${pet(g)}" fill="url(#cel-gp)" stroke="#e2433f" stroke-width="3" stroke-linejoin="round"/>${nerv}<path d="M${gira([-13, -62], g)} Q${gira([0, -71], g)} ${gira([13, -62], g)}" stroke="#ff9a8a" stroke-opacity=".7" stroke-width="2.2" fill="none" stroke-linecap="round"/></g>`;
       }
       s += `<g class="entra" style="--d:.6s"><circle r="15" fill="url(#cel-gm)"/>`;
       for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2 - .4; s += `<line x1="0" y1="0" x2="${f(Math.cos(a) * 13)}" y2="${f(Math.sin(a) * 13)}" stroke="#f9f1e0" stroke-width="1.2"/><circle cx="${f(Math.cos(a) * 14)}" cy="${f(Math.sin(a) * 14)}" r="2.3" fill="#c8571c"/>`; }

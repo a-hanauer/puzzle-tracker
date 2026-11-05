@@ -21,29 +21,32 @@ import { mantidos } from "../comum/selecao.mjs";
 const DIR = dirname(fileURLToPath(import.meta.url));
 export const EPOCH = [2026, 10, 4];                 // #1 = quarta, 04/11/2026
 // quantas palavras tem a lista do dia, por nível
-const NIVEL = { 1: [30, 45], 2: [40, 55], 3: [50, 68], 4: [62, 82], 5: [75, 95], 6: [88, 115], 7: [105, 150] };
+// Desde o #3 (06/11/2026): flor de 6 letras (5 pétalas + miolo) e palavras do dia = só verbetes de uso (verbetes.json, de
+// verbetes.py). Os #1 e #2 (7 letras, base.json) ficam como saíram. A versão anterior (7 letras) está no ramo geranio-6.1.
+const LETRAS = 6, DESDE = 2;                       // índice do primeiro dia no formato novo (#3)
+const NIVEL = { 1: [10, 14], 2: [13, 17], 3: [16, 21], 4: [19, 25], 5: [23, 30], 6: [28, 36], 7: [33, 50] };
 
 export const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
-export const pontos = (w, pangrama) => (w.length === 4 ? 1 : w.length) + (pangrama ? 7 : 0);
+export const pontos = (w, pangrama) => (w.length === 4 ? 1 : w.length) + (pangrama ? new Set(w).size : 0);   // pangrama: + nº de letras da flor
 
 function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
 
 export function palavras() {
-  const { comuns } = JSON.parse(readFileSync(join(DIR, "base.json"), "utf8"));
-  return new Map(Object.entries(comuns).map(([n, w]) => [n.toUpperCase(), w]));   // MAIUSCULA -> escrita com acento
+  const v = JSON.parse(readFileSync(join(DIR, "verbetes.json"), "utf8"));
+  return new Map(Object.entries(v).map(([n, w]) => [n.toUpperCase(), w]));   // MAIUSCULA -> escrita com acento
 }
 
 // todas as flores possíveis: 7 letras de algum pangrama × cada letra no miolo
 export function flores(m) {
   const lista = [...m.keys()], porConj = new Map();
-  for (const n of lista) { const s = [...new Set(n)]; if (s.length === 7) porConj.set(s.sort().join(""), true); }
+  for (const n of lista) { const s = [...new Set(n)]; if (s.length === LETRAS) porConj.set(s.sort().join(""), true); }
   const out = [];
   for (const k of porConj.keys()) {
     const L = new Set(k), cabem = lista.filter(n => [...n].every(c => L.has(c)));
     for (const c of k) {
       const ws = cabem.filter(n => n.includes(c));
-      const pang = ws.filter(n => new Set(n).size === 7);
-      const max = ws.reduce((t, n) => t + pontos(n, new Set(n).size === 7), 0);
+      const pang = ws.filter(n => new Set(n).size === LETRAS);
+      const max = ws.reduce((t, n) => t + pontos(n, new Set(n).size === LETRAS), 0);
       out.push({ k, c, ws, pang, max });
     }
   }
@@ -63,9 +66,11 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   };
   const refaz = p => { const L = new Set(p.c + p.f), ws = [...m.keys()].filter(n => n.includes(p.c) && [...n].every(c => L.has(c))).sort((x, y) => x.localeCompare(y));
     return { ...p, w: ws.map(n => m.get(n)), m: ws.reduce((t, n) => t + pontos(n, new Set(n).size === 7), 0) }; };
-  old.forEach((p, k) => (old[k] = refaz(p)));
+  // o formato novo começa no #3: os publicados antes ficam como estão; do #3 em diante, só os que já estão no formato novo
+  { const k = old.findIndex((p, i) => i >= DESDE && p.f.length !== LETRAS - 1); if (k >= 0) old.splice(k); }
+  void refaz;
   const out = old.slice(), usadaEm = new Map(), pangUsado = new Set();
-  out.forEach((p, k) => { usadaEm.set([p.c, ...p.f].sort().join(""), k); p.w.forEach(w => { const n = norm(w); if (new Set(n).size === 7) pangUsado.add(n); }); });
+  out.forEach((p, k) => { usadaEm.set([p.c, ...p.f].sort().join(""), k); p.w.forEach(w => { const n = norm(w); if (new Set(n).size === LETRAS) pangUsado.add(n); }); });
   for (let k = out.length; k < DIAS; k++) {
     const l = nivelDe(k), [a, b] = NIVEL[l], ontem = out[k - 1];
     const ok = todas.filter(f => f.ws.length >= a && f.ws.length <= b && f.c !== ontem?.c
@@ -88,7 +93,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   }
   const { bloq } = JSON.parse(readFileSync(join(DIR, "base.json"), "utf8"));
   writeFileSync(join(DIR, "desafios.json"), JSON.stringify({ epoch: EPOCH, bloq, puzzles: out, livre }));
-  const cont = {}; for (const p of out.slice(0, 7)) console.log(`#${out.indexOf(p) + 1} nível ${p.l}: ${p.c} + ${p.f} · ${p.w.length} palavras · ${p.m} pts · ${p.w.filter(w => new Set(norm(w)).size === 7).join(", ")}`);
+  const cont = {}; for (const p of out.slice(0, 7)) console.log(`#${out.indexOf(p) + 1} nível ${p.l}: ${p.c} + ${p.f} · ${p.w.length} palavras · ${p.m} pts · ${p.w.filter(w => new Set(norm(w)).size === p.f.length + 1).join(", ")}`);
   for (let l = 1; l <= 7; l++) cont[l] = todas.filter(f => f.ws.length >= NIVEL[l][0] && f.ws.length <= NIVEL[l][1]).length;
   console.log("flores por nível:", cont, "· livre:", Object.fromEntries(Object.entries(livre).map(([l, v]) => [l, v.length])));
 }

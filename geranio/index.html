@@ -10,11 +10,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Gerânio">
 <title>GERÂNIO — palavras com as letras da flor</title>
-<link rel="icon" type="image/png" href="icon.png?v=3">
-<script src="../comum/tema.js?v=152"></script>
-<script src="../comum/cabecalho.js?v=152"></script>
-<script src="../comum/dica.js?v=152"></script>
-<link rel="apple-touch-icon" href="icon.png?v=3">
+<link rel="icon" type="image/png" href="icon.png?v=4">
+<script src="../comum/tema.js?v=153"></script>
+<script src="../comum/cabecalho.js?v=153"></script>
+<script src="../comum/dica.js?v=153"></script>
+<link rel="apple-touch-icon" href="icon.png?v=4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
@@ -197,7 +197,7 @@
   .niveis .hj { font-weight: 800; color: var(--ink) !important; }
   .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--ink); color: var(--bg); font: inherit; font-weight: 700; font-size: .95rem; }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=152">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=153">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--acc); --gh-line: var(--line); }
   header.gh { flex: none; } .gh-meta { flex: none; }
@@ -207,7 +207,7 @@
 
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Gerânio — recarregar"><img src="icon.png?v=3" data-escuro="icon-escuro.png?v=3" alt=""><b>GERÂNIO</b></a>
+  <a class="gh-brand" href="./" aria-label="Gerânio — recarregar"><img src="icon.png?v=4" data-escuro="icon-escuro.png?v=4" alt=""><b>GERÂNIO</b></a>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
 
@@ -231,7 +231,7 @@
   <div class="controls" id="controls">
     <div class="prog">
       <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Gerânio: ver resultado">
-        <img class="ic" src="icon.png?v=3" data-escuro="icon-escuro.png?v=3" alt="">
+        <img class="ic" src="icon.png?v=4" data-escuro="icon-escuro.png?v=4" alt="">
         <span class="txt"><b id="doneTitle">0 pts</b><span id="doneSub"></span></span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
       </button>
@@ -247,9 +247,9 @@
     <ul>
       <li>Toda palavra usa a letra do <b>miolo</b> e tem <b>4 letras ou mais</b>. As letras podem se repetir.</li>
       <li>Vale <b>qualquer palavra</b> do português, com plurais, femininos e todas as conjugações (sem nomes próprios, de pessoas ou lugares, estrangeirismos nem palavrões).</li>
-      <li>A régua conta as <b>palavras do dia</b>: as comuns e as flexões comuns delas. Uma palavra válida fora delas é <b>rara</b> e vale o <b>dobro</b>.</li>
+      <li>A régua conta as <b>palavras do dia</b>: palavras de dicionário de uso corrente, na forma de verbete (verbo no infinitivo, sem plural nem feminino). Qualquer outra palavra válida (plural, conjugação, termo raro) vale o <b>dobro</b>, como bônus.</li>
       <li>Acentos e ç não contam: <b>ACAO</b> vale "ação".</li>
-      <li>Palavra de 4 letras vale 1 ponto; mais longa, 1 ponto por letra. A que usa <b>as 7 letras</b> (o pangrama) ganha mais 7. Todo dia tem pelo menos uma.</li>
+      <li>Palavra de 4 letras vale 1 ponto; mais longa, 1 ponto por letra. A que usa <b>todas as letras</b> da flor (o pangrama) ganha mais 1 ponto por letra da flor. Todo dia tem pelo menos uma.</li>
       <li>Na barra das achadas, quantas palavras do dia faltam por tamanho e por letra inicial. A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma delas. Uma por dia.</li>
     </ul>
     <p>Chegando a <b>Gerânio</b>, o dia está feito; dá para continuar até achar todas as do dia (Gerânio pleno). Ao longo da semana a lista do dia cresce.</p>
@@ -263,7 +263,7 @@
 <div class="overlay" id="endOverlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon.png?v=3" data-escuro="icon-escuro.png?v=3" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,30,20,.15)"></div>
+    <div class="fim-art"><img src="icon.png?v=4" data-escuro="icon-escuro.png?v=4" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(40,30,20,.15)"></div>
     <h2 class="fim-title" id="endTitle">Gerânio!</h2>
     <div class="fim-result"><div class="fim-time" id="endPts">0 pts</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="endSub"></p>
@@ -286,8 +286,8 @@
   const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
   const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
   const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
-  const ehPang = n => new Set(n).size === 7;
-  const pontosDe = n => (n.length === 4 ? 1 : n.length) + (ehPang(n) ? 7 : 0);
+  const ehPang = n => !!P && new Set(n).size === P.f.length + 1;   // usa todas as letras da flor
+  const pontosDe = n => (n.length === 4 ? 1 : n.length) + (ehPang(n) ? P.f.length + 1 : 0);   // pangrama: + 1 ponto por letra da flor
 
   // níveis: fração dos pontos possíveis (só as palavras do dia); Gerânio fecha o dia
   const NIVEIS = [["Semente", 0], ["Broto", .02], ["Muda", .05], ["Botão", .12], ["Flor", .22], ["Gerânio", .35]];
@@ -317,7 +317,7 @@
     // a lista do dia pode ter sido refeita: o que foi achado continua valendo, do lado certo (do dia ou rara)
     const ja = [...new Set([...(saved?.found || []), ...(saved?.raras || [])])].filter(n => n.includes(P.c));
     achadas = ja.filter(n => RESP.has(n)); raras = ja.filter(n => !RESP.has(n));
-    ordem = saved?.ordem && saved.ordem.length === 6 ? saved.ordem : [...P.f];
+    ordem = saved?.ordem && saved.ordem.length === puzzle.f.length ? saved.ordem : [...P.f];
     dicaUsada = !!saved?.dica; alvo = saved?.alvo || null;
     finished = !!saved?.done; digitado = ""; ultimasOrdem = [...achadas, ...raras];
     if (!teste) { const now = new Date(); $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`; }
@@ -358,13 +358,13 @@
   }
   setTimeout(() => dicionario().catch(() => {}), 300);   // toda palavra precisa dele: carrega logo
 
-  // ---------- a flor (SVG): 6 pétalas em gomo em volta do miolo (a letra obrigatória) ----------
+  // ---------- a flor (SVG): uma pétala em gomo por letra (5 desde o #3; 6 nos dias #1 e #2) em volta do miolo (a obrigatória) ----------
   // Cada pétala: laterais paralelas (fresta de largura constante), borda de dentro no arco do miolo e ponta de fora numa
   // curva contínua, tangente às laterais (a "mais redonda"). Cantos de dentro arredondados de leve pelo traço da mesma cor.
   // As pétalas são calculadas já giradas (sem transform), para nenhuma ficar com a ponta cortada no iPhone.
   const f1 = n => n.toFixed(2);
-  function petala(ri, ro, g, rc, k) {
-    const d = g / 2 + rc, u = [.5, -Math.sqrt(3) / 2], n = [-Math.sqrt(3) / 2, -.5], r1 = ri + rc, R = ro - rc;
+  function petala(ri, ro, g, rc, k, np) {
+    const th = Math.PI / np, d = g / 2 + rc, u = [Math.sin(th), -Math.cos(th)], n = [-Math.cos(th), -Math.sin(th)], r1 = ri + rc, R = ro - rc;
     const P = (t, s) => [s * (d * n[0] + t * u[0]), d * n[1] + t * u[1]];
     const tb = Math.sqrt(R * R - d * d) - k, B = P(tb, 1), C = P(tb, -1), uL = [-u[0], u[1]];
     const ponta = h => [[B[0] + u[0] * h, B[1] + u[1] * h], [C[0] + uL[0] * h, C[1] + uL[1] * h]];
@@ -373,17 +373,19 @@
     const [c1, c2] = ponta(lo), A = P(Math.sqrt(r1 * r1 - d * d), 1), D = [-A[0], A[1]];
     return [["M", A], ["L", B], ["C", c1, c2, C], ["L", D], ["A", r1, A]];
   }
-  const PETALA = petala(60, 162, 9, 5, 44), RAIO_LETRA = 109;
-  function petalaGirada(graus) {
+  const RAIO_LETRA = 109, FORMAS = {};
+  const PETALA = np => (FORMAS[np] ||= petala(60, 162, 9, 5, np === 5 ? 54 : 44, np));   // 5 pétalas: mais largas, ponta mais redonda
+  function petalaGirada(graus, np) {
     const a = graus * Math.PI / 180, c = Math.cos(a), s = Math.sin(a), R = ([x, y]) => `${f1(x * c - y * s)} ${f1(x * s + y * c)}`;
-    return PETALA.map(([k, ...p]) => k === "A" ? `A${f1(p[0])} ${f1(p[0])} 0 0 1 ${R(p[1])}` : k + p.map(R).join(" ")).join(" ") + " Z";
+    return PETALA(np).map(([k, ...p]) => k === "A" ? `A${f1(p[0])} ${f1(p[0])} 0 0 1 ${R(p[1])}` : k + p.map(R).join(" ")).join(" ") + " Z";
   }
-  const pos = (i, d) => { const a = Math.PI / 180 * (-90 + 60 * i); return [d * Math.cos(a), d * Math.sin(a)]; };
+  const pos = (i, d, np) => { const a = Math.PI / 180 * (-90 + 360 / np * i); return [d * Math.cos(a), d * Math.sin(a)]; };
   function desenhaFlor() {
     let s = `<svg id="florSvg" viewBox="-184 -184 368 368" role="group" aria-label="Letras da flor">`;
-    for (let i = 0; i < 6; i++) {
-      const [x, y] = pos(i, RAIO_LETRA);
-      s += `<g class="pt" data-i="${i}"><path class="lu" d="${petalaGirada(60 * i)}" fill="var(--petala)" stroke="var(--petala)" stroke-width="10" stroke-linejoin="round"/>
+    const np = P.f.length;
+    for (let i = 0; i < np; i++) {
+      const [x, y] = pos(i, RAIO_LETRA, np);
+      s += `<g class="pt" data-i="${i}"><path class="lu" d="${petalaGirada(360 / np * i, np)}" fill="var(--petala)" stroke="var(--petala)" stroke-width="10" stroke-linejoin="round"/>
         <text class="le" x="${f1(x)}" y="${f1(y)}" fill="var(--letra)"></text></g>`;
     }
     s += `<g class="pt" data-i="c"><circle r="54" fill="var(--miolo)"/><circle r="46" fill="none" stroke="var(--miolo-txt)" stroke-opacity=".25" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round"/>
@@ -537,7 +539,7 @@
     const f = $("flor"); f.classList.add("mexe");
     setTimeout(() => {
       const velha = ordem.join("");
-      do { for (let i = 5; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ordem[i], ordem[j]] = [ordem[j], ordem[i]]; } } while (ordem.join("") === velha);
+      do { for (let i = ordem.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ordem[i], ordem[j]] = [ordem[j], ordem[i]]; } } while (ordem.join("") === velha);
       letrasPetalas(); f.classList.remove("mexe"); persist();
     }, 180);
   });
@@ -668,9 +670,9 @@
   $("againBtn").addEventListener("click", () => sorteia());
 })();
 </script>
-<script src="../comum/catalogo.js?v=152"></script>
-<script src="../comum/celebra.js?v=152"></script>
-<script src="../comum/recorde.js?v=152"></script>
-<script src="../comum/proximo.js?v=152" data-jogo="girassol"></script>
+<script src="../comum/catalogo.js?v=153"></script>
+<script src="../comum/celebra.js?v=153"></script>
+<script src="../comum/recorde.js?v=153"></script>
+<script src="../comum/proximo.js?v=153" data-jogo="girassol"></script>
 </body>
 </html>
