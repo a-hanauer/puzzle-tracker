@@ -215,26 +215,26 @@
   .row.done .nm { text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: color-mix(in srgb, currentColor 70%, transparent); }
   .row a.game {
     flex: 1; min-width: 0; display: flex; flex-direction: row; align-items: center; gap: 12px; text-align: left;
-    padding: 10px 6px 10px 12px; color: inherit; text-decoration: none;
+    padding: 10px 6px 10px 10px; color: inherit; text-decoration: none;
   }
-  .row .icon { width: 42px; height: 42px; border-radius: 11px; font-size: 1.4rem; }
-  .row .icon img { width: 28px; height: 28px; }
+  .row .icon { width: 46px; height: 46px; border-radius: 12px; font-size: 1.5rem; }
+  .row .icon img { width: 30px; height: 30px; }
   .row .info { min-width: 0; display: flex; flex-direction: column; }
-  .row .name { display: flex; align-items: center; gap: 6px; font-size: .98rem; }
+  .row .name { display: flex; align-items: center; gap: 6px; font-size: 1rem; }
   .row .desc { display: block; color: var(--muted); font-size: .78rem; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   /* check dos outros jogos: círculo vazio → verde com ✔ */
   .toggle {
     flex-shrink: 0; align-self: stretch; display: flex; align-items: center; justify-content: center;
-    padding: 0 16px 0 10px; background: none; border: none; cursor: pointer;
+    padding: 0 13px 0 10px; background: none; border: none; cursor: pointer;
   }
   .check {
-    width: 30px; height: 30px; border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;   /* do tamanho visível do anel dos jogos da casa */
     border: 2px solid var(--border); background: var(--surface);
     display: flex; align-items: center; justify-content: center;
     transition: background .2s, border-color .2s, transform .15s;
   }
   .toggle:active .check { transform: scale(.9); }
-  .check svg { width: 16px; height: 16px; stroke: #fff; stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round;
+  .check svg { width: 12px; height: 12px; stroke: #fff; stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round;
     stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .25s .05s; }
   .toggle[aria-checked="true"] .check { background: var(--muted); border-color: var(--muted); opacity: .6; }
   .toggle[aria-checked="true"] .check svg { stroke-dashoffset: 0; }
@@ -381,12 +381,12 @@
   @container (max-width: 112px) { .pl .nv { display: none; } }   /* cartão estreito (celular pequeno): sai a régua do nível */
 
   /* Jogos da casa em LISTA (desde 04/11/2026, no lugar da grade de 3 colunas: nenhum número de jogos deixa buraco).
-     Um cartão só, linhas separadas por um fio; a cor de cada jogo fica no ícone e na pílula do nível. */
-  .grid { grid-template-columns: minmax(0, 1fr); gap: 0; background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+     Um cartão por jogo, igual aos outros jogos (05/11/2026): mesmo ícone (46px) e mesmo círculo à direita (26px). */
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .grid .app, .grid .app.done, .grid .app[data-g], .grid .app[data-g].done {
-    background: transparent; border: 0; border-radius: 0; box-shadow: none; color: var(--text); container-type: normal; }
-  .grid .app + .app { border-top: 1px solid var(--border); }
-  .grid .app:active { transform: none; background: color-mix(in srgb, var(--text) 5%, transparent); }
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
+    color: var(--text); container-type: normal; }
+  .grid .app:active { transform: none; background: color-mix(in srgb, var(--text) 4%, var(--surface)); }
   .grid .app a.game { flex-direction: row; align-items: center; gap: 12px; text-align: left; padding: 10px 50px 10px 10px; }
   .grid .app .icon, .grid .app[data-g] .icon { width: 46px; height: 46px; border-radius: 12px; background: var(--tile-bg, var(--surface-2)); }
   .grid .app .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
