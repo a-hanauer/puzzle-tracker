@@ -31,6 +31,7 @@ const BASE_GAMES = [
   { id: "novelo",     name: "Novelo",     emoji: "🧶", desc: "Um fio por todas as casas",     url: "novelo/", icon: "novelo/icon.png?v=21", iconDark: "novelo/icon-escuro.png?v=21", iconFull: true, cor: ["#f1c6c9", "#3b1619", "#3c2022", "#f4ebec"] },
   { id: "retalhos",   name: "Azulejo",    emoji: "🟦", desc: "Uma parede de painéis",         url: "azulejo/", icon: "azulejo/icon.png?v=21", iconDark: "azulejo/icon-escuro.png?v=21", iconFull: true, cor: ["#c6e5f1", "#16313b", "#20343c", "#ebf2f4"] },
   { id: "cordel",     name: "Cordel",     emoji: "🧵", desc: "Palavras escondidas na grade",  url: "cordel/", icon: "cordel/icon.png?v=22", iconDark: "cordel/icon-escuro.png?v=22", iconFull: true, cor: ["#dcd9d2", "#141210", "#2b2a28", "#f1e7d6"] },
+  { id: "girassol",   name: "Girassol",   emoji: "🌻", desc: "Palavras com as letras da flor", url: "girassol/", icon: "girassol/icon.png?v=1", iconDark: "girassol/icon-escuro.png?v=1", iconFull: true, cor: ["#f5dc98", "#3d2c06", "#3a3015", "#f6efd8"] },
   { id: "brigadeiro", name: "Brigadeiro", emoji: "🍫", desc: "Incline até as forminhas",      url: "brigadeiro/", icon: "brigadeiro/icon.png?v=1", iconDark: "brigadeiro/icon-escuro.png?v=1", iconFull: true, cor: ["#f6d3de", "#4a2030", "#3a2228", "#f7e6ec"] },
   { id: "cruzadinha", name: "Ponto Cruz", emoji: "🪡", desc: "Sudoku de dados bordados",      url: "cruzadinha/", icon: "cruzadinha/icon.png?v=24", iconDark: "cruzadinha/icon-escuro.png?v=24", iconFull: true, cor: ["#dfe9b8", "#2f3a12", "#2f3620", "#f1f4e6"] },
   { id: "pingado",    name: "Cortado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "cortado/", icon: "cortado/icon.png?v=21", iconDark: "cortado/icon-escuro.png?v=21", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
@@ -80,6 +81,14 @@ const LOCAL_PROGRESS = {
   cordel() { return progressoPorTempo("cordel", [2026, 9, 4]); },
   // Ponto Cruz (pasta e id "cruzadinha", o nome antigo): desafio #1 = 10/10/2026; prog = [casas preenchidas, total]
   cruzadinha() { return progressoPorTempo("cruzadinha", [2026, 9, 10]); },
+  // Girassol: desafio #1 = 04/11/2026; sem tempo — o resultado são os pontos. Feito = chegou a Girassol (70% dos pontos);
+  // a partida continua até achar todas (pleno = troféu no painel)
+  girassol() {
+    const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+    const p = readJSON(`girassol:dia:${Math.round((today0 - new Date(2026, 10, 4)) / 86400000) + 1}`);
+    if (!p || (!p.done && !p.started)) return null;
+    return { tries: p.pts || 0, max: p.meta || 1, won: !!p.done, finished: !!p.done, time: null, dica: !!p.dica, pts: p.pts || 0, pleno: !!p.pleno };
+  },
   // Brigadeiro (entrou no lugar da Panelinha): desafio #1 = 17/10/2026; prog = [doces nas forminhas, total]
   // o resultado é o número de inclinações (sem tempo): inc e min aparecem na pílula do painel
   brigadeiro() {

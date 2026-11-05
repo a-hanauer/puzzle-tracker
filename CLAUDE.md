@@ -81,3 +81,17 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - `brigadeiro/gerador.mjs`: sorteia paredes, forminhas e doces e resolve. Desde 22/10/2026 a semana vai de 3 doces e 4–6
   inclinações mínimas na segunda (o antigo nível 3) a 4 doces e 10–13 no domingo; sábado e domingo como antes.
   A dica faz a próxima inclinação ótima; se travou, volta até ter saída.
+
+## Girassol (jogo de palavras no estilo Spelling Bee, desde 04/11/2026)
+
+- 7 letras numa flor (pétala estilo "1": três camadas, degradê laranja→amarelo, miolo com sementes em espiral); a do miolo
+  é obrigatória; palavras de 4+ letras, letras podem repetir; acentos e ç não contam. Pontos: 4 letras = 1, mais longa = 1 por
+  letra, pangrama (as 7 letras) +7. Níveis: Semente, Broto, Muda, Botão, Flor, Girassol (2/8/20/40/70% dos pontos).
+  Chegar a Girassol = dia feito (celebração + bandeja de fim); dá para continuar até achar todas ("pleno" = troféu no painel).
+  Sem cronômetro: o resultado são os pontos.
+- Respostas: só a lista curada do Cordel (`cordel/respostas.json`), menos o que estiver em `FORA` no gerador. Palavra que existe
+  no dicionário largo (`cordel/palavras.txt`) mas não é resposta: "não está na lista do dia".
+- `girassol/gerador.mjs`: flores a partir de pangramas; nível = dia da semana pelo tamanho da lista (seg 13–18 … dom 37–60
+  palavras); as mesmas 7 letras não voltam em 150 dias; o miolo não repete o do dia anterior. Jogo livre: `livre[nível]`.
+- Dica (uma por dia): começo (2 letras) e tamanho da palavra mais curta que falta. A lista das achadas mostra também as
+  respostas de ontem.

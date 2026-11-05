@@ -42,6 +42,12 @@
   @keyframes cel-sai { to { opacity: 0; transform: scale(.92); visibility: hidden; } }
   .celebra.segura { animation: none; }
 
+  /* Girassol: a flor gira e abre — o miolo aparece, as pétalas brotam de dentro para fora e as sementes surgem */
+  .celebra .gira-flor { transform-box: view-box; transform-origin: 50% 50%; animation: cel-gira-flor 1.6s cubic-bezier(.2, .7, .3, 1) both; }
+  .celebra .gira-p { transform-box: view-box; transform-origin: 50% 50%; animation: cel-petala .5s cubic-bezier(.3, 1.35, .45, 1) var(--d, 0s) both; }
+  @keyframes cel-gira-flor { from { transform: rotate(-70deg); } to { transform: none; } }
+  @keyframes cel-petala { from { transform: scale(.25); opacity: 0; } 30% { opacity: 1; } to { transform: none; opacity: 1; } }
+
   /* Cortado: xícara com latte art */
   .celebra .cafe-gota { animation: cel-cai .33s ease-in .3s both; }
   .celebra .cafe-coracao { transform-origin: 50% 30%; animation: cel-leite .67s cubic-bezier(.25, .8, .3, 1) .5s both; }
@@ -172,6 +178,23 @@
         <path class="traco cz-p" d="M${g + 14} 30C90 54 92 70 84 86" fill="none" stroke="${COR[3]}" stroke-width="3" stroke-linecap="round" style="--l:80;--d:1.3s;--t:.3s"/>
         <g class="entra" style="--d:1.45s"><g transform="translate(80 82) rotate(20)"><rect x="-2.5" y="-4" width="5" height="40" rx="2.5" fill="#cfd3d6"/><path d="M-2.5 34L0 46L2.5 34Z" fill="#cfd3d6"/><rect x="-1" y="0" width="2" height="7" rx="1" fill="#fbf7ec"/></g></g>
       </g>`;
+    },
+
+    // Girassol: miolo com sementes em espiral; pétalas em três camadas que brotam do centro
+    girassol: () => {
+      const pet = (r0, r1, w) => { const L = r1 - r0; return `M${-w * .22} ${-r0}C${-w} ${-r0 - L * .32} ${-w * .85} ${-r0 - L * .8} 0 ${-r1}C${w * .85} ${-r0 - L * .8} ${w} ${-r0 - L * .32} ${w * .22} ${-r0}Z`; };
+      let s = `<defs><linearGradient id="cel-gp" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#e49b12"/><stop offset=".45" stop-color="#fbcf3a"/><stop offset="1" stop-color="#ffe27a"/></linearGradient>
+        <linearGradient id="cel-gp2" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#c97a0c"/><stop offset="1" stop-color="#e49b12"/></linearGradient>
+        <radialGradient id="cel-gm"><stop offset="0" stop-color="#7a4a22"/><stop offset=".55" stop-color="#5a3519"/><stop offset="1" stop-color="#3a200c"/></radialGradient></defs><g class="gira-flor">`;
+      for (let i = 0; i < 12; i++) s += `<g class="gira-p" style="--d:${(.05 + i * .03).toFixed(2)}s"><path d="${pet(22, 90, 13)}" transform="rotate(${15 + 30 * i})" fill="url(#cel-gp2)"/></g>`;
+      for (let i = 0; i < 6; i++) s += `<g class="gira-p" style="--d:${(.2 + i * .05).toFixed(2)}s"><path d="${pet(26, 84, 21)}" transform="rotate(${30 + 60 * i})" fill="url(#cel-gp2)"/></g>`;
+      for (let i = 0; i < 6; i++) s += `<g class="gira-p" style="--d:${(.4 + i * .07).toFixed(2)}s"><path d="${pet(27, 98, 30)}" transform="rotate(${60 * i})" fill="url(#cel-gp)"/>
+        <path d="M0 -36Q2 -66 0 -90" transform="rotate(${60 * i})" stroke="#e49b12" stroke-width="1.4" fill="none" opacity=".55"/></g>`;
+      let sem = "";
+      for (let k = 1; k < 220; k++) { const r = 2.25 * Math.sqrt(k), t = k * 2.39996; if (r > 32) break; sem += `<circle cx="${(r * Math.cos(t)).toFixed(1)}" cy="${(r * Math.sin(t)).toFixed(1)}" r="${(.8 + r / 34).toFixed(2)}" opacity="${(.45 + r / 70).toFixed(2)}"/>`; }
+      s += `<g class="entra" style="--d:.05s"><circle r="37" fill="#3a200c"/><circle r="35" fill="url(#cel-gm)"/></g><g class="surge" style="--d:.55s" fill="#2c1607">${sem}</g>
+        <path class="surge" style="--d:.8s" d="M-22 -18A28 28 0 0 1 4 -29" fill="none" stroke="rgba(255,230,170,.35)" stroke-width="3" stroke-linecap="round"/></g>`;
+      return s;
     },
 
     cordel: () => `
@@ -327,7 +350,7 @@
     setTimeout(() => el.remove(), SAIDA + 50);
   }
   // enquadramento de cada ícone: o ícone é o quadro final do desenho visto por esta viewBox [x, y, lado]
-  const QUADRO = { novelo: [-106, -104, 212], cruzadinha: [-104, -104, 208], brigadeiro: [-108, -106, 216] };
+  const QUADRO = { girassol: [-110, -110, 220], novelo: [-106, -104, 212], cruzadinha: [-104, -104, 208], brigadeiro: [-108, -106, 216] };
   // congela o quadro final: as regras ".celebra …" deixam de valer quando o desenho sai do tabuleiro,
   // então cada peça leva consigo, em estilo próprio, a posição, o giro e a transparência em que parou
   function congela(svg) {
