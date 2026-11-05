@@ -64,6 +64,8 @@
   .rank .pts { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 700; font-size: .9rem; white-space: nowrap; }
   .trilha { flex: 1; min-width: 0; position: relative; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
   .trilha .haste { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--folha); width: 0; transition: width .45s cubic-bezier(.3, .8, .3, 1); }
+  .rank.feito .pts::after { content: ""; display: inline-block; width: 7px; height: 7px; margin-left: 7px; border: solid currentColor; border-width: 2px 2px 0 0; transform: translateY(-1px) rotate(45deg); }
+  .rank.feito .pts { color: var(--ink); }
   .rank.sobe b { animation: sobe .5s cubic-bezier(.3, 1.6, .5, 1); }
   @keyframes sobe { 40% { transform: scale(1.18); color: var(--bom); } }
 
@@ -404,8 +406,10 @@
     nivelAntes = k;
     $("nAch").textContent = achadas.length + raras.length; $("nAchL").textContent = achadas.length + raras.length === 1 ? "palavra" : "palavras";
     $("ultimas").textContent = (DADOS && ultimasOrdem.length ? ultimasOrdem : [...achadas, ...raras]).filter(n => achadas.includes(n) || raras.includes(n)).slice().reverse().map(nomeDe).join(", ");
-    $("controls").classList.toggle("done", finished);
-    if (!finished) $("controls").classList.remove("play");
+    // o Girassol continua depois de feito (dá para tentar zerar): a faixa de fim embaixo não aparece, para a flor não
+    // encolher; o resultado e o próximo jogo ficam na bandeja de fim, que a régua reabre (com a setinha)
+    $("rank").classList.toggle("feito", finished);
+    $("rank").setAttribute("aria-label", finished ? "Ver o resultado do dia" : "Níveis de pontos");
     $("doneBar").tabIndex = finished ? 0 : -1;
     if (finished) {
       $("doneTitle").textContent = `${pts} pts${pleno() ? " · pleno" : ""}`;
@@ -553,7 +557,6 @@
     if (pleno() && finished) { render(); celebrar("girassol", { alvo: $("palco"), esmaecer: $("flor") }).then(() => setTimeout(showEnd, 200)); return; }
     if (finished || pts < corte(META)) return;
     finished = true;
-    $("controls").classList.add("play");
     persist(); render();
     celebrar("girassol", { alvo: $("palco"), esmaecer: $("flor") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
   }
@@ -589,7 +592,7 @@
   function closeModal(el) { el.classList.remove("open"); }
   document.querySelectorAll(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); }));
   $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
-  $("rank").addEventListener("click", () => openModal("helpOverlay"));
+  $("rank").addEventListener("click", () => (finished ? showEnd() : openModal("helpOverlay")));
 
   // ---------- jogo livre (modo de teste escondido, comum/proximo.js) ----------
   let nivelLivre = Number(load("nivel-livre", 4)) || 4, ultimo = null;

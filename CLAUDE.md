@@ -95,7 +95,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   frequentes e o plural/feminino de cada uma pelas regras do VERO) medem a régua, o "pleno" e as dicas. Palavra válida fora
   delas é **rara** e vale o **dobro** (escolha do dono: premiar vocabulário).
 - Níveis: Semente, Broto, Muda, Botão, Flor, Girassol (2/7/15/30/50% dos pontos das palavras do dia). Chegar a Girassol = dia
-  feito (celebração + bandeja de fim); continua até achar todas as do dia ("pleno" = troféu no painel).
+  feito (celebração + bandeja de fim); continua até achar todas as do dia ("pleno" = troféu no painel). Depois de feito
+  não aparece a faixa de fim embaixo (a flor não encolhe): a régua ganha uma setinha e reabre a bandeja de fim.
 - Dicas na barra das achadas, com chave Resumo | Grade (a escolha fica guardada): Resumo = quadradinhos por tamanho
   (achadas/total) e quantas faltam por letra inicial; Grade = tabela letra inicial × tamanho (faltam) e começos de duas letras; a lâmpada
   (uma por dia) dá começo (2 letras) e tamanho da mais curta que falta. Também mostra as palavras de ontem.
