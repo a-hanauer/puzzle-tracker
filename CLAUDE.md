@@ -91,6 +91,9 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   infinitivo, sem plural/feminino flexionado/conjugação; grafia exata com icf ≤ 14 ou no Cordel; sem estrangeirismos,
   `nomes-proprios.txt` e lugares). Todo o resto do vocabulário continua valendo como rara (dobro). Listas: seg 10–14 … dom 33–50.
   Pangrama: + 1 ponto por letra da flor. A página desenha quantas pétalas o desafio tiver (os #1 e #2 têm 6).
+  **Meta** (05/11/2026, escolha "pontos de N palavras"): Gerânio = pontos de N palavras do dia médias (pontos possíveis ÷
+  tamanho da lista), N pelo nível: 10, 11, 13, 15, 17, 19, 22 (seg → dom), no máximo os pontos possíveis; os outros níveis são
+  frações da meta (as mesmas de antes). Rara vale +50% (arredondado para cima). Os #1 e #2 seguem 35% e raras em dobro.
   **Grafia** (`geranio/grafia.py`, 05/11/2026): a jogada é a sequência de letras sem acento (vale e conta uma vez). Para mostrar:
   a grafia mais usada (icf exato: vídeo, século, colônia — não a versão sem acento da internet); palavra do dia = a grafia do
   verbete (verbetes.py: icf exato ≤ 14 ou como o Cordel escreve: jogo, não jogó; sem grafias pré-Acordo como pára); se outra

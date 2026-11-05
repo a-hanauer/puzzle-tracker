@@ -247,7 +247,7 @@
     <ul>
       <li>Toda palavra usa a letra do <b>miolo</b> e tem <b>4 letras ou mais</b>. As letras podem se repetir.</li>
       <li>Vale <b>qualquer palavra</b> do português, com plurais, femininos e todas as conjugações (sem nomes próprios, de pessoas ou lugares, estrangeirismos nem palavrões).</li>
-      <li>A régua conta as <b>palavras do dia</b>: palavras de dicionário de uso corrente, na forma de verbete (verbo no infinitivo, sem plural nem feminino). Qualquer outra palavra válida (plural, conjugação, termo raro) vale o <b>dobro</b>, como bônus.</li>
+      <li>A régua conta as <b>palavras do dia</b>: palavras de dicionário de uso corrente, na forma de verbete (verbo no infinitivo, sem plural nem feminino). Qualquer outra palavra válida (plural, conjugação, termo raro) vale <b>50% a mais</b>, como bônus.</li>
       <li>Acentos e ç não contam: <b>ACAO</b> vale "ação". Palavras que só mudam no acento são uma jogada só: <b>PAIS</b> vale "país · pais", uma vez.</li>
       <li>Palavra de 4 letras vale 1 ponto; mais longa, 1 ponto por letra. A que usa <b>todas as letras</b> da flor (o pangrama) ganha mais 1 ponto por letra da flor. Todo dia tem pelo menos uma.</li>
       <li>Na barra das achadas, quantas palavras do dia faltam por tamanho e por letra inicial. A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma delas. Uma por dia.</li>
@@ -291,16 +291,22 @@
   const pontosDe = n => (n.length === 4 ? 1 : n.length) + (ehPang(n) ? P.f.length + 1 : 0);   // pangrama: + 1 ponto por letra da flor
 
   // níveis: fração dos pontos possíveis (só as palavras do dia); Gerânio fecha o dia
-  const NIVEIS = [["Semente", 0], ["Broto", .02], ["Muda", .05], ["Botão", .12], ["Flor", .22], ["Gerânio", .35]];
-  const META = .35;   // Gerânio: 35% dos pontos das palavras do dia (com as flexões, a lista é longa)
-  const corte = f => Math.ceil(P.m * f);
+  // níveis: fração da meta (Gerânio = 1). Meta (05/11/2026): nos dias de 5 pétalas, os pontos de N palavras do dia médias
+  // (média = pontos possíveis ÷ tamanho da lista), N pelo nível: seg 10 … dom 22 — duas ou três palavras longas não bastam.
+  // Nos #1 e #2 (6 pétalas, listas longas) continua 35% dos pontos possíveis.
+  const NIVEIS = [["Semente", 0], ["Broto", .02 / .35], ["Muda", .05 / .35], ["Botão", .12 / .35], ["Flor", .22 / .35], ["Gerânio", 1]];
+  const META = 1, PALAVRAS_META = [0, 10, 11, 13, 15, 17, 19, 22];
+  const base = () => P.f.length > 5 ? P.m * .35 : Math.min(P.m, PALAVRAS_META[P.l] * P.m / P.w.length);
+  const corte = f => Math.ceil(base() * f - 1e-9);
+  const RARA = () => P.f.length > 5 ? 2 : 1.5;   // rara: dobro nos #1 e #2; +50% (arredondado para cima) desde o #3
+  const pontosRara = n => Math.ceil(RARA() * pontosDe(n));
 
   // ---------- estado ----------
   // P = { l: nível, c: miolo, f: as 6 pétalas, w: respostas (com acento), m: pontos possíveis }
   let P = null, dayNum = 0, RESP = new Map(), achadas = [], raras = [], BLOQ = new Set(), ordem = [], digitado = "", dicaUsada = false, alvo = null, finished = false;
   let DICIO = null, dica = null, GRAF = new Map();   // GRAF: chave sem acento → grafia (só quando difere)
   const pid = p => p.c + p.f;
-  const pontos = () => achadas.reduce((t, n) => t + pontosDe(n), 0) + raras.reduce((t, n) => t + 2 * pontosDe(n), 0);   // rara vale o dobro
+  const pontos = () => achadas.reduce((t, n) => t + pontosDe(n), 0) + raras.reduce((t, n) => t + pontosRara(n), 0);
   const nomeDe = n => RESP.get(n) || GRAF.get(n.toLowerCase()) || n.toLowerCase();
   const nivelIdx = pts => { let k = 0; NIVEIS.forEach(([, f], i) => { if (pts >= corte(f)) k = i; }); return k; };
   const pleno = () => P && achadas.length === P.w.length;
@@ -438,7 +444,7 @@
       $("rkNome").textContent = NIVEIS[k][0];
       $("rkPts").textContent = `${pts} pts`;
       tr.innerHTML = `<i class="haste" style="width:${Math.min(100, 100 * pts / meta).toFixed(1)}%"></i>` +
-        NIVEIS.slice(1, -1).map(([, fr]) => `<i class="tk" style="left:${(100 * fr / META).toFixed(1)}%"></i>`).join("");
+        NIVEIS.slice(1, -1).map(([, fr]) => `<i class="tk" style="left:${(100 * fr).toFixed(1)}%"></i>`).join("");
       const prox = NIVEIS[k + 1];
       $("rk2").innerHTML = `<span>faltam <b>${meta - pts} pts</b> para Gerânio</span>` +
         (prox && prox[0] !== "Gerânio" ? `<span>próximo: ${prox[0]} em ${corte(prox[1]) - pts}</span>` : "");
@@ -484,7 +490,7 @@
           return `<tr><td class="${c === P.c ? "c" : ""}">${c}</td>${r.map(cel).join("")}<td class="s">${r.reduce((x, y) => x + y, 0)}</td></tr>`; }).join("") +
         `<tr class="s"><td>Σ</td>${tams.map(t => `<td>${falta.filter(n => n.length === t).length}</td>`).join("")}<td class="s">${falta.length}</td></tr></table>`;
       const pares = [...new Set(todas.map(n => n.slice(0, 2)))].sort();
-      if (raras.length) h += `<div class="vazio">+ ${raras.length} rara${raras.length > 1 ? "s" : ""} achada${raras.length > 1 ? "s" : ""} (valem o dobro; a grade conta só as do dia)</div>`;
+      if (raras.length) h += `<div class="vazio">+ ${raras.length} rara${raras.length > 1 ? "s" : ""} achada${raras.length > 1 ? "s" : ""} (valem ${RARA() > 1.5 ? "o dobro" : "+50%"}; a grade conta só as do dia)</div>`;
       h += `<h3>Começos</h3><div class="duas">${pares.map(pr => { const f = falta.filter(n => n.startsWith(pr)).length;
         return `<span class="${f ? "" : "ok"}">${pr}${f ? `<b>${f}</b>` : ""}</span>`; }).join("")}</div>`;
     } else {
@@ -499,7 +505,7 @@
     }
     const ach = achadas.slice().sort((x, y) => x.localeCompare(y)), rar = raras.slice().sort((x, y) => x.localeCompare(y));
     h += `<h3>Achadas <em>${achadas.length} do dia${raras.length ? ` · ${raras.length} rara${raras.length > 1 ? "s" : ""}` : ""}</em></h3>`;
-    h += ach.length || rar.length ? `<div class="cols">${ach.map(n => `<div class="${ehPang(n) ? "pg" : ""}">${RESP.get(n)}</div>`).join("")}${rar.map(n => `<div class="ra${ehPang(n) ? " pg" : ""}">${nomeDe(n)} ×2</div>`).join("")}</div>`
+    h += ach.length || rar.length ? `<div class="cols">${ach.map(n => `<div class="${ehPang(n) ? "pg" : ""}">${RESP.get(n)}</div>`).join("")}${rar.map(n => `<div class="ra${ehPang(n) ? " pg" : ""}">${nomeDe(n)} ×${RARA() > 1.5 ? "2" : "1,5"}</div>`).join("")}</div>`
       : `<div class="vazio">As palavras que você achar aparecem aqui.</div>`;
     if (finished && pleno()) h += `<div class="vazio">Achou todas as do dia. Gerânio pleno!</div>`;
     // ontem: as palavras do dia, as achadas em destaque (só no desafio do dia)
@@ -582,7 +588,7 @@
     if (achadas.includes(n) || raras.includes(n)) return;   // mandou duas vezes enquanto o dicionário carregava
     raras.push(n); ultimasOrdem.push(n);
     if (window.jogosHaptico) jogosHaptico(true);
-    aviso(`<b>${nomeDe(n).toUpperCase()}</b>${pg ? "Pangrama raro! " : "Rara! "}+${2 * pontosDe(n)}`, "ok rara" + (pg ? " pang" : ""), 1600);
+    aviso(`<b>${nomeDe(n).toUpperCase()}</b>${pg ? "Pangrama raro! " : "Rara! "}+${pontosRara(n)}`, "ok rara" + (pg ? " pang" : ""), 1600);
     render(); persist(); confere();
   }
 
