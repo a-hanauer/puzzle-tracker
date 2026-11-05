@@ -81,6 +81,13 @@
   /* topo: marca pequena + ações; saudação com resumo do dia e anel pequeno */
   header.top { padding: 2px 0 0; }   /* tudo na mesma margem da página (16 px) */
   .top-row { display: flex; align-items: center; justify-content: space-between; }
+  .dia-nivel { display: flex; align-items: center; gap: 8px; margin: 6px 2px 0; min-height: 22px; font-size: .98rem; font-stretch: 62.5%; font-weight: 500;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .dia-nivel > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .dia-nivel .nv { display: inline-flex; gap: 3px; flex: none; }
+  @media (max-width: 359px) { .dia-nivel { letter-spacing: .02em; gap: 6px; } .dia-nivel .d7 { display: none; } }
+  .dia-nivel .nv i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .25; }
+  .dia-nivel .nv i.on { opacity: 1; }
   /* títulos em Noto Sans extracondensada e fina (mesmo estilo do teclado dos jogos) */
   /* nome do produto: ícone + "Jogos do Dia" em destaque; a barra do dia vem logo abaixo */
   .app-mark { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
@@ -670,6 +677,8 @@
     <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
   </div>
   </div>
+  <!-- o nível do dia (o mesmo para todos os jogos da casa: segunda = 1 … domingo = 7) -->
+  <div class="dia-nivel" id="diaNivel"></div>
   <!-- o dia: só aparece com tudo feito (resumo do dia, que gera o recibo) -->
   <button class="dia-btn" id="diaBtn" type="button" hidden>
     <span class="prog"><span class="prog-bar" id="progBar" aria-hidden="true"></span><span class="prog-n" id="count"></span></span>
@@ -1012,9 +1021,7 @@ function statusText(g, p, isDone) {
   if (!LOCAL_PROGRESS[g.id]) return isDone ? "Feito" : (g.app ? '<span class="tag">APP</span>' : "");
   if (!p) {                                             // ainda não jogado: o nível do dia
     if (isDone) return `<span class="pl">Feito</span>`;
-    if (!LOGICA[g.id] && g.id !== "girassol") return `<span class="pl leve">${["difícil", "fácil", "fácil", "normal", "normal", "normal", "difícil"][new Date().getDay()]}</span>`;   // Sando e 5PILA: nível pela semana
-    const n = (new Date().getDay() + 6) % 7 + 1;
-    return `<span class="pl leve">nível ${n}<span class="nv" aria-hidden="true">${[...Array(7)].map((_, i) => `<i${i < n ? ' class="on"' : ""}></i>`).join("")}</span></span>`;
+    return "";                                          // o nível do dia é o mesmo para todos: fica uma vez só, sob o título (#diaNivel)
   }
   if (!p.finished && p.pts != null) return `<span class="pl leve">${ST_ICON.meio}${p.pts}/${p.max}<span class="dim">&nbsp;pts</span></span>`;
   if (!p.finished) return `<span class="pl leve">${ST_ICON.meio}${p.tries}/${p.max}</span>`;
@@ -1082,6 +1089,14 @@ function render() {
   if (pb.children.length !== total) pb.innerHTML = "<i></i>".repeat(total);
   [...pb.children].forEach((seg, i) => seg.classList.toggle("on", i < n));
 
+  {                                                    // nível do dia, sob o título
+    const d = new Date(), nv = (d.getDay() + 6) % 7 + 1, DS = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+    const txt = `${DS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]} · nível ${nv}<span class="d7"> de 7</span>`;
+    if ($("diaNivel").dataset.t !== txt) {
+      $("diaNivel").dataset.t = txt;
+      $("diaNivel").innerHTML = `<span>${txt}</span><span class="nv" aria-hidden="true">${[...Array(7)].map((_, i) => `<i${i < nv ? ' class="on"' : ""}></i>`).join("")}</span>`;
+    }
+  }
   const complete = n === total && total > 0, db = $("diaBtn");
   if (complete && db.dataset.complete !== "1") db.classList.add("celebrate");   // ao completar (ou abrir já completo): brilho uma vez
   if (!complete) db.classList.remove("celebrate");
