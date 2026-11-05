@@ -670,7 +670,7 @@
     <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
   </div>
   </div>
-  <!-- o dia: barra (um trecho por jogo) + próximo jogo; com tudo feito, vira o resumo -->
+  <!-- o dia: só aparece com tudo feito (resumo do dia, que gera o recibo) -->
   <button class="dia-btn" id="diaBtn" type="button" hidden>
     <span class="prog"><span class="prog-bar" id="progBar" aria-hidden="true"></span><span class="prog-n" id="count"></span></span>
     <span class="dia-row" id="diaRow"></span>
@@ -1299,6 +1299,8 @@ function renderDiaBtn(done, n, complete) {
   const b = $("diaBtn"), r = $("diaRow"), total = GAMES.length;
   if (!total) { b.hidden = true; return; }
   const prox = ordemDoDia().find(g => !done.has(g.id)), falta = total - n;
+  // só aparece com tudo feito (o resumo do dia, para gerar o recibo); antes disso, nada no topo (desde 05/11/2026)
+  if (!complete) { b.hidden = true; diaChave = ""; return; }
   const chave = complete ? `fim|${total}` : `${n ? "cont" : "comeca"}|${prox && prox.id}|${falta}`;
   b.hidden = false;
   if (chave === diaChave) return;
