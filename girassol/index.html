@@ -280,8 +280,8 @@
   const pontosDe = n => (n.length === 4 ? 1 : n.length) + (ehPang(n) ? 7 : 0);
 
   // níveis: fração dos pontos possíveis (só as palavras do dia); Girassol fecha o dia
-  const NIVEIS = [["Semente", 0], ["Broto", .02], ["Muda", .07], ["Botão", .15], ["Flor", .3], ["Girassol", .5]];
-  const META = .5;   // Girassol: metade dos pontos das palavras do dia (com as flexões, a lista é longa)
+  const NIVEIS = [["Semente", 0], ["Broto", .02], ["Muda", .05], ["Botão", .12], ["Flor", .22], ["Girassol", .35]];
+  const META = .35;   // Girassol: metade dos pontos das palavras do dia (com as flexões, a lista é longa)
   const corte = f => Math.ceil(P.m * f);
 
   // ---------- estado ----------
@@ -304,8 +304,9 @@
 
   function setup(puzzle, saved) {
     P = puzzle; RESP = new Map(P.w.map(w => [norm(w), w]));
-    achadas = (saved?.found || []).filter(n => RESP.has(n));
-    raras = (saved?.raras || []).filter(n => !RESP.has(n) && n.includes(P.c));
+    // a lista do dia pode ter sido refeita: o que foi achado continua valendo, do lado certo (do dia ou rara)
+    const ja = [...new Set([...(saved?.found || []), ...(saved?.raras || [])])].filter(n => n.includes(P.c));
+    achadas = ja.filter(n => RESP.has(n)); raras = ja.filter(n => !RESP.has(n));
     ordem = saved?.ordem && saved.ordem.length === 6 ? saved.ordem : [...P.f];
     dicaUsada = !!saved?.dica; alvo = saved?.alvo || null;
     finished = !!saved?.done; digitado = ""; ultimasOrdem = [...achadas, ...raras];
@@ -352,7 +353,7 @@
     return `M${-w * .35} ${-r0} C ${-w * 1.15} ${-r0 - L * .2}, ${-w * 1.1} ${-r1}, 0 ${-r1} C ${w * 1.1} ${-r1}, ${w * 1.15} ${-r0 - L * .2}, ${w * .35} ${-r0} Z`; };
   const pos = (i, d) => { const a = Math.PI / 180 * (-90 + 60 * i); return [d * Math.cos(a), d * Math.sin(a)]; };
   function desenhaFlor() {
-    let s = `<svg id="florSvg" viewBox="-168 -168 336 336" role="group" aria-label="Letras da flor">`;
+    let s = `<svg id="florSvg" viewBox="-184 -184 368 368" role="group" aria-label="Letras da flor">`;
     for (let i = 0; i < 6; i++) {
       const [x, y] = pos(i, 112);
       s += `<g class="pt" data-i="${i}"><path class="lu" d="${petala(62, 160, 46)}" transform="rotate(${60 * i})" fill="var(--petala)"/>

@@ -91,15 +91,16 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - **Vale toda palavra que existe** (não se julga se é comum — isso só muda os pontos): dicionário `girassol/palavras.txt` =
   hunspell pt-BR do LibreOffice (VERO) expandido em todas as flexões por `girassol/dicionario.py` (só palavras com até 7 letras
   diferentes), menos palavrões (`bloq` em desafios.json). As **palavras do dia** (comuns + flexões: `girassol/base.json`, feito por
-  `girassol/comuns.mjs` — respostas do Cordel, palavras frequentes do fserb/pt-br sem nomes/estrangeirismos (`STOP`), conjugações
-  frequentes e o plural/feminino de cada uma pelas regras do VERO) medem a régua, o "pleno" e as dicas. Palavra válida fora
+  `girassol/comuns.mjs` — respostas do Cordel, palavras frequentes do fserb/pt-br sem nomes/estrangeirismos (`STOP`), verbetes
+  minúsculos do VERO até icf 13,5 (a frequência da internet subestima substantivos: anta, nata, tear), conjugações frequentes e o
+  plural/feminino de cada uma pelas regras do VERO; grafia pelo VERO) medem a régua, o "pleno" e as dicas. Palavra válida fora
   delas é **rara** e vale o **dobro** (escolha do dono: premiar vocabulário).
-- Níveis: Semente, Broto, Muda, Botão, Flor, Girassol (2/7/15/30/50% dos pontos das palavras do dia). Chegar a Girassol = dia
+- Níveis: Semente, Broto, Muda, Botão, Flor, Girassol (2/5/12/22/35% dos pontos das palavras do dia). Chegar a Girassol = dia
   feito (celebração + bandeja de fim); continua até achar todas as do dia ("pleno" = troféu no painel). Depois de feito
   não aparece a faixa de fim embaixo (a flor não encolhe): a régua ganha uma setinha e reabre a bandeja de fim.
 - Dicas na barra das achadas, com chave Resumo | Grade (a escolha fica guardada): Resumo = quadradinhos por tamanho
   (achadas/total) e quantas faltam por letra inicial; Grade = tabela letra inicial × tamanho (faltam) e começos de duas letras; a lâmpada
   (uma por dia) dá começo (2 letras) e tamanho da mais curta que falta. Também mostra as palavras de ontem.
-- `girassol/gerador.mjs`: flores a partir de pangramas das palavras do dia; nível = dia da semana pelo tamanho da lista (seg 20–30 …
-  dom 70–130); as mesmas 7 letras não voltam em 150 dias; o miolo não repete o do dia anterior. Dias já publicados guardam as
-  letras (a lista é refeita). Jogo livre: `livre[nível]`.
+- `girassol/gerador.mjs`: flores a partir de pangramas das palavras do dia; nível = dia da semana pelo tamanho da lista (seg 30–45 …
+  dom 105–150); as mesmas 7 letras não voltam em 150 dias; o miolo não repete o do dia anterior. Dias já publicados guardam as
+  letras (a lista é refeita; o que o jogador achou passa para o lado certo — do dia ou rara — e nunca some). Jogo livre: `livre[nível]`.

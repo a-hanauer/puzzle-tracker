@@ -21,7 +21,7 @@ import { mantidos } from "../comum/selecao.mjs";
 const DIR = dirname(fileURLToPath(import.meta.url));
 export const EPOCH = [2026, 10, 4];                 // #1 = quarta, 04/11/2026
 // quantas palavras tem a lista do dia, por nível
-const NIVEL = { 1: [20, 30], 2: [26, 36], 3: [32, 44], 4: [40, 52], 5: [48, 62], 6: [58, 76], 7: [70, 130] };
+const NIVEL = { 1: [30, 45], 2: [40, 55], 3: [50, 68], 4: [62, 82], 5: [75, 95], 6: [88, 115], 7: [105, 150] };
 
 export const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
 export const pontos = (w, pangrama) => (w.length === 4 ? 1 : w.length) + (pangrama ? 7 : 0);

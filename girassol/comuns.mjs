@@ -1,5 +1,5 @@
 // palavras do dia do Girassol: as respostas curadas do Cordel + as flexões comuns delas (plural, feminino, conjugações)
-// Uso: node girassol/comuns.mjs <pasta src do fserb/pt-br> girassol/base.json <formas com acento do VERO, de dicionario.py>
+// Uso: node girassol/comuns.mjs <pasta src do fserb/pt-br> girassol/base.json <flexoes.txt de dicionario.py> <index.dic do VERO> <formas-com-acento.txt de dicionario.py>
 //      (depois: node girassol/gerador.mjs)
 import fs from 'fs';
 const S=process.argv[2]+'/';const rd=f=>fs.readFileSync(S+f,'utf8').split('\n').map(s=>s.trim()).filter(Boolean);
@@ -19,7 +19,8 @@ trailer registo maia paul canada cesar foda monteiro live nunes tablet status ca
 infra drive juliana caxias celso merda fashion standard ferreira oliveira contacto facto hein tava grid design paulista carioca acordao natal
 salvador augusto gama recife pinheiro carvalho machado batista ribeiro marinho santos silva souza lima costa rocha nogueira paulo pedro jose
 ana carlos lucas gabriel daniel marcos felipe joana julia laura beatriz renata patricia fernanda luiza camila sandra regina rita ines nina
-vitoria clara rosa`.split(/\s+/));
+vitoria clara rosa alcorao morato rebeca barca palmela romeu cris mari hermes lounge jacuzzi toner enter freelancer lingerie
+boxe trans hiper limeira pinhal gajo diet iceberg design online offline email sites blogs anti inter intra tetra terrier`.split(/\s+/));
 const R=JSON.parse(fs.readFileSync(new URL('../cordel/',import.meta.url).pathname+'respostas.json','utf8'));
 const base=new Map(); for(const w of Object.values(R)){const n=norm(w); if(!FORA.has(n)&&!neg.has(n)) base.set(n,w);}
 // mais as palavras frequentes do léxico que faltam na lista do Cordel (terra, cidade, mundo…), sem nomes nem estrangeirismos
@@ -41,6 +42,17 @@ for(const [n,f] of icf){
   const a=acento.get(n); if(!/^[a-zà-üç]+$/.test(a)) continue;
   out[n]=a;
 }
+// verbetes do VERO (minúsculos: sem nomes próprios) até uma frequência mais baixa — a frequência da internet subestima
+// substantivos concretos (anta, nata, tear, luva…); sem estrangeirismos (k/w/y, ee/oo/sh/th, final em consoante estranha)
+if(process.argv[5]){
+  for(const line of fs.readFileSync(process.argv[5],'utf8').split('\n').slice(1)){
+    const w=line.split('/')[0], n=norm(w);
+    if(!w||!/^[a-zà-üç]+$/.test(w)||w.length<4||base.has(n)||STOP.has(n)||neg.has(n)||new Set(n).size>7) continue;
+    if(/[kwy]|ee|oo|sh|th/.test(n)||!/[aeiourslmzx]$/.test(n)||(icf.get(n)??99)>13.5) continue;
+    if(conj.has(n)&&!/(ar|er|ir|or)$/.test(n)) continue;
+    base.set(n,w); out[n]=w;
+  }
+}
 // plural e feminino de toda palavra-base que o VERO dá pelas regras da própria palavra (eterno -> eterna, eternos,
 // eternas; ação -> ações): entram sempre, sem olhar a frequência. Só terminações de número e gênero (nada de -mente, -inho…).
 if(process.argv[4]){
@@ -53,6 +65,14 @@ if(process.argv[4]){
     for(const x of flex.get(w)||[]){ const k=norm(x);
       if(out[k]||STOP.has(k)||neg.has(k)||k.length<4||new Set(k).size>7||!nominal2(w,x)) continue; out[k]=x; }
   }
+}
+// acento certo: a grafia do VERO (o icf às vezes traz a variante errada: antã, iatê, tarã)
+if(process.argv[6]){
+  const acc=new Map(); for(const w of fs.readFileSync(process.argv[6],'utf8').split('\n')){const n=norm(w); if(!acc.has(n)) acc.set(n,new Set()); acc.get(n).add(w);}
+  for(const n of Object.keys(out)){ const fs3=acc.get(n); if(!fs3) { delete out[n]; continue; }   // não existe no VERO: fora
+    // a grafia curada (Cordel) fica; nas outras, havendo a forma sem acento no VERO, ela ganha (anta, não antã; esta/está é só exibição)
+    const cur=base.get(n); if(cur&&Object.values(R).includes(cur)&&fs3.has(cur)){out[n]=cur;continue;}
+    if(fs3.has(n)) out[n]=n; else if(!fs3.has(out[n])) out[n]=[...fs3][0]; }
 }
 fs.writeFileSync(process.argv[3],JSON.stringify({comuns:out,bloq:[...neg].filter(n=>/^[a-z]{4,}$/.test(n)).sort()}));
 const ex=Object.keys(out).filter(n=>!base.has(n));
