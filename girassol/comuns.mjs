@@ -34,11 +34,12 @@ const stems=new Map(); for(const v of verbos){const s=v.slice(0,-2); if(s.length
 const nominal=w=>{ const c=[w.replace(/oes$/,'ao'),w.replace(/aes$/,'ao'),w.replace(/ns$/,'m'),w.replace(/is$/,'l'),w.replace(/eis$/,'el'),w.replace(/es$/,''),w.replace(/s$/,''),w.replace(/as$/,'o'),w.replace(/a$/,'o'),w.replace(/ora$/,'or'),w.replace(/oras$/,'or')];
   return c.some(x=>x!==w&&base.has(x)); };
 const verbal=w=>{ if(!conj.has(w)) return false; for(let k=Math.min(w.length-1,12);k>=2;k--){ if(stems.has(w.slice(0,k))) return true; } return false; };
+const VEROF=new Set(); if(process.argv[6]) for(const w of fs.readFileSync(process.argv[6],'utf8').split('\n')) VEROF.add(norm(w));
 const out={};
 for(const [n,w] of base) if(n.length>=4&&new Set(n).size<=7) out[n]=w;
 for(const [n,f] of icf){
   if(out[n]||STOP.has(n)||n.length<4||!/^[a-z]+$/.test(n)||new Set(n).size>7||f>12.5||neg.has(n)||!dic.has(n)) continue;
-  if(!(nominal(n)||verbal(n))) continue;
+  if(!(nominal(n)||verbal(n)||VEROF.has(n))) continue;   // ou qualquer forma do VERO (minúsculas: sem nomes) que seja frequente: teia, dita, tina
   const a=acento.get(n); if(!/^[a-zà-üç]+$/.test(a)) continue;
   out[n]=a;
 }

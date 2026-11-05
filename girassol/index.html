@@ -116,11 +116,13 @@
   .lista .cols div.falta.pg { color: color-mix(in srgb, var(--acc) 60%, var(--muted)); }
   .lista .vazio { color: var(--muted); padding: 8px 4px; font-size: .92rem; }
   .lista h3 em { font-style: normal; text-transform: none; letter-spacing: 0; font-weight: 600; float: right; }
-  .tam { display: grid; grid-template-columns: 4.8em minmax(0, 1fr) 3.4em; align-items: center; gap: 8px; margin: 6px 4px; font-size: .88rem; }
+  .tam { display: grid; grid-template-columns: 4.8em minmax(0, 1fr) 4.6em; align-items: center; gap: 8px; margin: 6px 4px; font-size: .88rem; }
   .tam b { font-weight: 800; }
   .tam .bar { display: flex; gap: 3px; flex-wrap: wrap; }
   .tam .bar i { width: 10px; height: 10px; border-radius: 3px; background: var(--line); }
   .tam .bar i.on { background: var(--folha); }
+  .tam .bar i.ra { background: var(--acc); }
+  .tam span small { font-size: inherit; color: var(--acc); }
   .tam span { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 700; }
   .ini { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; padding: 0 4px; }
   .ini div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 7px 0 6px; text-align: center; }
@@ -438,12 +440,15 @@
           return `<tr><td class="${c === P.c ? "c" : ""}">${c}</td>${r.map(cel).join("")}<td class="s">${r.reduce((x, y) => x + y, 0)}</td></tr>`; }).join("") +
         `<tr class="s"><td>Σ</td>${tams.map(t => `<td>${falta.filter(n => n.length === t).length}</td>`).join("")}<td class="s">${falta.length}</td></tr></table>`;
       const pares = [...new Set(todas.map(n => n.slice(0, 2)))].sort();
+      if (raras.length) h += `<div class="vazio">+ ${raras.length} rara${raras.length > 1 ? "s" : ""} achada${raras.length > 1 ? "s" : ""} (valem o dobro; a grade conta só as do dia)</div>`;
       h += `<h3>Começos</h3><div class="duas">${pares.map(pr => { const f = falta.filter(n => n.startsWith(pr)).length;
         return `<span class="${f ? "" : "ok"}">${pr}${f ? `<b>${f}</b>` : ""}</span>`; }).join("")}</div>`;
     } else {
       // por tamanho: um quadradinho por palavra (verde = achada)
-      h += tams.map(t => { const ws = todas.filter(n => n.length === t), a = ws.filter(n => achadas.includes(n)).length;
-        return `<div class="tam"><b>${t} letras</b><span class="bar">${ws.map((_, k) => `<i class="${k < a ? "on" : ""}"></i>`).join("")}</span><span>${a}/${ws.length}</span></div>`; }).join("");
+      // as raras também aparecem no tamanho delas (quadradinho a mais, em outro tom, e "+N"): toda palavra achada conta
+      const tamsR = [...new Set([...tams, ...raras.map(n => n.length)])].sort((x, y) => x - y);
+      h += tamsR.map(t => { const ws = todas.filter(n => n.length === t), a = ws.filter(n => achadas.includes(n)).length, r = raras.filter(n => n.length === t).length;
+        return `<div class="tam"><b>${t} letras</b><span class="bar">${ws.map((_, k) => `<i class="${k < a ? "on" : ""}"></i>`).join("")}${"<i class=\"ra\"></i>".repeat(r)}</span><span>${ws.length ? `${a}/${ws.length}` : ""}${r ? `<small> +${r}</small>` : ""}</span></div>`; }).join("");
       // por letra inicial: quantas faltam
       h += `<h3>Faltam por letra inicial</h3><div class="ini">${ini.map(c => { const f = falta.filter(n => n[0] === c).length;
         return `<div class="${c === P.c ? "c" : ""}${f ? "" : " ok"}"><b>${c}</b><small>${f || "✓"}</small></div>`; }).join("")}</div>`;
