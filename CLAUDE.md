@@ -130,7 +130,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   conta as palavras do dia ("Gerânio ✓ · 49/131 · rumo ao pleno · faltam 82 palavras · +N raras"). Tela de fim: "N de T palavras
   do dia (P%)"; pílula do painel "✓ pts · P%"; ao fechar um tamanho, "todas de N letras!".
 - Níveis: Semente, Broto, Muda, Botão, Flor, Gerânio (2/5/12/22/35% dos pontos das palavras do dia). Chegar a Gerânio = dia
-  feito (celebração + bandeja de fim); continua até achar todas as do dia ("pleno" = troféu no painel). Depois de feito
+  feito (celebração + bandeja de fim, só essa vez); continua até achar todas as do dia ("pleno" = troféu no painel e um aviso, sem nova celebração). Depois de feito
   não aparece a faixa de fim embaixo (a flor não encolhe): a régua ganha uma setinha e reabre a bandeja de fim.
 - Dicas na barra das achadas, com chave Resumo | Grade (a escolha fica guardada): Resumo = quadradinhos por tamanho
   (achadas/total, em vermelho; as raras entram como quadradinhos a mais, em amarelo (--rara), com "+N" — toda palavra achada aparece) e quantas faltam por letra inicial; Grade = tabela letra inicial × tamanho (faltam) e começos de duas letras; a lâmpada

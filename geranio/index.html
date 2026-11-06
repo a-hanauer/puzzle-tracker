@@ -303,7 +303,7 @@
 
   // ---------- estado ----------
   // P = { l: nível, c: miolo, f: as 6 pétalas, w: respostas (com acento), m: pontos possíveis }
-  let P = null, dayNum = 0, RESP = new Map(), achadas = [], raras = [], BLOQ = new Set(), ordem = [], digitado = "", dicaUsada = false, alvo = null, finished = false;
+  let P = null, dayNum = 0, RESP = new Map(), achadas = [], raras = [], BLOQ = new Set(), ordem = [], digitado = "", dicaUsada = false, alvo = null, finished = false, avisouPleno = false;
   let DICIO = null, dica = null, GRAF = new Map();   // GRAF: chave sem acento → grafia (só quando difere)
   const pid = p => p.c + p.f;
   const pontos = () => achadas.reduce((t, n) => t + pontosDe(n), 0) + raras.reduce((t, n) => t + pontosRara(n), 0);
@@ -326,7 +326,7 @@
     achadas = ja.filter(n => RESP.has(n)); raras = ja.filter(n => !RESP.has(n));
     ordem = saved?.ordem && saved.ordem.length === puzzle.f.length ? saved.ordem : [...P.f];
     dicaUsada = !!saved?.dica; alvo = saved?.alvo || null;
-    finished = !!saved?.done; digitado = ""; ultimasOrdem = [...achadas, ...raras];
+    finished = !!saved?.done; avisouPleno = !!(saved?.avisouPleno || saved?.pleno); digitado = ""; ultimasOrdem = [...achadas, ...raras];
     if (!teste) { const now = new Date(); $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`; }
     fechaLista(); desenhaFlor(); fit(); render(false);
     if (dica) dica.atualiza();
@@ -334,7 +334,7 @@
   function persist() {
     if (!P || teste) return;
     const pts = pontos();
-    save("dia:" + dayNum, { pid: pid(P), found: achadas, raras, ordem, dica: dicaUsada, alvo, done: finished, started: achadas.length + raras.length > 0,
+    save("dia:" + dayNum, { pid: pid(P), found: achadas, raras, ordem, dica: dicaUsada, alvo, done: finished, avisouPleno, started: achadas.length + raras.length > 0,
       pts, max: P.m, meta: corte(META), pleno: pleno(), nAch: achadas.length, nTot: P.w.length, nRar: raras.length, prog: [pts, corte(META)] });
   }
 
@@ -612,9 +612,13 @@
       st.pts ||= {};
       if (finished || pts >= corte(META)) { st.pts[dayNum] = [pts, P.m, achadas.length, P.w.length, raras.length]; save("stats", recomputeStats(st)); }
     }
-    if (pleno() && finished) { render(); celebrar("girassol", { alvo: $("palco"), esmaecer: $("flor") }).then(() => setTimeout(showEnd, 200)); return; }
-    if (finished || pts < corte(META)) return;
-    finished = true;
+    // a celebração é só uma, ao chegar a Gerânio; o pleno (todas as do dia) ganha só um aviso, uma vez
+    if (finished) {
+      if (pleno() && !avisouPleno) { avisouPleno = true; persist(); aviso("<b>Gerânio pleno!</b> Todas as palavras do dia", "ok pang", 2600); }
+      return;
+    }
+    if (pts < corte(META)) return;
+    finished = true; avisouPleno = pleno();
     persist(); render();
     celebrar("girassol", { alvo: $("palco"), esmaecer: $("flor") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
   }
