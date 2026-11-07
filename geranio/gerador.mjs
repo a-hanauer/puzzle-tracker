@@ -65,10 +65,11 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     return { l: 0, c: f.c, f: fora.join(""), w: ws.map(n => m.get(n)), m: f.max };
   };
   const refaz = p => { const L = new Set(p.c + p.f), ws = [...m.keys()].filter(n => n.includes(p.c) && [...n].every(c => L.has(c))).sort((x, y) => x.localeCompare(y));
-    return { ...p, w: ws.map(n => m.get(n)), m: ws.reduce((t, n) => t + pontos(n, new Set(n).size === 7), 0) }; };
+    return { ...p, w: ws.map(n => m.get(n)), m: ws.reduce((t, n) => t + pontos(n, new Set(n).size === LETRAS), 0) }; };
   // o formato novo começa no #3: os publicados antes ficam como estão; do #3 em diante, só os que já estão no formato novo
   { const k = old.findIndex((p, i) => i >= DESDE && p.f.length !== LETRAS - 1); if (k >= 0) old.splice(k); }
-  void refaz;
+  // dias já publicados no formato novo: as mesmas letras, a lista refeita com as palavras do dia atuais
+  for (let i = DESDE; i < old.length; i++) old[i] = refaz(old[i]);
   const out = old.slice(), usadaEm = new Map(), pangUsado = new Set();
   out.forEach((p, k) => { usadaEm.set([p.c, ...p.f].sort().join(""), k); p.w.forEach(w => { const n = norm(w); if (new Set(n).size === LETRAS) pangUsado.add(n); }); });
   for (let k = out.length; k < DIAS; k++) {

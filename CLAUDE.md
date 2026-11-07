@@ -89,7 +89,11 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - **Versão 6.2 (em teste, desde o #3 = 06/11/2026):** flor de **5 pétalas** (6 letras); palavras do dia = só **verbetes** de
   dicionário de uso corrente (`geranio/verbetes.json`, feito por `geranio/verbetes.py`: verbete minúsculo do VERO, verbo no
   infinitivo, sem plural/feminino flexionado/conjugação; grafia exata com icf ≤ 14 ou no Cordel; sem estrangeirismos,
-  `nomes-proprios.txt` e lugares). Todo o resto do vocabulário continua valendo como rara (dobro). Listas: seg 10–14 … dom 33–50.
+  `nomes-proprios.txt` e lugares). Desde 07/11/2026 entram também as palavras do `lexico` do fserb com icf ≤ 14 (o VERO não
+  traz como verbete muitas palavras de base que gera por regra: corda, faca, carne, dedo, roda, casa), sem plurais e sem
+  conjugação pura (gerúndio, ou forma bem menos usada que o próprio verbo: fico, toma, anda saem; cedo, entre, casa, nada ficam);
+  ~10,6 mil palavras. Os dias já publicados guardam as letras e a lista é refeita (`refaz` no gerador).
+  Todo o resto do vocabulário continua valendo como rara (+50%). Listas: seg 10–14 … dom 33–50.
   Pangrama: + 1 ponto por letra da flor. A página desenha quantas pétalas o desafio tiver (os #1 e #2 têm 6).
   **Meta** (05/11/2026, escolha "pontos de N palavras"): Gerânio = pontos de N palavras do dia médias (pontos possíveis ÷
   tamanho da lista), N pelo nível: 10, 11, 13, 15, 17, 19, 22 (seg → dom), no máximo os pontos possíveis; os outros níveis são
