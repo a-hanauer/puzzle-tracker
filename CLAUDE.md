@@ -145,6 +145,9 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Botões (opção "A", 07/11/2026): só ícones redondos nos cantos de baixo da flor (apagar à esquerda, claro; enviar à
   direita, escuro), na altura da base da flor (`--folga`, calculada em `fit()`); 46px em tela baixa. Sem botão de
   embaralhar (a barra de espaço do teclado físico ainda embaralha).
+- Começo vivo (07/11/2026): enquanto digita, com 1–2 letras, uma linha sob a palavra diz quantas do dia faltam com esse começo e
+  os tamanhos ("DE… 3 faltam: 8, 9 (×2) letras"; nunca com 3+ letras); a pílula do começo acende e as outras apagam. ★N no alto
+  do miolo = pangramas do dia que faltam (some quando acaba).
 - `geranio/gerador.mjs`: flores a partir de pangramas das palavras do dia; nível = dia da semana pelo tamanho da lista (seg 30–45 …
   dom 105–150); as mesmas 7 letras não voltam em 150 dias; o miolo não repete o do dia anterior. Dias já publicados guardam as
   letras (a lista é refeita; o que o jogador achou passa para o lado certo — do dia ou rara — e nunca some). Jogo livre: `livre[nível]`.

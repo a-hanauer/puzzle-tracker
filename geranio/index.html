@@ -116,6 +116,15 @@
   .flor.mexe .cnt { opacity: 0; }
   .inis { flex: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 2px 12px 6px; max-height: 92px; overflow-y: auto; }
   .inis:empty { display: none; }
+  .inis span.acesa { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .inis span.acesa b { color: var(--bg); opacity: .75; }
+  .inis span.apaga { opacity: .35; }
+  /* começo vivo: enquanto digita, quantas palavras do dia faltam com esse começo (1 ou 2 letras) e de que tamanhos */
+  .vivo { position: absolute; top: 66px; left: 0; right: 0; z-index: 1; pointer-events: none; text-align: center; font-size: .86rem;
+    color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 12px; }
+  .vivo b { color: var(--ink); letter-spacing: .06em; margin-right: 4px; }
+  .vivo small { font-size: .75em; }
+  .flor .pgc { font-size: 13px; opacity: .8; }
   @media (max-height: 700px) { .inis { max-height: 58px; gap: 4px; } .inis span { padding: 2px 8px; font-size: .8rem; } }
   .inis span { display: inline-flex; align-items: baseline; gap: 4px; padding: 4px 9px; border-radius: 999px; background: var(--surface);
     border: 1px solid var(--line); font-weight: 800; font-size: .88rem; letter-spacing: .04em; }
@@ -232,6 +241,7 @@
   <button class="achadas" id="achadasBtn" aria-expanded="false"><b id="nAch">0</b><small id="nAchL">palavras</small><span id="ultimas"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
   <div class="palco" id="palco">
     <div class="palavra" id="palavra" aria-live="polite"></div>
+    <div class="vivo" id="vivo"></div>
     <div class="florbox">
       <div class="flor" id="flor"></div>
       <button class="ib ap" id="apagar" aria-label="Apagar letra"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="M17.5 9.5l-5 5M12.5 9.5l5 5"/></svg></button>
@@ -264,7 +274,7 @@
       <li>A régua conta as <b>palavras do dia</b>: palavras de dicionário de uso corrente, na forma de verbete (verbo no infinitivo, sem plural nem feminino). Qualquer outra palavra válida (plural, conjugação, termo raro) vale <b>50% a mais</b>, como bônus.</li>
       <li>Acentos e ç não contam: <b>ACAO</b> vale "ação". Palavras que só mudam no acento são uma jogada só: <b>PAIS</b> vale "país · pais", uma vez.</li>
       <li>Palavra de 4 letras vale 1 ponto; mais longa, 1 ponto por letra. A que usa <b>todas as letras</b> da flor (o pangrama) ganha mais 1 ponto por letra da flor. Todo dia tem pelo menos uma.</li>
-      <li>Junto de cada letra, quantas palavras do dia ainda começam com ela; embaixo da flor, os começos de duas letras que faltam. Na barra das achadas, quantas faltam por tamanho e por letra inicial. A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma delas. Uma por dia.</li>
+      <li>Junto de cada letra, quantas palavras do dia ainda começam com ela; embaixo da flor, os começos de duas letras que faltam. Enquanto você digita, aparece quantas faltam com aquele começo e de que tamanhos; a ★ no miolo conta os pangramas que faltam. Na barra das achadas, quantas faltam por tamanho e por letra inicial. A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma delas. Uma por dia.</li>
     </ul>
     <p>Chegando a <b>Gerânio</b>, o dia está feito; dá para continuar até achar todas as do dia (Gerânio pleno). Ao longo da semana a lista do dia cresce.</p>
     <div class="niveis" id="niveis"></div>
@@ -415,7 +425,7 @@
         <text class="le" x="${f1(x)}" y="${f1(y)}" fill="var(--letra)"></text><text class="cnt" x="${f1(x + 24)}" y="${f1(y + 18)}" fill="var(--letra)"></text></g>`;
     }
     s += `<g class="pt" data-i="c"><circle r="54" fill="var(--miolo)"/><circle r="46" fill="none" stroke="var(--miolo-txt)" stroke-opacity=".25" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round"/>
-      <text x="0" y="0" fill="var(--miolo-txt)" style="font-size:37px">${P.c}</text><text class="cnt" x="27" y="20" fill="var(--miolo-txt)"></text></g></svg>`;
+      <text x="0" y="0" fill="var(--miolo-txt)" style="font-size:37px">${P.c}</text><text class="cnt" x="27" y="20" fill="var(--miolo-txt)"></text><text class="pgc" x="0" y="-31" fill="var(--miolo-txt)"></text></g></svg>`;
     $("flor").innerHTML = s;
     letrasPetalas();
   }
@@ -429,10 +439,29 @@
       const i = g.dataset.i, L = i === "c" ? P.c : ordem[+i], f = falta.filter(n => n[0] === L).length, t = g.querySelector(".cnt");
       if (t) t.textContent = f || "✓";
     });
+    // pangramas do dia que faltam: ★N no alto do miolo (some quando acaba)
+    const pg = falta.filter(n => new Set(n).size === P.f.length + 1).length, tp = $("flor").querySelector(".pgc");
+    if (tp) tp.textContent = pg ? "★" + pg : "";
     const pares = [...new Set(falta.map(n => n.slice(0, 2)))].sort();
     const el = $("inis"), antes = el.childElementCount;
-    el.innerHTML = pares.map(pr => `<span>${pr}<b>${falta.filter(n => n.startsWith(pr)).length}</b></span>`).join("");
+    el.innerHTML = pares.map(pr => `<span data-p="${pr}">${pr}<b>${falta.filter(n => n.startsWith(pr)).length}</b></span>`).join("");
     if (!!antes !== !!el.childElementCount) fit();
+    vivo();
+  }
+  // enquanto digita: com 1 ou 2 letras, quantas do dia faltam com esse começo e os tamanhos; acende a pílula (07/11/2026)
+  function vivo() {
+    if (!P) return;
+    const pre = digitado.slice(0, 2), el = $("vivo");
+    $("inis").querySelectorAll("span").forEach(s => {
+      s.classList.toggle("acesa", pre.length === 2 && s.dataset.p === pre);
+      s.classList.toggle("apaga", !!pre && !s.dataset.p.startsWith(pre));
+    });
+    if (!pre) { el.innerHTML = ""; return; }
+    const ws = P.w.map(chave).filter(n => !achadas.includes(n) && n.startsWith(pre));
+    if (!ws.length) { el.innerHTML = `<b>${pre}…</b> nenhuma do dia falta com esse começo`; return; }
+    const t = {}; ws.forEach(n => (t[n.length] = (t[n.length] || 0) + 1));
+    el.innerHTML = `<b>${pre}…</b> ${ws.length} ${ws.length > 1 ? "faltam" : "falta"}: ` +
+      Object.keys(t).sort((a, b) => a - b).map(k => (t[k] > 1 ? `${k} <small>(×${t[k]})</small>` : k)).join(", ") + " letras";
   }
   function fit() {
     const f = $("flor"), svg = $("florSvg");
@@ -449,6 +478,7 @@
   // ---------- tela ----------
   let msgT = 0, msgAtiva = false;
   function mostraPalavra() {
+    vivo();
     if (msgAtiva) return;
     const el = $("palavra");
     el.className = "palavra";
@@ -598,7 +628,7 @@
   async function envia() {
     const n = digitado;
     if (!n) return;
-    digitado = "";
+    digitado = ""; vivo();
     if (n.length < 4) { aviso("Curta demais: <b>4 letras</b> ou mais"); treme(); return; }
     if (!n.includes(P.c)) { aviso(`Falta o miolo: <b>${P.c}</b>`); treme(); return; }
     if (achadas.includes(n) || raras.includes(n)) { aviso(`<b>${nomeDe(n).toUpperCase()}</b> já foi`); treme(); return; }
