@@ -111,6 +111,15 @@
   .flor .pt.aperta .lu { filter: brightness(1.08); }
   .flor .le { transition: opacity .18s ease; }
   .flor.mexe .le { opacity: 0; }
+  /* no tabuleiro: quantas palavras do dia faltam por letra inicial (número junto da letra) e por começo (pílulas) */
+  .flor .cnt { font-size: 16px; opacity: .75; }
+  .flor.mexe .cnt { opacity: 0; }
+  .inis { flex: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 2px 12px 6px; max-height: 92px; overflow-y: auto; }
+  .inis:empty { display: none; }
+  @media (max-height: 700px) { .inis { max-height: 58px; gap: 4px; } .inis span { padding: 2px 8px; font-size: .8rem; } }
+  .inis span { display: inline-flex; align-items: baseline; gap: 4px; padding: 4px 9px; border-radius: 999px; background: var(--surface);
+    border: 1px solid var(--line); font-weight: 800; font-size: .88rem; letter-spacing: .04em; }
+  .inis span b { color: var(--muted); font-variant-numeric: tabular-nums; letter-spacing: 0; }
 
   /* lista das achadas, por cima da flor */
   .lista { position: absolute; inset: 0; z-index: 3; background: var(--bg); overflow: auto; padding: 6px 2px 16px; display: none; -webkit-overflow-scrolling: touch; }
@@ -219,6 +228,7 @@
   <div class="palco" id="palco">
     <div class="palavra" id="palavra" aria-live="polite"></div>
     <div class="flor" id="flor"></div>
+    <div class="inis" id="inis" aria-label="Começos que faltam"></div>
     <div class="lista" id="lista"></div>
   </div>
 </div>
@@ -250,7 +260,7 @@
       <li>A régua conta as <b>palavras do dia</b>: palavras de dicionário de uso corrente, na forma de verbete (verbo no infinitivo, sem plural nem feminino). Qualquer outra palavra válida (plural, conjugação, termo raro) vale <b>50% a mais</b>, como bônus.</li>
       <li>Acentos e ç não contam: <b>ACAO</b> vale "ação". Palavras que só mudam no acento são uma jogada só: <b>PAIS</b> vale "país · pais", uma vez.</li>
       <li>Palavra de 4 letras vale 1 ponto; mais longa, 1 ponto por letra. A que usa <b>todas as letras</b> da flor (o pangrama) ganha mais 1 ponto por letra da flor. Todo dia tem pelo menos uma.</li>
-      <li>Na barra das achadas, quantas palavras do dia faltam por tamanho e por letra inicial. A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma delas. Uma por dia.</li>
+      <li>Junto de cada letra, quantas palavras do dia ainda começam com ela; embaixo da flor, os começos de duas letras que faltam. Na barra das achadas, quantas faltam por tamanho e por letra inicial. A <b>dica</b> (a lâmpada) mostra o começo e o tamanho de uma delas. Uma por dia.</li>
     </ul>
     <p>Chegando a <b>Gerânio</b>, o dia está feito; dá para continuar até achar todas as do dia (Gerânio pleno). Ao longo da semana a lista do dia cresce.</p>
     <div class="niveis" id="niveis"></div>
@@ -398,14 +408,28 @@
     for (let i = 0; i < np; i++) {
       const [x, y] = pos(i, RAIO_LETRA, np);
       s += `<g class="pt" data-i="${i}"><path class="lu" d="${petalaGirada(360 / np * i, np)}" fill="var(--petala)" stroke="var(--petala)" stroke-width="10" stroke-linejoin="round"/>
-        <text class="le" x="${f1(x)}" y="${f1(y)}" fill="var(--letra)"></text></g>`;
+        <text class="le" x="${f1(x)}" y="${f1(y)}" fill="var(--letra)"></text><text class="cnt" x="${f1(x + 24)}" y="${f1(y + 18)}" fill="var(--letra)"></text></g>`;
     }
     s += `<g class="pt" data-i="c"><circle r="54" fill="var(--miolo)"/><circle r="46" fill="none" stroke="var(--miolo-txt)" stroke-opacity=".25" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round"/>
-      <text x="0" y="0" fill="var(--miolo-txt)" style="font-size:37px">${P.c}</text></g></svg>`;
+      <text x="0" y="0" fill="var(--miolo-txt)" style="font-size:37px">${P.c}</text><text class="cnt" x="27" y="20" fill="var(--miolo-txt)"></text></g></svg>`;
     $("flor").innerHTML = s;
     letrasPetalas();
   }
-  function letrasPetalas() { $("flor").querySelectorAll(".pt[data-i] .le").forEach(t => { t.textContent = ordem[+t.closest(".pt").dataset.i]; }); }
+  function letrasPetalas() { $("flor").querySelectorAll(".pt[data-i] .le").forEach(t => { t.textContent = ordem[+t.closest(".pt").dataset.i]; }); contas(); }
+  // quantas palavras do dia faltam por letra inicial (junto de cada letra; ✓ quando fecha) e por começo de duas letras
+  // (pílulas embaixo da flor, só os que faltam) — ajuda na reta final (escolha "C", 07/11/2026)
+  function contas() {
+    if (!P) return;
+    const falta = P.w.map(chave).filter(n => !achadas.includes(n));
+    $("flor").querySelectorAll(".pt[data-i]").forEach(g => {
+      const i = g.dataset.i, L = i === "c" ? P.c : ordem[+i], f = falta.filter(n => n[0] === L).length, t = g.querySelector(".cnt");
+      if (t) t.textContent = f || "✓";
+    });
+    const pares = [...new Set(falta.map(n => n.slice(0, 2)))].sort();
+    const el = $("inis"), antes = el.childElementCount;
+    el.innerHTML = pares.map(pr => `<span>${pr}<b>${falta.filter(n => n.startsWith(pr)).length}</b></span>`).join("");
+    if (!!antes !== !!el.childElementCount) fit();
+  }
   function fit() {
     const f = $("flor"), svg = $("florSvg");
     if (!f || !svg) return;
@@ -435,6 +459,7 @@
   let nivelAntes = -1, ultimasOrdem = [];
   function render(animar = true) {
     if (!P) return;
+    contas();
     const pts = pontos(), k = nivelIdx(pts);
     // fase 1 (até Gerânio): régua de pontos com uma marca em cada nível; embaixo, quanto falta
     // fase 2 (Gerânio feito): a régua conta as palavras do dia, rumo ao pleno; embaixo, quantas faltam e as raras
