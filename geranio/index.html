@@ -167,13 +167,18 @@
   .lista .dica-l { margin: 8px 4px; padding: 10px 12px; border-radius: 12px; background: var(--surface); font-size: .9rem; }
   .lista .dica-l b { letter-spacing: .12em; }
 
-  /* ---------- botões: apagar · embaralhar · enviar (o teclado comum, .gh-kb-key) ---------- */
-  :root { --kb-h: 52px; --kb-r: 12px; --kb-font: "Noto Sans", -apple-system, BlinkMacSystemFont, sans-serif; --kb-stretch: 87.5%; --kb-weight: 800; --kb-fs: 15px; }
-  .botoes { display: flex; gap: 10px; margin-top: 8px; flex: none; }
-  .botoes .gh-kb-key { flex: 1; max-width: none; letter-spacing: .08em; font-size: 15px; box-shadow: var(--shadow); }
-  .botoes .gh-kb-key.mid { flex: 0 0 64px; }
-  .botoes .gh-kb-key svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
-  .botoes .gh-kb-key.enter { flex: 1; max-width: none; background: var(--kb-ink); color: var(--kb-bg); }
+  /* ---------- botões: só ícones, nos cantos de baixo da flor (opção "A", 07/11/2026; o embaralhar saiu — a barra de espaço ainda embaralha) ---------- */
+  .florbox { position: relative; flex: 1 1 0; min-height: 0; width: 100%; display: flex; }
+  .florbox .flor { flex: 1 1 0; }
+  .ib { position: absolute; bottom: max(4px, calc(var(--folga, 0px) - 22px)); z-index: 2; width: 58px; height: 58px; border-radius: 50%; border: none; padding: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); -webkit-tap-highlight-color: transparent;
+    transition: transform .1s ease; }
+  .ib:active { transform: scale(.92); }
+  .ib svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .ib.ap { left: 8px; background: var(--surface); color: var(--ink); }
+  .ib.en { right: 8px; background: var(--ink); color: var(--bg); }
+  .ib.en svg { stroke-width: 2.5; }
+  @media (max-height: 700px) { .ib { width: 46px; height: 46px; } .ib svg { width: 22px; height: 22px; } }
 
   /* ---------- faixa de fim (aparece ao chegar a Gerânio; o jogo continua) ---------- */
   .rodape { flex: none; }
@@ -227,15 +232,14 @@
   <button class="achadas" id="achadasBtn" aria-expanded="false"><b id="nAch">0</b><small id="nAchL">palavras</small><span id="ultimas"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
   <div class="palco" id="palco">
     <div class="palavra" id="palavra" aria-live="polite"></div>
-    <div class="flor" id="flor"></div>
+    <div class="florbox">
+      <div class="flor" id="flor"></div>
+      <button class="ib ap" id="apagar" aria-label="Apagar letra"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="M17.5 9.5l-5 5M12.5 9.5l5 5"/></svg></button>
+      <button class="ib en" id="enviar" aria-label="Enviar palavra"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
     <div class="inis" id="inis" aria-label="Começos que faltam"></div>
     <div class="lista" id="lista"></div>
   </div>
-</div>
-<div class="botoes">
-  <button class="gh-kb-key" id="apagar">APAGAR</button>
-  <button class="gh-kb-key mid" id="embaralhar" aria-label="Embaralhar as pétalas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v4.5h-4.5"/></svg></button>
-  <button class="gh-kb-key enter" id="enviar">ENVIAR</button>
 </div>
 <div class="rodape" data-tabuleiro>
   <div class="controls" id="controls">
@@ -436,6 +440,8 @@
     svg.style.width = svg.style.height = "0px";
     const lado = Math.floor(Math.min(f.clientWidth, f.clientHeight, 380));
     svg.style.width = svg.style.height = Math.max(160, lado) + "px";
+    // os botões ficam na altura da base da flor (não no fundo da área, quando a flor não ocupa a altura toda)
+    f.parentNode.style.setProperty("--folga", Math.max(0, (f.clientHeight - Math.max(160, lado)) / 2) + "px");
   }
   window.addEventListener("resize", fit);
   if (window.visualViewport) visualViewport.addEventListener("resize", fit);
@@ -571,7 +577,7 @@
   });
   $("apagar").addEventListener("click", () => { fechaLista(); apaga(); });
   $("enviar").addEventListener("click", () => { fechaLista(); envia(); });
-  $("embaralhar").addEventListener("click", () => {
+  function embaralha() {
     fechaLista();
     const f = $("flor"); f.classList.add("mexe");
     setTimeout(() => {
@@ -579,13 +585,13 @@
       do { for (let i = ordem.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ordem[i], ordem[j]] = [ordem[j], ordem[i]]; } } while (ordem.join("") === velha);
       letrasPetalas(); f.classList.remove("mexe"); persist();
     }, 180);
-  });
+  }
   document.addEventListener("keydown", e => {
     if (!P || e.metaKey || e.ctrlKey || e.altKey || document.querySelector(".overlay.open")) return;
     const k = norm(e.key);
     if (e.key === "Enter") { e.preventDefault(); envia(); }
     else if (e.key === "Backspace") { e.preventDefault(); apaga(); }
-    else if (e.key === " ") { e.preventDefault(); $("embaralhar").click(); }
+    else if (e.key === " ") { e.preventDefault(); embaralha(); }
     else if (k.length === 1 && (k === P.c || P.f.includes(k))) poe(k);
   });
 
