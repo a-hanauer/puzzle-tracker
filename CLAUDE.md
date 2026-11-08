@@ -142,9 +142,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - No tabuleiro (opção "C", 07/11/2026): junto de cada letra, um número pequeno = palavras do dia que faltam começando por ela
   (✓ quando fecha; segue a letra ao embaralhar); embaixo da flor, pílulas com os começos de duas letras que faltam (só os que
   faltam; até 3 linhas, 2 em tela baixa, com rolagem).
-- Botões (opção "A", 07/11/2026): só ícones redondos nos cantos de baixo da flor (apagar à esquerda, claro; enviar à
-  direita, escuro), na altura da base da flor (`--folga`, calculada em `fit()`); 46px em tela baixa. Sem botão de
-  embaralhar (a barra de espaço do teclado físico ainda embaralha).
+- Botões (opção "A", 07/11/2026): só ícones redondos nos cantos da flor, na altura da base/topo da flor (`--folga`, calculada
+  em `fit()`); 46px em tela baixa. Embaixo: apagar à esquerda (claro), enviar à direita (escuro). Em cima (08/11/2026):
+  embaralhar à esquerda; à direita, o olho que liga/desliga as dicas do tabuleiro (números nas letras, ★, pílulas e começo
+  vivo; `body.sem-dicas`, guardado em `girassol:dicas-tabuleiro`). A barra de espaço também embaralha.
 - Começo vivo (07/11/2026): enquanto digita, com 1–2 letras, uma linha sob a palavra diz quantas do dia faltam com esse começo e
   os tamanhos ("DE… 3 faltam: 8, 9 (×2) letras"; nunca com 3+ letras); a pílula do começo acende e as outras apagam. ★N no alto
   do miolo = pangramas do dia que faltam (some quando acaba).
