@@ -95,7 +95,11 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   Desde 08/11/2026: do léxico só entra o que o VERO conhece com a mesma grafia (tira paper e outros estrangeirismos), e
   municípios só ficam fora se pouco usados como palavra (icf > 11,3: pedra, escada, recife voltam; piracicaba não); a
   conjugação sai se não for ao menos meio ponto de icf mais usada que o verbo (busca, venda, volta, troca entram);
-  estrangeirismos e nomes achados cruzando com o hunspell de inglês em `nomes-proprios.txt`. ~10,5 mil palavras.
+  estrangeirismos e nomes achados cruzando com o hunspell de inglês em `nomes-proprios.txt`.
+  Uso corrente (08/11/2026): icf ≤ 12, ou icf ≤ 14 e ≥ 30 ocorrências nas legendas pt-BR do OpenSubtitles
+  (github.com/hermitdave/FrequencyWords, `pt_br_full.txt`, 5º argumento de verbetes.py); a faixa incerta (icf 12–14, até 6
+  letras diferentes, ~3,9 mil) foi revista à mão: nomes, grafias de Portugal, termos técnicos, prefixos e conjugações que
+  passavam ficam em `nomes-proprios.txt` (parra, deca, gajo, autocarro). ~9,8 mil palavras.
   Os dias já publicados guardam as letras e a lista é refeita (`refaz` no gerador).
   Todo o resto do vocabulário continua valendo como rara (+50%). Listas: seg 10–14 … dom 33–50.
   Pangrama: + 1 ponto por letra da flor. A página desenha quantas pétalas o desafio tiver (os #1 e #2 têm 6).

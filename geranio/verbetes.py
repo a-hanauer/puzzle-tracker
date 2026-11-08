@@ -3,7 +3,7 @@
 # frequência conhecida no fserb/pt-br (icf ≤ 14) ou presentes na lista curada do Cordel.
 # Fora: estrangeirismos e nomes próprios (as mesmas regras de dicionario.py), palavrões (negativas do fserb) e a lista STOP.
 # Plurais, femininos e conjugações continuam VALENDO no jogo (palavras.txt), como raras (pontos em dobro).
-# Uso: python3 geranio/verbetes.py <pasta do VERO com index.dic> <pasta src do fserb/pt-br> geranio/verbetes.json <formas-com-acento.txt>
+# Uso: python3 geranio/verbetes.py <pasta do VERO com index.dic> <pasta src do fserb/pt-br> geranio/verbetes.json <formas-com-acento.txt> <pt_br_full.txt>
 #      depois python3 geranio/grafia.py (segunda grafia corrente, metro · metrô, e a grafia das raras em palavras.txt)
 import re, sys, json, unicodedata, os
 norm = lambda s: unicodedata.normalize('NFD', s).encode('ascii', 'ignore').decode().lower()
@@ -27,6 +27,14 @@ for f in ('paises', 'estados-br', 'continentes'):
 # palavra (icf > 11,3: piracicaba, maringá, bauru). Sobrenomes e santos que sobram vão em nomes-proprios.txt
 municipios = {w.strip().lower() for w in open(os.path.join(sys.argv[2], 'listas', 'municipios-br'), encoding='utf8').read().splitlines() if w.strip()}
 icfx = {}
+# uso corrente = icf ≤ 12 (texto da internet) ou, entre 12 e 14, aparecer ao menos 100 vezes nas legendas de filmes e séries
+# em pt-BR (OpenSubtitles 2018, github.com/hermitdave/FrequencyWords, 5º argumento: pt_br_full.txt). A internet sozinha
+# deixava passar sobrenome e termo técnico (parra, deca, repassada); a fala do dia a dia separa (08/11/2026)
+leg = {}
+for l in open(sys.argv[5], encoding='utf8'):
+    w, _, c = l.strip().partition(' ')
+    leg[w] = leg.get(w, 0) + int(c or 0)
+corrente = lambda w: icfx.get(w, 99) <= 12 or (icfx.get(w, 99) <= 14 and leg.get(w, 0) >= 30)
 lugar = lambda w: w in lugares or (w in municipios and icfx.get(w, 99) > 11.3)
 for l in open(os.path.join(sys.argv[2], 'icf'), encoding='utf8'):
     w, _, v = l.strip().partition(',')
@@ -45,7 +53,7 @@ for l in open(os.path.join(sys.argv[1], 'index.dic'), encoding='utf8').read().sp
     n = norm(w)
     if n in neg or (n in STOP and n not in resp) or len(set(n)) > 7 or (lugar(w) and n not in resp): continue
     # vale a grafia exata: o verbete de uso (icf ≤ 14) ou a palavra como o Cordel a escreve (jogo, não o verbete jogó)
-    if icfx.get(w, 99) <= 14: cand.setdefault(n, set()).add(w)
+    if corrente(w): cand.setdefault(n, set()).add(w)
     elif n in resp: cand.setdefault(n, set()).update(r for r in respw if norm(r) == n)
 # O VERO não traz como verbete muitas palavras de base que ele gera por regra (corda, faca, carne, dedo, roda, casa, sono):
 # entram também as do léxico do fserb (palavras que não são conjugação, mais os infinitivos), com o mesmo filtro e
@@ -74,7 +82,7 @@ def so_conjugacao(w):
 for w in lexico:
     if not re.fullmatch(r'[a-zà-üç]+', w) or len(w) < 4 or fora(w) or w in OBSOLETAS or so_conjugacao(w): continue
     n = norm(w)
-    if n in neg or n in STOP or len(set(n)) > 7 or lugar(w) or icfx.get(w, 99) > 14 or w not in formas: continue
+    if n in neg or n in STOP or len(set(n)) > 7 or lugar(w) or not corrente(w) or w not in formas: continue
     cand.setdefault(n, set()).add(w)
 # nenhum plural entre as palavras do dia (o VERO traz alguns como verbete: carros, amigos)
 for n in list(cand):

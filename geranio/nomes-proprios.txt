@@ -12,3 +12,18 @@ alana gertrudes dina quito manila trofa rojo tone
 caxias sousa santiago mariana carolina catarina braga castro cunha barbosa monteiro camargo aguiar barroso bastos mesquita toledo assis madalena messias sabino vitorino tenório rondon alvarenga lobato dionísio anastácio floriano nazareno nepomuceno belém santarém ourém magda jacinto angelina salgado caldas penha
 # estrangeirismos e nomes que o VERO traz e passam pelas regras (achados cruzando as palavras do dia com o hunspell de inglês, 08/11/2026)
 acapulco adelaide alabama atlanta barbecue blazer bridge calendar cartoon charles charter cute detective doctor drive fate fender financial flame flare fondue freelance freelancer freezer garage gaze gram grunge hamster jingle late lite live login logon manager maple marine mile miss mister motocross novel palace patrol paul pedigree poodle pool prime rail ranger ratio rave rebel remix render revival sample secure sector single suede sugar superstar techno time topless trailer translator trevor triple upgrade vector vintage volvo xerox zoom siemens iago cassandra clarissa bernardo bruno berta carina carmelo juvenal mariano nestor molina navarro sancho soto luanda riga havana nevada timor gaza hermes minerva pandora judas casanova quixote dalai dali canada boom cisco sega napa maxi mimi lulu tutu lila leda cora nona mona milo baal babel calendar ibidem situ opus corpus campus curriculum quantum
+# fora das palavras do dia por revisão à mão da faixa incerta (icf 12–14) em 08/11/2026: nomes, grafias de Portugal,
+# termos técnicos ou arcaicos, prefixos, palavrões e conjugações que passavam (continuam valendo como raras)
+agar agra albano alba alexia alonso amir aninha apolo argel arão arpoador aquando autocarro babi bari barnabé beirute bete
+betão bibi bira borla buda caca caim carlota carmona carrinha carte castela chica chávena cimeira cona coli corso creta
+córdoba delfim donato dojo devir diodo coaxial distal basal axial biliar cimo cerro aspeto contactado défice coupé conduto
+comutação cúria cônego cabina avance cândida alter anglo
+electro eletro enoque escolho esto estevão excepto excepção fracção foste fontana fraga gajo gare gamboa gastão genebra giga
+guião guto gávea hacer hasta herdade hipólito heleno homo honor inda irina isidoro islão janaína jango japa javé judite lala
+lari leone lero lenga lise loiça luca lupo maga maiorca martim marino meca miramar mondego montijo mori moscou málaga navarra
+nica nilo noutra ondina mango modus miga laia napoleão nonato lázaro intra hiper hidro neuro lipo mono
+paco paloma parma parra pati paulina pedroso penélope peri pila pina planear plutão pola polaco porreiro proto psico pseudo
+rebeca recta raposo rela romeu sainte sama santoro sema sica sida sito sião solano souto subtil tamo tejo tele tecno teca
+terramoto tibete tico timo toninho toscano travão tristão troia tuna urano urca valverde vanda varela vero viriato vénus
+ávila íamos óscar xoxo zorra táctica pagará dirijo ganharia mataria empata arranha apaga chupa
+siena aids
