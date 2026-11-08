@@ -92,7 +92,11 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   `nomes-proprios.txt` e lugares). Desde 07/11/2026 entram também as palavras do `lexico` do fserb com icf ≤ 14 (o VERO não
   traz como verbete muitas palavras de base que gera por regra: corda, faca, carne, dedo, roda, casa), sem plurais e sem
   conjugação pura (gerúndio, ou forma bem menos usada que o próprio verbo: fico, toma, anda saem; cedo, entre, casa, nada ficam);
-  ~10,6 mil palavras. Os dias já publicados guardam as letras e a lista é refeita (`refaz` no gerador).
+  Desde 08/11/2026: do léxico só entra o que o VERO conhece com a mesma grafia (tira paper e outros estrangeirismos), e
+  municípios só ficam fora se pouco usados como palavra (icf > 11,3: pedra, escada, recife voltam; piracicaba não); a
+  conjugação sai se não for ao menos meio ponto de icf mais usada que o verbo (busca, venda, volta, troca entram);
+  estrangeirismos e nomes achados cruzando com o hunspell de inglês em `nomes-proprios.txt`. ~10,5 mil palavras.
+  Os dias já publicados guardam as letras e a lista é refeita (`refaz` no gerador).
   Todo o resto do vocabulário continua valendo como rara (+50%). Listas: seg 10–14 … dom 33–50.
   Pangrama: + 1 ponto por letra da flor. A página desenha quantas pétalas o desafio tiver (os #1 e #2 têm 6).
   **Meta** (05/11/2026, escolha "pontos de N palavras"): Gerânio = pontos de N palavras do dia médias (pontos possíveis ÷
