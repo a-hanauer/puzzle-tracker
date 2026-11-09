@@ -1,0 +1,43 @@
+rules_version = '2';
+// Jogos do Dia: progresso de cada pessoa (só ela lê e grava) e ranking por grupo de amigos (código de convite)
+// Publicado no projeto Firebase "Puzzle Tracker" (puzzle-tracker-c683a). Esta cópia é só para registro.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function eu() { return request.auth != null; }
+    function dono(uid) { return eu() && request.auth.uid == uid; }
+    function membro(cod) { return eu() && request.auth.uid in get(/databases/$(database)/documents/grupos/$(cod)).data.membros; }
+
+    // perfil (apelido, grupos) e progresso (uma cópia de cada chave salva no aparelho)
+    match /users/{uid} {
+      allow read, write: if dono(uid);
+      match /prog/{chave} {
+        allow read, write: if dono(uid) && (request.resource == null || request.resource.data.v.size() < 200000);
+      }
+    }
+
+    // grupos: quem tem o código lê (para entrar); cria quem for o dono; entrar/sair = mexer só no próprio uid
+    match /grupos/{cod} {
+      allow get: if eu();
+      allow create: if eu() && request.resource.data.dono == request.auth.uid
+        && request.resource.data.membros == [request.auth.uid] && cod.size() >= 6 && cod.size() <= 12;
+      allow update: if eu()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membros', 'nomes'])
+        && (request.resource.data.membros.removeAll(resource.data.membros) == [request.auth.uid]
+            || resource.data.membros.removeAll(request.resource.data.membros) == [request.auth.uid]
+            || request.resource.data.membros == resource.data.membros)
+        && request.resource.data.membros.size() <= 50;
+
+      // resultados do dia (um por pessoa, jogo e dia): só membros leem; cada um grava o seu
+      match /res/{id} {
+        allow read: if membro(cod);
+        allow create, update: if membro(cod) && request.resource.data.uid == request.auth.uid
+          && id == request.resource.data.dia + '_' + request.resource.data.jogo + '_' + request.auth.uid
+          && request.resource.data.dia is string && request.resource.data.dia.size() == 10
+          && request.resource.data.jogo is string && request.resource.data.jogo.size() <= 24
+          && request.resource.data.valor is number && request.resource.data.valor >= 0 && request.resource.data.valor < 100000
+          && request.resource.data.dica is bool;
+        allow delete: if membro(cod) && resource.data.uid == request.auth.uid;
+      }
+    }
+  }
+}

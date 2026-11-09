@@ -450,6 +450,9 @@
   }
   .round:active { transform: scale(.94); }
   .round svg { width: 18px; height: 18px; }
+  .app-mark h1 { white-space: nowrap; }
+  @media (max-width: 374px) { .app-mark h1 { font-size: 1.5rem; } .head-actions { gap: 4px; } .round { width: 32px; height: 32px; } }
+  @media (max-width: 339px) { .app-mark h1 { font-size: 1.32rem; } }
 
   /* painel de configurações (sobe de baixo) */
   .sheet-bg { position: fixed; inset: 0; z-index: 20; display: flex; align-items: flex-end; justify-content: center; background: rgba(8, 9, 12, .5); backdrop-filter: blur(3px); }
@@ -665,6 +668,46 @@
   .dist .hrow { grid-template-columns: 14px 1fr 30px; margin: 4px 0; }
   .dist .n { color: var(--muted); font-weight: 700; font-size: .78rem; }
   .empty { color: var(--muted); font-size: .82rem; padding: 6px 0; }
+
+  /* ---------- Ranking com amigos (#ranking; nuvem.js) — opção "A", 09/11/2026: um cartão por jogo ---------- */
+  .rk-grp { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 2px 12px; color: var(--muted); font-size: .86rem; }
+  .rk-grp b { color: var(--text); font-size: 1rem; }
+  .rk-cod { font-family: "IBM Plex Mono", monospace; font-weight: 700; letter-spacing: .08em; background: var(--surface-2); padding: 5px 10px; border-radius: 8px;
+    color: var(--text); border: 0; font-size: .9rem; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+  .rk-cod svg { width: 14px; height: 14px; }
+  .rk-dia { display: flex; align-items: center; justify-content: center; gap: 6px; margin: -4px 0 12px; font-weight: 700; color: var(--muted);
+    font-size: .84rem; letter-spacing: .06em; text-transform: uppercase; }
+  .rk-dia button { border: 0; background: none; color: var(--text); width: 36px; height: 32px; font-size: 1.1rem; cursor: pointer; }
+  .rk-dia button:disabled { opacity: .25; }
+  .rk-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 10px 12px; margin-bottom: 8px; }
+  .rk-ch { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .rk-ch img, .rk-ch .em { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+  .rk-ch b { font-size: .98rem; } .rk-ch small { color: var(--muted); font-size: .74rem; margin-left: auto; }
+  .rk-rr { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 2px; font-size: .92rem; }
+  .rk-rr .p { font-weight: 800; color: var(--muted); text-align: center; }
+  .rk-rr .n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rk-rr.eu .n { font-weight: 800; }
+  .rk-rr .v { font-family: "IBM Plex Mono", monospace; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .rk-rr.nao { color: var(--faint); } .rk-rr.nao .v { font-family: inherit; font-weight: 500; font-size: .8rem; }
+  .rk-rr.perdeu .v { color: var(--muted); }
+  .rk-dc { display: inline-block; font-size: .66rem; font-weight: 800; color: #a8790a; background: color-mix(in srgb, var(--gold) 22%, transparent);
+    border-radius: 6px; padding: 1px 5px; margin-left: 6px; vertical-align: 1px; }
+  .rk-sem .rk-rr { grid-template-columns: 22px minmax(0, 1fr) repeat(3, 46px); }
+  .rk-sem .rk-rr .v { text-align: center; }
+  .rk-sem .hd { font-size: .68rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .rk-lead { font-size: .88rem; color: var(--muted); margin: 6px 2px 14px; line-height: 1.45; }
+  .rk-in { width: 100%; box-sizing: border-box; font: inherit; font-size: 1rem; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); }
+  .rk-in.cod { font-family: "IBM Plex Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+  .rk-lbl { display: block; font-size: .78rem; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin: 16px 2px 6px; }
+  .rk-btn { display: block; width: 100%; padding: 13px; border-radius: 14px; border: 0; font: inherit; font-weight: 800; font-size: .95rem; margin-top: 10px; cursor: pointer; }
+  .rk-btn.pr { background: var(--text); color: var(--bg); } .rk-btn.sc { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+  .rk-btn:disabled { opacity: .5; }
+  .rk-ou { text-align: center; color: var(--muted); font-size: .8rem; margin: 14px 0 4px; }
+  .rk-nota { font-size: .78rem; color: var(--muted); margin-top: 14px; line-height: 1.45; }
+  .rk-erro { color: #d0453a; font-size: .84rem; margin-top: 10px; min-height: 1em; }
+  .rk-link { background: none; border: 0; color: var(--muted); font: inherit; font-size: .8rem; text-decoration: underline; cursor: pointer; padding: 6px 0; }
+  .conta-box .rk-in { margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -673,6 +716,7 @@
   <div class="top-row">
     <div class="app-mark"><img src="icon-192.png?v=6" alt=""><h1>Jogos do Dia</h1></div>
   <div class="head-actions">
+    <button class="round" id="rankBtn" aria-label="Ranking com amigos"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg></button>
     <button class="round" id="histBtn" aria-label="Estatísticas"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V13M10 20V6M15 20v-9M20 20V9"/></svg></button>
     <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
   </div>
@@ -705,11 +749,21 @@
     </div>
     <button class="set-btn" id="badgeBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg><span>Mostrar pendentes no ícone do app</span></button>
     <button class="set-btn" id="manageBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Gerenciar jogos</span></button>
+    <div class="set-label" style="margin-top:22px">Conta na nuvem</div>
+    <div class="conta-box" id="contaBox"></div>
     <div class="set-label" style="margin-top:22px">Backup</div>
     <button class="set-btn" id="exportBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5"/><path d="M7.5 8 12 3.5 16.5 8"/><path d="M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg><span>Exportar progresso</span></button>
     <button class="set-btn" id="importBtn"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5V15"/><path d="M7.5 10.5 12 15l4.5-4.5"/><path d="M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg><span>Importar progresso</span></button>
-    <div class="set-note">O progresso fica só neste aparelho. Exporte para guardar uma cópia ou levar para outro celular: sequências, tempos, histórico, jogos da casa em andamento e a sua lista de jogos.</div>
+    <div class="set-note">Sem conta na nuvem, o progresso fica só neste aparelho. Exporte para guardar uma cópia ou levar para outro celular: sequências, tempos, histórico, jogos da casa em andamento e a sua lista de jogos.</div>
   </div>
+</section>
+
+<section id="viewRanking" hidden>
+  <header class="page-head">
+    <button class="page-back" data-voltar aria-label="Voltar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h1>Ranking</h1>
+  </header>
+  <div id="rkBody"></div>
 </section>
 
 <section id="viewHistory" hidden>
@@ -850,7 +904,7 @@ function load() {
   s.hidden ??= [];         // ids dos jogos do painel que a pessoa ocultou
   return s;
 }
-function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} if (window.nuvemAgenda) nuvemAgenda(); }
 
 const state = load();
 
@@ -903,9 +957,11 @@ function syncLocalGames() {
     if (!finished && state.results[today()]?.[g.id]) { delete state.results[today()][g.id]; changed = true; }
     if (finished) {
       const r = (state.results[today()] ??= {});
-      if (r[g.id]?.tries !== p.tries || r[g.id]?.time !== p.time) {
+      if (r[g.id]?.tries !== p.tries || r[g.id]?.time !== p.time || !!r[g.id]?.dica !== !!p.dica || r[g.id]?.inc !== p.inc) {
         r[g.id] = { tries: p.tries, max: p.max, won: p.won };
         if (p.time != null) r[g.id].time = p.time;
+        if (p.dica) r[g.id].dica = true;
+        if (p.inc != null) r[g.id].inc = p.inc;
         changed = true;
       }
     }
@@ -1931,19 +1987,22 @@ document.querySelectorAll("#perSeg button").forEach(b => b.addEventListener("cli
 
 /* ---------- Páginas: Estatísticas (#estatisticas) e Configurações (#configuracoes) ----------
    Ocupam a tela toda, com título e voltar; o voltar do sistema também funciona. */
-const PAGINAS = { "#estatisticas": "viewHistory", "#historico": "viewHistory", "#configuracoes": "viewSettings" };
+const PAGINAS = { "#estatisticas": "viewHistory", "#historico": "viewHistory", "#configuracoes": "viewSettings", "#ranking": "viewRanking" };
 function route() {
   const alvo = PAGINAS[location.hash] || null;
   $("viewHistory").hidden = alvo !== "viewHistory";
   $("viewSettings").hidden = alvo !== "viewSettings";
+  $("viewRanking").hidden = alvo !== "viewRanking";
   $("viewToday").hidden = !!alvo;
   document.body.classList.toggle("pagina", !!alvo);
   if (alvo === "viewHistory") renderHistory();
-  if (alvo === "viewSettings") { renderTheme(); }
+  if (alvo === "viewSettings") { renderTheme(); renderConta(); }
+  if (alvo === "viewRanking") renderRanking();
   if (alvo) window.scrollTo(0, 0);
 }
 const abrirPagina = hash => { history.pushState({ pagina: true }, "", hash); route(); };
 $("histBtn").addEventListener("click", () => abrirPagina("#estatisticas"));
+$("rankBtn").addEventListener("click", () => abrirPagina("#ranking"));
 $("settingsBtn").addEventListener("click", () => abrirPagina("#configuracoes"));
 document.querySelectorAll("[data-voltar]").forEach(b => b.addEventListener("click", () => {
   if (history.state && history.state.pagina) history.back();
@@ -1952,10 +2011,218 @@ document.querySelectorAll("[data-voltar]").forEach(b => b.addEventListener("clic
 window.addEventListener("popstate", route);
 window.addEventListener("hashchange", route);
 
+
+/* ---------- Nuvem: progresso salvo na conta e ranking com amigos (nuvem.js, Firebase; desde 09/11/2026) ----------
+   O painel continua gravando tudo no aparelho; o nuvem.js copia as chaves dos jogos para a conta e traz de volta o
+   que mudou em outro aparelho. Os resultados de cada dia (os mesmos de state.results) vão para os grupos de amigos. */
+const RK_EPOCAS = { eclipse: [2026, 8, 27], novelo: [2026, 8, 28], retalhos: [2026, 8, 28], pingado: [2026, 8, 28], cordel: [2026, 9, 4],
+  cruzadinha: [2026, 9, 10], brigadeiro: [2026, 9, 17], girassol: [2026, 10, 4] };
+const RK_CRIT = { pts: "mais pontos", tries: "menos tentativas", inc: "menos inclinações", time: "menor tempo", fora: "tempo aprox." };
+function chaveDoDia(id, dia) {
+  const [y, m, d] = dia.split("-").map(Number);
+  if (id === "sanduba") return `sanduba-daily-${y}-${m}-${d}`;
+  const ep = RK_EPOCAS[id]; if (!ep) return null;
+  return `${id}:dia:${Math.round((new Date(y, m - 1, d) - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1}`;
+}
+// um resultado por jogo e dia terminado: o que entra no ranking (os dias já jogados também: o histórico vem junto)
+function resultadosParaRanking(dias = 120) {
+  const out = [], lim = dayKey(new Date(Date.now() - dias * 86400000));
+  for (const [dia, rs] of Object.entries(state.results || {})) {
+    if (dia < lim) continue;
+    for (const [id, r] of Object.entries(rs || {})) {
+      const k = chaveDoDia(id, dia), p = k ? readJSON(k) : null;
+      let tipo, valor;
+      if (id === "girassol") { tipo = "pts"; valor = p?.pts ?? r.tries; }
+      else if (id === "sanduba" || id === "quinhentos") { tipo = "tries"; valor = r.tries; }
+      else if (id === "brigadeiro") { tipo = "inc"; valor = r.inc ?? p?.inc; }
+      else if (LOCAL_PROGRESS[id]) { tipo = "time"; valor = r.time; }
+      else { tipo = "fora"; valor = r.time; }
+      if (typeof valor !== "number" || !(valor >= 0) || (tipo === "fora" && !valor)) continue;
+      out.push({ dia, jogo: id, tipo, valor: Math.round(valor), dica: !!(r.dica || p?.dica), won: r.won !== false, max: r.max || 0 });
+    }
+  }
+  return out;
+}
+// junta a versão daqui e a de outro aparelho do estado do painel: histórico e resultados somam
+function fundirPainel(k, local, remoto) {
+  if (k !== KEY) return null;
+  const a = JSON.parse(local), b = JSON.parse(remoto), m = { ...b, ...a };
+  m.history = { ...(b.history || {}) };
+  for (const [d, l] of Object.entries(a.history || {})) m.history[d] = [...new Set([...(m.history[d] || []), ...l])];
+  m.results = { ...(b.results || {}) };
+  for (const [d, r] of Object.entries(a.results || {})) m.results[d] = { ...(m.results[d] || {}), ...r };
+  return JSON.stringify(m);
+}
+let nuvemT = 0, nuvemRodando = false;
+window.nuvemAgenda = (ms = 4000) => { clearTimeout(nuvemT); nuvemT = setTimeout(nuvemJa, ms); };
+async function nuvemJa() {
+  const n = window.nuvem;
+  if (!n || !n.estado.conectado || nuvemRodando) return;
+  nuvemRodando = true;
+  try {
+    const antes = localStorage.getItem(KEY);
+    await n.sincroniza();
+    const depois = localStorage.getItem(KEY);
+    if (depois && depois !== antes && depois !== JSON.stringify(state)) {   // chegou coisa de outro aparelho: recarrega o painel
+      const novo = load(); Object.keys(state).forEach(k => delete state[k]); Object.assign(state, novo);
+      render(); if (!$("viewHistory").hidden) renderHistory();
+    }
+    await n.enviaResultados(resultadosParaRanking());
+  } catch (e) { console.warn("nuvem", e); }
+  nuvemRodando = false;
+  if (!$("viewSettings").hidden) renderConta();
+}
+function nuvemInicia() {
+  const n = window.nuvem; if (!n || nuvemInicia.ok) return; nuvemInicia.ok = true;
+  n.configura({ prefixos: BK_PREFIXOS, fundir: fundirPainel });
+  n.ouvir(() => { if (!$("viewSettings").hidden) renderConta(); });
+  n.pronto.then(() => { if (n.estado.conectado) nuvemAgenda(600); if (!$("viewRanking").hidden) renderRanking(); });
+}
+window.addEventListener("nuvem", nuvemInicia);
+if (window.nuvem) nuvemInicia();
+window.addEventListener("focus", () => nuvemAgenda(1200));
+window.addEventListener("pageshow", () => nuvemAgenda(1200));
+window.addEventListener("online", () => nuvemAgenda(800));
+
+// ---------- tela do Ranking ----------
+let rkModo = "hoje", rkDia = today(), rkCod = null;
+const rkFmt = (r) => r.tipo === "pts" ? `${r.valor} pts` : r.tipo === "tries" ? `${r.won ? "" : "✗ "}${r.valor}/${r.max || "?"}`
+  : r.tipo === "inc" ? String(r.valor) : r.tipo === "fora" ? `~${fmtTime(r.valor)}` : fmtTime(r.valor);
+// ordem dentro de um jogo: pontos, do maior; o resto, do menor (quem não acertou vai para o fim)
+const rkOrdem = (a, b) => (a.tipo === "tries" && a.won !== b.won) ? (a.won ? -1 : 1) : a.tipo === "pts" ? b.valor - a.valor : a.valor - b.valor;
+const rkMed = i => ["🥇", "🥈", "🥉"][i] || String(i + 1);
+const rkSemana = d => { const x = new Date(d + "T12:00"), seg = new Date(x); seg.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+  const dom = new Date(seg); dom.setDate(seg.getDate() + 6); return [dayKey(seg), dayKey(dom)]; };
+const rkDataTxt = d => { const x = new Date(d + "T12:00"); return `${["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"][x.getDay()]}, ${x.getDate()} ${["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][x.getMonth()]}`; };
+const rkMuda = (d, n) => { const x = new Date(d + "T12:00"); x.setDate(x.getDate() + n); return dayKey(x); };
+function rkIcone(id) {
+  const g = GAMES.find(x => x.id === id);
+  if (g?.icon) return `<img src="${new URL(g.icon, location.href).href}" alt="">`;
+  return `<span class="em">${g?.emoji || "🎲"}</span>`;
+}
+function renderEntrada(el, e) {
+  el.innerHTML = `<p class="rk-lead">Jogue com amigos: cada um vê os resultados do dia dos outros no grupo. Seu progresso também fica salvo na nuvem — troque de celular sem perder nada.</p>
+    <label class="rk-lbl" for="rkApelido">Seu apelido</label><input class="rk-in" id="rkApelido" maxlength="20" autocomplete="nickname" value="${escHTML(e.apelido || "")}">
+    <button class="rk-btn pr" id="rkCriar">Criar um grupo</button>
+    <div class="rk-ou">ou</div>
+    <label class="rk-lbl" for="rkCodigo" style="margin-top:4px">Código de convite</label><input class="rk-in cod" id="rkCodigo" maxlength="8" placeholder="Ex.: QX7K2M" autocapitalize="characters" autocomplete="off">
+    <button class="rk-btn sc" id="rkEntrar">Entrar no grupo</button>
+    <div class="rk-erro" id="rkErro"></div>
+    <p class="rk-nota">Sem cadastro: o app cria uma conta só sua neste aparelho. Para usar em outro celular, ligue um e-mail e senha em Configurações → Conta na nuvem.</p>`;
+  const acao = async (fn) => {
+    const ap = $("rkApelido").value.trim(), erro = $("rkErro");
+    if (!ap) { erro.textContent = "Escolha um apelido."; $("rkApelido").focus(); return; }
+    el.querySelectorAll("button").forEach(b => (b.disabled = true)); erro.textContent = "Um instante…";
+    try { await window.nuvem.entrar(ap); await fn(ap); erro.textContent = ""; await nuvemJa(); renderRanking(); }
+    catch (x) { console.warn(x); erro.textContent = x.message?.startsWith("Não achei") ? x.message : "Não deu certo agora. Confira a internet e tente de novo."; el.querySelectorAll("button").forEach(b => (b.disabled = false)); }
+  };
+  $("rkCriar").onclick = () => acao(ap => window.nuvem.criarGrupo(`Amigos de ${ap}`).then(c => (rkCod = c)));
+  $("rkEntrar").onclick = () => acao(() => { const c = $("rkCodigo").value; if (c.trim().length < 6) throw new Error("Não achei um grupo com esse código."); return window.nuvem.entrarGrupo(c).then(() => (rkCod = c.toUpperCase().replace(/[^A-Z0-9]/g, ""))); });
+}
+async function renderRanking() {
+  const el = $("rkBody"), n = window.nuvem;
+  if (!n) { el.innerHTML = `<p class="rk-lead">Não consegui falar com a nuvem agora. Confira a internet e abra de novo.</p>`; return; }
+  await n.pronto;
+  const e = n.estado;
+  if (!e.conectado || !e.grupos.length) { renderEntrada(el, e); return; }
+  if (!rkCod || !e.grupos.some(g => g.cod === rkCod)) rkCod = e.grupos[0].cod;
+  const [de, ate] = rkModo === "hoje" ? [rkDia, rkDia] : rkSemana(rkDia);
+  const topo = `${e.grupos.length > 1 ? `<div class="segx" id="rkGrupos">${e.grupos.map(g => `<button data-c="${g.cod}" aria-checked="${g.cod === rkCod}">${escHTML(g.nome)}</button>`).join("")}</div>` : ""}
+    <div class="segx" id="rkModo" style="margin-bottom:10px"><button data-m="hoje" aria-checked="${rkModo === "hoje"}">Hoje</button><button data-m="semana" aria-checked="${rkModo === "semana"}">Semana</button></div>
+    <div class="rk-dia"><button id="rkAnt" aria-label="Anterior">‹</button><span>${rkModo === "hoje" ? rkDataTxt(rkDia) : `${+de.slice(8)} a ${rkDataTxt(ate).split(", ")[1]}`}</span><button id="rkProx" aria-label="Próximo" ${ate >= today() ? "disabled" : ""}>›</button></div>`;
+  el.innerHTML = `<div class="rk-grp"><span><b>…</b></span><button class="rk-cod">${rkCod}</button></div>${topo}<p class="rk-lead">Carregando…</p>`;
+  const liga = () => {
+    el.querySelectorAll("#rkGrupos button").forEach(b => (b.onclick = () => { rkCod = b.dataset.c; renderRanking(); }));
+    el.querySelectorAll("#rkModo button").forEach(b => (b.onclick = () => { rkModo = b.dataset.m; renderRanking(); }));
+    $("rkAnt").onclick = () => { rkDia = rkMuda(rkDia, rkModo === "hoje" ? -1 : -7); renderRanking(); };
+    $("rkProx").onclick = () => { rkDia = rkMuda(rkDia, rkModo === "hoje" ? 1 : 7); if (rkDia > today()) rkDia = today(); renderRanking(); };
+    const cod = el.querySelector(".rk-cod");
+    if (cod) cod.onclick = async () => {
+      const txt = `Entra no meu grupo dos Jogos do Dia! Código: ${rkCod}\nhttps://a-hanauer.github.io/puzzle-tracker/`;
+      try { if (navigator.share) await navigator.share({ text: txt }); else { await navigator.clipboard.writeText(txt); cod.textContent = "copiado!"; setTimeout(() => (cod.textContent = rkCod), 1500); } } catch {}
+    };
+    const sair = $("rkSair");
+    if (sair) sair.onclick = async () => { await n.sairGrupo(rkCod); rkCod = null; renderRanking(); };
+  };
+  liga();
+  let dados;
+  try { if (de <= today() && ate >= today()) await nuvemJa(); dados = await n.resultados(rkCod, de, ate); }
+  catch (x) { console.warn(x); el.querySelector(".rk-lead").textContent = "Não consegui carregar o ranking. Confira a internet e tente de novo."; return; }
+  const grupo = dados.grupo || { nome: "Grupo", membros: [], nomes: {} };
+  const nomes = { ...(grupo.nomes || {}) }; dados.res.forEach(r => (nomes[r.uid] = r.apelido || nomes[r.uid]));
+  const membros = grupo.membros || [];
+  let corpo = "";
+  if (rkModo === "hoje") {
+    const porJogo = {}; dados.res.forEach(r => (porJogo[r.jogo] ||= []).push(r));
+    const ordem = [...GAMES.map(g => g.id).filter(id => porJogo[id]), ...Object.keys(porJogo).filter(id => !GAMES.some(g => g.id === id))];
+    corpo = ordem.map(id => {
+      const rs = porJogo[id].sort(rkOrdem), g = GAMES.find(x => x.id === id), feitos = new Set(rs.map(r => r.uid));
+      let pos = 0;
+      return `<div class="rk-card"><div class="rk-ch">${rkIcone(id)}<b>${escHTML(g?.name || id)}</b><small>${RK_CRIT[rs[0].tipo] || ""}</small></div>` +
+        rs.map((r, i) => { if (i === 0 || rkOrdem(rs[i - 1], r) !== 0) pos = i;
+          return `<div class="rk-rr ${r.uid === e.uid ? "eu" : ""} ${r.tipo === "tries" && !r.won ? "perdeu" : ""}"><span class="p">${r.tipo === "tries" && !r.won ? "·" : rkMed(pos)}</span><span class="n">${escHTML(nomes[r.uid] || "?")}${r.dica ? '<span class="rk-dc">💡 dica</span>' : ""}</span><span class="v">${rkFmt(r)}</span></div>`; }).join("") +
+        membros.filter(u => !feitos.has(u)).map(u => `<div class="rk-rr nao"><span class="p">·</span><span class="n">${escHTML(nomes[u] || "?")}</span><span class="v">${de === today() ? "ainda não jogou" : "não jogou"}</span></div>`).join("") + `</div>`;
+    }).join("") || `<p class="rk-lead">Ninguém do grupo terminou um jogo ${de === today() ? "hoje ainda" : "nesse dia"}.</p>`;
+  } else {
+    const t = {}; membros.forEach(u => (t[u] = { j: 0, o: 0, d: 0 }));
+    const porDJ = {}; dados.res.forEach(r => { (t[r.uid] ||= { j: 0, o: 0, d: 0 }); t[r.uid].j++; if (r.dica) t[r.uid].d++; (porDJ[r.dia + r.jogo] ||= []).push(r); });
+    Object.values(porDJ).forEach(rs => { rs.sort(rkOrdem); if (rs[0].tipo === "tries" && !rs[0].won) return; rs.filter(r => rkOrdem(rs[0], r) === 0).forEach(r => t[r.uid].o++); });
+    const lista = Object.entries(t).sort(([, a], [, b]) => b.o - a.o || b.j - a.j);
+    corpo = `<div class="rk-card rk-sem"><div class="rk-rr hd"><span></span><span></span><span class="v">jogos</span><span class="v">🥇</span><span class="v">💡</span></div>` +
+      lista.map(([u, x], i) => `<div class="rk-rr ${u === e.uid ? "eu" : ""}"><span class="p">${rkMed(i)}</span><span class="n">${escHTML(nomes[u] || "?")}</span><span class="v">${x.j}</span><span class="v">${x.o}</span><span class="v">${x.d}</span></div>`).join("") +
+      `</div><p class="rk-nota">Ordem da semana: mais vezes em 1º lugar num jogo do dia; empate, mais jogos feitos. 💡 = jogos com dica.</p>`;
+  }
+  el.innerHTML = `<div class="rk-grp"><span><b>${escHTML(grupo.nome || "Grupo")}</b> · ${membros.length} ${membros.length === 1 ? "pessoa" : "pessoas"}</span>
+      <button class="rk-cod" aria-label="Convidar com o código ${rkCod}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>${rkCod}</button></div>` +
+    topo + corpo + `<p class="rk-nota">Toque no código para convidar. 💡 = usou dica · Gerânio em pontos, Sando e 5PILA em tentativas, Brigadeiro em inclinações, os outros em tempo (jogos de fora: tempo aproximado, fora do app).</p>
+      <button class="rk-link" id="rkSair">Sair deste grupo</button>`;
+  liga();
+}
+
+// ---------- Configurações → Conta na nuvem ----------
+function renderConta() {
+  const el = $("contaBox"), n = window.nuvem; if (!el) return;
+  if (!n) { el.innerHTML = `<div class="set-note" style="margin-top:0">A nuvem não carregou (sem internet?). O progresso continua salvo neste aparelho.</div>`; return; }
+  const e = n.estado;
+  if (!e.conectado) {
+    el.innerHTML = `<div class="set-note" style="margin-top:0">Entre no Ranking para salvar seu progresso na nuvem e jogar com amigos.</div>
+      <button class="rk-btn sc" id="contaRk">Abrir o Ranking</button><button class="rk-link" id="contaJa">Já tenho conta com e-mail</button><div id="contaForm"></div>`;
+    $("contaRk").onclick = () => abrirPagina("#ranking");
+    $("contaJa").onclick = () => contaForm("entrar");
+    return;
+  }
+  const hora = e.ultimaSync ? new Date(e.ultimaSync).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null;
+  el.innerHTML = `<div class="set-note" style="margin-top:0"><b>${escHTML(e.apelido || "Sem apelido")}</b>${e.email ? ` · ${escHTML(e.email)}` : " · conta deste aparelho"}<br>
+      ${e.erro ? "Não consegui sincronizar agora." : hora ? `Progresso salvo na nuvem (última vez às ${hora}).` : "Progresso sendo salvo na nuvem…"}</div>
+    ${e.anonimo ? `<button class="rk-btn sc" id="contaLigar">Ligar e-mail e senha (para outro aparelho)</button>` : ""}
+    <button class="rk-link" id="contaJa">${e.anonimo ? "Já tenho conta com e-mail: entrar nela" : "Sair da conta"}</button><div id="contaForm"></div>`;
+  if ($("contaLigar")) $("contaLigar").onclick = () => contaForm("ligar");
+  $("contaJa").onclick = () => e.anonimo ? contaForm("entrar") : n.sair().then(renderConta);
+}
+function contaForm(modo) {
+  const f = $("contaForm");
+  f.innerHTML = `<input class="rk-in" id="cfEmail" type="email" placeholder="e-mail" autocomplete="email"><input class="rk-in" id="cfSenha" type="password" placeholder="senha (6+ caracteres)" autocomplete="${modo === "ligar" ? "new-password" : "current-password"}">
+    <button class="rk-btn pr" id="cfOk">${modo === "ligar" ? "Ligar à minha conta" : "Entrar"}</button><div class="rk-erro" id="cfErro"></div>`;
+  $("cfOk").onclick = async () => {
+    const em = $("cfEmail").value.trim(), se = $("cfSenha").value, er = $("cfErro");
+    er.textContent = "Um instante…";
+    try {
+      if (modo === "ligar") await window.nuvem.ligarEmail(em, se);
+      else { await window.nuvem.entrarEmail(em, se); const novo = load(); Object.keys(state).forEach(k => delete state[k]); Object.assign(state, novo); render(); }
+      renderConta();
+    } catch (x) {
+      const c = x.code || "";
+      er.textContent = c.includes("email-already") ? "Esse e-mail já tem conta: use “entrar nela”." : c.includes("weak-password") ? "Senha fraca: use 6 caracteres ou mais."
+        : c.includes("invalid") || c.includes("wrong") || c.includes("not-found") ? "E-mail ou senha não conferem." : "Não deu certo agora. Confira a internet e tente de novo.";
+    }
+  };
+}
+
 renderDate();
 render();
 route();
 scheduleMidnight();
 </script>
+<script type="module" src="nuvem.js?v=1"></script>
 </body>
 </html>

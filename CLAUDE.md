@@ -21,6 +21,23 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   conferir em 320–430 px que `document.documentElement.scrollWidth === innerWidth`.
 - **Área segura**: respeitar `env(safe-area-inset-*)` em cima (notch) e embaixo (barra de gestos).
 
+## Nuvem e ranking com amigos (Firebase, desde 09/11/2026)
+
+- Projeto Firebase **Puzzle Tracker** (`puzzle-tracker-c683a`, Firestore em southamerica-east1; app web "Jogos do Dia").
+  Login anônimo (sem cadastro, criado ao entrar no Ranking) + e-mail/senha opcional para outro aparelho.
+  Regras em `firestore.rules` (cópia; publicar pela ferramenta do Firebase). **Cuidado**: a ferramenta do Firebase no Mac
+  guarda o projeto ativo por pasta e o mesmo usuário tem o projeto **Nightrun** (`nightrun-3a57c`, pasta /tmp): publicar
+  sempre a partir de /var/tmp com o projeto ativo conferido (`firebase_get_environment`) antes do deploy.
+- `nuvem.js` (módulo, SDK 10.14.1 do gstatic; só o painel carrega): copia para `users/{uid}/prog/{chave}` as chaves dos
+  jogos (os prefixos do backup, `BK_PREFIXOS`) e traz o que mudou em outro aparelho; se mudou dos dois lados, junta
+  (partida terminada vale mais; Gerânio soma as achadas; o estado do painel soma histórico e resultados — `fundirPainel`).
+- Ranking (página `#ranking`, botão de troféu no topo; opção "A": um cartão por jogo, Hoje | Semana, dias anteriores):
+  grupos por código de 6 letras (`grupos/{cod}`, membros e apelidos); cada resultado vai para `grupos/{cod}/res/{dia_jogo_uid}`
+  (`resultadosParaRanking`, a partir de `state.results` dos últimos 120 dias). Critério: Gerânio pontos; Sando e 5PILA
+  tentativas (quem não acertou vai para o fim); Brigadeiro inclinações; os da casa, tempo; os de fora, o tempo fora do app
+  (aproximado, "~"). Sempre mostra quem usou dica (💡). Semana: mais 1º lugares, depois mais jogos.
+- Configurações → Conta na nuvem: apelido, última sincronização, ligar e-mail e senha, entrar numa conta com e-mail.
+
 ## Consistência visual (muito importante)
 
 - Reaproveitar sempre os componentes comuns em vez de desenhar de novo em cada jogo:
