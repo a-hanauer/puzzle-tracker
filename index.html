@@ -793,6 +793,7 @@
   /* ---------- Ranking e Amigos, nova cara (09/11/2026) ---------- */
   .x-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 2px 12px; min-height: 44px; }
   .x-top h1 { margin: 0; }
+  .x-gn { color: var(--muted); font-size: .84rem; font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .x-volta { display: inline-flex; align-items: center; gap: 2px; border: 0; background: none; color: var(--text); font: inherit; font-weight: 700; font-size: .95rem; padding: 6px 4px 6px 0; cursor: pointer; }
   .x-volta svg { width: 22px; height: 22px; }
   .x-grp { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 62%; border: 1px solid var(--border); background: var(--surface);
@@ -867,6 +868,16 @@
   .x-err { color: #d0453a; font-size: .84rem; margin-top: 8px; min-height: 1em; }
   .x-nota { font-size: .76rem; color: var(--muted); margin: 8px 4px 0; line-height: 1.45; }
   .pf-av { color: #fff; }
+  /* faixa do grupo nos cartões do painel */
+  .gs { display: flex; align-items: center; gap: 8px; margin: 0 10px; padding: 7px 0 9px; border-top: 1px solid var(--border); font-size: .78rem; color: var(--muted); min-width: 0; cursor: pointer; }
+  .gs .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .gs .t b { color: var(--text); font-weight: 700; }
+  .gs .ps { flex: none; display: inline-flex; align-items: center; gap: 3px; font-weight: 800; color: var(--text); background: var(--surface-2); border-radius: 99px; padding: 2px 8px 2px 5px; font-size: .78rem; }
+  .gs .ps.ouro { background: color-mix(in srgb, var(--gold) 20%, var(--surface-2)); }
+  .gs .vz { margin-left: auto; flex: none; font-weight: 800; color: var(--text); }
+  .av2 { width: 20px; height: 20px; border-radius: 50%; flex: none; font-style: normal; font-size: .58rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 0 0 2px var(--surface); }
+  .avs { display: inline-flex; flex: none; } .avs .av2 + .av2 { margin-left: -6px; }
+  .grid .app.cg .badge { top: 33px; }
+  .row.cg { flex-wrap: wrap; } .row .gs { flex: 1 0 calc(100% - 20px); }
 </style>
 </head>
 <body>
@@ -2295,23 +2306,34 @@ async function guardaGrupoHoje(n, cod, dados) {
 function decoraGrupo() {
   const g = readJSON(GRUPO_CACHE), ok = !!g && g.dia === today();
   const meus = ok ? resultadosParaRanking(2).filter(r => r.dia === today()) : [];
+  // faixa do grupo embaixo de cada cartão (opção "A", 09/11/2026): fora do link, para não apagar quando o jogo está feito.
+  // Depois de jogar: minha posição e quem está perto; antes: quem já jogou, o melhor resultado e "sua vez".
+  const nome = r => (g.nomes?.[r.uid] || r.apelido || "?").trim();
   for (const jg of GAMES) {
     const li = cards[jg.id]; if (!li) continue;
+    li.querySelector(".amg")?.remove();
     const outros = ok ? (g.res || []).filter(r => r.jogo === jg.id && r.uid !== g.eu) : [];
-    let amg = li.querySelector(".amg");
-    if (!outros.length) amg?.remove();
-    else {
-      if (!amg) { amg = document.createElement("span"); amg.className = "amg"; (li.querySelector(".ds") || li.querySelector(".desc"))?.after(amg); }
-      const nome = r => (g.nomes?.[r.uid] || r.apelido || "?").trim();
-      amg.innerHTML = outros.slice(0, 4).map(r => `<i style="background:${rkCor(r.uid)};color:#fff">${escHTML(nome(r)[0]?.toUpperCase() || "?")}</i>`).join("") +
-        `<small>${outros.length === 1 ? `${escHTML(nome(outros[0]))} já jogou` : `${outros.length} amigos já jogaram`}</small>`;
-    }
-    // minha posição no grupo, depois de terminar (com pelo menos mais alguém no jogo): no começo da linha dos amigos
+    let gs = li.querySelector(":scope > .gs");
+    if (!outros.length) { gs?.remove(); li.classList.remove("cg"); continue; }
+    if (!gs) { gs = document.createElement("div"); gs.className = "gs"; li.appendChild(gs); gs.addEventListener("click", () => { rkModo = "hoje"; rkDia = today(); irPara("#ranking"); }); }
+    li.classList.add("cg");
+    const b = r => `<b>${escHTML(nome(r))}</b>`, dc = r => (r.dica ? " 💡" : "");
     const eu = meus.find(r => r.jogo === jg.id);
-    if (amg && eu && outros.length && !(eu.tipo === "tries" && !eu.won)) {
-      const todos = [...outros, { ...eu, uid: g.eu }].sort(rkOrdem);
-      let pos = 0; for (let i = 0; i < todos.length; i++) { if (i === 0 || rkOrdem(todos[i - 1], todos[i]) !== 0) pos = i; if (todos[i].uid === g.eu) break; }
-      amg.insertAdjacentHTML("afterbegin", `<span class="posg" title="Sua posição no grupo hoje">${["🥇", "🥈", "🥉"][pos] || ""}${pos + 1}º de ${todos.length}</span>`);
+    if (eu) {
+      const todos = rkPosicoes([...outros, { ...eu, uid: g.eu }]), meu = todos.find(x => x.r.uid === g.eu), pos = meu.pos;
+      const vivos = todos.filter(x => x.pos >= 0 && x.r.uid !== g.eu);
+      const chip = pos < 0 ? `<span class="ps">✗ não acertou</span>` : `<span class="ps ${pos === 0 ? "ouro" : ""}">${["🥇", "🥈", "🥉"][pos] || ""} ${pos + 1}º de ${todos.length}</span>`;
+      let txt = "";
+      if (pos === 0 && vivos.length) { const r = vivos[0].r; txt = `${b(r)} ${rkFmt(r)}${dc(r)}`; }
+      else if (vivos.length) { const r = vivos[0].r; txt = `${b(r)} lidera com ${rkFmt(r)}${dc(r)}`; }
+      else txt = `${b(outros[0])} ${rkFmt(outros[0])}`;
+      gs.innerHTML = chip + `<span class="t">${txt}</span>`;
+    } else {
+      const ord = rkPosicoes(outros), melhor = ord[0].r;
+      const avs = `<span class="avs">${outros.slice(0, 3).map(r => `<i class="av2" style="background:${rkCor(r.uid)}">${escHTML(nome(r)[0]?.toUpperCase() || "?")}</i>`).join("")}</span>`;
+      const txt = outros.length === 1 ? `${b(outros[0])} fez ${rkFmt(outros[0])}${dc(outros[0])}`
+        : `${outros.length === 2 ? `${b(outros[0])} e ${b(outros[1])}` : `${b(outros[0])} e mais ${outros.length - 1}`} jogaram · melhor ${rkFmt(melhor)}`;
+      gs.innerHTML = avs + `<span class="t">${txt}</span><span class="vz">sua vez ›</span>`;
     }
   }
   // pontinho no troféu: resultado novo de amigo desde a última visita ao ranking
@@ -2441,10 +2463,6 @@ function rkPosicoes(rs) {
   rs = [...rs].sort(rkOrdem); let pos = 0;
   return rs.map((r, i) => { if (i === 0 || rkOrdem(rs[i - 1], r) !== 0) pos = i; return { r, pos: r.tipo === "tries" && !r.won ? -1 : pos }; });
 }
-function rkGrupoBtn(e, d) {
-  const outros = d.membros.filter(u => u !== e.uid).slice(0, 3);
-  return `<button class="x-grp" id="rkGrp" aria-label="Grupo: ${escHTML(d.grupo.nome || "Grupo")}"><span class="x-avs">${outros.map(u => rkAv(u, d.nomes[u], "s")).join("")}</span><span>${escHTML(d.grupo.nome || "Grupo")}</span>${SV}<path d="M6 9l6 6 6-6"/></svg></button>`;
-}
 async function renderRanking() {
   const el = $("rkBody"), n = window.nuvem;
   if (!n) { el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Não consegui falar com a nuvem agora. Confira a internet e abra de novo.</p>`; return; }
@@ -2455,14 +2473,15 @@ async function renderRanking() {
   localStorage.setItem(RANK_VISTO, String(Date.now())); decoraGrupo();
   if (history.state?.pessoa) return renderPerfil(el, n, e);
   const nomeG = e.grupos.find(g => g.cod === rkCod)?.nome || "Grupo";
-  if (!el.querySelector(".x-top .x-grp")) el.innerHTML = `<div class="x-top"><h1>Ranking</h1><button class="x-grp"><span>${escHTML(nomeG)}</span></button></div><p class="rk-lead">Carregando…</p>`;
+  if (!el.querySelector("#rkModo")) el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Carregando…</p>`;
   let d;
   try { d = await rkSemanaDados(n, rkCod, rkDia); }
   catch (x) { console.warn(x); el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Não consegui carregar o ranking. Confira a internet e tente de novo.</p>`; return; }
   if (rkCod === e.grupos[0].cod && d.seg <= today() && d.dom >= today()) guardaGrupoHoje(n, rkCod, { grupo: d.grupo, res: d.res });
   const nm = u => u === e.uid ? "Você" : (d.nomes[u] || "?");
   const linha = (r, pos, sub = "") => `<div class="r ${r.uid === e.uid ? "eu" : ""} ${pos < 0 ? "perdeu" : ""}" data-u="${r.uid}"><span class="m">${pos < 0 ? "·" : rkMed(pos)}</span>${rkAv(r.uid, d.nomes[r.uid], "md")}<span class="n">${escHTML(d.nomes[r.uid] || "?")}${r.uid === e.uid ? '<span class="tag">você</span>' : ""}${r.dica ? '<span class="rk-dc">💡 dica</span>' : ""}${sub}</span><span class="v">${rkFmt(r)}</span></div>`;
-  let h = `<div class="x-top"><h1>Ranking</h1>${rkGrupoBtn(e, d)}</div>
+  // o grupo fica na aba Amigos; aqui só o nome, e só para quem está em mais de um grupo
+  let h = `<div class="x-top"><h1>Ranking</h1>${e.grupos.length > 1 ? `<small class="x-gn">${escHTML(nomeG)}</small>` : ""}</div>
     <div class="segx" id="rkModo"><button data-m="hoje" aria-checked="${rkModo === "hoje"}">Dia</button><button data-m="semana" aria-checked="${rkModo === "semana"}">Semana</button></div>`;
   const proxOk = d.dom < today();
   if (rkModo === "hoje") {
@@ -2526,7 +2545,6 @@ async function renderRanking() {
   el.querySelectorAll(".wk .d").forEach(b => (b.onclick = () => { rkDia = b.dataset.d; renderRanking(); }));
   $("rkAnt").onclick = () => { rkDia = rkMuda(rkDia, -7); renderRanking(); };
   $("rkProx").onclick = () => { rkDia = rkMuda(rkDia, 7); if (rkDia > today()) rkDia = today(); renderRanking(); };
-  $("rkGrp").onclick = () => e.grupos.length > 1 ? gSheetGrupos(e) : irPara("#amigos");
   el.querySelectorAll("[data-u]").forEach(r => (r.onclick = () => abrePessoa(r.dataset.u)));
 }
 

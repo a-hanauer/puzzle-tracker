@@ -40,7 +40,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   completa com `state.results`; ao entrar ou entrar em outro grupo, manda o histórico todo). Critério: Gerânio pontos; Sando e 5PILA
   tentativas (quem não acertou vai para o fim); Brigadeiro inclinações; os da casa, tempo; os de fora, o tempo fora do app
   (aproximado, "~"). Sempre mostra quem usou dica (💡). Semana: mais 1º lugares, depois mais jogos.
-- Ranking (nova cara, 09/11/2026): faixa com os 7 dias da semana, destaque de quem lidera, bolinhas coloridas por pessoa
+- Ranking (nova cara, 09/11/2026): sem o grupo no topo (fica na aba Amigos; o nome só aparece para quem tem mais de um grupo); faixa com os 7 dias da semana, destaque de quem lidera, bolinhas coloridas por pessoa
   (`rkCor`), quem não jogou numa linha só; Semana com barras de 1º lugares e o melhor de cada jogo. Uma consulta por semana (`rkSemanaDados`, cache de 1 min).
   Aba Amigos: grupo, convite, cada pessoa (jogos de hoje, duelo da semana), outros grupos, entrar/criar. Só quem criou o grupo
   (`dono`) renomeia e remove pessoas (bandeja "Editar grupo"; regras em firestore.rules); `confereGrupos` esquece grupos de onde a pessoa saiu.
@@ -48,7 +48,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Amigos fora da página de ranking (09/11/2026): o painel guarda os resultados de hoje do 1º grupo em `jogosDoDia.grupo`
   (não vai para a nuvem). Com ele: no fim de cada jogo da casa, `grupoFim` (comum/recorde.js, chamado por `semanaFim`)
   mostra "Nº de M no grupo", o pódio do dia com 💡 e quem ainda não jogou, no mesmo cartão do bloco da semana, logo acima
-  dele; no painel, a linha "🥇 1º de 2 · B Bia já jogou" no cartão de cada jogo e um pontinho no troféu quando há
+  dele; no painel, uma faixa embaixo do cartão de cada jogo (opção "A", 09/11/2026; fora do link, não apaga com o jogo feito):
+  depois de jogar, "🥇 1º de 2" + quem está perto ("Bia 3:40 💡" / "Bia lidera com 142 pts"); antes, quem jogou, o melhor e "sua vez ›" (toque = Ranking) e um pontinho no troféu quando há
   resultado novo de amigo (`jogosDoDia.rankVisto`). Toque num nome no ranking = perfil: sequência, duelo "Você × X"
   (Semana | Mês | Sempre; em cada jogo de cada dia que os dois terminaram), hoje lado a lado e recordes.
 
