@@ -37,7 +37,7 @@ function chavesLocais() {
   const out = {};
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i);
-    if (k && k !== LS && !/^jogosDoDia\.(fora|grupo|rankVisto)$/.test(k) && prefixos.some(p => k.startsWith(p))) out[k] = localStorage.getItem(k);
+    if (k && k !== LS && !/^jogosDoDia\.(fora|grupo|rankVisto|reentrar)$/.test(k) && prefixos.some(p => k.startsWith(p))) out[k] = localStorage.getItem(k);
   }
   return out;
 }

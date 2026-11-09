@@ -44,6 +44,9 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   (`rkCor`), quem não jogou numa linha só; Semana com barras de 1º lugares e o melhor de cada jogo. Uma consulta por semana (`rkSemanaDados`, cache de 1 min).
   Aba Amigos: grupo, convite, cada pessoa (jogos de hoje, duelo da semana), outros grupos, entrar/criar. Só quem criou o grupo
   (`dono`) renomeia e remove pessoas (bandeja "Editar grupo"; regras em firestore.rules); `confereGrupos` esquece grupos de onde a pessoa saiu.
+- Backup (exportar/importar, 09/11/2026): leva o apelido e os grupos (códigos), não a conta (`jogosDoDia.nuvem` fica fora,
+  `BK_FORA`); ao importar, a conta deste aparelho reenvia tudo e `reentraGrupos` entra de novo nos grupos (`jogosDoDia.reentrar`).
+  Num aparelho novo a pessoa vira outro membro do grupo; para seguir a mesma, e-mail e senha.
 - Configurações (aba Ajustes) → Conta na nuvem: apelido, última sincronização, ligar e-mail e senha, entrar numa conta com e-mail.
 - Amigos fora da página de ranking (09/11/2026): o painel guarda os resultados de hoje do 1º grupo em `jogosDoDia.grupo`
   (não vai para a nuvem). Com ele: no fim de cada jogo da casa, `grupoFim` (comum/recorde.js, chamado por `semanaFim`)
