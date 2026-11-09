@@ -868,6 +868,21 @@
   .x-err { color: #d0453a; font-size: .84rem; margin-top: 8px; min-height: 1em; }
   .x-nota { font-size: .76rem; color: var(--muted); margin: 8px 4px 0; line-height: 1.45; }
   .pf-av { color: #fff; }
+  /* placar do dia/semana (opção "B") e "voltar para hoje" */
+  .volta { display: flex; justify-content: center; margin: -4px 0 12px; }
+  .volta button { border: 0; font: inherit; font-weight: 800; font-size: .82rem; color: var(--bg); background: var(--text); border-radius: 99px; padding: 7px 14px; cursor: pointer; }
+  .ldB { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .ldB .hd { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; min-width: 0; }
+  .ldB .hd b { font-size: 1rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ldB .hd small { color: var(--muted); font-size: .74rem; flex: none; }
+  .ldB .ps { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - (var(--n) - 1) * 6px) / var(--n)); gap: 6px; text-align: center; overflow-x: auto; scrollbar-width: none; padding-top: 6px; }
+  .ldB .ps::-webkit-scrollbar { display: none; }
+  .ldB .p { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 2px 6px; border-radius: 14px; min-width: 0; cursor: pointer; }
+  .ldB .p .av { width: 40px; height: 40px; font-size: .9rem; }
+  .ldB .p.l .av { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--gold); }
+  .ldB .p.l::before { content: "👑"; position: absolute; top: -6px; font-size: .95rem; z-index: 1; }
+  .ldB .p.eu { background: color-mix(in srgb, var(--green) 11%, transparent); }
+  .ldB .p span { font-size: .78rem; font-weight: 700; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ldB .p em { font-style: normal; font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: .8rem; } .ldB .p em.z { color: var(--faint); }
   /* faixa do grupo nos cartões do painel */
   .gs { display: flex; align-items: center; gap: 8px; margin: 0 10px; padding: 7px 0 9px; border-top: 1px solid var(--border); font-size: .78rem; color: var(--muted); min-width: 0; cursor: pointer; }
   .gs .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .gs .t b { color: var(--text); font-weight: 700; }
@@ -2180,7 +2195,7 @@ function route() {
 function irPara(hash) {
   const mesma = (PAGINAS[hash] || null) === (PAGINAS[location.hash] || null);
   if (mesma && history.state?.pessoa) { history.back(); return; }
-  if (mesma) { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  if (mesma) { window.scrollTo({ top: 0, behavior: "smooth" }); if (hash === "#ranking" && rkDia !== today()) { rkDia = today(); renderRanking(); } return; }
   history.replaceState(null, "", hash === "#jogos" ? location.pathname : hash);
   window.scrollTo(0, 0); route();
 }
@@ -2463,6 +2478,18 @@ function rkPosicoes(rs) {
   rs = [...rs].sort(rkOrdem); let pos = 0;
   return rs.map((r, i) => { if (i === 0 || rkOrdem(rs[i - 1], r) !== 0) pos = i; return { r, pos: r.tipo === "tries" && !r.won ? -1 : pos }; });
 }
+// placar: uma bolinha por pessoa, na ordem (mais 1º lugares, depois mais jogos), com a coroa em quem lidera
+function rkPlacar(e, d, v, maxO, quando) {
+  const ord = d.membros.filter(u => v[u]).sort((a, b) => v[b].o - v[a].o || v[b].j - v[a].j || (b === e.uid) - (a === e.uid));   // no empate, você primeiro
+  const lid = ord.filter(u => v[u].o === maxO), maxJ = Math.max(...lid.map(u => v[u].j)), top = lid.filter(u => v[u].j === maxJ);
+  const nm = u => u === e.uid ? "Você" : (d.nomes[u] || "?");
+  const um = top.length === 1, voce = um && top[0] === e.uid;
+  const verbo = { hoje: um ? (voce ? "lidera hoje" : "lidera hoje") : "empatam na frente", dia: um ? "venceu o dia" : "empataram no dia",
+    semana: um ? "lidera a semana" : "empatam na frente", "semana-fim": um ? "venceu a semana" : "empataram na semana" }[quando];
+  const quem = top.length > 2 ? `${nm(top[0])} e mais ${top.length - 1}` : rkLista(top.map(nm));
+  return `<div class="ldB"><div class="hd"><b>${escHTML(quem)} ${verbo}</b><small>1º lugares</small></div><div class="ps" style="--n:${Math.min(ord.length, 5)}">` +
+    ord.map(u => `<div class="p ${top.includes(u) ? "l" : ""} ${u === e.uid ? "eu" : ""}" data-u="${u}">${rkAv(u, d.nomes[u])}<span>${escHTML(nm(u))}</span><em class="${v[u].o ? "" : "z"}">🥇${v[u].o}</em></div>`).join("") + `</div></div>`;
+}
 async function renderRanking() {
   const el = $("rkBody"), n = window.nuvem;
   if (!n) { el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Não consegui falar com a nuvem agora. Confira a internet e abra de novo.</p>`; return; }
@@ -2490,6 +2517,7 @@ async function renderRanking() {
       Array.from({ length: 7 }, (_, i) => { const dd = rkMuda(d.seg, i), x = new Date(dd + "T12:00");
         return `<button class="d ${diasCom.has(dd) ? "tem" : ""}" data-d="${dd}" ${dd === rkDia ? 'aria-current="date"' : ""} ${dd > today() ? "disabled" : ""}>${["dom", "seg", "ter", "qua", "qui", "sex", "sáb"][x.getDay()]}<b>${x.getDate()}</b><i></i></button>`; }).join("") +
       `<button class="ar" id="rkProx" aria-label="Próxima semana" ${proxOk ? "" : "disabled"}>›</button></div>`;
+    if (rkDia !== today()) h += `<div class="volta"><button id="rkHoje">↩ Voltar para hoje</button></div>`;
     const doDia = d.res.filter(r => r.dia === rkDia), hoje = rkDia === today();
     const porJogo = {}; doDia.forEach(r => (porJogo[r.jogo] ||= []).push(r));
     const ordem = [...GAMES.map(g => g.id).filter(id => porJogo[id]), ...Object.keys(porJogo).filter(id => !GAMES.some(g => g.id === id))];
@@ -2498,13 +2526,8 @@ async function renderRanking() {
     const meus = [];
     ordem.forEach(id => rkPosicoes(porJogo[id]).forEach(({ r, pos }) => { (v[r.uid] ||= { o: 0, j: 0 }).j++; if (pos === 0 && porJogo[id].length > 1) v[r.uid].o++; if (r.uid === e.uid) meus.push(pos); }));
     const maxO = Math.max(0, ...Object.values(v).map(x => x.o));
-    if (maxO > 0) {
-      const lid = Object.keys(v).filter(u => v[u].o === maxO), maxJ = Math.max(...lid.map(u => v[u].j)), top = lid.filter(u => v[u].j === maxJ);
-      const quem = rkLista(top.map(nm)), um = top.length === 1;
-      const verbo = um ? (top[0] === e.uid ? (hoje ? "lidera hoje" : "venceu o dia") : (hoje ? "lidera hoje" : "venceu o dia")) : (hoje ? "empatam na frente" : "empataram");
-      h += `<div class="dest"><span class="cr">${top.slice(0, 3).map(u => rkAv(u, d.nomes[u], "g")).join("")}</span><span class="tx"><b>${escHTML(quem)} ${verbo}</b><small>${maxO} ${maxO === 1 ? "primeiro lugar" : "primeiros lugares"} · ${maxJ} ${maxJ === 1 ? "jogo" : "jogos"}${um ? "" : " cada"}</small></span>` +
-        `<span class="me"><small>você</small><b>${meus.length ? meus.slice(0, 4).map(p => p < 0 ? "✗" : `${p + 1}º`).join(" · ") + (meus.length > 4 ? " …" : "") : "–"}</b></span></div>`;
-    }
+    // placar do dia (opção "B", 09/11/2026): todo mundo do grupo com os 1º lugares; coroa em quem lidera
+    if (maxO > 0) h += rkPlacar(e, d, v, maxO, hoje ? "hoje" : "dia");
     h += ordem.map(id => {
       const ps = rkPosicoes(porJogo[id]), g = GAMES.find(x => x.id === id), feitos = new Set(ps.map(x => x.r.uid));
       const faltam = d.membros.filter(u => !feitos.has(u)), eu = faltam.includes(e.uid);
@@ -2517,18 +2540,14 @@ async function renderRanking() {
     const fmtD = x => { const y = new Date(x + "T12:00"); return [y.getDate(), ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"][y.getMonth()]]; };
     const [a1, m1] = fmtD(d.seg), [a2, m2] = fmtD(d.dom), atual = d.dom >= today();
     h += `<div class="wk sem"><button class="ar" id="rkAnt" aria-label="Semana anterior">‹</button><span class="tt">${atual ? "Esta semana · " : ""}${a1}${m1 !== m2 ? ` de ${m1}` : ""} a ${a2} de ${m2}</span><button class="ar" id="rkProx" aria-label="Próxima semana" ${proxOk ? "" : "disabled"}>›</button></div>`;
+    if (!atual) h += `<div class="volta"><button id="rkHoje">↩ Voltar para esta semana</button></div>`;
     const t = {}; d.membros.forEach(u => (t[u] = { j: 0, o: 0, dc: 0 }));
     const porDJ = {}; d.res.forEach(r => { (t[r.uid] ||= { j: 0, o: 0, dc: 0 }).j++; if (r.dica) t[r.uid].dc++; (porDJ[r.dia + "|" + r.jogo] ||= []).push(r); });
     Object.values(porDJ).forEach(rs => { if (rs.length < 2) return; rkPosicoes(rs).forEach(({ r, pos }) => { if (pos === 0) t[r.uid].o++; }); });
     const lista = Object.entries(t).sort(([, a], [, b]) => b.o - a.o || b.j - a.j), maxO = Math.max(1, ...lista.map(([, x]) => x.o));
-    if (lista.length && (lista[0][1].o || lista[0][1].j)) {
-      const [u0, x0] = lista[0], top = lista.filter(([, x]) => x.o === x0.o && x.j === x0.j).map(([u]) => u);
-      const minhaPos = lista.findIndex(([u]) => u === e.uid);
-      h += `<div class="dest"><span class="cr">${top.slice(0, 3).map(u => rkAv(u, d.nomes[u], "g")).join("")}</span><span class="tx"><b>${escHTML(rkLista(top.map(nm)))} ${top.length > 1 ? (atual ? "empatam na frente" : "empataram") : (atual ? "lidera a semana" : "venceu a semana")}</b><small>${x0.o} ${x0.o === 1 ? "primeiro lugar" : "primeiros lugares"} em ${x0.j} ${x0.j === 1 ? "jogo" : "jogos"}</small></span>` +
-        `<span class="me"><small>você</small><b>${t[e.uid]?.j ? `${minhaPos + 1}º` : "–"}</b></span></div>`;
-    }
+    if (lista.length && lista[0][1].o) h += rkPlacar(e, d, t, lista[0][1].o, atual ? "semana" : "semana-fim");
     let pos = 0;
-    h += `<div class="gc sm"><div class="h"><b>1º lugares</b><small>na semana</small></div>` + lista.map(([u, x], i) => {
+    h += `<div class="gc sm"><div class="h"><b>Classificação</b><small>1º lugares na semana</small></div>` + lista.map(([u, x], i) => {
       if (i === 0 || lista[i - 1][1].o !== x.o || lista[i - 1][1].j !== x.j) pos = i;
       return `<div class="r ${u === e.uid ? "eu" : ""}" data-u="${u}"><span class="m">${x.j ? rkMed(pos) : "·"}</span>${rkAv(u, d.nomes[u], "md")}<span class="n">${escHTML(d.nomes[u] || "?")}${u === e.uid ? '<span class="tag">você</span>' : ""}<small>${x.j} ${x.j === 1 ? "jogo" : "jogos"}${x.dc ? ` · 💡 ${x.dc}` : ""}</small></span><span class="bar"><i style="width:${Math.round(70 * x.o / maxO)}px"></i>${x.o}</span></div>`;
     }).join("") + `</div>`;
@@ -2547,6 +2566,7 @@ async function renderRanking() {
   $("rkProx").onclick = () => { rkDia = rkMuda(rkDia, 7); if (rkDia > today()) rkDia = today(); renderRanking(); };
   el.querySelectorAll("[data-u]").forEach(r => (r.onclick = () => abrePessoa(r.dataset.u)));
   if ($("rkGrp")) $("rkGrp").onclick = () => gSheetGrupos(n.estado);
+  if ($("rkHoje")) $("rkHoje").onclick = () => { rkDia = today(); renderRanking(); };
 }
 
 // ---------- perfil (toque num nome, no Ranking ou em Amigos): com "voltar" ----------
