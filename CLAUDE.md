@@ -40,7 +40,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   completa com `state.results`; ao entrar ou entrar em outro grupo, manda o histórico todo). Critério: Gerânio pontos; Sando e 5PILA
   tentativas (quem não acertou vai para o fim); Brigadeiro inclinações; os da casa, tempo; os de fora, o tempo fora do app
   (aproximado, "~"). Sempre mostra quem usou dica (💡). Semana: mais 1º lugares, depois mais jogos.
-- Ranking (nova cara, 09/11/2026): sem o grupo no topo (fica na aba Amigos; o nome só aparece para quem tem mais de um grupo); faixa com os 7 dias da semana, destaque de quem lidera, bolinhas coloridas por pessoa
+- Ranking (nova cara, 09/11/2026): sem o grupo no topo (fica na aba Amigos; o seletor de grupo só aparece para quem tem mais de um grupo); faixa com os 7 dias da semana, destaque de quem lidera, bolinhas coloridas por pessoa
   (`rkCor`), quem não jogou numa linha só; Semana com barras de 1º lugares e o melhor de cada jogo. Uma consulta por semana (`rkSemanaDados`, cache de 1 min).
   Aba Amigos: grupo, convite, cada pessoa (jogos de hoje, duelo da semana), outros grupos, entrar/criar. Só quem criou o grupo
   (`dono`) renomeia e remove pessoas (bandeja "Editar grupo"; regras em firestore.rules); `confereGrupos` esquece grupos de onde a pessoa saiu.
