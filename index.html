@@ -744,7 +744,7 @@
   /* ---------- barra de abas (09/11/2026, opção "B"): Jogos · Ranking · Amigos · Estatísticas · Ajustes ----------
      A mesma dos outros apps: cápsula de vidro flutuante, gota de vidro sob a aba escolhida (que escorrega ao trocar e
      vira lente com o dedo na barra) e encolhe para uma bolinha ao rolar para baixo. Scripts no fim da página. */
-  :root { --tb-h: 64px; --tb-b: max(10px, calc(env(safe-area-inset-bottom, 0px) - 12px));
+  :root { --tb-h: 64px; --tb-b: max(10px, calc(var(--sab-lock, env(safe-area-inset-bottom, 0px)) - 12px));
     --tb-vidro: color-mix(in srgb, var(--surface) 72%, transparent); --tb-acc: var(--text); --tb-tinta: var(--muted);
     --tb-aro-hi: rgba(255,255,255,.2); --tb-aro-lo: rgba(0,0,0,.5); --tb-sombra: rgba(0,0,0,.45);
     --tb-gota: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.07));
@@ -755,7 +755,7 @@
   :root[data-theme="light"] { --tb-aro-hi: rgba(255,255,255,.95); --tb-aro-lo: rgba(20,24,33,.1); --tb-sombra: rgba(20,24,33,.16);
     --tb-gota: linear-gradient(180deg, rgba(255,255,255,.9), rgba(232,232,238,.6));
     --tb-gota-pousa: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.05)) color-mix(in srgb, var(--muted) 12%, transparent); }
-  body { padding-bottom: calc(var(--tb-h) + var(--tb-b) + 28px); }
+  body { padding-bottom: calc(var(--tb-h) + var(--tb-b) + 28px); min-height: 100lvh; }   /* página nunca mais baixa que a tela: a barra não pula entre abas */
   .tabbar { position: fixed; z-index: 15; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: hidden;
     left: max(14px, env(safe-area-inset-left, 0px), calc(50% - 260px)); width: min(520px, calc(100% - 28px)); bottom: var(--tb-b);
     height: var(--tb-h); padding: 4px; border-radius: 32px; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
@@ -2701,6 +2701,17 @@ scheduleMidnight();
 </script>
 <script type="module" src="nuvem.js?v=4"></script>
 <script>
+/* Trava a área segura de baixo no maior valor visto (como no Nightrun): no app instalado o iPhone às vezes muda o
+   env(safe-area-inset-bottom) ao trocar de página, e a barra pulava de altura. */
+(function () {
+  var probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;bottom:0;height:0;padding-bottom:env(safe-area-inset-bottom);visibility:hidden;pointer-events:none';
+  document.body.appendChild(probe);
+  var max = -1;
+  function read() { var v = parseFloat(getComputedStyle(probe).paddingBottom) || 0; if (v > max) { max = v; document.documentElement.style.setProperty('--sab-lock', v + 'px'); } }
+  read(); window.addEventListener('resize', read); if (window.visualViewport) visualViewport.addEventListener('resize', read);
+  window.addEventListener('pageshow', read);
+})();
 /* Barra de abas flutuante, como no iOS 26: encolhe para uma bolinha com a aba atual ao rolar para baixo e volta
    inteira ao rolar para cima, ao chegar no topo, ao trocar de aba ou ao tocar nela. */
 (function () {
