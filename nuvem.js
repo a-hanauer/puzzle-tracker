@@ -103,18 +103,35 @@ async function perfil() {
   return s;
 }
 async function salvaPerfil(s) { await setDoc(doc(db, "users", user.uid), { apelido: s.apelido || "", grupos: s.grupos || [] }, { merge: true }); gravar(s); avisa(); }
+// Envia os resultados que ainda não foram (ou mudaram). Lotes pequenos: cada gravação confere nas regras se a pessoa é do
+// grupo (um get() no grupo), e o banco recusa o lote inteiro se passar de 20 consultas — com lotes de 100, o histórico dos
+// dias anteriores nunca subia. Se um lote falhar, tenta um a um, para um resultado estranho não segurar os outros.
+const RES_V = 2;   // subir para reenviar tudo de todo mundo
 async function enviaResultados(lista) {
   const s = ler(); if (!user || !s.grupos?.length || !navigator.onLine) return;
+  if (s.resV !== RES_V) { s.res = {}; s.resV = RES_V; }
   s.res ||= {};
-  const novos = lista.filter(r => s.res[`${r.dia}_${r.jogo}`] !== hash(JSON.stringify(r) + s.apelido + s.grupos.map(g => g.cod).join()));
-  for (let i = 0; i < novos.length; i += 100) {
-    const b = writeBatch(db);
-    for (const r of novos.slice(i, i + 100)) for (const g of s.grupos)
-      b.set(doc(db, "grupos", g.cod, "res", `${r.dia}_${r.jogo}_${user.uid}`), { ...r, uid: user.uid, apelido: s.apelido || "", t: Date.now() });
-    await b.commit();
-    for (const r of novos.slice(i, i + 100)) s.res[`${r.dia}_${r.jogo}`] = hash(JSON.stringify(r) + s.apelido + s.grupos.map(g => g.cod).join());
+  const marca = r => hash(JSON.stringify(r) + s.apelido + s.grupos.map(g => g.cod).join());
+  const ok = r => typeof r.valor === "number" && r.valor >= 0 && r.valor < 100000 && /^\d{4}-\d\d-\d\d$/.test(r.dia) && (r.jogo || "").length <= 24;
+  const novos = lista.filter(r => ok(r) && s.res[`${r.dia}_${r.jogo}`] !== marca(r))
+    .sort((a, b) => b.dia.localeCompare(a.dia));   // os mais recentes primeiro
+  const grava = (b, r) => { for (const g of s.grupos)
+    b.set(doc(db, "grupos", g.cod, "res", `${r.dia}_${r.jogo}_${user.uid}`), { ...r, dica: !!r.dica, uid: user.uid, apelido: s.apelido || "", t: Date.now() }); };
+  const porLote = Math.max(1, Math.floor(8 / s.grupos.length));
+  let falhas = 0;
+  for (let i = 0; i < novos.length; i += porLote) {
+    const parte = novos.slice(i, i + porLote);
+    try { const b = writeBatch(db); parte.forEach(r => grava(b, r)); await b.commit(); parte.forEach(r => s.res[`${r.dia}_${r.jogo}`] = marca(r)); }
+    catch (e) {
+      for (const r of parte) {
+        try { const b = writeBatch(db); grava(b, r); await b.commit(); s.res[`${r.dia}_${r.jogo}`] = marca(r); }
+        catch (e2) { falhas++; console.warn("nuvem: resultado recusado", r, e2); }
+      }
+    }
+    if (i % 80 === 0) gravar({ ...ler(), res: s.res, resV: s.resV });   // guarda o avanço no caminho
   }
-  gravar(s);
+  gravar({ ...ler(), res: s.res, resV: s.resV });
+  return { enviados: novos.length - falhas, falhas };
 }
 
 window.nuvem = {
