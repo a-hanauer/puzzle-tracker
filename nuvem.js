@@ -7,7 +7,7 @@
 // O painel (index.html) fala com este módulo por window.nuvem; sem internet, nada quebra: tudo continua local.
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInAnonymously, EmailAuthProvider, linkWithCredential,
-  signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, where, writeBatch,
   arrayUnion, arrayRemove, deleteField } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
@@ -20,6 +20,7 @@ const app = initializeApp({
   appId: "1:737948537482:web:ec0e6648c063809ea85373",
 });
 const auth = getAuth(app), db = getFirestore(app);
+auth.languageCode = "pt-BR";   // e-mails do Firebase (recuperar a senha) em português
 
 const LS = "jogosDoDia.nuvem";   // { uid, apelido, grupos: [{cod, nome}], env: {chave: hash}, pull: ms, res: {id: hash} }
 const ler = () => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch { return {}; } };
@@ -221,6 +222,8 @@ window.nuvem = {
     const s = ler(); s.env = {}; s.pull = 0; s.res = {}; gravar(s);   // aparelho novo: recebe tudo e junta com o que tem aqui
     await perfil(); await this.sincroniza(); return this.estado;
   },
+  // esqueci a senha: o Firebase manda um e-mail com um link para criar uma senha nova
+  async recuperarSenha(email) { await sendPasswordResetEmail(auth, (email || "").trim()); },
   async sair() { await signOut(auth); gravar({}); user = null; avisa(); },
 };
 window.dispatchEvent(new Event("nuvem"));

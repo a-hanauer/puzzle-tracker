@@ -2742,7 +2742,15 @@ function renderConta() {
 function contaForm(modo) {
   const f = $("contaForm");
   f.innerHTML = `<input class="rk-in" id="cfEmail" type="email" placeholder="e-mail" autocomplete="email"><input class="rk-in" id="cfSenha" type="password" placeholder="senha (6+ caracteres)" autocomplete="${modo === "ligar" ? "new-password" : "current-password"}">
-    <button class="rk-btn pr" id="cfOk">${modo === "ligar" ? "Ligar à minha conta" : "Entrar"}</button><div class="rk-erro" id="cfErro"></div>`;
+    <button class="rk-btn pr" id="cfOk">${modo === "ligar" ? "Ligar à minha conta" : "Entrar"}</button><div class="rk-erro" id="cfErro"></div>
+    ${modo === "ligar" ? "" : `<button class="rk-link" id="cfEsqueci">Esqueci a senha</button>`}`;
+  if ($("cfEsqueci")) $("cfEsqueci").onclick = async () => {
+    const em = $("cfEmail").value.trim(), er = $("cfErro");
+    if (!/.+@.+\..+/.test(em)) { er.textContent = "Digite o seu e-mail acima e toque de novo em “Esqueci a senha”."; $("cfEmail").focus(); return; }
+    er.textContent = "Um instante…";
+    try { await window.nuvem.recuperarSenha(em); er.textContent = `Se ${em} tem conta, chegou um e-mail com um link para criar uma senha nova (olhe também o spam).`; }
+    catch (x) { const c = x.code || ""; er.textContent = c.includes("invalid-email") ? "Esse e-mail não parece válido." : "Não deu certo agora. Confira a internet e tente de novo."; }
+  };
   $("cfOk").onclick = async () => {
     const em = $("cfEmail").value.trim(), se = $("cfSenha").value, er = $("cfErro");
     er.textContent = "Um instante…";
@@ -2763,7 +2771,7 @@ render();
 route();
 scheduleMidnight();
 </script>
-<script type="module" src="nuvem.js?v=5"></script>
+<script type="module" src="nuvem.js?v=6"></script>
 <script>
 /* Trava a área segura de baixo no maior valor visto (como no Nightrun): no app instalado o iPhone às vezes muda o
    env(safe-area-inset-bottom) ao trocar de página, e a barra pulava de altura. */
