@@ -20,12 +20,17 @@ service cloud.firestore {
       allow get: if eu();
       allow create: if eu() && request.resource.data.dono == request.auth.uid
         && request.resource.data.membros == [request.auth.uid] && cod.size() >= 6 && cod.size() <= 12;
+      // quem criou (dono): muda o nome e entra/sai/tira gente; os outros: só entram ou saem eles mesmos (e o próprio apelido)
       allow update: if eu()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membros', 'nomes'])
-        && (request.resource.data.membros.removeAll(resource.data.membros) == [request.auth.uid]
-            || resource.data.membros.removeAll(request.resource.data.membros) == [request.auth.uid]
-            || request.resource.data.membros == resource.data.membros)
-        && request.resource.data.membros.size() <= 50;
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membros', 'nomes', 'nome'])
+        && request.resource.data.membros.size() <= 50
+        && (resource.data.dono == request.auth.uid
+            ? (request.resource.data.nome is string && request.resource.data.nome.size() >= 1 && request.resource.data.nome.size() <= 40)
+            : (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['nome'])
+               && request.resource.data.nomes.diff(resource.data.nomes).affectedKeys().hasOnly([request.auth.uid])
+               && (request.resource.data.membros.removeAll(resource.data.membros) == [request.auth.uid]
+                   || resource.data.membros.removeAll(request.resource.data.membros) == [request.auth.uid]
+                   || request.resource.data.membros == resource.data.membros)));
 
       // resultados do dia (um por pessoa, jogo e dia): só membros leem; cada um grava o seu
       match /res/{id} {

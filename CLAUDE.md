@@ -19,6 +19,9 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   (ícone 46px e o mesmo círculo à direita nas duas listas). O nível do dia aparece uma vez só, sob o
   título (`#diaNivel`: "quinta, 5 nov · nível 4 de 7" + pontinhos); os cartões não têm pílula de nível antes de jogar. Nunca rola para o lado. Grades com `minmax(0, 1fr)` (nunca `1fr` puro) e `html, body { overflow-x: clip }`;
   conferir em 320–430 px que `document.documentElement.scrollWidth === innerWidth`.
+- **Barra de abas** (09/11/2026, opção "B"): Jogos · Ranking · Amigos · Estatísticas · Ajustes, no rodapé do painel (a mesma
+  cápsula de vidro dos outros apps, com gota sob a aba e encolhendo ao rolar). Substituiu os botões redondos do topo. Abas trocam
+  a página com `irPara(hash)` (replaceState, sem empilhar); o perfil de uma pessoa empilha e tem "voltar". Pontinho de amigo novo na aba Ranking.
 - **Área segura**: respeitar `env(safe-area-inset-*)` em cima (notch) e embaixo (barra de gestos).
 
 ## Nuvem e ranking com amigos (Firebase, desde 09/11/2026)
@@ -37,7 +40,11 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   completa com `state.results`; ao entrar ou entrar em outro grupo, manda o histórico todo). Critério: Gerânio pontos; Sando e 5PILA
   tentativas (quem não acertou vai para o fim); Brigadeiro inclinações; os da casa, tempo; os de fora, o tempo fora do app
   (aproximado, "~"). Sempre mostra quem usou dica (💡). Semana: mais 1º lugares, depois mais jogos.
-- Configurações → Conta na nuvem: apelido, última sincronização, ligar e-mail e senha, entrar numa conta com e-mail.
+- Ranking (nova cara, 09/11/2026): faixa com os 7 dias da semana, destaque de quem lidera, bolinhas coloridas por pessoa
+  (`rkCor`), quem não jogou numa linha só; Semana com barras de 1º lugares e o melhor de cada jogo. Uma consulta por semana (`rkSemanaDados`, cache de 1 min).
+  Aba Amigos: grupo, convite, cada pessoa (jogos de hoje, duelo da semana), outros grupos, entrar/criar. Só quem criou o grupo
+  (`dono`) renomeia e remove pessoas (bandeja "Editar grupo"; regras em firestore.rules); `confereGrupos` esquece grupos de onde a pessoa saiu.
+- Configurações (aba Ajustes) → Conta na nuvem: apelido, última sincronização, ligar e-mail e senha, entrar numa conta com e-mail.
 - Amigos fora da página de ranking (09/11/2026): o painel guarda os resultados de hoje do 1º grupo em `jogosDoDia.grupo`
   (não vai para a nuvem). Com ele: no fim de cada jogo da casa, `grupoFim` (comum/recorde.js, chamado por `semanaFim`)
   mostra "Nº de M no grupo", o pódio do dia com 💡 e quem ainda não jogou, no mesmo cartão do bloco da semana, logo acima

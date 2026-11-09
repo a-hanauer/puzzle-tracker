@@ -183,6 +183,27 @@ window.nuvem = {
     s.grupos = (s.grupos || []).filter(g => g.cod !== cod);
     await salvaPerfil(s);
   },
+  // só quem criou o grupo: muda o nome e tira pessoas (as regras do banco conferem)
+  async renomearGrupo(cod, nome) {
+    nome = (nome || "").trim().slice(0, 40); if (!nome) return;
+    await updateDoc(doc(db, "grupos", cod), { nome });
+    const s = ler(); s.grupos = (s.grupos || []).map(g => g.cod === cod ? { ...g, nome } : g); await salvaPerfil(s);
+  },
+  async removerMembro(cod, uid) { await updateDoc(doc(db, "grupos", cod), { membros: arrayRemove(uid), [`nomes.${uid}`]: deleteField() }); },
+  // confere os grupos guardados: traz o nome novo e esquece os grupos de onde a pessoa foi removida
+  async confereGrupos() {
+    const s = ler(); if (!user || !s.grupos?.length || !navigator.onLine) return;
+    let mudou = false; const fica = [];
+    for (const g of s.grupos) {
+      try {
+        const d = await getDoc(doc(db, "grupos", g.cod));
+        if (!d.exists() || !(d.data().membros || []).includes(user.uid)) { mudou = true; continue; }
+        const nome = d.data().nome; if (nome && nome !== g.nome) { g.nome = nome; mudou = true; }
+      } catch {}
+      fica.push(g);
+    }
+    if (mudou) { s.grupos = fica; await salvaPerfil(s); }
+  },
   async mudaApelido(apelido) { const s = ler(); s.apelido = apelido.trim().slice(0, 20); s.res = {}; await salvaPerfil(s); },
   enviaResultados,
   // resultados do grupo entre dois dias (inclusive), já com os nomes dos membros

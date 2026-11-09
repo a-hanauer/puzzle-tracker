@@ -717,8 +717,6 @@
   .amg small { font-size: .72rem; color: var(--muted); margin-left: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
   .posg { display: inline-flex; align-items: center; gap: 2px; font-size: .78rem; font-weight: 800; color: var(--text); white-space: nowrap;
     background: var(--surface-2); border-radius: 99px; padding: 1px 7px 1px 4px; margin-right: 8px; flex: none; }
-  #rankBtn { position: relative; }
-  #rankBtn .novo { position: absolute; top: 2px; right: 2px; width: 9px; height: 9px; border-radius: 50%; background: #e2433f; box-shadow: 0 0 0 2px var(--bg); }
   /* perfil de uma pessoa do grupo (toque no nome) */
   .rk-rr[data-u] { cursor: pointer; }
   .pf-top { display: flex; align-items: center; gap: 14px; margin: 10px 2px 16px; }
@@ -742,6 +740,133 @@
   .pf-h { font-weight: 800; font-size: .98rem; margin: 0 0 6px; }
   .pf-rec .rk-rr { grid-template-columns: 28px minmax(0, 1fr) auto; }
   .pf-rec .rk-rr > img { width: 24px; height: 24px; border-radius: 6px; }
+
+  /* ---------- barra de abas (09/11/2026, opção "B"): Jogos · Ranking · Amigos · Estatísticas · Ajustes ----------
+     A mesma dos outros apps: cápsula de vidro flutuante, gota de vidro sob a aba escolhida (que escorrega ao trocar e
+     vira lente com o dedo na barra) e encolhe para uma bolinha ao rolar para baixo. Scripts no fim da página. */
+  :root { --tb-h: 64px; --tb-b: max(10px, calc(env(safe-area-inset-bottom, 0px) - 12px));
+    --tb-vidro: color-mix(in srgb, var(--surface) 72%, transparent); --tb-acc: var(--text); --tb-tinta: var(--muted);
+    --tb-aro-hi: rgba(255,255,255,.2); --tb-aro-lo: rgba(0,0,0,.5); --tb-sombra: rgba(0,0,0,.45);
+    --tb-gota: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.07));
+    --tb-gota-pousa: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.03)) rgba(255,255,255,.07); }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --tb-aro-hi: rgba(255,255,255,.95); --tb-aro-lo: rgba(20,24,33,.1); --tb-sombra: rgba(20,24,33,.16);
+    --tb-gota: linear-gradient(180deg, rgba(255,255,255,.9), rgba(232,232,238,.6));
+    --tb-gota-pousa: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.05)) color-mix(in srgb, var(--muted) 12%, transparent); } }
+  :root[data-theme="light"] { --tb-aro-hi: rgba(255,255,255,.95); --tb-aro-lo: rgba(20,24,33,.1); --tb-sombra: rgba(20,24,33,.16);
+    --tb-gota: linear-gradient(180deg, rgba(255,255,255,.9), rgba(232,232,238,.6));
+    --tb-gota-pousa: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.05)) color-mix(in srgb, var(--muted) 12%, transparent); }
+  body { padding-bottom: calc(var(--tb-h) + var(--tb-b) + 28px); }
+  .tabbar { position: fixed; z-index: 15; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: hidden;
+    left: max(14px, env(safe-area-inset-left, 0px), calc(50% - 260px)); width: min(520px, calc(100% - 28px)); bottom: var(--tb-b);
+    height: var(--tb-h); padding: 4px; border-radius: 32px; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    background: var(--tb-vidro); -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%);
+    box-shadow: 0 10px 30px var(--tb-sombra);
+    transition: width .42s cubic-bezier(.25,.9,.3,1.05), height .42s cubic-bezier(.25,.9,.3,1.05), padding .42s; }
+  .tabbar::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; padding: 1px; z-index: 2;
+    background: linear-gradient(160deg, var(--tb-aro-hi), transparent 34%, transparent 66%, var(--tb-aro-lo));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; }
+  .tabbar a { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-width: 0;
+    border-radius: 28px; color: var(--tb-tinta); font-size: 10.5px; font-weight: 600; text-decoration: none; white-space: nowrap; -webkit-user-drag: none;
+    transition: color .2s; }
+  .tabbar a svg { width: 24px; height: 24px; flex: none; }
+  .tabbar a[aria-current="page"], .tabbar a.tb-sob { color: var(--tb-acc); }
+  .tabbar a[aria-current="page"] { font-weight: 800; }
+  .tabbar a .novo { position: absolute; top: 7px; left: calc(50% + 7px); width: 8px; height: 8px; border-radius: 50%; background: #e2433f; box-shadow: 0 0 0 2px var(--surface); }
+  .tb-gota { position: absolute; left: 0; top: 4px; z-index: 0; border-radius: 999px; pointer-events: none; opacity: 0; background: var(--tb-gota-pousa);
+    box-shadow: inset 0 1px 0 var(--tb-aro-hi), inset 0 0 0 .5px var(--tb-aro-lo); transform-origin: center;
+    transition: opacity .25s, transform .42s cubic-bezier(.3,1.25,.5,1), background .22s, box-shadow .22s; }
+  .tb-gota.pousa, .tb-gota.on { opacity: 1; }
+  .tb-gota.on { background: var(--tb-gota); box-shadow: 0 6px 18px var(--tb-sombra), inset 0 1px 0 var(--tb-aro-hi), inset 0 0 0 .5px var(--tb-aro-lo);
+    -webkit-backdrop-filter: blur(3px) saturate(160%) brightness(1.08); backdrop-filter: blur(3px) saturate(160%) brightness(1.08); }
+  .tabbar.min { width: 56px; height: 56px; padding: 3px; grid-template-columns: minmax(0, 1fr); }
+  .tabbar.min a:not([aria-current="page"]), .tabbar.min .tb-gota { display: none; }
+  .tabbar.min a span { display: none; }
+  @media (prefers-reduced-motion: reduce) { .tabbar, .tabbar a { transition: none; } .tb-gota { transition: opacity .15s; } }
+  .toast { bottom: calc(var(--tb-h) + var(--tb-b) + 14px); }
+  .fora { bottom: calc(var(--tb-h) + var(--tb-b) + 10px); }
+  /* páginas das abas: título grande, sem voltar */
+  .page-head .page-back { display: none; }
+  .page-head h1, .x-top h1 { font-size: 1.9rem; font-weight: 900; letter-spacing: -.02em; }
+  .page-head { margin-bottom: 8px; }
+
+  /* ---------- Ranking e Amigos, nova cara (09/11/2026) ---------- */
+  .x-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 2px 12px; min-height: 44px; }
+  .x-top h1 { margin: 0; }
+  .x-volta { display: inline-flex; align-items: center; gap: 2px; border: 0; background: none; color: var(--text); font: inherit; font-weight: 700; font-size: .95rem; padding: 6px 4px 6px 0; cursor: pointer; }
+  .x-volta svg { width: 22px; height: 22px; }
+  .x-grp { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 62%; border: 1px solid var(--border); background: var(--surface);
+    border-radius: 99px; padding: 4px 11px 4px 4px; font: inherit; font-weight: 700; font-size: .86rem; color: var(--text); cursor: pointer; }
+  .x-grp > span:not(.x-avs) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .x-grp svg { width: 14px; height: 14px; flex: none; color: var(--muted); }
+  .x-avs { display: inline-flex; flex: none; } .x-avs .av + .av { margin-left: -7px; }
+  .av { width: 28px; height: 28px; border-radius: 50%; flex: none; font-style: normal; font-size: .72rem; font-weight: 800; display: inline-flex;
+    align-items: center; justify-content: center; color: #fff; box-shadow: 0 0 0 2px var(--surface); }
+  .av.s { width: 22px; height: 22px; font-size: .6rem; } .av.md { width: 24px; height: 24px; font-size: .62rem; } .av.g { width: 44px; height: 44px; font-size: 1rem; }
+  .wk { display: grid; grid-template-columns: 26px repeat(7, minmax(0, 1fr)) 26px; gap: 3px; align-items: center; margin-bottom: 12px; }
+  .wk.sem { grid-template-columns: 36px minmax(0, 1fr) 36px; }
+  .wk > button { border: 0; background: none; font: inherit; color: var(--muted); cursor: pointer; padding: 0; }
+  .wk .ar { color: var(--text); font-weight: 800; font-size: 1.15rem; height: 40px; } .wk .ar:disabled { opacity: .25; }
+  .wk .d { text-align: center; padding: 6px 0 5px; border-radius: 12px; font-size: .62rem; font-weight: 700; text-transform: uppercase; }
+  .wk .d b { display: block; font-size: .95rem; color: var(--text); font-weight: 800; margin-top: 1px; }
+  .wk .d i { display: block; width: 4px; height: 4px; border-radius: 50%; margin: 3px auto 0; }
+  .wk .d.tem i { background: var(--green); }
+  .wk .d[aria-current="date"] { background: var(--text); color: var(--bg); } .wk .d[aria-current="date"] b { color: var(--bg); } .wk .d[aria-current="date"].tem i { background: var(--bg); }
+  .wk .d:disabled { opacity: .35; cursor: default; }
+  .wk .tt { text-align: center; font-weight: 800; font-size: .84rem; color: var(--text); }
+  .dest { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .dest .cr { position: relative; display: inline-flex; flex: none; } .dest .cr::before { content: "👑"; position: absolute; top: -13px; left: 12px; font-size: .95rem; z-index: 1; }
+  .dest .cr .av + .av { margin-left: -14px; }
+  .dest .tx { min-width: 0; } .dest b { display: block; font-size: .98rem; } .dest small { display: block; color: var(--muted); font-size: .8rem; margin-top: 1px; }
+  .dest .me { margin-left: auto; text-align: right; flex: none; } .dest .me small { margin: 0; } .dest .me b { font-family: "IBM Plex Mono", monospace; font-size: 1.1rem; }
+  .gc { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 10px 12px 8px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .gc .h { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; } .gc .h img, .gc .h .em { width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+  .gc .h b { font-size: .98rem; } .gc .h small { margin-left: auto; color: var(--muted); font-size: .72rem; }
+  .r { display: grid; grid-template-columns: 24px 24px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 6px; border-radius: 12px; font-size: .92rem; }
+  .r[data-u] { cursor: pointer; }
+  .r .m { text-align: center; font-weight: 800; color: var(--muted); } .r .v { font-family: "IBM Plex Mono", monospace; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .r .n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .r .n small { display: block; color: var(--muted); font-size: .72rem; }
+  .r.eu { background: color-mix(in srgb, var(--green) 11%, transparent); } .r.eu .n { font-weight: 800; }
+  .r.perdeu .v { color: var(--muted); }
+  .r .tag, .tag { font-size: .6rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: var(--surface-2); border-radius: 5px; padding: 1px 5px; margin-left: 6px; vertical-align: 2px; }
+  .nj { display: flex; align-items: center; gap: 8px; border-top: 1px dashed var(--border); margin-top: 6px; padding: 7px 6px 2px; color: var(--muted); font-size: .78rem; }
+  .nj .av { opacity: .6; }
+  .sm .r { grid-template-columns: 24px 24px minmax(0, 1fr) minmax(0, 104px); }
+  .bar { display: flex; align-items: center; gap: 6px; justify-content: flex-end; font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: .86rem; }
+  .bar i { display: block; height: 8px; border-radius: 4px; background: var(--gold); min-width: 4px; }
+  .bj .r { grid-template-columns: 28px minmax(0, 1fr) 24px auto; } .bj .r img, .bj .r .em { width: 24px; height: 24px; border-radius: 6px; }
+  .inv { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow); }
+  .inv .cd { display: block; font-family: "IBM Plex Mono", monospace; font-size: 1.35rem; font-weight: 700; letter-spacing: .12em; }
+  .inv small { display: block; color: var(--muted); font-size: .78rem; }
+  .inv button { margin-left: auto; border: 0; background: var(--text); color: var(--bg); border-radius: 99px; padding: 9px 14px; font: inherit; font-weight: 800; font-size: .84rem; display: inline-flex; gap: 6px; align-items: center; cursor: pointer; flex: none; }
+  .inv button svg { width: 15px; height: 15px; }
+  .gh { display: flex; align-items: center; gap: 8px; margin: 0 2px 10px; min-width: 0; } .gh b { font-size: 1.2rem; font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .gh button { margin-left: auto; flex: none; border: 0; font: inherit; font-weight: 700; font-size: .86rem; color: var(--text); background: var(--surface-2); border-radius: 99px; padding: 6px 13px; cursor: pointer; }
+  .ml { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 12px; }
+  .ml .p { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto 12px; gap: 12px; align-items: center; padding: 11px 14px; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .ml .p:last-child { border-bottom: 0; }
+  .ml .p b { display: block; font-size: .98rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ml .p small { display: block; color: var(--muted); font-size: .78rem; margin-top: 1px; }
+  .ml .p .sq { text-align: right; font-size: .82rem; font-weight: 800; font-family: "IBM Plex Mono", monospace; } .ml .p .sq small { font-family: "Noto Sans", sans-serif; font-weight: 600; }
+  .ml .p .ch { color: var(--faint); font-weight: 800; }
+  .ml .p.e { grid-template-columns: 36px minmax(0, 1fr) auto; cursor: default; } .ml .p.e .av { width: 36px; height: 36px; font-size: .8rem; }
+  .x-lbl { font-size: .74rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 16px 4px 8px; }
+  .og { display: flex; align-items: center; gap: 10px; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; margin-bottom: 8px; font: inherit; color: var(--text); cursor: pointer; text-align: left; }
+  .og b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .og small { color: var(--muted); margin-left: auto; font-size: .8rem; flex: none; }
+  .og[aria-current="true"] { border-color: var(--text); }
+  .bt2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .bt2 button { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 6px; font: inherit; font-weight: 700; font-size: .88rem; color: var(--text); cursor: pointer; }
+  .rm { border: 0; color: #d0453a; font: inherit; font-weight: 800; font-size: .82rem; background: color-mix(in srgb, #d0453a 10%, transparent); border-radius: 99px; padding: 5px 11px; cursor: pointer; }
+  .rm.conf { background: #d0453a; color: #fff; }
+  .x-sair { display: block; width: 100%; color: #d0453a; text-align: center; font: inherit; font-weight: 800; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-top: 10px; cursor: pointer; }
+  .x-sair.conf { background: #d0453a; color: #fff; border-color: #d0453a; }
+  #gSheet .sheet { background: var(--bg); max-height: 88vh; overflow: auto; }
+  #gSheet .sheet-head b { font-size: 1.15rem; font-weight: 900; }
+  .x-ok { border: 0; background: none; font: inherit; font-weight: 800; color: var(--green); font-size: 1rem; cursor: pointer; padding: 6px 2px; }
+  .x-ok:disabled { opacity: .4; }
+  .x-in { width: 100%; box-sizing: border-box; font: inherit; font-size: 1rem; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text); -webkit-user-select: text; user-select: text; }
+  .x-in.cod { font-family: "IBM Plex Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+  .x-err { color: #d0453a; font-size: .84rem; margin-top: 8px; min-height: 1em; }
+  .x-nota { font-size: .76rem; color: var(--muted); margin: 8px 4px 0; line-height: 1.45; }
+  .pf-av { color: #fff; }
 </style>
 </head>
 <body>
@@ -749,11 +874,6 @@
 <header class="top">
   <div class="top-row">
     <div class="app-mark"><img src="icon-192.png?v=6" alt=""><h1>Jogos do Dia</h1></div>
-  <div class="head-actions">
-    <button class="round" id="rankBtn" aria-label="Ranking com amigos"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg></button>
-    <button class="round" id="histBtn" aria-label="Estatísticas"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V13M10 20V6M15 20v-9M20 20V9"/></svg></button>
-    <button class="round" id="settingsBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg></button>
-  </div>
   </div>
   <!-- o nível do dia (o mesmo para todos os jogos da casa: segunda = 1 … domingo = 7) -->
   <div class="dia-nivel" id="diaNivel"></div>
@@ -767,7 +887,7 @@
 <section id="viewSettings" hidden>
   <header class="page-head">
     <button class="page-back" data-voltar aria-label="Voltar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <h1>Configurações</h1>
+    <h1>Ajustes</h1>
   </header>
   <div class="set-page">
     <div class="set-label">Tema</div>
@@ -793,11 +913,11 @@
 </section>
 
 <section id="viewRanking" hidden>
-  <header class="page-head">
-    <button class="page-back" data-voltar aria-label="Voltar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <h1>Ranking</h1>
-  </header>
   <div id="rkBody"></div>
+</section>
+
+<section id="viewAmigos" hidden>
+  <div id="amBody"></div>
 </section>
 
 <section id="viewHistory" hidden>
@@ -894,6 +1014,15 @@
   <div class="rc-wrap"><div class="rc-papel" id="rcPapel"></div></div>
   <div class="rc-acoes"><button class="rc-salvar" id="rsShare" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Salvar imagem</button></div>
 </div>
+<nav class="tabbar" id="tabbar" aria-label="Seções">
+  <a href="#jogos" data-aba="jogos"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Jogos</span></a>
+  <a href="#ranking" data-aba="ranking" id="tabRank"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg><span>Ranking</span></a>
+  <a href="#amigos" data-aba="amigos"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="9" cy="8.5" r="3.3"/><path d="M3 19.5a6 6 0 0 1 12 0"/><circle cx="17" cy="9.5" r="2.6"/><path d="M15.5 14.4a5 5 0 0 1 6 5.1"/></svg><span>Amigos</span></a>
+  <a href="#estatisticas" data-aba="estatisticas"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M5 20V13M10 20V6M15 20v-9M20 20V9"/></svg><span>Estatísticas</span></a>
+  <a href="#configuracoes" data-aba="configuracoes"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg><span>Ajustes</span></a>
+</nav>
+<!-- grupos: trocar, editar (quem criou), entrar com código, criar -->
+<div class="sheet-bg" id="gSheet" hidden><div class="sheet" role="dialog" aria-modal="true"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="fora" id="fora" role="status" aria-live="polite" hidden></div>
 
@@ -2022,23 +2151,30 @@ document.querySelectorAll("#perSeg button").forEach(b => b.addEventListener("cli
 
 /* ---------- Páginas: Estatísticas (#estatisticas) e Configurações (#configuracoes) ----------
    Ocupam a tela toda, com título e voltar; o voltar do sistema também funciona. */
-const PAGINAS = { "#estatisticas": "viewHistory", "#historico": "viewHistory", "#configuracoes": "viewSettings", "#ranking": "viewRanking" };
+const PAGINAS = { "#estatisticas": "viewHistory", "#historico": "viewHistory", "#configuracoes": "viewSettings", "#ranking": "viewRanking", "#amigos": "viewAmigos" };
+const ABA_DE = { viewHistory: "estatisticas", viewSettings: "configuracoes", viewRanking: "ranking", viewAmigos: "amigos" };
 function route() {
   const alvo = PAGINAS[location.hash] || null;
-  $("viewHistory").hidden = alvo !== "viewHistory";
-  $("viewSettings").hidden = alvo !== "viewSettings";
-  $("viewRanking").hidden = alvo !== "viewRanking";
+  ["viewHistory", "viewSettings", "viewRanking", "viewAmigos"].forEach(v => ($(v).hidden = alvo !== v));
   $("viewToday").hidden = !!alvo;
   document.body.classList.toggle("pagina", !!alvo);
+  const aba = alvo ? ABA_DE[alvo] : "jogos";
+  document.querySelectorAll("#tabbar a").forEach(a => { if (a.dataset.aba === aba) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   if (alvo === "viewHistory") renderHistory();
   if (alvo === "viewSettings") { renderTheme(); renderConta(); }
   if (alvo === "viewRanking") renderRanking();
-  if (alvo) window.scrollTo(0, 0);
+  if (alvo === "viewAmigos") renderAmigos();
 }
-const abrirPagina = hash => { history.pushState({ pagina: true }, "", hash); route(); };
-$("histBtn").addEventListener("click", () => abrirPagina("#estatisticas"));
-$("rankBtn").addEventListener("click", () => abrirPagina("#ranking"));
-$("settingsBtn").addEventListener("click", () => abrirPagina("#configuracoes"));
+// abas: trocam a página sem empilhar no histórico (o perfil de uma pessoa, sim, empilha e tem "voltar")
+function irPara(hash) {
+  const mesma = (PAGINAS[hash] || null) === (PAGINAS[location.hash] || null);
+  if (mesma && history.state?.pessoa) { history.back(); return; }
+  if (mesma) { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  history.replaceState(null, "", hash === "#jogos" ? location.pathname : hash);
+  window.scrollTo(0, 0); route();
+}
+document.querySelectorAll("#tabbar a").forEach(a => a.addEventListener("click", ev => { ev.preventDefault(); irPara("#" + a.dataset.aba); }));
+$("gSheet").addEventListener("click", e => { if (e.target === $("gSheet") || e.target.closest("[data-close]")) $("gSheet").hidden = true; });
 document.querySelectorAll("[data-voltar]").forEach(b => b.addEventListener("click", () => {
   if (history.state && history.state.pagina) history.back();
   else { history.replaceState(null, "", location.pathname); route(); }
@@ -2124,6 +2260,7 @@ async function nuvemJa() {
       const novo = load(); Object.keys(state).forEach(k => delete state[k]); Object.assign(state, novo);
       render(); if (!$("viewHistory").hidden) renderHistory();
     }
+    if (n.confereGrupos && Date.now() - (nuvemJa.conf || 0) > 300000) { nuvemJa.conf = Date.now(); await n.confereGrupos(); }
     await n.enviaResultados(resultadosParaRanking());
     if (n.estado.grupos.length) await guardaGrupoHoje(n);
   } catch (e) { console.warn("nuvem", e); }
@@ -2134,7 +2271,7 @@ function nuvemInicia() {
   const n = window.nuvem; if (!n || nuvemInicia.ok) return; nuvemInicia.ok = true;
   n.configura({ prefixos: BK_PREFIXOS, fundir: fundirPainel });
   n.ouvir(() => { if (!$("viewSettings").hidden) renderConta(); });
-  n.pronto.then(() => { if (n.estado.conectado) nuvemAgenda(600); if (!$("viewRanking").hidden) renderRanking(); });
+  n.pronto.then(() => { if (n.estado.conectado) nuvemAgenda(600); renderAtual(); });
 }
 window.addEventListener("nuvem", nuvemInicia);
 if (window.nuvem) nuvemInicia();
@@ -2166,7 +2303,7 @@ function decoraGrupo() {
     else {
       if (!amg) { amg = document.createElement("span"); amg.className = "amg"; (li.querySelector(".ds") || li.querySelector(".desc"))?.after(amg); }
       const nome = r => (g.nomes?.[r.uid] || r.apelido || "?").trim();
-      amg.innerHTML = outros.slice(0, 4).map(r => `<i>${escHTML(nome(r)[0]?.toUpperCase() || "?")}</i>`).join("") +
+      amg.innerHTML = outros.slice(0, 4).map(r => `<i style="background:${rkCor(r.uid)};color:#fff">${escHTML(nome(r)[0]?.toUpperCase() || "?")}</i>`).join("") +
         `<small>${outros.length === 1 ? `${escHTML(nome(outros[0]))} já jogou` : `${outros.length} amigos já jogaram`}</small>`;
     }
     // minha posição no grupo, depois de terminar (com pelo menos mais alguém no jogo): no começo da linha dos amigos
@@ -2179,13 +2316,12 @@ function decoraGrupo() {
   }
   // pontinho no troféu: resultado novo de amigo desde a última visita ao ranking
   const visto = +(localStorage.getItem(RANK_VISTO) || 0), novo = ok && (g.res || []).some(r => r.uid !== g.eu && (r.t || 0) > visto);
-  const btn = $("rankBtn"); let dot = btn.querySelector(".novo");
+  const btn = $("tabRank"); let dot = btn.querySelector(".novo");
   if (novo && !dot) btn.insertAdjacentHTML("beforeend", '<i class="novo" aria-hidden="true"></i>'); else if (!novo && dot) dot.remove();
 }
 
 // ---------- perfil de uma pessoa do grupo (toque no nome no ranking) ----------
 let pfPer = "mes";
-function abrePessoa(uid) { history.pushState({ pagina: true, pessoa: uid }, "", "#ranking"); renderRanking(); }
 async function renderPessoa(el, n, e, uid) {
   el.innerHTML = `<p class="rk-lead">Carregando…</p>`;
   let dados;
@@ -2200,7 +2336,7 @@ async function renderPessoa(el, n, e, uid) {
   while (dias.has(d)) { seq++; d = rkMuda(d, -1); }
   const desde = dela.map(r => r.dia).sort()[0];
   const mes = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-  let h = `<div class="pf-top"><span class="pf-av">${escHTML(nome.trim()[0]?.toUpperCase() || "?")}</span><span><b>${escHTML(nome)}${souEu ? " (você)" : ""}</b>
+  let h = `<div class="pf-top"><span class="pf-av" style="background:${rkCor(uid)}">${escHTML(nome.trim()[0]?.toUpperCase() || "?")}</span><span><b>${escHTML(nome)}${souEu ? " (você)" : ""}</b>
     <small>${seq ? `🔥 ${seq} ${seq === 1 ? "dia" : "dias seguidos"}` : "sem sequência agora"} · ${dela.length} jogos${desde ? ` desde ${+desde.slice(8)} ${mes[+desde.slice(5, 7) - 1]}` : ""}</small></span></div>
     <div class="segx" id="pfPer">${[["semana", "Semana"], ["mes", "Mês"], ["sempre", "Sempre"]].map(([v, t]) => `<button data-p="${v}" aria-checked="${pfPer === v}">${t}</button>`).join("")}</div>`;
   const perTxt = pfPer === "semana" ? "nesta semana" : pfPer === "mes" ? `em ${["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"][+today().slice(5, 7) - 1]}` : "desde sempre";
@@ -2259,6 +2395,14 @@ function rkIcone(id) {
   if (g?.icon) return `<img src="${new URL(g.icon, location.href).href}" alt="">`;
   return `<span class="em">${g?.emoji || "🎲"}</span>`;
 }
+// cor de cada pessoa (sempre a mesma, pelo uid) e a bolinha com a inicial
+const RK_CORES = ["#e2643a", "#d0457e", "#3f7fd6", "#2f9a6a", "#8a5cd0", "#b07a0e", "#1c8597", "#b5523b"];
+const rkCor = uid => { let h = 7; for (const c of String(uid || "")) h = (h * 31 + c.charCodeAt(0)) | 0; return RK_CORES[Math.abs(h) % RK_CORES.length]; };
+const rkAv = (uid, nome, cls = "") => `<i class="av ${cls}" style="background:${rkCor(uid)}">${escHTML((nome || "?").trim()[0]?.toUpperCase() || "?")}</i>`;
+const rkLista = l => l.length <= 1 ? (l[0] || "") : l.slice(0, -1).join(", ") + " e " + l[l.length - 1];
+const SV = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">';
+// qual das abas está aberta agora, para redesenhar a certa depois de entrar num grupo etc.
+function renderAtual() { if (!$("viewRanking").hidden) renderRanking(); if (!$("viewAmigos").hidden) renderAmigos(); }
 function renderEntrada(el, e) {
   el.innerHTML = `<p class="rk-lead">Jogue com amigos: cada um vê os resultados do dia dos outros no grupo. Seu progresso também fica salvo na nuvem — troque de celular sem perder nada.</p>
     <label class="rk-lbl" for="rkApelido">Seu apelido</label><input class="rk-in" id="rkApelido" maxlength="20" autocomplete="nickname" value="${escHTML(e.apelido || "")}">
@@ -2267,79 +2411,248 @@ function renderEntrada(el, e) {
     <label class="rk-lbl" for="rkCodigo" style="margin-top:4px">Código de convite</label><input class="rk-in cod" id="rkCodigo" maxlength="8" placeholder="Ex.: QX7K2M" autocapitalize="characters" autocomplete="off">
     <button class="rk-btn sc" id="rkEntrar">Entrar no grupo</button>
     <div class="rk-erro" id="rkErro"></div>
-    <p class="rk-nota">Sem cadastro: o app cria uma conta só sua neste aparelho. Para usar em outro celular, ligue um e-mail e senha em Configurações → Conta na nuvem.</p>`;
+    <p class="rk-nota">Sem cadastro: o app cria uma conta só sua neste aparelho. Para usar em outro celular, ligue um e-mail e senha em Ajustes → Conta na nuvem.</p>`;
   const acao = async (fn) => {
     const ap = $("rkApelido").value.trim(), erro = $("rkErro");
     if (!ap) { erro.textContent = "Escolha um apelido."; $("rkApelido").focus(); return; }
     el.querySelectorAll("button").forEach(b => (b.disabled = true)); erro.textContent = "Um instante…";
-    try { await window.nuvem.entrar(ap); await fn(ap); erro.textContent = ""; await nuvemJa(); renderRanking(); }
+    try { await window.nuvem.entrar(ap); await fn(ap); erro.textContent = ""; await nuvemJa(); rkCache = {}; renderAtual(); }
     catch (x) { console.warn(x); erro.textContent = x.message?.startsWith("Não achei") ? x.message : "Não deu certo agora. Confira a internet e tente de novo."; el.querySelectorAll("button").forEach(b => (b.disabled = false)); }
   };
   $("rkCriar").onclick = () => acao(ap => window.nuvem.criarGrupo(`Amigos de ${ap}`).then(c => (rkCod = c)));
   $("rkEntrar").onclick = () => acao(() => { const c = $("rkCodigo").value; if (c.trim().length < 6) throw new Error("Não achei um grupo com esse código."); return window.nuvem.entrarGrupo(c).then(() => (rkCod = c.toUpperCase().replace(/[^A-Z0-9]/g, ""))); });
 }
+// os resultados de uma semana inteira do grupo (uma consulta serve para os dias, a semana e os pontinhos da faixa)
+let rkCache = {};
+async function rkSemanaDados(n, cod, dia, fresco) {
+  const [seg, dom] = rkSemana(dia), ate = dom < today() ? dom : today(), k = cod + seg;
+  const c = rkCache[k];
+  if (c && !fresco && Date.now() - c.t < 60000) return c;
+  if (seg <= today() && dom >= today()) await nuvemJa();
+  const d = await n.resultados(cod, seg, ate);
+  const grupo = d.grupo || { nome: "Grupo", membros: [], nomes: {} }, membros = grupo.membros || [];
+  const nomes = { ...(grupo.nomes || {}) };
+  d.res.forEach(r => { if (!nomes[r.uid]) nomes[r.uid] = r.apelido; });
+  const res = d.res.filter(r => membros.includes(r.uid));   // quem saiu (ou foi removido) não conta mais
+  return (rkCache[k] = { t: Date.now(), grupo, membros, nomes, res, seg, dom });
+}
+// ordem de um jogo com empates: devolve [{r, pos}] (pos 0 = 1º); quem errou no Sando/5PILA fica sem posição
+function rkPosicoes(rs) {
+  rs = [...rs].sort(rkOrdem); let pos = 0;
+  return rs.map((r, i) => { if (i === 0 || rkOrdem(rs[i - 1], r) !== 0) pos = i; return { r, pos: r.tipo === "tries" && !r.won ? -1 : pos }; });
+}
+function rkGrupoBtn(e, d) {
+  const outros = d.membros.filter(u => u !== e.uid).slice(0, 3);
+  return `<button class="x-grp" id="rkGrp" aria-label="Grupo: ${escHTML(d.grupo.nome || "Grupo")}"><span class="x-avs">${outros.map(u => rkAv(u, d.nomes[u], "s")).join("")}</span><span>${escHTML(d.grupo.nome || "Grupo")}</span>${SV}<path d="M6 9l6 6 6-6"/></svg></button>`;
+}
 async function renderRanking() {
   const el = $("rkBody"), n = window.nuvem;
-  if (!n) { el.innerHTML = `<p class="rk-lead">Não consegui falar com a nuvem agora. Confira a internet e abra de novo.</p>`; return; }
+  if (!n) { el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Não consegui falar com a nuvem agora. Confira a internet e abra de novo.</p>`; return; }
   await n.pronto;
   const e = n.estado;
-  if (!e.conectado || !e.grupos.length) { renderEntrada(el, e); return; }
+  if (!e.conectado || !e.grupos.length) { el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><div></div>`; renderEntrada(el.lastElementChild, e); return; }
   if (!rkCod || !e.grupos.some(g => g.cod === rkCod)) rkCod = e.grupos[0].cod;
   localStorage.setItem(RANK_VISTO, String(Date.now())); decoraGrupo();
-  if (history.state?.pessoa) { await renderPessoa(el, n, e, history.state.pessoa); return; }
-  const [de, ate] = rkModo === "hoje" ? [rkDia, rkDia] : rkSemana(rkDia);
-  const topo = `${e.grupos.length > 1 ? `<div class="segx" id="rkGrupos">${e.grupos.map(g => `<button data-c="${g.cod}" aria-checked="${g.cod === rkCod}">${escHTML(g.nome)}</button>`).join("")}</div>` : ""}
-    <div class="segx" id="rkModo" style="margin-bottom:10px"><button data-m="hoje" aria-checked="${rkModo === "hoje"}">Hoje</button><button data-m="semana" aria-checked="${rkModo === "semana"}">Semana</button></div>
-    <div class="rk-dia"><button id="rkAnt" aria-label="Anterior">‹</button><span>${rkModo === "hoje" ? rkDataTxt(rkDia) : `${+de.slice(8)} a ${rkDataTxt(ate).split(", ")[1]}`}</span><button id="rkProx" aria-label="Próximo" ${ate >= today() ? "disabled" : ""}>›</button></div>`;
-  el.innerHTML = `<div class="rk-grp"><span><b>…</b></span><button class="rk-cod">${rkCod}</button></div>${topo}<p class="rk-lead">Carregando…</p>`;
-  const liga = () => {
-    el.querySelectorAll("#rkGrupos button").forEach(b => (b.onclick = () => { rkCod = b.dataset.c; renderRanking(); }));
-    el.querySelectorAll("#rkModo button").forEach(b => (b.onclick = () => { rkModo = b.dataset.m; renderRanking(); }));
-    $("rkAnt").onclick = () => { rkDia = rkMuda(rkDia, rkModo === "hoje" ? -1 : -7); renderRanking(); };
-    $("rkProx").onclick = () => { rkDia = rkMuda(rkDia, rkModo === "hoje" ? 1 : 7); if (rkDia > today()) rkDia = today(); renderRanking(); };
-    const cod = el.querySelector(".rk-cod");
-    if (cod) cod.onclick = async () => {
-      const txt = `Entra no meu grupo dos Jogos do Dia! Código: ${rkCod}\nhttps://a-hanauer.github.io/puzzle-tracker/`;
-      try { if (navigator.share) await navigator.share({ text: txt }); else { await navigator.clipboard.writeText(txt); cod.textContent = "copiado!"; setTimeout(() => (cod.textContent = rkCod), 1500); } } catch {}
-    };
-    const sair = $("rkSair");
-    if (sair) sair.onclick = async () => { await n.sairGrupo(rkCod); rkCod = null; renderRanking(); };
-  };
-  liga();
-  let dados;
-  try { if (de <= today() && ate >= today()) await nuvemJa(); dados = await n.resultados(rkCod, de, ate); }
-  catch (x) { console.warn(x); el.querySelector(".rk-lead").textContent = "Não consegui carregar o ranking. Confira a internet e tente de novo."; return; }
-  if (de === today() && rkCod === e.grupos[0].cod) guardaGrupoHoje(n, rkCod, dados);
-  const grupo = dados.grupo || { nome: "Grupo", membros: [], nomes: {} };
-  const nomes = { ...(grupo.nomes || {}) }; dados.res.forEach(r => (nomes[r.uid] = r.apelido || nomes[r.uid]));
-  const membros = grupo.membros || [];
-  let corpo = "";
+  if (history.state?.pessoa) return renderPerfil(el, n, e);
+  const nomeG = e.grupos.find(g => g.cod === rkCod)?.nome || "Grupo";
+  if (!el.querySelector(".x-top .x-grp")) el.innerHTML = `<div class="x-top"><h1>Ranking</h1><button class="x-grp"><span>${escHTML(nomeG)}</span></button></div><p class="rk-lead">Carregando…</p>`;
+  let d;
+  try { d = await rkSemanaDados(n, rkCod, rkDia); }
+  catch (x) { console.warn(x); el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Não consegui carregar o ranking. Confira a internet e tente de novo.</p>`; return; }
+  if (rkCod === e.grupos[0].cod && d.seg <= today() && d.dom >= today()) guardaGrupoHoje(n, rkCod, { grupo: d.grupo, res: d.res });
+  const nm = u => u === e.uid ? "Você" : (d.nomes[u] || "?");
+  const linha = (r, pos, sub = "") => `<div class="r ${r.uid === e.uid ? "eu" : ""} ${pos < 0 ? "perdeu" : ""}" data-u="${r.uid}"><span class="m">${pos < 0 ? "·" : rkMed(pos)}</span>${rkAv(r.uid, d.nomes[r.uid], "md")}<span class="n">${escHTML(d.nomes[r.uid] || "?")}${r.uid === e.uid ? '<span class="tag">você</span>' : ""}${r.dica ? '<span class="rk-dc">💡 dica</span>' : ""}${sub}</span><span class="v">${rkFmt(r)}</span></div>`;
+  let h = `<div class="x-top"><h1>Ranking</h1>${rkGrupoBtn(e, d)}</div>
+    <div class="segx" id="rkModo"><button data-m="hoje" aria-checked="${rkModo === "hoje"}">Dia</button><button data-m="semana" aria-checked="${rkModo === "semana"}">Semana</button></div>`;
+  const proxOk = d.dom < today();
   if (rkModo === "hoje") {
-    const porJogo = {}; dados.res.forEach(r => (porJogo[r.jogo] ||= []).push(r));
+    const diasCom = new Set(d.res.map(r => r.dia));
+    h += `<div class="wk"><button class="ar" id="rkAnt" aria-label="Semana anterior">‹</button>` +
+      Array.from({ length: 7 }, (_, i) => { const dd = rkMuda(d.seg, i), x = new Date(dd + "T12:00");
+        return `<button class="d ${diasCom.has(dd) ? "tem" : ""}" data-d="${dd}" ${dd === rkDia ? 'aria-current="date"' : ""} ${dd > today() ? "disabled" : ""}>${["dom", "seg", "ter", "qua", "qui", "sex", "sáb"][x.getDay()]}<b>${x.getDate()}</b><i></i></button>`; }).join("") +
+      `<button class="ar" id="rkProx" aria-label="Próxima semana" ${proxOk ? "" : "disabled"}>›</button></div>`;
+    const doDia = d.res.filter(r => r.dia === rkDia), hoje = rkDia === today();
+    const porJogo = {}; doDia.forEach(r => (porJogo[r.jogo] ||= []).push(r));
     const ordem = [...GAMES.map(g => g.id).filter(id => porJogo[id]), ...Object.keys(porJogo).filter(id => !GAMES.some(g => g.id === id))];
-    corpo = ordem.map(id => {
-      const rs = porJogo[id].sort(rkOrdem), g = GAMES.find(x => x.id === id), feitos = new Set(rs.map(r => r.uid));
-      let pos = 0;
-      return `<div class="rk-card"><div class="rk-ch">${rkIcone(id)}<b>${escHTML(g?.name || id)}</b><small>${RK_CRIT[rs[0].tipo] || ""}</small></div>` +
-        rs.map((r, i) => { if (i === 0 || rkOrdem(rs[i - 1], r) !== 0) pos = i;
-          return `<div class="rk-rr ${r.uid === e.uid ? "eu" : ""} ${r.tipo === "tries" && !r.won ? "perdeu" : ""}" data-u="${r.uid}"><span class="p">${r.tipo === "tries" && !r.won ? "·" : rkMed(pos)}</span><span class="n">${escHTML(nomes[r.uid] || "?")}${r.dica ? '<span class="rk-dc">💡 dica</span>' : ""}</span><span class="v">${rkFmt(r)}</span></div>`; }).join("") +
-        membros.filter(u => !feitos.has(u)).map(u => `<div class="rk-rr nao" data-u="${u}"><span class="p">·</span><span class="n">${escHTML(nomes[u] || "?")}</span><span class="v">${de === today() ? "ainda não jogou" : "não jogou"}</span></div>`).join("") + `</div>`;
-    }).join("") || `<p class="rk-lead">Ninguém do grupo terminou um jogo ${de === today() ? "hoje ainda" : "nesse dia"}.</p>`;
+    // destaque: quem tem mais 1º lugares no dia (empate: mais jogos)
+    const v = {}; d.membros.forEach(u => (v[u] = { o: 0, j: 0 }));
+    const meus = [];
+    ordem.forEach(id => rkPosicoes(porJogo[id]).forEach(({ r, pos }) => { (v[r.uid] ||= { o: 0, j: 0 }).j++; if (pos === 0 && porJogo[id].length > 1) v[r.uid].o++; if (r.uid === e.uid) meus.push(pos); }));
+    const maxO = Math.max(0, ...Object.values(v).map(x => x.o));
+    if (maxO > 0) {
+      const lid = Object.keys(v).filter(u => v[u].o === maxO), maxJ = Math.max(...lid.map(u => v[u].j)), top = lid.filter(u => v[u].j === maxJ);
+      const quem = rkLista(top.map(nm)), um = top.length === 1;
+      const verbo = um ? (top[0] === e.uid ? (hoje ? "lidera hoje" : "venceu o dia") : (hoje ? "lidera hoje" : "venceu o dia")) : (hoje ? "empatam na frente" : "empataram");
+      h += `<div class="dest"><span class="cr">${top.slice(0, 3).map(u => rkAv(u, d.nomes[u], "g")).join("")}</span><span class="tx"><b>${escHTML(quem)} ${verbo}</b><small>${maxO} ${maxO === 1 ? "primeiro lugar" : "primeiros lugares"} · ${maxJ} ${maxJ === 1 ? "jogo" : "jogos"}${um ? "" : " cada"}</small></span>` +
+        `<span class="me"><small>você</small><b>${meus.length ? meus.slice(0, 4).map(p => p < 0 ? "✗" : `${p + 1}º`).join(" · ") + (meus.length > 4 ? " …" : "") : "–"}</b></span></div>`;
+    }
+    h += ordem.map(id => {
+      const ps = rkPosicoes(porJogo[id]), g = GAMES.find(x => x.id === id), feitos = new Set(ps.map(x => x.r.uid));
+      const faltam = d.membros.filter(u => !feitos.has(u)), eu = faltam.includes(e.uid);
+      const nomesF = [...(eu ? ["Você"] : []), ...faltam.filter(u => u !== e.uid).map(u => d.nomes[u] || "?")];
+      const txt = nomesF.length > 3 ? `${nomesF.slice(0, 2).join(", ")} e mais ${nomesF.length - 2}` : rkLista(nomesF);
+      return `<div class="gc"><div class="h">${rkIcone(id)}<b>${escHTML(g?.name || id)}</b><small>${RK_CRIT[ps[0].r.tipo] || ""}</small></div>` + ps.map(({ r, pos }) => linha(r, pos)).join("") +
+        (faltam.length ? `<div class="nj"><span class="x-avs">${faltam.slice(0, 4).map(u => rkAv(u, d.nomes[u], "s")).join("")}</span>${escHTML(txt)} ${hoje ? (nomesF.length === 1 && !eu ? "ainda não jogou" : "ainda não jogaram") : (nomesF.length === 1 && !eu ? "não jogou" : "não jogaram")}</div>` : "") + `</div>`;
+    }).join("") || `<p class="rk-lead">Ninguém do grupo terminou um jogo ${hoje ? "hoje ainda" : "nesse dia"}.</p>`;
   } else {
-    const t = {}; membros.forEach(u => (t[u] = { j: 0, o: 0, d: 0 }));
-    const porDJ = {}; dados.res.forEach(r => { (t[r.uid] ||= { j: 0, o: 0, d: 0 }); t[r.uid].j++; if (r.dica) t[r.uid].d++; (porDJ[r.dia + r.jogo] ||= []).push(r); });
-    Object.values(porDJ).forEach(rs => { rs.sort(rkOrdem); if (rs[0].tipo === "tries" && !rs[0].won) return; rs.filter(r => rkOrdem(rs[0], r) === 0).forEach(r => t[r.uid].o++); });
-    const lista = Object.entries(t).sort(([, a], [, b]) => b.o - a.o || b.j - a.j);
-    corpo = `<div class="rk-card rk-sem"><div class="rk-rr hd"><span></span><span></span><span class="v">jogos</span><span class="v">🥇</span><span class="v">💡</span></div>` +
-      lista.map(([u, x], i) => `<div class="rk-rr ${u === e.uid ? "eu" : ""}" data-u="${u}"><span class="p">${rkMed(i)}</span><span class="n">${escHTML(nomes[u] || "?")}</span><span class="v">${x.j}</span><span class="v">${x.o}</span><span class="v">${x.d}</span></div>`).join("") +
-      `</div><p class="rk-nota">Ordem da semana: mais vezes em 1º lugar num jogo do dia; empate, mais jogos feitos. 💡 = jogos com dica. Toque num nome para ver o duelo e os recordes.</p>`;
+    const fmtD = x => { const y = new Date(x + "T12:00"); return [y.getDate(), ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"][y.getMonth()]]; };
+    const [a1, m1] = fmtD(d.seg), [a2, m2] = fmtD(d.dom), atual = d.dom >= today();
+    h += `<div class="wk sem"><button class="ar" id="rkAnt" aria-label="Semana anterior">‹</button><span class="tt">${atual ? "Esta semana · " : ""}${a1}${m1 !== m2 ? ` de ${m1}` : ""} a ${a2} de ${m2}</span><button class="ar" id="rkProx" aria-label="Próxima semana" ${proxOk ? "" : "disabled"}>›</button></div>`;
+    const t = {}; d.membros.forEach(u => (t[u] = { j: 0, o: 0, dc: 0 }));
+    const porDJ = {}; d.res.forEach(r => { (t[r.uid] ||= { j: 0, o: 0, dc: 0 }).j++; if (r.dica) t[r.uid].dc++; (porDJ[r.dia + "|" + r.jogo] ||= []).push(r); });
+    Object.values(porDJ).forEach(rs => { if (rs.length < 2) return; rkPosicoes(rs).forEach(({ r, pos }) => { if (pos === 0) t[r.uid].o++; }); });
+    const lista = Object.entries(t).sort(([, a], [, b]) => b.o - a.o || b.j - a.j), maxO = Math.max(1, ...lista.map(([, x]) => x.o));
+    if (lista.length && (lista[0][1].o || lista[0][1].j)) {
+      const [u0, x0] = lista[0], top = lista.filter(([, x]) => x.o === x0.o && x.j === x0.j).map(([u]) => u);
+      const minhaPos = lista.findIndex(([u]) => u === e.uid);
+      h += `<div class="dest"><span class="cr">${top.slice(0, 3).map(u => rkAv(u, d.nomes[u], "g")).join("")}</span><span class="tx"><b>${escHTML(rkLista(top.map(nm)))} ${top.length > 1 ? (atual ? "empatam na frente" : "empataram") : (atual ? "lidera a semana" : "venceu a semana")}</b><small>${x0.o} ${x0.o === 1 ? "primeiro lugar" : "primeiros lugares"} em ${x0.j} ${x0.j === 1 ? "jogo" : "jogos"}</small></span>` +
+        `<span class="me"><small>você</small><b>${t[e.uid]?.j ? `${minhaPos + 1}º` : "–"}</b></span></div>`;
+    }
+    let pos = 0;
+    h += `<div class="gc sm"><div class="h"><b>1º lugares</b><small>na semana</small></div>` + lista.map(([u, x], i) => {
+      if (i === 0 || lista[i - 1][1].o !== x.o || lista[i - 1][1].j !== x.j) pos = i;
+      return `<div class="r ${u === e.uid ? "eu" : ""}" data-u="${u}"><span class="m">${x.j ? rkMed(pos) : "·"}</span>${rkAv(u, d.nomes[u], "md")}<span class="n">${escHTML(d.nomes[u] || "?")}${u === e.uid ? '<span class="tag">você</span>' : ""}<small>${x.j} ${x.j === 1 ? "jogo" : "jogos"}${x.dc ? ` · 💡 ${x.dc}` : ""}</small></span><span class="bar"><i style="width:${Math.round(70 * x.o / maxO)}px"></i>${x.o}</span></div>`;
+    }).join("") + `</div>`;
+    // o melhor resultado de cada jogo na semana
+    const melhor = {}; d.res.forEach(r => { if (r.tipo === "tries" && !r.won) return; if (!melhor[r.jogo] || rkOrdem(r, melhor[r.jogo]) < 0) melhor[r.jogo] = r; });
+    const jogos = [...GAMES.map(g => g.id).filter(id => melhor[id]), ...Object.keys(melhor).filter(id => !GAMES.some(g => g.id === id))];
+    if (jogos.length) h += `<div class="gc bj"><div class="h"><b>Melhor de cada jogo</b></div>` + jogos.map(id => { const r = melhor[id], g = GAMES.find(x => x.id === id);
+      return `<div class="r" data-u="${r.uid}">${rkIcone(id)}<span class="n">${escHTML(g?.name || id)}</span>${rkAv(r.uid, d.nomes[r.uid], "md")}<span class="v">${rkFmt(r)}${r.dica ? "💡" : ""}</span></div>`; }).join("") + `</div>`;
+    h += `<p class="rk-nota">Ordem da semana: mais 1º lugares num jogo do dia; no empate, mais jogos feitos.</p>`;
   }
-  setTimeout(() => el.querySelectorAll(".rk-rr[data-u]").forEach(r => (r.onclick = () => abrePessoa(r.dataset.u))), 0);
-  el.innerHTML = `<div class="rk-grp"><span><b>${escHTML(grupo.nome || "Grupo")}</b> · ${membros.length} ${membros.length === 1 ? "pessoa" : "pessoas"}</span>
-      <button class="rk-cod" aria-label="Convidar com o código ${rkCod}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>${rkCod}</button></div>` +
-    topo + corpo + `<p class="rk-nota">Toque no código para convidar. 💡 = usou dica · Gerânio em pontos, Sando e 5PILA em tentativas, Brigadeiro em inclinações, os outros em tempo (jogos de fora: tempo aproximado, fora do app).</p>
-      <button class="rk-link" id="rkSair">Sair deste grupo</button>`;
-  liga();
+  h += `<p class="rk-nota">💡 = usou dica · Gerânio em pontos, Sando e 5PILA em tentativas, Brigadeiro em inclinações, os outros em tempo (jogos de fora: aproximado). Toque num nome para ver o duelo.</p>`;
+  el.innerHTML = h;
+  el.querySelectorAll("#rkModo button").forEach(b => (b.onclick = () => { rkModo = b.dataset.m; renderRanking(); }));
+  el.querySelectorAll(".wk .d").forEach(b => (b.onclick = () => { rkDia = b.dataset.d; renderRanking(); }));
+  $("rkAnt").onclick = () => { rkDia = rkMuda(rkDia, -7); renderRanking(); };
+  $("rkProx").onclick = () => { rkDia = rkMuda(rkDia, 7); if (rkDia > today()) rkDia = today(); renderRanking(); };
+  $("rkGrp").onclick = () => e.grupos.length > 1 ? gSheetGrupos(e) : irPara("#amigos");
+  el.querySelectorAll("[data-u]").forEach(r => (r.onclick = () => abrePessoa(r.dataset.u)));
+}
+
+// ---------- perfil (toque num nome, no Ranking ou em Amigos): com "voltar" ----------
+function abrePessoa(uid) { history.pushState({ pagina: true, pessoa: uid }, "", location.hash || "#ranking"); window.scrollTo(0, 0); renderAtual(); }
+function renderPerfil(el, n, e) {
+  el.innerHTML = `<div class="x-top"><button class="x-volta" id="pfVolta">${SV}<path d="M15 5l-7 7 7 7"/></svg>${$("viewAmigos").hidden ? "Ranking" : "Amigos"}</button></div><div></div>`;
+  $("pfVolta").onclick = () => history.back();
+  return renderPessoa(el.lastElementChild, n, e, history.state.pessoa);
+}
+
+// ---------- aba Amigos: o grupo, o convite, as pessoas, outros grupos ----------
+async function renderAmigos() {
+  const el = $("amBody"), n = window.nuvem;
+  if (!n) { el.innerHTML = `<div class="x-top"><h1>Amigos</h1></div><p class="rk-lead">Não consegui falar com a nuvem agora. Confira a internet e abra de novo.</p>`; return; }
+  await n.pronto;
+  const e = n.estado;
+  if (!e.conectado || !e.grupos.length) { el.innerHTML = `<div class="x-top"><h1>Amigos</h1></div><div></div>`; renderEntrada(el.lastElementChild, e); return; }
+  if (!rkCod || !e.grupos.some(g => g.cod === rkCod)) rkCod = e.grupos[0].cod;
+  if (history.state?.pessoa) return renderPerfil(el, n, e);
+  if (!el.querySelector(".gh")) el.innerHTML = `<div class="x-top"><h1>Amigos</h1></div><p class="rk-lead">Carregando…</p>`;
+  let d;
+  try { d = await rkSemanaDados(n, rkCod, today()); }
+  catch (x) { console.warn(x); el.innerHTML = `<div class="x-top"><h1>Amigos</h1></div><p class="rk-lead">Não consegui carregar o grupo. Confira a internet e tente de novo.</p>`; return; }
+  const g = d.grupo, dono = g.dono === e.uid, totJogos = GAMES.length;
+  // hoje: quantos jogos cada um terminou; semana: o duelo comigo (em cada jogo de cada dia que os dois terminaram)
+  const hoje = {}; d.res.filter(r => r.dia === today()).forEach(r => (hoje[r.uid] = (hoje[r.uid] || 0) + 1));
+  const meu = {}; d.res.filter(r => r.uid === e.uid).forEach(r => (meu[r.dia + r.jogo] = r));
+  const duelo = u => { let a = 0, b = 0; d.res.filter(r => r.uid === u).forEach(r => { const m = meu[r.dia + r.jogo]; if (!m) return; const c = rkOrdem(m, r); if (c < 0) a++; else if (c > 0) b++; }); return [a, b]; };
+  const ouros = {}; const porDJ = {}; d.res.forEach(r => (porDJ[r.dia + "|" + r.jogo] ||= []).push(r));
+  Object.values(porDJ).forEach(rs => { if (rs.length < 2) return; rkPosicoes(rs).forEach(({ r, pos }) => { if (pos === 0) ouros[r.uid] = (ouros[r.uid] || 0) + 1; }); });
+  const membros = [...d.membros].sort((a, b) => (b === e.uid) - (a === e.uid) || (hoje[b] || 0) - (hoje[a] || 0));
+  let h = `<div class="x-top"><h1>Amigos</h1></div>
+    <div class="gh"><b>${escHTML(g.nome || "Grupo")}</b><span class="tag">${d.membros.length} ${d.membros.length === 1 ? "pessoa" : "pessoas"}</span>${dono ? `<button id="amEditar">Editar</button>` : ""}</div>
+    <div class="inv"><span><small>Código de convite</small><span class="cd">${rkCod}</span></span><button id="amConv">${SV.replace('2.6', '2.4')}<path d="M12 15V3.5M7.5 8 12 3.5 16.5 8M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>Convidar</button></div>
+    <div class="ml">` + membros.map(u => {
+      const j = hoje[u] || 0, eu = u === e.uid;
+      const sub = (j ? `jogou ${j} de ${totJogos} hoje` : "ainda não jogou hoje") + (g.dono === u ? " · criou o grupo" : "");
+      let dir;
+      if (eu) dir = `🥇 ${ouros[u] || 0}<small style="display:block;color:var(--muted)">na semana</small>`;
+      else { const [a, b] = duelo(u); dir = `${a} × ${b}<small style="display:block;color:var(--muted)">você × ${escHTML((d.nomes[u] || "?").split(" ")[0])}</small>`; }
+      return `<div class="p" data-u="${u}">${rkAv(u, d.nomes[u], "g")}<span style="min-width:0"><b>${escHTML(d.nomes[u] || "?")}${eu ? '<span class="tag">você</span>' : ""}</b><small>${escHTML(sub)}</small></span><span class="sq">${dir}</span><span class="ch">›</span></div>`;
+    }).join("") + `</div>`;
+  const outros = e.grupos.filter(x => x.cod !== rkCod);
+  if (outros.length) h += `<div class="x-lbl">Outros grupos</div>` + outros.map(x => `<button class="og" data-c="${x.cod}"><b>${escHTML(x.nome)}</b><small>abrir ›</small></button>`).join("");
+  h += `<div class="x-lbl">${outros.length ? "Mais grupos" : "Outro grupo"}</div><div class="bt2"><button id="amEntrar">Entrar com código</button><button id="amCriar">Criar grupo</button></div>
+    ${dono ? "" : `<button class="x-sair" id="amSair">Sair deste grupo</button>`}
+    <p class="x-nota">Duelo da semana: em cada jogo de cada dia que vocês dois terminaram, quem foi melhor. Toque numa pessoa para ver mais.</p>`;
+  el.innerHTML = h;
+  el.querySelectorAll(".ml .p[data-u]").forEach(p => (p.onclick = () => abrePessoa(p.dataset.u)));
+  el.querySelectorAll(".og").forEach(b => (b.onclick = () => { rkCod = b.dataset.c; window.scrollTo(0, 0); renderAmigos(); }));
+  const conv = $("amConv");
+  conv.onclick = async () => {
+    const txt = `Entra no meu grupo dos Jogos do Dia! Código: ${rkCod}\nhttps://a-hanauer.github.io/puzzle-tracker/`;
+    try { if (navigator.share) await navigator.share({ text: txt }); else { await navigator.clipboard.writeText(txt); toast("Convite copiado"); } } catch {}
+  };
+  if ($("amEditar")) $("amEditar").onclick = () => gSheetEditar(e, d);
+  $("amEntrar").onclick = () => gSheetEntrar();
+  $("amCriar").onclick = () => gSheetCriar(e);
+  const sair = $("amSair");
+  if (sair) sair.onclick = async () => {
+    if (!sair.classList.contains("conf")) { sair.classList.add("conf"); sair.textContent = "Toque de novo para sair"; return; }
+    sair.disabled = true; await n.sairGrupo(rkCod); rkCod = null; rkCache = {}; renderAmigos();
+  };
+}
+
+// ---------- bandeja dos grupos: trocar, editar (só quem criou), entrar com código, criar ----------
+function gSheet(titulo, corpo, ok) {
+  const bg = $("gSheet");
+  bg.querySelector(".sheet").innerHTML = `<div class="sheet-head"><b>${titulo}</b>${ok ? `<button class="x-ok" id="gOk">${ok}</button>` : `<button class="round" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`}</div>${corpo}`;
+  bg.hidden = false;
+  return bg;
+}
+const gFecha = () => { $("gSheet").hidden = true; };
+function gSheetGrupos(e) {
+  gSheet("Grupos", e.grupos.map(x => `<button class="og" data-c="${x.cod}" aria-current="${x.cod === rkCod}"><b>${escHTML(x.nome)}</b><small>${x.cod === rkCod ? "aberto" : "abrir ›"}</small></button>`).join("") +
+    `<button class="x-sair" style="color:var(--text)" id="gAm">Ver em Amigos</button>`);
+  $("gSheet").querySelectorAll(".og").forEach(b => (b.onclick = () => { rkCod = b.dataset.c; gFecha(); renderAtual(); }));
+  $("gAm").onclick = () => { gFecha(); irPara("#amigos"); };
+}
+function gSheetEditar(e, d) {
+  const g = d.grupo, n = window.nuvem;
+  gSheet("Editar grupo", `<div class="x-lbl" style="margin-top:0">Nome do grupo</div><input class="x-in" id="gNome" maxlength="40" value="${escHTML(g.nome || "")}" autocomplete="off">
+    <div class="x-lbl">Membros · ${d.membros.length}</div><div class="ml">` +
+    d.membros.map(u => `<div class="p e">${rkAv(u, d.nomes[u])}<span style="min-width:0"><b>${escHTML(d.nomes[u] || "?")}</b><small>${u === e.uid ? "você · criou o grupo" : "membro"}</small></span>${u === e.uid ? "<span></span>" : `<button class="rm" data-u="${u}">Remover</button>`}</div>`).join("") +
+    `</div><div class="x-err" id="gErr"></div><button class="x-sair" id="gSair">Sair do grupo</button>
+    <p class="x-nota">Quem for removido some do ranking deste grupo, mas pode voltar com o código de convite. Se você sair, o grupo continua para os outros, sem ninguém para editar.</p>`, "Pronto");
+  const err = $("gErr");
+  $("gOk").onclick = async () => {
+    const nome = $("gNome").value.trim();
+    if (!nome) { err.textContent = "Dê um nome ao grupo."; return; }
+    $("gOk").disabled = true;
+    try { if (nome !== g.nome) await n.renomearGrupo(rkCod, nome); rkCache = {}; gFecha(); renderAtual(); }
+    catch (x) { console.warn(x); err.textContent = "Não deu certo agora. Confira a internet e tente de novo."; $("gOk").disabled = false; }
+  };
+  $("gSheet").querySelectorAll(".rm").forEach(b => (b.onclick = async () => {
+    if (!b.classList.contains("conf")) { b.classList.add("conf"); b.textContent = "Confirmar"; return; }
+    b.disabled = true;
+    try { await n.removerMembro(rkCod, b.dataset.u); b.closest(".p").remove(); rkCache = {}; }
+    catch (x) { console.warn(x); err.textContent = "Não consegui remover agora. Tente de novo."; b.disabled = false; }
+  }));
+  const sair = $("gSair");
+  sair.onclick = async () => {
+    if (!sair.classList.contains("conf")) { sair.classList.add("conf"); sair.textContent = "Toque de novo para sair"; return; }
+    sair.disabled = true; await n.sairGrupo(rkCod); rkCod = null; rkCache = {}; gFecha(); renderAtual();
+  };
+}
+function gSheetEntrar() {
+  gSheet("Entrar num grupo", `<input class="x-in cod" id="gCod" maxlength="8" placeholder="Código, ex.: QX7K2M" autocapitalize="characters" autocomplete="off"><div class="x-err" id="gErr"></div>`, "Entrar");
+  $("gOk").onclick = async () => {
+    const c = $("gCod").value.toUpperCase().replace(/[^A-Z0-9]/g, ""), err = $("gErr");
+    if (c.length < 6) { err.textContent = "O código tem 6 letras."; return; }
+    $("gOk").disabled = true; err.textContent = "Um instante…";
+    try { await window.nuvem.entrarGrupo(c); rkCod = c; rkCache = {}; await nuvemJa(); gFecha(); renderAtual(); }
+    catch (x) { console.warn(x); err.textContent = x.message?.startsWith("Não achei") ? x.message : "Não deu certo agora. Confira a internet e tente de novo."; $("gOk").disabled = false; }
+  };
+}
+function gSheetCriar(e) {
+  gSheet("Criar grupo", `<input class="x-in" id="gNome" maxlength="40" placeholder="Nome do grupo" value="" autocomplete="off"><div class="x-err" id="gErr"></div>
+    <p class="x-nota">Depois é só mandar o código de convite para os amigos.</p>`, "Criar");
+  $("gOk").onclick = async () => {
+    const nome = $("gNome").value.trim() || `Amigos de ${e.apelido || "você"}`, err = $("gErr");
+    $("gOk").disabled = true;
+    try { rkCod = await window.nuvem.criarGrupo(nome); rkCache = {}; await nuvemJa(); gFecha(); renderAtual(); }
+    catch (x) { console.warn(x); err.textContent = "Não deu certo agora. Confira a internet e tente de novo."; $("gOk").disabled = false; }
+  };
 }
 
 // ---------- Configurações → Conta na nuvem ----------
@@ -2386,6 +2699,118 @@ render();
 route();
 scheduleMidnight();
 </script>
-<script type="module" src="nuvem.js?v=3"></script>
+<script type="module" src="nuvem.js?v=4"></script>
+<script>
+/* Barra de abas flutuante, como no iOS 26: encolhe para uma bolinha com a aba atual ao rolar para baixo e volta
+   inteira ao rolar para cima, ao chegar no topo, ao trocar de aba ou ao tocar nela. */
+(function () {
+  var bar = document.querySelector('#tabbar');
+  if (!bar) return;
+  var last = 0, min = false, trava = 0;
+  function poe(v) { if (v === min) return; min = v; bar.classList.toggle('min', v); }
+  function topo(e) {
+    var t = e && e.target;
+    if (t && t.nodeType === 1 && t !== document.documentElement && t !== document.body) return t.scrollTop;
+    return window.scrollY || document.documentElement.scrollTop || 0;
+  }
+  document.addEventListener('scroll', function (e) {
+    var t = e && e.target;
+    if (t && t.nodeType === 1 && t.closest && t.closest('[role="dialog"], .sheet, .sheet-bg, .cook, .modal')) return;   // folhas por cima não mexem na barra
+    var y = topo(e);
+    if (Date.now() < trava || bar.hidden) { last = y; return; }
+    if (y < 30) poe(false);
+    else if (y - last > 6) poe(true);
+    else if (last - y > 6) poe(false);
+    last = y;
+  }, { capture: true, passive: true });
+  // tocar na bolinha só abre a barra (não troca de aba)
+  bar.addEventListener('click', function (e) {
+    if (!min) return;
+    e.preventDefault(); e.stopPropagation(); poe(false); trava = Date.now() + 450;
+  }, true);
+  window.addEventListener('hashchange', function () { poe(false); last = 0; trava = Date.now() + 450; });
+})();
+/* Vidro da barra de abas (09/11/2026): uma gota de vidro fica sob a aba escolhida (que também fica na cor do app);
+   ao trocar de aba ela escorrega até a nova. Com o dedo na barra, a gota cresce, segue o dedo e acende a aba de baixo;
+   ao soltar, encaixa nela. Arrastar até outra aba e soltar troca de aba, como no iOS 26. */
+(function () {
+  var bar = document.querySelector('#tabbar'), SEL = 'a', CUR = '[aria-current="page"]';
+  if (!bar) return;
+  var gota = null, toque = null, ignoraAte = 0, ultX = null;
+  var reduz = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function abas() { return [].filter.call(bar.querySelectorAll(SEL), function (a) { return a.offsetWidth > 0; }); }
+  function garante() {
+    if (!gota || gota.parentNode !== bar) {
+      gota = document.createElement('i'); gota.className = 'tb-gota'; gota.setAttribute('aria-hidden', 'true'); bar.appendChild(gota);
+      if (ultX != null) { gota.style.transition = 'none'; gota.style.transform = 'translateX(' + ultX + 'px)'; }
+    }
+    return gota;
+  }
+  function sob(x) {
+    var m = null, d = 1e9;
+    abas().forEach(function (a) { var r = a.getBoundingClientRect(), c = Math.abs(x - (r.left + r.width / 2)); if (c < d) { d = c; m = a; } });
+    return m;
+  }
+  function mede(a, x, lente) {
+    var rb = bar.getBoundingClientRect(), ra = a.getBoundingClientRect(), w = ra.width;
+    var cx = lente ? Math.max(rb.left + 4 + w / 2, Math.min(rb.right - 4 - w / 2, x)) : ra.left + w / 2;
+    gota.style.width = w + 'px'; gota.style.height = ra.height + 'px'; gota.style.top = (ra.top - rb.top) + 'px';
+    ultX = cx - rb.left - w / 2;
+    gota.style.transform = 'translateX(' + ultX + 'px)' + (lente ? ' scale(1.16, 1.1)' : '');
+  }
+  // gota parada sob a aba escolhida
+  var pend = 0;
+  function pousa(anima) {
+    if (toque || bar.hidden || bar.classList.contains('min')) return;
+    var a = bar.querySelector(SEL + CUR); garante();
+    if (!a || !a.offsetWidth) { gota.classList.remove('pousa'); return; }
+    if (!anima || reduz) gota.style.transition = 'none';
+    mede(a, 0, false); gota.classList.add('pousa');
+    if (!anima || reduz) { void gota.offsetWidth; gota.style.transition = ''; }
+  }
+  function agenda(anima) { cancelAnimationFrame(pend); pend = requestAnimationFrame(function () { pousa(anima); }); }
+  new MutationObserver(function (ms) {
+    if (ms.every(function (m) { return m.target === gota; })) return;
+    agenda(true);
+  }).observe(bar, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-current', 'class', 'hidden'] });
+  bar.addEventListener('transitionend', function (e) { if (e.target === bar) agenda(false); });   // depois de encolher/abrir
+  window.addEventListener('resize', function () { agenda(false); });
+  window.addEventListener('pageshow', function () { agenda(false); });
+  agenda(false);
+  // dedo na barra: a gota vira lente e segue o dedo
+  function poe(x, lente) {
+    var a = sob(x); if (!a) return null;
+    mede(a, x, lente);
+    abas().forEach(function (b) { b.classList.toggle('tb-sob', lente && b === a); });
+    return a;
+  }
+  bar.addEventListener('pointerdown', function (e) {
+    if (bar.classList.contains('min') || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    garante();
+    toque = { x0: e.clientX, mexeu: false };
+    gota.classList.add('on'); poe(e.clientX, true);
+  });
+  bar.addEventListener('pointermove', function (e) {
+    if (!toque) return;
+    if (Math.abs(e.clientX - toque.x0) > 8) toque.mexeu = true;
+    gota.style.transition = 'opacity .22s, background .22s, box-shadow .22s'; poe(e.clientX, true);
+  });
+  function fim(e, cancela) {
+    if (!toque) return;
+    var t = toque; toque = null;
+    gota.style.transition = '';
+    var a = cancela ? null : sob(e.clientX);
+    gota.classList.remove('on');
+    abas().forEach(function (b) { b.classList.remove('tb-sob'); });
+    if (a && !a.matches(CUR)) { mede(a, 0, false); if (t.mexeu) { ignoraAte = Date.now() + 350; a.click(); } }   // um toque simples segue pelo clique normal
+    else agenda(true);
+  }
+  bar.addEventListener('dragstart', function (e) { e.preventDefault(); });   // links não viram arrasto do navegador
+  bar.addEventListener('pointerup', function (e) { fim(e, false); });
+  bar.addEventListener('pointercancel', function (e) { fim(e, true); });
+  // depois de arrastar, o toque de verdade (no ponto onde começou) não conta
+  bar.addEventListener('click', function (e) { if (e.isTrusted && Date.now() < ignoraAte) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+})();
+</script>
 </body>
 </html>
