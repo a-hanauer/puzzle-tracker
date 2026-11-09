@@ -38,6 +38,12 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   tentativas (quem não acertou vai para o fim); Brigadeiro inclinações; os da casa, tempo; os de fora, o tempo fora do app
   (aproximado, "~"). Sempre mostra quem usou dica (💡). Semana: mais 1º lugares, depois mais jogos.
 - Configurações → Conta na nuvem: apelido, última sincronização, ligar e-mail e senha, entrar numa conta com e-mail.
+- Amigos fora da página de ranking (09/11/2026): o painel guarda os resultados de hoje do 1º grupo em `jogosDoDia.grupo`
+  (não vai para a nuvem). Com ele: no fim de cada jogo da casa, `grupoFim` (comum/recorde.js, chamado por `semanaFim`)
+  mostra "Nº de M no grupo", o pódio do dia com 💡 e quem ainda não jogou, no mesmo cartão do bloco da semana, logo acima
+  dele; no painel, a linha "🥇 1º de 2 · B Bia já jogou" no cartão de cada jogo e um pontinho no troféu quando há
+  resultado novo de amigo (`jogosDoDia.rankVisto`). Toque num nome no ranking = perfil: sequência, duelo "Você × X"
+  (Semana | Mês | Sempre; em cada jogo de cada dia que os dois terminaram), hoje lado a lado e recordes.
 
 ## Consistência visual (muito importante)
 

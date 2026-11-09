@@ -13,10 +13,10 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=153"></script>
-<script src="comum/catalogo.js?v=153"></script>
-<script src="comum/celebra.js?v=153"></script>
-<script src="comum/recorde.js?v=153"></script>
+<script src="comum/tema.js?v=154"></script>
+<script src="comum/catalogo.js?v=154"></script>
+<script src="comum/celebra.js?v=154"></script>
+<script src="comum/recorde.js?v=154"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -708,6 +708,40 @@
   .rk-erro { color: #d0453a; font-size: .84rem; margin-top: 10px; min-height: 1em; }
   .rk-link { background: none; border: 0; color: var(--muted); font: inherit; font-size: .8rem; text-decoration: underline; cursor: pointer; padding: 6px 0; }
   .conta-box .rk-in { margin-top: 8px; }
+
+  /* amigos no painel: iniciais de quem já jogou hoje e a minha posição no grupo (cache "jogosDoDia.grupo") */
+  .amg { display: flex; align-items: center; margin-top: 4px; min-width: 0; }
+  .amg i { width: 19px; height: 19px; border-radius: 50%; flex: none; font-style: normal; font-size: .6rem; font-weight: 800; display: inline-flex;
+    align-items: center; justify-content: center; background: var(--surface-2); color: var(--text); box-shadow: 0 0 0 2px var(--surface); }
+  .amg i + i { margin-left: -5px; }
+  .amg small { font-size: .72rem; color: var(--muted); margin-left: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .posg { display: inline-flex; align-items: center; gap: 2px; font-size: .78rem; font-weight: 800; color: var(--text); white-space: nowrap;
+    background: var(--surface-2); border-radius: 99px; padding: 1px 7px 1px 4px; margin-right: 8px; flex: none; }
+  #rankBtn { position: relative; }
+  #rankBtn .novo { position: absolute; top: 2px; right: 2px; width: 9px; height: 9px; border-radius: 50%; background: #e2433f; box-shadow: 0 0 0 2px var(--bg); }
+  /* perfil de uma pessoa do grupo (toque no nome) */
+  .rk-rr[data-u] { cursor: pointer; }
+  .pf-top { display: flex; align-items: center; gap: 14px; margin: 10px 2px 16px; }
+  .pf-av { width: 56px; height: 56px; border-radius: 50%; flex: none; background: var(--surface-2); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.4rem; }
+  .pf-top b { display: block; font-size: 1.25rem; font-weight: 800; }
+  .pf-top small { display: block; color: var(--muted); font-size: .84rem; margin-top: 2px; }
+  .pf-duelo { text-align: center; padding: 14px 14px 16px; }
+  .pf-duelo .t { color: var(--muted); font-size: .74rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+  .pf-duelo .pl { display: flex; align-items: center; justify-content: center; gap: 22px; margin: 8px 0 10px; background: none; height: auto; padding: 0; }
+  .pf-duelo .pl div { min-width: 70px; } .pf-duelo .pl b { display: block; font-size: 2.3rem; font-weight: 900; font-family: "IBM Plex Mono", monospace; line-height: 1.1; }
+  .pf-duelo .pl small { color: var(--muted); font-size: .8rem; } .pf-duelo .pl .x { color: var(--muted); font-weight: 700; min-width: 0; }
+  .pf-barra { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--surface-2); }
+  .pf-barra i { display: block; height: 100%; } .pf-barra .a { background: var(--text); } .pf-barra .e { background: var(--gold); }
+  .pf-duelo .emp { margin-top: 8px; color: var(--muted); font-size: .76rem; }
+  .pf-tab .rk-rr { grid-template-columns: 28px minmax(0, 1fr) 66px 66px 44px; }
+  .pf-tab .rk-rr > img { width: 26px; height: 26px; border-radius: 7px; }
+  .pf-tab .rk-rr .em { font-size: 1.1rem; text-align: center; }
+  .pf-tab .v { text-align: right; font-size: .84rem; } .pf-tab .v.ela { color: var(--muted); } .pf-tab .v.pl { font-size: .74rem; color: var(--muted); }
+  .pf-tab .v.ganha { color: var(--text); }
+  .pf-h { font-weight: 800; font-size: .98rem; margin: 0 0 6px; }
+  .pf-rec .rk-rr { grid-template-columns: 28px minmax(0, 1fr) auto; }
+  .pf-rec .rk-rr > img { width: 24px; height: 24px; border-radius: 6px; }
 </style>
 </head>
 <body>
@@ -1129,6 +1163,7 @@ function render() {
     else { a.removeAttribute("target"); a.removeAttribute("rel"); }
   }
 
+  decoraGrupo();
   // mantém a ordem da lista (um jogo reexibido volta ao seu lugar, sem refazer as animações à toa)
   // nos outros jogos, os pendentes vêm primeiro (cada grupo na ordem da lista)
   for (const grid of [gridNative, gridExternal]) {
@@ -2090,6 +2125,7 @@ async function nuvemJa() {
       render(); if (!$("viewHistory").hidden) renderHistory();
     }
     await n.enviaResultados(resultadosParaRanking());
+    if (n.estado.grupos.length) await guardaGrupoHoje(n);
   } catch (e) { console.warn("nuvem", e); }
   nuvemRodando = false;
   if (!$("viewSettings").hidden) renderConta();
@@ -2105,6 +2141,107 @@ if (window.nuvem) nuvemInicia();
 window.addEventListener("focus", () => nuvemAgenda(1200));
 window.addEventListener("pageshow", () => nuvemAgenda(1200));
 window.addEventListener("online", () => nuvemAgenda(800));
+
+
+// ---------- amigos no painel ----------
+const GRUPO_CACHE = "jogosDoDia.grupo", RANK_VISTO = "jogosDoDia.rankVisto";
+async function guardaGrupoHoje(n, cod, dados) {
+  try {
+    const e = n.estado; cod ||= e.grupos[0]?.cod; if (!cod) return;
+    dados ||= await n.resultados(cod, today(), today());
+    const g = dados.grupo || {};
+    const res = dados.res.filter(r => r.dia === today()).map(({ uid, apelido, jogo, tipo, valor, max, won, dica, t }) => ({ uid, apelido, jogo, tipo, valor, max, won, dica, t }));
+    localStorage.setItem(GRUPO_CACHE, JSON.stringify({ dia: today(), cod, nome: g.nome || "", eu: e.uid, membros: g.membros || [], nomes: g.nomes || {}, res }));
+    decoraGrupo();
+  } catch (x) { console.warn("grupo", x); }
+}
+function decoraGrupo() {
+  const g = readJSON(GRUPO_CACHE), ok = !!g && g.dia === today();
+  const meus = ok ? resultadosParaRanking(2).filter(r => r.dia === today()) : [];
+  for (const jg of GAMES) {
+    const li = cards[jg.id]; if (!li) continue;
+    const outros = ok ? (g.res || []).filter(r => r.jogo === jg.id && r.uid !== g.eu) : [];
+    let amg = li.querySelector(".amg");
+    if (!outros.length) amg?.remove();
+    else {
+      if (!amg) { amg = document.createElement("span"); amg.className = "amg"; (li.querySelector(".ds") || li.querySelector(".desc"))?.after(amg); }
+      const nome = r => (g.nomes?.[r.uid] || r.apelido || "?").trim();
+      amg.innerHTML = outros.slice(0, 4).map(r => `<i>${escHTML(nome(r)[0]?.toUpperCase() || "?")}</i>`).join("") +
+        `<small>${outros.length === 1 ? `${escHTML(nome(outros[0]))} já jogou` : `${outros.length} amigos já jogaram`}</small>`;
+    }
+    // minha posição no grupo, depois de terminar (com pelo menos mais alguém no jogo): no começo da linha dos amigos
+    const eu = meus.find(r => r.jogo === jg.id);
+    if (amg && eu && outros.length && !(eu.tipo === "tries" && !eu.won)) {
+      const todos = [...outros, { ...eu, uid: g.eu }].sort(rkOrdem);
+      let pos = 0; for (let i = 0; i < todos.length; i++) { if (i === 0 || rkOrdem(todos[i - 1], todos[i]) !== 0) pos = i; if (todos[i].uid === g.eu) break; }
+      amg.insertAdjacentHTML("afterbegin", `<span class="posg" title="Sua posição no grupo hoje">${["🥇", "🥈", "🥉"][pos] || ""}${pos + 1}º de ${todos.length}</span>`);
+    }
+  }
+  // pontinho no troféu: resultado novo de amigo desde a última visita ao ranking
+  const visto = +(localStorage.getItem(RANK_VISTO) || 0), novo = ok && (g.res || []).some(r => r.uid !== g.eu && (r.t || 0) > visto);
+  const btn = $("rankBtn"); let dot = btn.querySelector(".novo");
+  if (novo && !dot) btn.insertAdjacentHTML("beforeend", '<i class="novo" aria-hidden="true"></i>'); else if (!novo && dot) dot.remove();
+}
+
+// ---------- perfil de uma pessoa do grupo (toque no nome no ranking) ----------
+let pfPer = "mes";
+function abrePessoa(uid) { history.pushState({ pagina: true, pessoa: uid }, "", "#ranking"); renderRanking(); }
+async function renderPessoa(el, n, e, uid) {
+  el.innerHTML = `<p class="rk-lead">Carregando…</p>`;
+  let dados;
+  try { dados = await n.resultados(rkCod, "2000-01-01", today()); } catch (x) { el.innerHTML = `<p class="rk-lead">Não consegui carregar. Confira a internet e tente de novo.</p>`; return; }
+  const g = dados.grupo || {}, nomes = { ...(g.nomes || {}) }; dados.res.forEach(r => (nomes[r.uid] = r.apelido || nomes[r.uid]));
+  const nome = nomes[uid] || "?", souEu = uid === e.uid;
+  const [de] = pfPer === "semana" ? rkSemana(today()) : pfPer === "mes" ? [today().slice(0, 8) + "01"] : ["2000-01-01"];
+  const doPer = dados.res.filter(r => r.dia >= de);
+  const dela = dados.res.filter(r => r.uid === uid);
+  // sequência: dias seguidos com algum jogo terminado, até hoje (ou ontem)
+  const dias = new Set(dela.map(r => r.dia)); let seq = 0, d = today(); if (!dias.has(d)) d = rkMuda(d, -1);
+  while (dias.has(d)) { seq++; d = rkMuda(d, -1); }
+  const desde = dela.map(r => r.dia).sort()[0];
+  const mes = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  let h = `<div class="pf-top"><span class="pf-av">${escHTML(nome.trim()[0]?.toUpperCase() || "?")}</span><span><b>${escHTML(nome)}${souEu ? " (você)" : ""}</b>
+    <small>${seq ? `🔥 ${seq} ${seq === 1 ? "dia" : "dias seguidos"}` : "sem sequência agora"} · ${dela.length} jogos${desde ? ` desde ${+desde.slice(8)} ${mes[+desde.slice(5, 7) - 1]}` : ""}</small></span></div>
+    <div class="segx" id="pfPer">${[["semana", "Semana"], ["mes", "Mês"], ["sempre", "Sempre"]].map(([v, t]) => `<button data-p="${v}" aria-checked="${pfPer === v}">${t}</button>`).join("")}</div>`;
+  const perTxt = pfPer === "semana" ? "nesta semana" : pfPer === "mes" ? `em ${["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"][+today().slice(5, 7) - 1]}` : "desde sempre";
+  // duelo: em cada jogo de cada dia que os dois terminaram, quem foi melhor
+  const placar = {}, porJogo = {};
+  if (!souEu) {
+    const meu = {}; doPer.filter(r => r.uid === e.uid).forEach(r => (meu[r.dia + r.jogo] = r));
+    let a = 0, b = 0, emp = 0;
+    doPer.filter(r => r.uid === uid).forEach(r => {
+      const m = meu[r.dia + r.jogo]; if (!m) return;
+      const c = rkOrdem(m, r), pj = (porJogo[r.jogo] ||= [0, 0]);
+      if (c < 0) { a++; pj[0]++; } else if (c > 0) { b++; pj[1]++; } else emp++;
+    });
+    Object.assign(placar, { a, b, emp });
+    const tot = a + b || 1;
+    h += `<div class="rk-card pf-duelo"><div class="t">Você × ${escHTML(nome)} ${perTxt}</div>
+      <div class="pl"><div><b>${a}</b><small>Você</small></div><div class="x">×</div><div><b>${b}</b><small>${escHTML(nome)}</small></div></div>
+      <div class="pf-barra"><i class="a" style="width:${(100 * a / tot).toFixed(1)}%"></i><i class="e" style="width:${(100 * b / tot).toFixed(1)}%"></i></div>
+      ${a + b + emp ? (emp ? `<div class="emp">${emp} empate${emp > 1 ? "s" : ""}</div>` : "") : `<div class="emp">Ainda não jogaram o mesmo jogo no mesmo dia ${perTxt}.</div>`}</div>`;
+    // hoje, lado a lado
+    const hoje = dados.res.filter(r => r.dia === today()), jogos = GAMES.filter(gm => hoje.some(r => r.jogo === gm.id && (r.uid === uid || r.uid === e.uid)));
+    if (jogos.length) h += `<div class="rk-card pf-tab"><div class="rk-rr hd" style="font-size:.66rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em"><span></span><span>hoje</span><span class="v">você</span><span class="v">${escHTML(nome.slice(0, 8))}</span><span class="v">${pfPer === "semana" ? "sem." : pfPer === "mes" ? "mês" : "total"}</span></div>` +
+      jogos.map(gm => { const m = hoje.find(r => r.jogo === gm.id && r.uid === e.uid), o = hoje.find(r => r.jogo === gm.id && r.uid === uid), pj = porJogo[gm.id] || [0, 0];
+        const ganhei = m && o && rkOrdem(m, o) < 0, perdi = m && o && rkOrdem(m, o) > 0;
+        return `<div class="rk-rr">${rkIcone(gm.id)}<span class="n">${escHTML(gm.name)}</span><span class="v ${ganhei ? "ganha" : ""}">${m ? rkFmt(m) + (m.dica ? "💡" : "") : "–"}</span><span class="v ela ${perdi ? "ganha" : ""}">${o ? rkFmt(o) + (o.dica ? "💡" : "") : "–"}</span><span class="v pl">${pj[0]} × ${pj[1]}</span></div>`; }).join("") + `</div>`;
+  }
+  // recordes da pessoa no período: o melhor de cada jogo, vitórias no grupo e dias com dica
+  const doPerDela = doPer.filter(r => r.uid === uid), melhor = {};
+  doPerDela.forEach(r => { if (r.tipo === "tries" && !r.won) return; if (!melhor[r.jogo] || rkOrdem(r, melhor[r.jogo]) < 0) melhor[r.jogo] = r; });
+  const porDJ = {}; doPer.forEach(r => (porDJ[r.dia + r.jogo] ||= []).push(r));
+  let ouros = 0; Object.values(porDJ).forEach(rs => { if (rs.length < 2) return; rs.sort(rkOrdem); if (rs[0].tipo === "tries" && !rs[0].won) return; if (rs.some(r => r.uid === uid && rkOrdem(rs[0], r) === 0)) ouros++; });
+  const diasDica = new Set(doPerDela.filter(r => r.dica).map(r => r.dia)).size;
+  const recs = GAMES.filter(gm => melhor[gm.id]).map(gm => `<div class="rk-rr">${rkIcone(gm.id)}<span class="n">${escHTML(gm.name)} · ${melhor[gm.id].tipo === "pts" ? "mais pontos" : melhor[gm.id].tipo === "time" || melhor[gm.id].tipo === "fora" ? "mais rápido" : "melhor"}</span><span class="v">${rkFmt(melhor[gm.id])}</span></div>`).join("");
+  h += `<div class="rk-card pf-rec"><div class="pf-h">${souEu ? "Seus recordes" : `Recordes de ${escHTML(nome)}`} ${perTxt}</div>
+    <div class="rk-rr"><span class="p">🥇</span><span class="n">1º lugar no grupo</span><span class="v">${ouros}×</span></div>
+    <div class="rk-rr"><span class="p">🎯</span><span class="n">Jogos terminados</span><span class="v">${doPerDela.length}</span></div>
+    <div class="rk-rr"><span class="p">💡</span><span class="n">Dias com dica</span><span class="v">${diasDica}</span></div>
+    ${recs || `<p class="rk-nota" style="margin-top:6px">Nenhum jogo terminado ${perTxt}.</p>`}</div>`;
+  el.innerHTML = h;
+  el.querySelectorAll("#pfPer button").forEach(b => (b.onclick = () => { pfPer = b.dataset.p; renderPessoa(el, n, e, uid); }));
+}
 
 // ---------- tela do Ranking ----------
 let rkModo = "hoje", rkDia = today(), rkCod = null;
@@ -2148,6 +2285,8 @@ async function renderRanking() {
   const e = n.estado;
   if (!e.conectado || !e.grupos.length) { renderEntrada(el, e); return; }
   if (!rkCod || !e.grupos.some(g => g.cod === rkCod)) rkCod = e.grupos[0].cod;
+  localStorage.setItem(RANK_VISTO, String(Date.now())); decoraGrupo();
+  if (history.state?.pessoa) { await renderPessoa(el, n, e, history.state.pessoa); return; }
   const [de, ate] = rkModo === "hoje" ? [rkDia, rkDia] : rkSemana(rkDia);
   const topo = `${e.grupos.length > 1 ? `<div class="segx" id="rkGrupos">${e.grupos.map(g => `<button data-c="${g.cod}" aria-checked="${g.cod === rkCod}">${escHTML(g.nome)}</button>`).join("")}</div>` : ""}
     <div class="segx" id="rkModo" style="margin-bottom:10px"><button data-m="hoje" aria-checked="${rkModo === "hoje"}">Hoje</button><button data-m="semana" aria-checked="${rkModo === "semana"}">Semana</button></div>
@@ -2170,6 +2309,7 @@ async function renderRanking() {
   let dados;
   try { if (de <= today() && ate >= today()) await nuvemJa(); dados = await n.resultados(rkCod, de, ate); }
   catch (x) { console.warn(x); el.querySelector(".rk-lead").textContent = "Não consegui carregar o ranking. Confira a internet e tente de novo."; return; }
+  if (de === today() && rkCod === e.grupos[0].cod) guardaGrupoHoje(n, rkCod, dados);
   const grupo = dados.grupo || { nome: "Grupo", membros: [], nomes: {} };
   const nomes = { ...(grupo.nomes || {}) }; dados.res.forEach(r => (nomes[r.uid] = r.apelido || nomes[r.uid]));
   const membros = grupo.membros || [];
@@ -2182,8 +2322,8 @@ async function renderRanking() {
       let pos = 0;
       return `<div class="rk-card"><div class="rk-ch">${rkIcone(id)}<b>${escHTML(g?.name || id)}</b><small>${RK_CRIT[rs[0].tipo] || ""}</small></div>` +
         rs.map((r, i) => { if (i === 0 || rkOrdem(rs[i - 1], r) !== 0) pos = i;
-          return `<div class="rk-rr ${r.uid === e.uid ? "eu" : ""} ${r.tipo === "tries" && !r.won ? "perdeu" : ""}"><span class="p">${r.tipo === "tries" && !r.won ? "·" : rkMed(pos)}</span><span class="n">${escHTML(nomes[r.uid] || "?")}${r.dica ? '<span class="rk-dc">💡 dica</span>' : ""}</span><span class="v">${rkFmt(r)}</span></div>`; }).join("") +
-        membros.filter(u => !feitos.has(u)).map(u => `<div class="rk-rr nao"><span class="p">·</span><span class="n">${escHTML(nomes[u] || "?")}</span><span class="v">${de === today() ? "ainda não jogou" : "não jogou"}</span></div>`).join("") + `</div>`;
+          return `<div class="rk-rr ${r.uid === e.uid ? "eu" : ""} ${r.tipo === "tries" && !r.won ? "perdeu" : ""}" data-u="${r.uid}"><span class="p">${r.tipo === "tries" && !r.won ? "·" : rkMed(pos)}</span><span class="n">${escHTML(nomes[r.uid] || "?")}${r.dica ? '<span class="rk-dc">💡 dica</span>' : ""}</span><span class="v">${rkFmt(r)}</span></div>`; }).join("") +
+        membros.filter(u => !feitos.has(u)).map(u => `<div class="rk-rr nao" data-u="${u}"><span class="p">·</span><span class="n">${escHTML(nomes[u] || "?")}</span><span class="v">${de === today() ? "ainda não jogou" : "não jogou"}</span></div>`).join("") + `</div>`;
     }).join("") || `<p class="rk-lead">Ninguém do grupo terminou um jogo ${de === today() ? "hoje ainda" : "nesse dia"}.</p>`;
   } else {
     const t = {}; membros.forEach(u => (t[u] = { j: 0, o: 0, d: 0 }));
@@ -2191,9 +2331,10 @@ async function renderRanking() {
     Object.values(porDJ).forEach(rs => { rs.sort(rkOrdem); if (rs[0].tipo === "tries" && !rs[0].won) return; rs.filter(r => rkOrdem(rs[0], r) === 0).forEach(r => t[r.uid].o++); });
     const lista = Object.entries(t).sort(([, a], [, b]) => b.o - a.o || b.j - a.j);
     corpo = `<div class="rk-card rk-sem"><div class="rk-rr hd"><span></span><span></span><span class="v">jogos</span><span class="v">🥇</span><span class="v">💡</span></div>` +
-      lista.map(([u, x], i) => `<div class="rk-rr ${u === e.uid ? "eu" : ""}"><span class="p">${rkMed(i)}</span><span class="n">${escHTML(nomes[u] || "?")}</span><span class="v">${x.j}</span><span class="v">${x.o}</span><span class="v">${x.d}</span></div>`).join("") +
-      `</div><p class="rk-nota">Ordem da semana: mais vezes em 1º lugar num jogo do dia; empate, mais jogos feitos. 💡 = jogos com dica.</p>`;
+      lista.map(([u, x], i) => `<div class="rk-rr ${u === e.uid ? "eu" : ""}" data-u="${u}"><span class="p">${rkMed(i)}</span><span class="n">${escHTML(nomes[u] || "?")}</span><span class="v">${x.j}</span><span class="v">${x.o}</span><span class="v">${x.d}</span></div>`).join("") +
+      `</div><p class="rk-nota">Ordem da semana: mais vezes em 1º lugar num jogo do dia; empate, mais jogos feitos. 💡 = jogos com dica. Toque num nome para ver o duelo e os recordes.</p>`;
   }
+  setTimeout(() => el.querySelectorAll(".rk-rr[data-u]").forEach(r => (r.onclick = () => abrePessoa(r.dataset.u))), 0);
   el.innerHTML = `<div class="rk-grp"><span><b>${escHTML(grupo.nome || "Grupo")}</b> · ${membros.length} ${membros.length === 1 ? "pessoa" : "pessoas"}</span>
       <button class="rk-cod" aria-label="Convidar com o código ${rkCod}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>${rkCod}</button></div>` +
     topo + corpo + `<p class="rk-nota">Toque no código para convidar. 💡 = usou dica · Gerânio em pontos, Sando e 5PILA em tentativas, Brigadeiro em inclinações, os outros em tempo (jogos de fora: tempo aproximado, fora do app).</p>
@@ -2245,6 +2386,6 @@ render();
 route();
 scheduleMidnight();
 </script>
-<script type="module" src="nuvem.js?v=1"></script>
+<script type="module" src="nuvem.js?v=2"></script>
 </body>
 </html>

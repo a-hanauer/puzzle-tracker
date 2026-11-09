@@ -67,12 +67,78 @@
       return r && r.tries != null ? { d: d, v: r.tries, perdeu: !r.won } : { d: d, v: null };
     });
   };
+
+  /* ---------- Ranking do grupo no fim de jogo (desde 09/11/2026) ----------
+     O painel guarda em "jogosDoDia.grupo" os resultados de hoje do grupo de amigos (nuvem.js). Aqui, no fim da
+     partida, junta o resultado de quem joga (lido do próprio jogo) com os dos amigos e mostra a posição no grupo.
+     Sem grupo (ou sem conta), não aparece nada. */
+  var PASTA = { eclipse: "eclipse", novelo: "novelo", azulejo: "retalhos", cortado: "pingado", cordel: "cordel", cruzadinha: "cruzadinha",
+    geranio: "girassol", brigadeiro: "brigadeiro", sando: "sanduba", "5pila": "quinhentos" };
+  var EPOCA = { eclipse: [2026, 8, 27], novelo: [2026, 8, 28], retalhos: [2026, 8, 28], pingado: [2026, 8, 28], cordel: [2026, 9, 4],
+    cruzadinha: [2026, 9, 10], brigadeiro: [2026, 9, 17], girassol: [2026, 10, 4] };
+  var MED = ["🥇", "🥈", "🥉"];
+  function hojeK() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function meuResultado(id) {
+    var d = new Date(); d.setHours(0, 0, 0, 0);
+    if (id === "sanduba") {
+      var s = ler("sanduba-daily-" + d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate());
+      if (!s || !s.guesses || !s.guesses.length) return null;
+      var won = s.guesses.some(function (g) { return g.word === s.secret; });
+      return { tipo: "tries", valor: s.guesses.length, max: s.max || 14, won: won, dica: !!s.dica };
+    }
+    if (id === "quinhentos") {
+      var q = ler("quinhentao:game:padrao"); if (!q || !q.finished) return null;
+      return { tipo: "tries", valor: q.guesses.length, max: q.max || 8, won: !!q.won, dica: !!q.dica };
+    }
+    var ep = EPOCA[id]; if (!ep) return null;
+    var n = Math.round((d - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1, p = ler(id + ":dia:" + n);
+    if (!p || !p.done) return null;
+    if (id === "girassol") return { tipo: "pts", valor: p.pts || 0, won: true, dica: !!p.dica };
+    if (id === "brigadeiro") return { tipo: "inc", valor: p.inc, won: true, dica: !!p.dica };
+    return { tipo: "time", valor: p.time, won: true, dica: !!p.dica };
+  }
+  function ordem(a, b) {
+    if (a.tipo === "tries" && a.won !== b.won) return a.won ? -1 : 1;
+    return a.tipo === "pts" ? b.valor - a.valor : a.valor - b.valor;
+  }
+  function fmtR(r) {
+    return r.tipo === "pts" ? r.valor + " pts" : r.tipo === "tries" ? (r.won ? "" : "✗ ") + r.valor + "/" + (r.max || "?") : r.tipo === "inc" ? String(r.valor) : fmtT(r.valor);
+  }
+  window.grupoFim = function (subEl, mostrar) {
+    var box = subEl.parentNode.querySelector(".fim-grupo");
+    var id = PASTA[(location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/) || [])[1]];
+    var g = ler("jogosDoDia.grupo"), eu = id && meuResultado(id);
+    if (!mostrar || !g || g.dia !== hojeK() || !eu || typeof eu.valor !== "number") { if (box) box.remove(); return; }
+    var lista = (g.res || []).filter(function (r) { return r.jogo === id && r.uid !== g.eu; });
+    eu.uid = g.eu; eu.eu = true; lista.push(eu); lista.sort(ordem);
+    var pos = 0, linhas = lista.map(function (r, i) {
+      if (i === 0 || ordem(lista[i - 1], r) !== 0) pos = i;
+      var perdeu = r.tipo === "tries" && !r.won;
+      return '<div class="fg-l' + (r.eu ? " eu" : "") + '"><span class="fg-p">' + (perdeu ? "·" : MED[pos] || (pos + 1) + "º") + '</span><span class="fg-n">' +
+        (r.eu ? "Você" : esc((g.nomes || {})[r.uid] || r.apelido || "?")) + (r.dica ? '<span class="fg-dc">💡 dica</span>' : "") + '</span><b>' + fmtR(r) + "</b></div>";
+    });
+    var euPos = lista.findIndex(function (r) { return r.eu; }), minha = 0;
+    for (var i = 0; i <= euPos; i++) if (i === 0 || ordem(lista[i - 1], lista[i]) !== 0) minha = i;
+    var faltam = (g.membros || []).filter(function (u) { return u !== g.eu && !lista.some(function (r) { return r.uid === u; }); })
+      .map(function (u) { return esc((g.nomes || {})[u] || "?"); });
+    var so = lista.length === 1;
+    var titulo = so ? "Primeiro do grupo hoje" : (eu.tipo === "tries" && !eu.won) ? "No grupo hoje" : (minha + 1) + "º de " + lista.length + " no grupo";
+    if (!box) { box = document.createElement("div"); box.className = "fim-grupo"; }
+    var ancora = subEl.parentNode.querySelector(".fim-rec") || subEl;
+    ancora.after(box);
+    box.innerHTML = '<a class="fg-top" href="../#ranking"><span class="fg-med">' + (so ? "🏁" : (eu.tipo === "tries" && !eu.won) ? "👥" : MED[minha] || "👥") + '</span><span class="fg-tit">' + titulo +
+      '<small>' + esc(g.nome || "Seu grupo") + '</small></span><span class="fg-ver">Ranking<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></a>' +
+      (so ? "" : '<div class="fg-lista">' + linhas.join("") + "</div>") +
+      (faltam.length ? '<div class="fg-falta">' + (faltam.length === 1 ? faltam[0] + " ainda não jogou" : faltam.slice(0, -1).join(", ") + " e " + faltam[faltam.length - 1] + " ainda não jogaram") + "</div>" : "");
+  };
   // desenha (ou tira, com dias = null) o bloco logo abaixo da linha pequena e do selo de recorde
   window.semanaFim = function (subEl, dias, tipo) {
+    if (window.grupoFim) grupoFim(subEl, !!dias);   // posição no grupo de amigos, logo abaixo do resultado
     var box = subEl.parentNode.querySelector(".fim-semana");
     if (!dias) { if (box) box.remove(); return; }
     if (!box) { box = document.createElement("div"); box.className = "fim-semana"; }
-    var ancora = subEl.parentNode.querySelector(".fim-rec") || subEl;
+    var ancora = subEl.parentNode.querySelector(".fim-grupo") || subEl.parentNode.querySelector(".fim-rec") || subEl;
     ancora.after(box);
     var tempo = tipo === "tempo", vals = dias.filter(function (x) { return x.v != null; }).map(function (x) { return x.v; });
     var topo = Math.max.apply(null, vals.concat([1]));

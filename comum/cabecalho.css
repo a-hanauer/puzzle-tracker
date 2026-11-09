@@ -477,6 +477,24 @@ html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-
 @media (prefers-reduced-motion: reduce) { .overlay.open > .modal.fim { animation: none; } }
 
 /* Últimos 7 dias na bandeja de fim (comum/recorde.js: semanaFim) */
+/* posição no grupo de amigos (recorde.js → grupoFim): mesmo cartão do bloco da semana, logo acima dele */
+.fim-grupo { margin: -4px 0 10px; padding: 12px 14px 10px; border-radius: 16px; background: color-mix(in srgb, var(--gh-ink) 5%, transparent); text-align: left; }
+.fim-grupo + .fim-semana { margin-top: 0; }
+.fim-grupo .fg-top { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; }
+.fim-grupo .fg-med { font-size: 1.6rem; line-height: 1; width: 32px; text-align: center; flex: none; }
+.fim-grupo .fg-tit { display: flex; flex-direction: column; min-width: 0; font-weight: 800; font-size: 1.02rem; line-height: 1.2; }
+.fim-grupo .fg-tit small { font-weight: 600; font-size: .74rem; color: var(--gh-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fim-grupo .fg-ver { margin-left: auto; display: inline-flex; align-items: center; gap: 2px; font-size: .8rem; font-weight: 700; color: var(--gh-muted); flex: none; }
+.fim-grupo .fg-ver svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.fim-grupo .fg-lista { margin-top: 8px; padding-top: 6px; border-top: 1px solid color-mix(in srgb, var(--gh-ink) 8%, transparent); }
+.fim-grupo .fg-l { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 4px 0; font-size: .9rem; }
+.fim-grupo .fg-l .fg-p { text-align: center; font-size: 1rem; color: var(--gh-muted); font-weight: 800; }
+.fim-grupo .fg-l .fg-n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fim-grupo .fg-l b { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.fim-grupo .fg-l.eu { font-weight: 800; }
+.fim-grupo .fg-dc { display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 5px; font-size: .64rem; font-weight: 800; vertical-align: 1px;
+  color: #a8790a; background: color-mix(in srgb, #e0b84f 24%, transparent); }
+.fim-grupo .fg-falta { margin: 4px 0 0 42px; font-size: .76rem; color: var(--gh-muted); }
 .fim-semana { margin: -4px 0 18px; padding: 14px 12px 12px; border-radius: 16px; background: color-mix(in srgb, var(--gh-ink) 5%, transparent); text-align: center; }
 .fim-semana .sem-tit { margin: 0 0 10px; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gh-muted); }
 .fim-semana .sem-barras, .fim-semana .sem-dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; padding: 0 4px; }
