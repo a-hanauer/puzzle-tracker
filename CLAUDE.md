@@ -33,7 +33,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   (partida terminada vale mais; Gerânio soma as achadas; o estado do painel soma histórico e resultados — `fundirPainel`).
 - Ranking (página `#ranking`, botão de troféu no topo; opção "A": um cartão por jogo, Hoje | Semana, dias anteriores):
   grupos por código de 6 letras (`grupos/{cod}`, membros e apelidos); cada resultado vai para `grupos/{cod}/res/{dia_jogo_uid}`
-  (`resultadosParaRanking`, a partir de `state.results` dos últimos 120 dias). Critério: Gerânio pontos; Sando e 5PILA
+  (`resultadosParaRanking`, retroativo até 2 anos: lê os dias que cada jogo da casa guardou — `eclipse:dia:N`, `sanduba-daily-…` — e
+  completa com `state.results`; ao entrar ou entrar em outro grupo, manda o histórico todo). Critério: Gerânio pontos; Sando e 5PILA
   tentativas (quem não acertou vai para o fim); Brigadeiro inclinações; os da casa, tempo; os de fora, o tempo fora do app
   (aproximado, "~"). Sempre mostra quem usou dica (💡). Semana: mais 1º lugares, depois mais jogos.
 - Configurações → Conta na nuvem: apelido, última sincronização, ligar e-mail e senha, entrar numa conta com e-mail.

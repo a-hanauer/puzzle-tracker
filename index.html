@@ -2024,12 +2024,34 @@ function chaveDoDia(id, dia) {
   const ep = RK_EPOCAS[id]; if (!ep) return null;
   return `${id}:dia:${Math.round((new Date(y, m - 1, d) - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1}`;
 }
-// um resultado por jogo e dia terminado: o que entra no ranking (os dias já jogados também: o histórico vem junto)
-function resultadosParaRanking(dias = 120) {
-  const out = [], lim = dayKey(new Date(Date.now() - dias * 86400000));
+// um resultado por jogo e dia terminado: o que entra no ranking. Retroativo: além de state.results (o que o painel
+// registrou), lê direto o que cada jogo da casa guardou de cada dia — assim entram também dias em que o painel não viu
+// o jogo terminar. Vai tudo (até 2 anos); o nuvem.js só reenvia o que mudou.
+function resultadosParaRanking(dias = 730) {
+  const out = new Map(), lim = dayKey(new Date(Date.now() - dias * 86400000));
+  const poe = (dia, id, r) => { if (dia >= lim && typeof r.valor === "number" && r.valor >= 0) out.set(dia + "_" + id, { dia, jogo: id, ...r, valor: Math.round(r.valor) }); };
+  // 1) o que os próprios jogos guardaram, dia a dia
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i), m = k && k.match(/^([a-z]+):dia:(\d+)$/);
+    const sd = k && k.match(/^sanduba-daily-(\d+)-(\d+)-(\d+)$/);
+    if (sd) {
+      const p = readJSON(k); if (!p || !Array.isArray(p.guesses) || !p.guesses.length) continue;
+      const won = p.guesses.some(g => g.word === p.secret), max = p.max || 14;
+      if (!won && p.guesses.length < max) continue;
+      poe(`${sd[1]}-${sd[2].padStart(2, "0")}-${sd[3].padStart(2, "0")}`, "sanduba", { tipo: "tries", valor: p.guesses.length, max, won, dica: !!p.dica });
+      continue;
+    }
+    if (!m || !RK_EPOCAS[m[1]]) continue;
+    const id = m[1], p = readJSON(k); if (!p || !p.done) continue;
+    const ep = RK_EPOCAS[id], d = new Date(ep[0], ep[1], ep[2] + (+m[2] - 1)), dia = dayKey(d);
+    if (id === "girassol") poe(dia, id, { tipo: "pts", valor: p.pts, won: true, max: 0, dica: !!p.dica });
+    else if (id === "brigadeiro") poe(dia, id, { tipo: "inc", valor: p.inc, won: true, max: p.min || 0, dica: !!p.dica });
+    else poe(dia, id, { tipo: "time", valor: p.time, won: true, max: 0, dica: !!p.dica });
+  }
+  // 2) o que o painel registrou (5PILA, jogos de fora e o que já não está mais nos jogos)
   for (const [dia, rs] of Object.entries(state.results || {})) {
-    if (dia < lim) continue;
     for (const [id, r] of Object.entries(rs || {})) {
+      if (out.has(dia + "_" + id)) continue;
       const k = chaveDoDia(id, dia), p = k ? readJSON(k) : null;
       let tipo, valor;
       if (id === "girassol") { tipo = "pts"; valor = p?.pts ?? r.tries; }
@@ -2037,11 +2059,11 @@ function resultadosParaRanking(dias = 120) {
       else if (id === "brigadeiro") { tipo = "inc"; valor = r.inc ?? p?.inc; }
       else if (LOCAL_PROGRESS[id]) { tipo = "time"; valor = r.time; }
       else { tipo = "fora"; valor = r.time; }
-      if (typeof valor !== "number" || !(valor >= 0) || (tipo === "fora" && !valor)) continue;
-      out.push({ dia, jogo: id, tipo, valor: Math.round(valor), dica: !!(r.dica || p?.dica), won: r.won !== false, max: r.max || 0 });
+      if (tipo === "fora" && !valor) continue;
+      poe(dia, id, { tipo, valor, dica: !!(r.dica || p?.dica), won: r.won !== false, max: r.max || 0 });
     }
   }
-  return out;
+  return [...out.values()];
 }
 // junta a versão daqui e a de outro aparelho do estado do painel: histórico e resultados somam
 function fundirPainel(k, local, remoto) {
