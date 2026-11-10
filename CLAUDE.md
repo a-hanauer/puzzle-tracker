@@ -80,7 +80,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   Bandeja de resultado com ícone menor (64px). Partida terminada = `#controls.done`, `.gh-fim.on` ou `body.acabou` (Ponto Cruz,
   Brigadeiro e, desde 10/11/2026, Gerânio — que não tem faixa de resultado, só a doca). Em todos: tabuleiro, faixa de resultado, doca;
   a dica do próprio jogo (`#tip`) some. **Contagem para os novos desafios** (opção "A", 10/11/2026): só no topo do painel (`#novos`,
-  "⏱ novos em 13h18"; em tela estreita só a hora) — todos os jogos da casa trocam à meia-noite; nada de "Próximo X em" nos jogos
+  reloginho + tempo restante "12:28:15", pequeno e discreto) — todos os jogos da casa trocam à meia-noite; nada de "Próximo X em" nos jogos
   nem nas bandejas (`.fim-count`/`.fim-cd` escondidos em cabecalho.css).
 
 ## Publicar
