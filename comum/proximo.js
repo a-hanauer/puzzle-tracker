@@ -263,12 +263,14 @@
       if (!!velha !== (acabou && !livre)) reajusta = true;
     });
     subrows().forEach(el => {
-      if (el.hidden === acabou) reajusta = true;
+      const antes = el.hidden;
       el.hidden = !acabou;
       el.innerHTML = "";
       if (!acabou) return;
       if (!SEM_LIVRE && livre) el.append(atalhoExtra());          // só no modo de teste
-      if (!livre) el.insertAdjacentHTML("beforeend", `<span class="cd">Próximo em <b data-contagem>--:--:--</b></span>`);
+      // a contagem para os novos desafios fica só no painel (opção "A", 10/11/2026): todos trocam juntos à meia-noite
+      if (!el.childElementCount) el.hidden = true;
+      if (el.hidden !== antes) reajusta = true;
     });
     if (reajusta) window.dispatchEvent(new Event("resize"));   // o tabuleiro se reajusta já, antes de a tela ser desenhada
     const tip = document.getElementById("tip");
@@ -276,10 +278,7 @@
     // bandeja de resultado
     // contagem logo abaixo do placar; no pé: início · jogar outro · próximo jogo
     document.querySelectorAll(".modal.fim .fim-free").forEach(el => { el.innerHTML = ""; el.hidden = true; });
-    document.querySelectorAll(".modal.fim .fim-cd").forEach(el => {
-      el.innerHTML = livre ? "" : contagem;
-      el.hidden = livre;
-    });
+    document.querySelectorAll(".modal.fim .fim-cd").forEach(el => { el.innerHTML = ""; el.hidden = true; });   // contagem: só no painel
     document.querySelectorAll(".modal.fim .fim-foot").forEach(el => {
       el.innerHTML = "";
       if (!SEM_LIVRE && livre) {                          // jogo livre (modo de teste): início e "Jogar outro", como antes

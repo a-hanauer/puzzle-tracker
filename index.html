@@ -868,6 +868,12 @@
   .x-err { color: #d0453a; font-size: .84rem; margin-top: 8px; min-height: 1em; }
   .x-nota { font-size: .76rem; color: var(--muted); margin: 8px 4px 0; line-height: 1.45; }
   .pf-av { color: #fff; }
+  /* contagem para os novos desafios (opção "A", 10/11/2026): só aqui, no topo do painel — todos trocam juntos à meia-noite */
+  .novos { display: inline-flex; align-items: center; gap: 5px; flex: none; font-size: .8rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .novos b { color: var(--text); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .novos svg { width: 15px; height: 15px; }
+  .top-row { gap: 10px; } .app-mark { min-width: 0; }
+  @media (max-width: 374px) { .novos .rot { display: none; } }   /* tela estreita: só o reloginho e a hora */
   /* Ranking com o grupo no topo (10/11/2026) */
   .ia-h { display: flex; align-items: center; gap: 10px; margin: 0 2px 4px; min-height: 44px; }
   .ia-t { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; padding: 0; font: inherit; color: var(--text); min-width: 0; flex: 1; text-align: left; cursor: pointer; }
@@ -915,6 +921,7 @@
 <header class="top">
   <div class="top-row">
     <div class="app-mark"><img src="icon-192.png?v=6" alt=""><h1>Jogos do Dia</h1></div>
+    <span class="novos" id="novos" title="Todos os jogos da casa trocam à meia-noite"></span>
   </div>
   <!-- o nível do dia (o mesmo para todos os jogos da casa: segunda = 1 … domingo = 7) -->
   <div class="dia-nivel" id="diaNivel"></div>
@@ -2793,6 +2800,17 @@ scheduleMidnight();
 </script>
 <script type="module" src="nuvem.js?v=7"></script>
 <script>
+/* contagem para os novos desafios no topo do painel */
+(function () {
+  var el = document.getElementById('novos'); if (!el) return;
+  var REL = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>';
+  function poe() {
+    var agora = new Date(), meia = new Date(agora); meia.setHours(24, 0, 0, 0);
+    var min = Math.max(0, Math.ceil((meia - agora) / 60000)), h = Math.floor(min / 60), m = min % 60;
+    el.innerHTML = REL + '<span class="rot">novos em </span><b>' + (h ? h + 'h' + String(m).padStart(2, '0') : m + ' min') + '</b>';
+  }
+  poe(); setInterval(poe, 15000); document.addEventListener('visibilitychange', poe);
+})();
 /* Trava a área segura de baixo no maior valor visto (como no Nightrun): no app instalado o iPhone às vezes muda o
    env(safe-area-inset-bottom) ao trocar de página, e a barra pulava de altura. */
 (function () {

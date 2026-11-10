@@ -344,6 +344,7 @@ header{
 .btn:active{transform:translateY(1px);}
 .btn:hover{filter:brightness(1.06);}
 .btn.secondary{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);}
+#s-countdown{display:none!important;} /* a contagem dos novos desafios fica só no painel (10/11/2026) */
 .countdown{text-align:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
 .countdown .l{font-size:9.5px;color:var(--ink-dim);letter-spacing:1px;font-weight:600;}
 .countdown .t{font-family:var(--font-display);font-size:26px;font-weight:800;letter-spacing:-1px;margin-top:3px;}
@@ -392,7 +393,7 @@ header{
 .tile.correct,.tile.present,.tile.absent,.tile.maybe{box-shadow:0 3px 0 0 rgba(0,0,0,.28),inset 0 2px 2px rgba(255,255,255,.35);}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=158">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=159">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--accent-ink); --gh-fim-ink: var(--accent-ink); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--ink-dim); --gh-surface: var(--panel); --gh-track: var(--panel-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -1501,6 +1502,6 @@ header{
 <script src="../comum/catalogo.js?v=154"></script>
 <script src="../comum/celebra.js?v=154"></script>
 <script src="../comum/recorde.js?v=154"></script>
-<script src="../comum/proximo.js?v=161" data-jogo="quinhentos"></script>
+<script src="../comum/proximo.js?v=162" data-jogo="quinhentos"></script>
 </body>
 </html>
