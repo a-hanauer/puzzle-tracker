@@ -19,7 +19,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   (ícone 46px e o mesmo círculo à direita nas duas listas). O nível do dia aparece uma vez só, sob o
   título (`#diaNivel`: "quinta, 5 nov · nível 4 de 7" + pontinhos); os cartões não têm pílula de nível antes de jogar. Nunca rola para o lado. Grades com `minmax(0, 1fr)` (nunca `1fr` puro) e `html, body { overflow-x: clip }`;
   conferir em 320–430 px que `document.documentElement.scrollWidth === innerWidth`.
-- **Barra de abas** (09/11/2026, opção "B"): Jogos · Ranking · Amigos · Estatísticas · Ajustes, no rodapé do painel (a mesma
+- **Barra de abas** (09/11/2026, opção "B"; desde 10/11/2026 com 4 abas: Jogos · Ranking · Estatísticas · Ajustes — Amigos entrou no Ranking), no rodapé do painel (a mesma
   cápsula de vidro dos outros apps, com gota sob a aba e encolhendo ao rolar). Substituiu os botões redondos do topo. Abas trocam
   a página com `irPara(hash)` (replaceState, sem empilhar); o perfil de uma pessoa empilha e tem "voltar". Pontinho de amigo novo na aba Ranking.
 - **Área segura**: respeitar `env(safe-area-inset-*)` em cima (notch) e embaixo (barra de gestos).
@@ -40,9 +40,14 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   completa com `state.results`; ao entrar ou entrar em outro grupo, manda o histórico todo). Critério: Gerânio pontos; Sando e 5PILA
   tentativas (quem não acertou vai para o fim); Brigadeiro inclinações; os da casa, tempo; os de fora, o tempo fora do app
   (aproximado, "~"). Sempre mostra quem usou dica (💡). Semana: mais 1º lugares, depois mais jogos.
-- Ranking (nova cara, 09/11/2026): sem o grupo no topo (fica na aba Amigos; o seletor de grupo só aparece para quem tem mais de um grupo); faixa com os 7 dias da semana (fora de hoje, botão "↩ Voltar para hoje"; tocar de novo na aba também volta), placar do dia/semana (opção "B": todo mundo com os 1º lugares, coroa em quem lidera, você primeiro no empate — `rkPlacar`), bolinhas coloridas por pessoa
+- Ranking = uma aba só (opção "B", 10/11/2026; a aba Amigos acabou, `#amigos` abre Ranking → Pessoas): no topo, o nome do grupo
+  grande com "⌄" abre o menu do grupo (`gSheetMenu`, o ÚNICO lugar para trocar de grupo, convidar, editar — quem criou —, sair,
+  entrar com código e criar); botão de convidar ao lado; linha com as bolinhas e "N pessoas · você criou"; seções Hoje | Semana | Pessoas
+  (`rkModo`). Pessoas (`rkPessoas`): cada um com o que jogou hoje e o duelo da semana com você (você: sequência de dias), convite e
+  "Editar grupo". Sem grupo: tela "Jogue com amigos" (criar / "Tenho um código de convite").
+- Ranking (09/11/2026): faixa com os 7 dias da semana (fora de hoje, botão "↩ Voltar para hoje"; tocar de novo na aba também volta), placar do dia/semana (opção "B": todo mundo com os 1º lugares, coroa em quem lidera, você primeiro no empate — `rkPlacar`), bolinhas coloridas por pessoa
   (`rkCor`), quem não jogou numa linha só; Semana com barras de 1º lugares e o melhor de cada jogo. Uma consulta por semana (`rkSemanaDados`, cache de 1 min).
-  Aba Amigos: grupo, convite, cada pessoa (jogos de hoje, duelo da semana), outros grupos, entrar/criar. Só quem criou o grupo
+  Só quem criou o grupo
   (`dono`) renomeia e remove pessoas (bandeja "Editar grupo"; regras em firestore.rules); `confereGrupos` esquece grupos de onde a pessoa saiu.
 - Backup (exportar/importar, 09/11/2026): leva o apelido e os grupos (códigos), não a conta (`jogosDoDia.nuvem` fica fora,
   `BK_FORA`); ao importar, a conta deste aparelho reenvia tudo e `reentraGrupos` entra de novo nos grupos (`jogosDoDia.reentrar`).

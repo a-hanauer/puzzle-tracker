@@ -756,7 +756,7 @@
     --tb-gota: linear-gradient(180deg, rgba(255,255,255,.9), rgba(232,232,238,.6));
     --tb-gota-pousa: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.05)) color-mix(in srgb, var(--muted) 12%, transparent); }
   body { padding-bottom: calc(var(--tb-h) + var(--tb-b) + 28px); min-height: 100lvh; }   /* página nunca mais baixa que a tela: a barra não pula entre abas */
-  .tabbar { position: fixed; z-index: 15; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: hidden;
+  .tabbar { position: fixed; z-index: 15; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: hidden;
     left: max(14px, env(safe-area-inset-left, 0px), calc(50% - 260px)); width: min(520px, calc(100% - 28px)); bottom: var(--tb-b);
     height: var(--tb-h); padding: 4px; border-radius: 32px; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
     background: var(--tb-vidro); -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%);
@@ -868,6 +868,21 @@
   .x-err { color: #d0453a; font-size: .84rem; margin-top: 8px; min-height: 1em; }
   .x-nota { font-size: .76rem; color: var(--muted); margin: 8px 4px 0; line-height: 1.45; }
   .pf-av { color: #fff; }
+  /* Ranking com o grupo no topo (10/11/2026) */
+  .ia-h { display: flex; align-items: center; gap: 10px; margin: 0 2px 4px; min-height: 44px; }
+  .ia-t { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; padding: 0; font: inherit; color: var(--text); min-width: 0; flex: 1; text-align: left; cursor: pointer; }
+  .ia-t b { font-size: 1.65rem; font-weight: 900; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ia-t svg { width: 20px; height: 20px; flex: none; color: var(--muted); margin-top: 4px; }
+  .ia-sub { display: flex; align-items: center; gap: 8px; margin: 0 2px 12px; color: var(--muted); font-size: .82rem; min-height: 22px; }
+  .ia-ic { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--surface-2); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+  .ia-ic svg { width: 20px; height: 20px; }
+  .ia-gl .og .ck { color: var(--green); font-weight: 900; }
+  .ia-acao { display: flex; align-items: center; gap: 12px; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 13px 14px; margin-bottom: 8px;
+    font: inherit; font-weight: 700; font-size: .95rem; color: var(--text); cursor: pointer; text-align: left; }
+  .ia-acao svg { width: 20px; height: 20px; flex: none; } .ia-acao small { margin-left: auto; color: var(--muted); font-weight: 600; font-family: "IBM Plex Mono", monospace; letter-spacing: .08em; }
+  .ia-acao.red { color: #d0453a; } .ia-acao.red.conf { background: #d0453a; color: #fff; border-color: #d0453a; }
+  .ia-vz { text-align: center; padding: 18px 10px 4px; } .ia-vz .ic { font-size: 3rem; line-height: 1; }
+  .ia-vz h2 { font-size: 1.4rem; font-weight: 900; margin: 12px 0 6px; } .ia-vz p { color: var(--muted); font-size: .9rem; line-height: 1.45; margin: 0; }
   /* placar do dia/semana (opção "B") e "voltar para hoje" */
   .volta { display: flex; justify-content: center; margin: -4px 0 12px; }
   .volta button { border: 0; font: inherit; font-weight: 800; font-size: .82rem; color: var(--bg); background: var(--text); border-radius: 99px; padding: 7px 14px; cursor: pointer; }
@@ -942,9 +957,6 @@
   <div id="rkBody"></div>
 </section>
 
-<section id="viewAmigos" hidden>
-  <div id="amBody"></div>
-</section>
 
 <section id="viewHistory" hidden>
   <header class="page-head">
@@ -1043,7 +1055,6 @@
 <nav class="tabbar" id="tabbar" aria-label="Seções">
   <a href="#jogos" data-aba="jogos"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Jogos</span></a>
   <a href="#ranking" data-aba="ranking" id="tabRank"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg><span>Ranking</span></a>
-  <a href="#amigos" data-aba="amigos"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="9" cy="8.5" r="3.3"/><path d="M3 19.5a6 6 0 0 1 12 0"/><circle cx="17" cy="9.5" r="2.6"/><path d="M15.5 14.4a5 5 0 0 1 6 5.1"/></svg><span>Amigos</span></a>
   <a href="#estatisticas" data-aba="estatisticas"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M5 20V13M10 20V6M15 20v-9M20 20V9"/></svg><span>Estatísticas</span></a>
   <a href="#configuracoes" data-aba="configuracoes"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg><span>Ajustes</span></a>
 </nav>
@@ -2189,11 +2200,12 @@ document.querySelectorAll("#perSeg button").forEach(b => b.addEventListener("cli
 
 /* ---------- Páginas: Estatísticas (#estatisticas) e Configurações (#configuracoes) ----------
    Ocupam a tela toda, com título e voltar; o voltar do sistema também funciona. */
-const PAGINAS = { "#estatisticas": "viewHistory", "#historico": "viewHistory", "#configuracoes": "viewSettings", "#ranking": "viewRanking", "#amigos": "viewAmigos" };
-const ABA_DE = { viewHistory: "estatisticas", viewSettings: "configuracoes", viewRanking: "ranking", viewAmigos: "amigos" };
+const PAGINAS = { "#estatisticas": "viewHistory", "#historico": "viewHistory", "#configuracoes": "viewSettings", "#ranking": "viewRanking", "#amigos": "viewRanking" };
+const ABA_DE = { viewHistory: "estatisticas", viewSettings: "configuracoes", viewRanking: "ranking" };
 function route() {
+  if (location.hash === "#amigos") { rkModo = "pessoas"; history.replaceState(history.state, "", "#ranking"); }   // a antiga aba Amigos virou Ranking → Pessoas
   const alvo = PAGINAS[location.hash] || null;
-  ["viewHistory", "viewSettings", "viewRanking", "viewAmigos"].forEach(v => ($(v).hidden = alvo !== v));
+  ["viewHistory", "viewSettings", "viewRanking"].forEach(v => ($(v).hidden = alvo !== v));
   $("viewToday").hidden = !!alvo;
   document.body.classList.toggle("pagina", !!alvo);
   const aba = alvo ? ABA_DE[alvo] : "jogos";
@@ -2201,7 +2213,6 @@ function route() {
   if (alvo === "viewHistory") renderHistory();
   if (alvo === "viewSettings") { renderTheme(); renderConta(); }
   if (alvo === "viewRanking") renderRanking();
-  if (alvo === "viewAmigos") renderAmigos();
 }
 // abas: trocam a página sem empilhar no histórico (o perfil de uma pessoa, sim, empilha e tem "voltar")
 function irPara(hash) {
@@ -2464,16 +2475,17 @@ const rkAv = (uid, nome, cls = "") => `<i class="av ${cls}" style="background:${
 const rkLista = l => l.length <= 1 ? (l[0] || "") : l.slice(0, -1).join(", ") + " e " + l[l.length - 1];
 const SV = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">';
 // qual das abas está aberta agora, para redesenhar a certa depois de entrar num grupo etc.
-function renderAtual() { if (!$("viewRanking").hidden) renderRanking(); if (!$("viewAmigos").hidden) renderAmigos(); }
+function renderAtual() { if (!$("viewRanking").hidden) renderRanking(); }
 function renderEntrada(el, e) {
-  el.innerHTML = `<p class="rk-lead">Jogue com amigos: cada um vê os resultados do dia dos outros no grupo. Seu progresso também fica salvo na nuvem — troque de celular sem perder nada.</p>
+  el.innerHTML = `<div class="ia-vz"><div class="ic">🏆</div><h2>Jogue com amigos</h2><p>Crie um grupo e mande o código para quem você quiser. Cada um vê os resultados do dia dos outros, jogo a jogo.</p></div>
     <label class="rk-lbl" for="rkApelido">Seu apelido</label><input class="rk-in" id="rkApelido" maxlength="20" autocomplete="nickname" value="${escHTML(e.apelido || "")}">
     <button class="rk-btn pr" id="rkCriar">Criar um grupo</button>
-    <div class="rk-ou">ou</div>
-    <label class="rk-lbl" for="rkCodigo" style="margin-top:4px">Código de convite</label><input class="rk-in cod" id="rkCodigo" maxlength="8" placeholder="Ex.: QX7K2M" autocapitalize="characters" autocomplete="off">
-    <button class="rk-btn sc" id="rkEntrar">Entrar no grupo</button>
+    <button class="rk-btn sc" id="rkTenho">Tenho um código de convite</button>
+    <div id="rkCodBox" hidden><label class="rk-lbl" for="rkCodigo">Código de convite</label><input class="rk-in cod" id="rkCodigo" maxlength="8" placeholder="Ex.: QX7K2M" autocapitalize="characters" autocomplete="off">
+    <button class="rk-btn pr" id="rkEntrar">Entrar no grupo</button></div>
     <div class="rk-erro" id="rkErro"></div>
-    <p class="rk-nota">Sem cadastro: o app cria uma conta só sua neste aparelho. Para usar em outro celular, ligue um e-mail e senha em Ajustes → Conta na nuvem.</p>`;
+    <p class="rk-nota">Sem cadastro: o app cria uma conta só sua neste aparelho, e o progresso também fica salvo na nuvem. Para usar em outro celular, ligue um e-mail e senha em Ajustes → Conta na nuvem.</p>`;
+  $("rkTenho").onclick = () => { $("rkCodBox").hidden = false; $("rkTenho").hidden = true; $("rkCodigo").focus(); };
   const acao = async (fn) => {
     const ap = $("rkApelido").value.trim(), erro = $("rkErro");
     if (!ap) { erro.textContent = "Escolha um apelido."; $("rkApelido").focus(); return; }
@@ -2520,23 +2532,29 @@ async function renderRanking() {
   if (!n) { el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Não consegui falar com a nuvem agora. Confira a internet e abra de novo.</p>`; return; }
   await n.pronto;
   const e = n.estado;
-  if (!e.conectado || !e.grupos.length) { el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><div></div>`; renderEntrada(el.lastElementChild, e); return; }
+  if (!e.conectado || !e.grupos.length) { el.innerHTML = `<div></div>`; renderEntrada(el.lastElementChild, e); return; }
   if (!rkCod || !e.grupos.some(g => g.cod === rkCod)) rkCod = e.grupos[0].cod;
   localStorage.setItem(RANK_VISTO, String(Date.now())); decoraGrupo();
   if (history.state?.pessoa) return renderPerfil(el, n, e);
   const nomeG = e.grupos.find(g => g.cod === rkCod)?.nome || "Grupo";
-  if (!el.querySelector("#rkModo")) el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Carregando…</p>`;
+  if (!el.querySelector("#rkModo")) el.innerHTML = `<div class="ia-h"><span class="ia-t"><b>${escHTML(nomeG)}</b></span></div><p class="rk-lead">Carregando…</p>`;
   let d;
-  try { d = await rkSemanaDados(n, rkCod, rkDia); }
+  try { d = await rkSemanaDados(n, rkCod, rkModo === "pessoas" ? today() : rkDia); }
   catch (x) { console.warn(x); el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Não consegui carregar o ranking. Confira a internet e tente de novo.</p>`; return; }
   if (rkCod === e.grupos[0].cod && d.seg <= today() && d.dom >= today()) guardaGrupoHoje(n, rkCod, { grupo: d.grupo, res: d.res });
   const nm = u => u === e.uid ? "Você" : (d.nomes[u] || "?");
   const linha = (r, pos, sub = "") => `<div class="r ${r.uid === e.uid ? "eu" : ""} ${pos < 0 ? "perdeu" : ""}" data-u="${r.uid}"><span class="m">${pos < 0 ? "·" : rkMed(pos)}</span>${rkAv(r.uid, d.nomes[r.uid], "md")}<span class="n">${escHTML(d.nomes[r.uid] || "?")}${r.uid === e.uid ? '<span class="tag">você</span>' : ""}${r.dica ? '<span class="rk-dc">💡 dica</span>' : ""}${sub}</span><span class="v">${rkFmt(r)}</span></div>`;
-  // o grupo fica na aba Amigos; aqui só o seletor, e só para quem está em mais de um grupo
-  let h = `<div class="x-top"><h1>Ranking</h1>${e.grupos.length > 1 ? `<button class="x-grp" id="rkGrp" aria-label="Trocar de grupo (agora: ${escHTML(nomeG)})"><span class="x-avs">${d.membros.filter(u => u !== e.uid).slice(0, 3).map(u => rkAv(u, d.nomes[u], "s")).join("")}</span><span>${escHTML(nomeG)}</span>${SV}<path d="M6 9l6 6 6-6"/></svg></button>` : ""}</div>
-    <div class="segx" id="rkModo"><button data-m="hoje" aria-checked="${rkModo === "hoje"}">Dia</button><button data-m="semana" aria-checked="${rkModo === "semana"}">Semana</button></div>`;
+  // aba única "Ranking" (opção "B", 10/11/2026): o nome do grupo grande no topo abre o menu do grupo (trocar, entrar, criar,
+  // convidar, editar, sair); o botão ao lado convida; embaixo, Hoje | Semana | Pessoas
+  const dono = d.grupo.dono === e.uid, outros = d.membros.filter(u => u !== e.uid);
+  const criador = dono ? "você criou" : d.grupo.dono && d.nomes[d.grupo.dono] ? `criado por ${escHTML(d.nomes[d.grupo.dono])}` : "";
+  let h = `<div class="ia-h"><button class="ia-t" id="rkMenu" aria-label="Grupo ${escHTML(nomeG)}: trocar, convidar e mais"><b>${escHTML(d.grupo.nome || nomeG)}</b>${SV}<path d="M6 9l6 6 6-6"/></svg></button>
+      <button class="ia-ic" id="rkConv" aria-label="Convidar para o grupo">${CONV_SVG}</button></div>
+    <div class="ia-sub"><span class="x-avs">${outros.slice(0, 4).map(u => rkAv(u, d.nomes[u], "s")).join("")}</span>${d.membros.length} ${d.membros.length === 1 ? "pessoa" : "pessoas"}${criador ? ` · ${criador}` : ""}</div>
+    <div class="segx" id="rkModo"><button data-m="hoje" aria-checked="${rkModo === "hoje"}">Hoje</button><button data-m="semana" aria-checked="${rkModo === "semana"}">Semana</button><button data-m="pessoas" aria-checked="${rkModo === "pessoas"}">Pessoas</button></div>`;
   const proxOk = d.dom < today();
-  if (rkModo === "hoje") {
+  if (rkModo === "pessoas") h += rkPessoas(e, d);
+  else if (rkModo === "hoje") {
     const diasCom = new Set(d.res.map(r => r.dia));
     h += `<div class="wk"><button class="ar" id="rkAnt" aria-label="Semana anterior">‹</button>` +
       Array.from({ length: 7 }, (_, i) => { const dd = rkMuda(d.seg, i), x = new Date(dd + "T12:00");
@@ -2583,78 +2601,54 @@ async function renderRanking() {
       return `<div class="r" data-u="${r.uid}">${rkIcone(id)}<span class="n">${escHTML(g?.name || id)}</span>${rkAv(r.uid, d.nomes[r.uid], "md")}<span class="v">${rkFmt(r)}${r.dica ? "💡" : ""}</span></div>`; }).join("") + `</div>`;
     h += `<p class="rk-nota">Ordem da semana: mais 1º lugares num jogo do dia; no empate, mais jogos feitos.</p>`;
   }
-  h += `<p class="rk-nota">💡 = usou dica · Gerânio em pontos, Sando e 5PILA em tentativas, Brigadeiro em inclinações, os outros em tempo (jogos de fora: aproximado). Toque num nome para ver o duelo.</p>`;
+  if (rkModo !== "pessoas") h += `<p class="rk-nota">💡 = usou dica · Gerânio em pontos, Sando e 5PILA em tentativas, Brigadeiro em inclinações, os outros em tempo (jogos de fora: aproximado). Toque num nome para ver o duelo.</p>`;
   el.innerHTML = h;
   el.querySelectorAll("#rkModo button").forEach(b => (b.onclick = () => { rkModo = b.dataset.m; renderRanking(); }));
   el.querySelectorAll(".wk .d").forEach(b => (b.onclick = () => { rkDia = b.dataset.d; renderRanking(); }));
-  $("rkAnt").onclick = () => { rkDia = rkMuda(rkDia, -7); renderRanking(); };
-  $("rkProx").onclick = () => { rkDia = rkMuda(rkDia, 7); if (rkDia > today()) rkDia = today(); renderRanking(); };
+  if ($("rkAnt")) $("rkAnt").onclick = () => { rkDia = rkMuda(rkDia, -7); renderRanking(); };
+  if ($("rkProx")) $("rkProx").onclick = () => { rkDia = rkMuda(rkDia, 7); if (rkDia > today()) rkDia = today(); renderRanking(); };
   el.querySelectorAll("[data-u]").forEach(r => (r.onclick = () => abrePessoa(r.dataset.u)));
-  if ($("rkGrp")) $("rkGrp").onclick = () => gSheetGrupos(n.estado);
+  $("rkMenu").onclick = () => gSheetMenu(n.estado, d);
+  $("rkConv").onclick = () => rkConvidar();
+  if ($("amEditar")) $("amEditar").onclick = () => gSheetEditar(e, d);
   if ($("rkHoje")) $("rkHoje").onclick = () => { rkDia = today(); renderRanking(); };
 }
 
-// ---------- perfil (toque num nome, no Ranking ou em Amigos): com "voltar" ----------
+// ---------- perfil (toque num nome no Ranking): com "voltar" ----------
 function abrePessoa(uid) { history.pushState({ pagina: true, pessoa: uid }, "", location.hash || "#ranking"); window.scrollTo(0, 0); renderAtual(); }
 function renderPerfil(el, n, e) {
-  el.innerHTML = `<div class="x-top"><button class="x-volta" id="pfVolta">${SV}<path d="M15 5l-7 7 7 7"/></svg>${$("viewAmigos").hidden ? "Ranking" : "Amigos"}</button></div><div></div>`;
+  el.innerHTML = `<div class="x-top"><button class="x-volta" id="pfVolta">${SV}<path d="M15 5l-7 7 7 7"/></svg>Ranking</button></div><div></div>`;
   $("pfVolta").onclick = () => history.back();
   return renderPessoa(el.lastElementChild, n, e, history.state.pessoa);
 }
 
-// ---------- aba Amigos: o grupo, o convite, as pessoas, outros grupos ----------
-async function renderAmigos() {
-  const el = $("amBody"), n = window.nuvem;
-  if (!n) { el.innerHTML = `<div class="x-top"><h1>Amigos</h1></div><p class="rk-lead">Não consegui falar com a nuvem agora. Confira a internet e abra de novo.</p>`; return; }
-  await n.pronto;
-  const e = n.estado;
-  if (!e.conectado || !e.grupos.length) { el.innerHTML = `<div class="x-top"><h1>Amigos</h1></div><div></div>`; renderEntrada(el.lastElementChild, e); return; }
-  if (!rkCod || !e.grupos.some(g => g.cod === rkCod)) rkCod = e.grupos[0].cod;
-  if (history.state?.pessoa) return renderPerfil(el, n, e);
-  if (!el.querySelector(".gh")) el.innerHTML = `<div class="x-top"><h1>Amigos</h1></div><p class="rk-lead">Carregando…</p>`;
-  let d;
-  try { d = await rkSemanaDados(n, rkCod, today()); }
-  catch (x) { console.warn(x); el.innerHTML = `<div class="x-top"><h1>Amigos</h1></div><p class="rk-lead">Não consegui carregar o grupo. Confira a internet e tente de novo.</p>`; return; }
+// ---------- Ranking → Pessoas: cada um com o que jogou hoje e o duelo da semana com você; convite; editar (quem criou) ----------
+const CONV_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6"/></svg>';
+async function rkConvidar() {
+  const txt = `Entra no meu grupo dos Jogos do Dia! Código: ${rkCod}\nhttps://a-hanauer.github.io/puzzle-tracker/`;
+  try { if (navigator.share) await navigator.share({ text: txt }); else { await navigator.clipboard.writeText(txt); toast("Convite copiado"); } } catch {}
+}
+// minha sequência de dias com algum jogo feito, pelo histórico do painel (a da semana do grupo não vê além de segunda)
+function seqPainel() { const d = new Date(); const tem = k => (state.history[k] || []).length > 0; if (!tem(dayKey(d))) d.setDate(d.getDate() - 1); let n = 0; while (tem(dayKey(d))) { n++; d.setDate(d.getDate() - 1); } return n; }
+function rkPessoas(e, d) {
   const g = d.grupo, dono = g.dono === e.uid, totJogos = GAMES.length;
-  // hoje: quantos jogos cada um terminou; semana: o duelo comigo (em cada jogo de cada dia que os dois terminaram)
   const hoje = {}; d.res.filter(r => r.dia === today()).forEach(r => (hoje[r.uid] = (hoje[r.uid] || 0) + 1));
   const meu = {}; d.res.filter(r => r.uid === e.uid).forEach(r => (meu[r.dia + r.jogo] = r));
   const duelo = u => { let a = 0, b = 0; d.res.filter(r => r.uid === u).forEach(r => { const m = meu[r.dia + r.jogo]; if (!m) return; const c = rkOrdem(m, r); if (c < 0) a++; else if (c > 0) b++; }); return [a, b]; };
-  const ouros = {}; const porDJ = {}; d.res.forEach(r => (porDJ[r.dia + "|" + r.jogo] ||= []).push(r));
-  Object.values(porDJ).forEach(rs => { if (rs.length < 2) return; rkPosicoes(rs).forEach(({ r, pos }) => { if (pos === 0) ouros[r.uid] = (ouros[r.uid] || 0) + 1; }); });
+  // sequência: dias seguidos com jogo terminado, até hoje (ou ontem) — dentro do que esta semana mostra, contando a minha pelo painel
+  const seqDe = u => { const dias = new Set(d.res.filter(r => r.uid === u).map(r => r.dia)); let n = 0, x = today(); if (!dias.has(x)) x = rkMuda(x, -1); while (dias.has(x)) { n++; x = rkMuda(x, -1); } return n; };
   const membros = [...d.membros].sort((a, b) => (b === e.uid) - (a === e.uid) || (hoje[b] || 0) - (hoje[a] || 0));
-  let h = `<div class="x-top"><h1>Amigos</h1></div>
-    <div class="gh"><b>${escHTML(g.nome || "Grupo")}</b><span class="tag">${d.membros.length} ${d.membros.length === 1 ? "pessoa" : "pessoas"}</span>${dono ? `<button id="amEditar">Editar</button>` : ""}</div>
-    <div class="inv"><span><small>Código de convite</small><span class="cd">${rkCod}</span></span><button id="amConv">${SV.replace('2.6', '2.4')}<path d="M12 15V3.5M7.5 8 12 3.5 16.5 8M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>Convidar</button></div>
-    <div class="ml">` + membros.map(u => {
+  return `<div class="ml">` + membros.map(u => {
       const j = hoje[u] || 0, eu = u === e.uid;
       const sub = (j ? `jogou ${j} de ${totJogos} hoje` : "ainda não jogou hoje") + (g.dono === u ? " · criou o grupo" : "");
       let dir;
-      if (eu) dir = `🥇 ${ouros[u] || 0}<small style="display:block;color:var(--muted)">na semana</small>`;
+      if (eu) { const sq = Math.max(seqDe(u), seqPainel()); dir = sq ? `🔥 ${sq}<small style="display:block;color:var(--muted)">${sq === 1 ? "dia" : "dias"}</small>` : ""; }
       else { const [a, b] = duelo(u); dir = `${a} × ${b}<small style="display:block;color:var(--muted)">você × ${escHTML((d.nomes[u] || "?").split(" ")[0])}</small>`; }
       return `<div class="p" data-u="${u}">${rkAv(u, d.nomes[u], "g")}<span style="min-width:0"><b>${escHTML(d.nomes[u] || "?")}${eu ? '<span class="tag">você</span>' : ""}</b><small>${escHTML(sub)}</small></span><span class="sq">${dir}</span><span class="ch">›</span></div>`;
-    }).join("") + `</div>`;
-  const outros = e.grupos.filter(x => x.cod !== rkCod);
-  if (outros.length) h += `<div class="x-lbl">Outros grupos</div>` + outros.map(x => `<button class="og" data-c="${x.cod}"><b>${escHTML(x.nome)}</b><small>abrir ›</small></button>`).join("");
-  h += `<div class="x-lbl">${outros.length ? "Mais grupos" : "Outro grupo"}</div><div class="bt2"><button id="amEntrar">Entrar com código</button><button id="amCriar">Criar grupo</button></div>
-    ${dono ? "" : `<button class="x-sair" id="amSair">Sair deste grupo</button>`}
-    <p class="x-nota">Duelo da semana: em cada jogo de cada dia que vocês dois terminaram, quem foi melhor. Toque numa pessoa para ver mais.</p>`;
-  el.innerHTML = h;
-  el.querySelectorAll(".ml .p[data-u]").forEach(p => (p.onclick = () => abrePessoa(p.dataset.u)));
-  el.querySelectorAll(".og").forEach(b => (b.onclick = () => { rkCod = b.dataset.c; window.scrollTo(0, 0); renderAmigos(); }));
-  const conv = $("amConv");
-  conv.onclick = async () => {
-    const txt = `Entra no meu grupo dos Jogos do Dia! Código: ${rkCod}\nhttps://a-hanauer.github.io/puzzle-tracker/`;
-    try { if (navigator.share) await navigator.share({ text: txt }); else { await navigator.clipboard.writeText(txt); toast("Convite copiado"); } } catch {}
-  };
-  if ($("amEditar")) $("amEditar").onclick = () => gSheetEditar(e, d);
-  $("amEntrar").onclick = () => gSheetEntrar();
-  $("amCriar").onclick = () => gSheetCriar(e);
-  const sair = $("amSair");
-  if (sair) sair.onclick = async () => {
-    if (!sair.classList.contains("conf")) { sair.classList.add("conf"); sair.textContent = "Toque de novo para sair"; return; }
-    sair.disabled = true; await n.sairGrupo(rkCod); rkCod = null; rkCache = {}; renderAmigos();
-  };
+    }).join("") + `</div>
+    <div class="inv"><span><small>Convide pelo código</small><span class="cd">${rkCod}</span></span><button onclick="rkConvidar()">${CONV_SVG}Convidar</button></div>
+    ${dono ? `<button class="x-sair" style="color:var(--text)" id="amEditar">Editar grupo</button>` : ""}
+    <p class="x-nota">Toque numa pessoa para ver o duelo e os recordes. Duelo da semana: em cada jogo de cada dia que vocês dois terminaram, quem foi melhor.</p>`;
 }
 
 // ---------- bandeja dos grupos: trocar, editar (só quem criou), entrar com código, criar ----------
@@ -2665,11 +2659,29 @@ function gSheet(titulo, corpo, ok) {
   return bg;
 }
 const gFecha = () => { $("gSheet").hidden = true; };
-function gSheetGrupos(e) {
-  gSheet("Grupos", e.grupos.map(x => `<button class="og" data-c="${x.cod}" aria-current="${x.cod === rkCod}"><b>${escHTML(x.nome)}</b><small>${x.cod === rkCod ? "aberto" : "abrir ›"}</small></button>`).join("") +
-    `<button class="x-sair" style="color:var(--text)" id="gAm">Ver em Amigos</button>`);
-  $("gSheet").querySelectorAll(".og").forEach(b => (b.onclick = () => { rkCod = b.dataset.c; gFecha(); renderAtual(); }));
-  $("gAm").onclick = () => { gFecha(); irPara("#amigos"); };
+// menu do grupo (toque no nome grande do Ranking): o único lugar para trocar, entrar, criar, convidar, editar e sair
+function gSheetMenu(e, d) {
+  const dono = d.grupo.dono === e.uid, nomeG = d.grupo.nome || "Grupo";
+  const IC = p => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+  gSheet(e.grupos.length > 1 ? "Seus grupos" : "Grupo", (e.grupos.length > 1 ? `<div class="ia-gl">` + e.grupos.map(x => `<button class="og" data-c="${x.cod}" aria-current="${x.cod === rkCod}"><b>${escHTML(x.nome)}</b>${x.cod === rkCod ? '<small class="ck">✓</small>' : "<small></small>"}</button>`).join("") + `</div>` : "") +
+    `<div class="x-lbl">${escHTML(nomeG)}</div>
+    <button class="ia-acao" id="gConv">${CONV_SVG}Convidar<small>${rkCod}</small></button>
+    ${dono ? `<button class="ia-acao" id="gEd">${IC('<path d="M4 20h4L19 9l-4-4L4 16z"/>')}Editar nome e pessoas</button>` : ""}
+    <button class="ia-acao red" id="gSair">${IC('<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>')}Sair do grupo</button>
+    <div class="x-lbl">${e.grupos.length > 1 ? "Mais um grupo" : "Outro grupo"}</div>
+    <button class="ia-acao" id="gEnt">${IC('<path d="M12 5v14M5 12h14"/>')}Entrar com código</button>
+    <button class="ia-acao" id="gCri">${IC('<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/>')}Criar grupo</button>`);
+  const bg = $("gSheet");
+  bg.querySelectorAll(".og").forEach(b => (b.onclick = () => { rkCod = b.dataset.c; gFecha(); renderRanking(); }));
+  $("gConv").onclick = () => rkConvidar();
+  if ($("gEd")) $("gEd").onclick = () => gSheetEditar(e, d);
+  $("gEnt").onclick = () => gSheetEntrar();
+  $("gCri").onclick = () => gSheetCriar(e);
+  const sair = $("gSair");
+  sair.onclick = async () => {
+    if (!sair.classList.contains("conf")) { sair.classList.add("conf"); sair.lastChild.textContent = "Toque de novo para sair"; return; }
+    sair.disabled = true; await window.nuvem.sairGrupo(rkCod); rkCod = null; rkCache = {}; gFecha(); renderRanking();
+  };
 }
 function gSheetEditar(e, d) {
   const g = d.grupo, n = window.nuvem;
