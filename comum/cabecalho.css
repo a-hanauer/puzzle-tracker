@@ -146,7 +146,7 @@ header.gh {
   box-shadow: 0 -10px 40px rgba(0, 0, 0, .22) !important;
 }
 /* a bandeja sobe de baixo ao abrir; dá para fechá-la puxando para baixo pela alça (comum/cabecalho.js) */
-.overlay > .modal { position: relative; }
+.overlay > .modal { position: relative; overflow-x: hidden !important; touch-action: pan-y; }   /* só rola na vertical (a doca rola para o lado por conta própria) */
 .overlay.open > .modal { animation: gh-sobe .34s cubic-bezier(.22, .9, .3, 1) both; }
 @keyframes gh-sobe { from { transform: translateY(100%); } to { transform: none; } }
 .overlay > .modal::before {
@@ -528,7 +528,7 @@ html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-
   border: .5px solid color-mix(in srgb, var(--gh-ink, #000) 10%, transparent);
   box-shadow: 0 8px 24px rgba(0, 0, 0, .12), inset 0 1px 0 rgba(255, 255, 255, .35);
 }
-.gh-doca .dk-lista { flex: 1; min-width: 0; display: flex; gap: 4px; padding: 0 8px 0 2px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.gh-doca .dk-lista { touch-action: pan-x; flex: 1; min-width: 0; display: flex; gap: 4px; padding: 0 8px 0 2px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .gh-doca .dk-lista::-webkit-scrollbar { display: none; }
 .gh-doca a { text-decoration: none; color: var(--gh-ink); -webkit-touch-callout: none; }
 .gh-doca .dk-casa { flex: 0 0 44px; align-self: flex-start; margin-top: 2px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; background: rgba(118, 118, 128, .16); }
