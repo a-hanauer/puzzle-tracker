@@ -522,18 +522,18 @@ html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-
 /* ---------- doca de jogos no fim da partida (opção "C", 10/11/2026; comum/proximo.js) ----------
    Faixa de vidro com o início e todos os outros jogos do dia; feitos apagados com ✓, o próximo com anel. */
 .gh-doca {
-  display: flex; align-items: center; gap: 4px; margin-top: 10px; padding: 7px 8px; border-radius: 24px;
-  overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  display: flex; align-items: center; gap: 4px; margin-top: 10px; padding: 7px 0 7px 8px; border-radius: 24px; overflow: hidden;
   background: color-mix(in srgb, var(--gh-surface, #fff) 74%, transparent);
   -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%);
   border: .5px solid color-mix(in srgb, var(--gh-ink, #000) 10%, transparent);
   box-shadow: 0 8px 24px rgba(0, 0, 0, .12), inset 0 1px 0 rgba(255, 255, 255, .35);
 }
-.gh-doca::-webkit-scrollbar { display: none; }
+.gh-doca .dk-lista { flex: 1; min-width: 0; display: flex; gap: 4px; padding: 0 8px 0 2px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.gh-doca .dk-lista::-webkit-scrollbar { display: none; }
 .gh-doca a { text-decoration: none; color: var(--gh-ink); -webkit-touch-callout: none; }
-.gh-doca .dk-casa { flex: 0 0 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; background: rgba(118, 118, 128, .16); }
+.gh-doca .dk-casa { flex: 0 0 44px; align-self: flex-start; margin-top: 2px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; background: rgba(118, 118, 128, .16); }
 .gh-doca .dk-casa svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.gh-doca .dk-sep { flex: 0 0 1px; height: 36px; margin: 0 4px; background: rgba(118, 118, 128, .3); }
+.gh-doca .dk-sep { flex: 0 0 1px; height: 36px; margin: 0 2px 0 6px; align-self: flex-start; margin-top: 6px; background: rgba(118, 118, 128, .3); }
 .gh-doca .dk-j { position: relative; flex: 0 0 56px; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; padding-top: 2px; }
 .gh-doca .dk-j:active .px-ic { transform: scale(.92); }
 .gh-doca .dk-j .px-ic { width: 44px; height: 44px; border-radius: 13px; font-size: 24px; transition: transform .15s; }
@@ -545,8 +545,6 @@ html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-
   display: flex; align-items: center; justify-content: center; background: #3fa24c; color: #fff; font-size: .6rem; font-weight: 900;
   box-shadow: 0 0 0 2px var(--gh-surface, #fff);
 }
-.gh-doca .dk-j.nx .px-ic { box-shadow: 0 0 0 2px var(--gh-surface, #fff), 0 0 0 4px var(--gh-accent, #4f46e5); }
-.gh-doca .dk-j.nx small { font-weight: 800; }
 .fim-foot.com-doca { display: block; border-top: 0; padding-top: 8px; }
 .fim-foot .gh-doca { margin-top: 0; box-shadow: none; background: rgba(118, 118, 128, .1); border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
 /* bandeja de resultado mais compacta: ícone menor */

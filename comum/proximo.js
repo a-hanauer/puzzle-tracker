@@ -196,28 +196,24 @@
     return b;
   }
 
-  // doca de jogos (opção "C", 10/11/2026): faixa de vidro com o início e todos os outros jogos do dia; feitos apagados com ✓,
-  // o próximo pendente com anel. Rola para o lado. Vai embaixo da faixa de resultado e no pé da bandeja de resultado.
+  // doca de jogos (opção "C", 10/11/2026): faixa de vidro com o início (fixo) e todos os outros jogos do dia (rolam para o
+  // lado); feitos apagados com ✓, nenhum outro destaque. Vai embaixo da faixa de resultado e no pé da bandeja de resultado.
   function doca(s) {
     const nav = document.createElement("nav");
     nav.className = "gh-doca"; nav.setAttribute("aria-label", "Ir para outro jogo");
-    nav.insertAdjacentHTML("beforeend", `<a class="dk-casa" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia">${CASA}</a><span class="dk-sep" aria-hidden="true"></span>`);
-    const lista = jogos(s).filter(g => g.id !== ATUAL);
-    const nx = lista.find(g => !feito(g, s));
-    let alvo = null;
-    for (const g of lista) {
+    // o início fica fixo à esquerda; só a fileira de jogos rola para o lado
+    nav.insertAdjacentHTML("beforeend", `<a class="dk-casa" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia">${CASA}</a><span class="dk-sep" aria-hidden="true"></span><div class="dk-lista"></div>`);
+    const fila = nav.querySelector(".dk-lista");
+    for (const g of jogos(s).filter(g => g.id !== ATUAL)) {
       const a = document.createElement("a"), ok = feito(g, s);
-      a.className = "dk-j" + (ok ? " ok" : "") + (g === nx ? " nx" : "");
+      a.className = "dk-j" + (ok ? " ok" : "");
       a.href = new URL(g.url, CATALOGO_RAIZ).href;
-      a.setAttribute("aria-label", `${g.name}${ok ? " (feito)" : g === nx ? " (próximo)" : ""}`);
+      a.setAttribute("aria-label", `${g.name}${ok ? " (feito)" : ""}`);
       a.append(icone(g));
       a.insertAdjacentHTML("beforeend", `<small>${esc(g.name)}</small>`);
       a.onclick = e => abrir(e, g, s);
-      nav.append(a);
-      if (g === nx) alvo = a;
+      fila.append(a);
     }
-    // o próximo pendente sempre à vista
-    if (alvo) requestAnimationFrame(() => { nav.scrollLeft = Math.max(0, alvo.offsetLeft - 70); });
     return nav;
   }
 
