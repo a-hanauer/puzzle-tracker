@@ -74,6 +74,11 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   trilho em cápsula cinza e pílula clara que desliza até a opção escolhida (`.sg-pill`). Pega `.segx`, `.seg2`, `.modo` (Gerânio),
   `#theme-seg` (5PILA) e `[data-seg]`; escolhida = `aria-checked`/`aria-pressed="true"` ou `.active`/`.on`. Seletor novo: usar um desses.
 
+- **Fim de partida** (opção "C", 10/11/2026; `comum/proximo.js` + `cabecalho.css`): a doca de jogos (`.gh-doca`, faixa de vidro com o
+  início e todos os outros jogos do dia — feitos apagados com ✓, o próximo pendente com anel; rola para o lado) fica embaixo da faixa de
+  resultado no jogo e no pé da bandeja de resultado, no lugar do antigo botão "Próximo". Jogo livre (modo de teste) mantém Início/Jogar outro.
+  Bandeja de resultado com ícone menor (64px).
+
 ## Publicar
 
 1. Subir a versão do cache em `sw.js` (`const CACHE = "jogos-do-dia-vN"`).

@@ -196,6 +196,31 @@
     return b;
   }
 
+  // doca de jogos (opção "C", 10/11/2026): faixa de vidro com o início e todos os outros jogos do dia; feitos apagados com ✓,
+  // o próximo pendente com anel. Rola para o lado. Vai embaixo da faixa de resultado e no pé da bandeja de resultado.
+  function doca(s) {
+    const nav = document.createElement("nav");
+    nav.className = "gh-doca"; nav.setAttribute("aria-label", "Ir para outro jogo");
+    nav.insertAdjacentHTML("beforeend", `<a class="dk-casa" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia">${CASA}</a><span class="dk-sep" aria-hidden="true"></span>`);
+    const lista = jogos(s).filter(g => g.id !== ATUAL);
+    const nx = lista.find(g => !feito(g, s));
+    let alvo = null;
+    for (const g of lista) {
+      const a = document.createElement("a"), ok = feito(g, s);
+      a.className = "dk-j" + (ok ? " ok" : "") + (g === nx ? " nx" : "");
+      a.href = new URL(g.url, CATALOGO_RAIZ).href;
+      a.setAttribute("aria-label", `${g.name}${ok ? " (feito)" : g === nx ? " (próximo)" : ""}`);
+      a.append(icone(g));
+      a.insertAdjacentHTML("beforeend", `<small>${esc(g.name)}</small>`);
+      a.onclick = e => abrir(e, g, s);
+      nav.append(a);
+      if (g === nx) alvo = a;
+    }
+    // o próximo pendente sempre à vista
+    if (alvo) requestAnimationFrame(() => { nav.scrollLeft = Math.max(0, alvo.offsetLeft - 70); });
+    return nav;
+  }
+
   // a linha "Jogar um extra · Próximo em" fica logo abaixo do tabuleiro
   // (o elemento marcado com data-tabuleiro em cada jogo), não no pé da tela
   function subrows() {
@@ -226,11 +251,16 @@
 
     const contagem = `<span class="cd">${PROXIMO} ${esc(NOME)} em <b data-contagem>--:--:--</b></span>`;
     // faixa de fim: próximo jogo à direita (se houver) e a linha de baixo
-    document.querySelectorAll(".fim-nx").forEach(el => {
-      el.innerHTML = "";
-      if (acabou && g) el.append(botaoProximo(g, s, "nx"));
-    });
+    // embaixo da faixa de resultado: a doca com todos os jogos (no lugar do antigo botão "Próximo")
     let reajusta = false;
+    document.querySelectorAll(".fim-nx").forEach(el => { el.innerHTML = ""; });
+    document.querySelectorAll(".fim-row").forEach(row => {
+      if (row.closest(".modal")) return;
+      const velha = row.nextElementSibling?.classList.contains("gh-doca") ? row.nextElementSibling : null;
+      if (velha) velha.remove();
+      if (acabou && !livre) row.after(doca(s));
+      if (!!velha !== (acabou && !livre)) reajusta = true;
+    });
     subrows().forEach(el => {
       if (el.hidden === acabou) reajusta = true;
       el.hidden = !acabou;
@@ -251,15 +281,15 @@
     });
     document.querySelectorAll(".modal.fim .fim-foot").forEach(el => {
       el.innerHTML = "";
-      el.insertAdjacentHTML("beforeend", `<a class="fim-btn fim-home" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia">${CASA}<span class="rot">Voltar aos Jogos do Dia</span></a>`);
-      if (!SEM_LIVRE && livre) {
+      if (!SEM_LIVRE && livre) {                          // jogo livre (modo de teste): início e "Jogar outro", como antes
+        el.insertAdjacentHTML("beforeend", `<a class="fim-btn fim-home" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia">${CASA}<span class="rot">Voltar aos Jogos do Dia</span></a>`);
         const outro = document.createElement("button");
         outro.type = "button"; outro.className = "fim-btn fim-outro";
         outro.innerHTML = `${REFRESH}<span>Jogar outro</span>`;
         outro.addEventListener("click", jogarExtra);
         el.append(outro);
-      }
-      if (g) el.append(botaoProximo(g, s, "fim-btn fim-nxbtn"));
+      } else el.append(doca(s));
+      el.classList.toggle("com-doca", !livre || SEM_LIVRE);
       el.hidden = false;
     });
     document.dispatchEvent(new Event("gh-contagem"));
