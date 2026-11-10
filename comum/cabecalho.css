@@ -550,3 +550,4 @@ html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-
 /* bandeja de resultado mais compacta: ícone menor */
 .modal.fim .fim-art > img, .modal.fim .fim-art > svg { height: 64px !important; }
 .modal.fim .fim-art { margin: 0 0 8px; }
+#tip[hidden], .tip[hidden] { display: none !important; }   /* a dica do jogo some quando a partida acaba (a contagem fica na linha de baixo do tabuleiro) */

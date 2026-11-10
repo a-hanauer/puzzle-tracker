@@ -77,7 +77,9 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - **Fim de partida** (opção "C", 10/11/2026; `comum/proximo.js` + `cabecalho.css`): a doca de jogos (`.gh-doca`, faixa de vidro com o
   início fixo e os outros jogos do dia numa fileira que rola para o lado — em aberto primeiro, feitos no fim, apagados com ✓; nenhum outro destaque) fica embaixo da faixa de
   resultado no jogo e no pé da bandeja de resultado, no lugar do antigo botão "Próximo". Jogo livre (modo de teste) mantém Início/Jogar outro.
-  Bandeja de resultado com ícone menor (64px).
+  Bandeja de resultado com ícone menor (64px). Partida terminada = `#controls.done`, `.gh-fim.on` ou `body.acabou` (Ponto Cruz,
+  Brigadeiro e, desde 10/11/2026, Gerânio — que não tem faixa de resultado, só a doca). Em todos: "Próximo em" logo abaixo do tabuleiro,
+  depois a faixa de resultado, depois a doca; a dica do próprio jogo (`#tip`) some.
 
 ## Publicar
 

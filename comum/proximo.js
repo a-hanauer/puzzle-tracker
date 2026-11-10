@@ -151,7 +151,7 @@
       row.className = "fim-row";
       c.before(row); row.append(c);
       row.insertAdjacentHTML("beforeend", '<span class="fim-nx"></span>');
-      row.insertAdjacentHTML("afterend", '<div class="fim-subrow" hidden></div>');
+      row.insertAdjacentHTML("beforebegin", '<div class="fim-subrow" hidden></div>');   // "Próximo em" acima da faixa (e da doca), como nos outros jogos
     }
     // bandeja de resultado: o atalho do jogo livre junto do resultado; o pé no lugar da antiga linha
     document.querySelectorAll(".modal.fim").forEach(m => {
@@ -228,7 +228,10 @@
     if (!el) {
       el = document.createElement("div");
       el.className = "fim-subrow junto"; el.hidden = true;
-      alvo.after(el);
+      // tabuleiro centrado numa caixa em linha (Ponto Cruz, Brigadeiro): a linha vai depois da caixa, não ao lado do tabuleiro
+      const pai = alvo.parentElement, cs = pai && getComputedStyle(pai), fr = alvo.querySelector(".fim-row");
+      if (fr) fr.before(el);                               // "tabuleiro" que já contém a faixa (Gerânio): a linha vai antes dela e da doca
+      else (cs && cs.display.includes("flex") && !cs.flexDirection.startsWith("column") ? pai : alvo).after(el);
     }
     return [el];
   }
@@ -237,7 +240,7 @@
   function atualizar(forcar) {
     montar();
     // partida na tela terminou? (faixa de fim à mostra)
-    const acabou = !!document.querySelector("#controls.done, .gh-fim.on");
+    const acabou = !!document.querySelector("#controls.done, .gh-fim.on, body.acabou");   // body.acabou: Ponto Cruz, Brigadeiro, Gerânio
     const livre = chave.on();
     const { g, s } = proximo();
     const k = [acabou, livre, g ? g.id : "", nivel()].join("|");
@@ -344,6 +347,7 @@
   const vigia = () => {
     const obs = new MutationObserver(() => atualizar(false));
     document.querySelectorAll("#controls, .gh-fim").forEach(el => obs.observe(el, { attributes: true, attributeFilter: ["class"] }));
+    obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", vigia); else vigia();
   document.addEventListener("visibilitychange", () => { if (!document.hidden) atualizar(true); });

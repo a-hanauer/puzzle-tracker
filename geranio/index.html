@@ -230,7 +230,7 @@
   .niveis .hj { font-weight: 800; color: var(--ink) !important; }
   .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--ink); color: var(--bg); font: inherit; font-weight: 700; font-size: .95rem; }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=157">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=158">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--acc); --gh-line: var(--line); }
   header.gh { flex: none; } .gh-meta { flex: none; }
@@ -362,7 +362,7 @@
     achadas = ja.filter(n => RESP.has(n)); raras = ja.filter(n => !RESP.has(n));
     ordem = saved?.ordem && saved.ordem.length === puzzle.f.length ? saved.ordem : [...P.f];
     dicaUsada = !!saved?.dica; alvo = saved?.alvo || null;
-    finished = !!saved?.done; avisouPleno = !!(saved?.avisouPleno || saved?.pleno); digitado = ""; ultimasOrdem = [...achadas, ...raras];
+    finished = !!saved?.done; document.body.classList.toggle("acabou", finished); avisouPleno = !!(saved?.avisouPleno || saved?.pleno); digitado = ""; ultimasOrdem = [...achadas, ...raras];
     if (!teste) { const now = new Date(); $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`; }
     fechaLista(); desenhaFlor(); fit(); render(false);
     if (dica) dica.atualiza();
@@ -696,7 +696,7 @@
       return;
     }
     if (pts < corte(META)) return;
-    finished = true; avisouPleno = pleno();
+    finished = true; avisouPleno = pleno(); document.body.classList.add("acabou");   // a doca de jogos aparece embaixo (comum/proximo.js); a flor se ajusta
     persist(); render();
     celebrar("girassol", { alvo: $("palco"), esmaecer: $("flor") }).then(() => setTimeout(showEnd, 200));   // comum/celebra.js
   }
@@ -767,6 +767,6 @@
 <script src="../comum/catalogo.js?v=154"></script>
 <script src="../comum/celebra.js?v=154"></script>
 <script src="../comum/recorde.js?v=154"></script>
-<script src="../comum/proximo.js?v=157" data-jogo="girassol"></script>
+<script src="../comum/proximo.js?v=161" data-jogo="girassol"></script>
 </body>
 </html>
