@@ -50,10 +50,10 @@
   html, body, a, button { touch-action: manipulation; }
   html { height: 100%; background: var(--bg); -webkit-text-size-adjust: 100%; }
   body {
-    margin: 0 auto; max-width: 520px; height: 100%;
+    margin: 0 auto; max-width: 520px; height: calc(100% + var(--sobra, 0px));   /* app instalado: o iPhone deixa uma faixa de fora embaixo (--sobra, comum/tema.js), como nos outros jogos */
     background: var(--bg); color: var(--ink);
     font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    padding: calc(12px + env(safe-area-inset-top)) 16px max(10px, calc(env(safe-area-inset-bottom) - 10px));
+    padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
     display: flex; flex-direction: column; overflow: hidden;
     -webkit-font-smoothing: antialiased; -webkit-user-select: none; user-select: none;
   }
