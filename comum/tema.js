@@ -173,7 +173,7 @@
   } catch (e) {}
   // Telas dos jogos (<html data-fixa>): a página não rola nem "estica" com o dedo — o arrasto
   // é do jogo (Novelo, Azulejo...). Continua rolando o que precisa rolar (texto das
-  // bandejas) e, se num celular pequeno a página não couber na tela, ela rola normalmente.
+  // bandejas, fileiras que rolam para o lado) e, se num celular pequeno a página não couber na tela, ela rola normalmente.
   try {
     if (document.documentElement.hasAttribute("data-fixa")) {
       var st2 = document.createElement("style");
@@ -181,8 +181,9 @@
       document.head.appendChild(st2);
       var rolavel = function (el) {
         for (; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
-          var oy = getComputedStyle(el).overflowY;
+          var cs = getComputedStyle(el), oy = cs.overflowY, ox = cs.overflowX;
           if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight + 1) return true;
+          if ((ox === "auto" || ox === "scroll") && el.scrollWidth > el.clientWidth + 1) return true;   // fileiras que rolam para o lado (doca de jogos)
         }
         return false;
       };
