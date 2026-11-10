@@ -203,3 +203,58 @@
   window.addEventListener("storage", function (e) { if (e.key === KEY) apply(get()); });
   window.addEventListener("pageshow", function () { apply(get()); });
 })();
+
+// ---------- seletores (segmented control) no padrão do iOS 26 (opção "A", 10/11/2026) ----------
+// Trilho em cápsula cinza e uma "pílula" clara que desliza até a opção escolhida. Vale para os seletores do
+// painel (.segx, .seg2), a chave Resumo | Grade do Gerânio (.modo), o tema do 5PILA (#theme-seg) e quem tiver [data-seg].
+// A opção escolhida é a que tiver aria-checked/aria-pressed="true" ou a classe .active/.on.
+(function () {
+  var SEL = ".segx,.seg2,.modo,#theme-seg,[data-seg]";
+  var ATIVO = ['[aria-checked="true"]', '[aria-pressed="true"]', ".active", ".on"];
+  var css = ":root{--sg-track:rgba(118,118,128,.12);--sg-thumb:#fff;--sg-sh:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.04)}" +
+    "@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--sg-track:rgba(118,118,128,.24);--sg-thumb:#636366;--sg-sh:0 3px 8px rgba(0,0,0,.28)}}" +
+    ":root[data-theme=dark]{--sg-track:rgba(118,118,128,.24);--sg-thumb:#636366;--sg-sh:0 3px 8px rgba(0,0,0,.28)}" +
+    ".sg.sg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;padding:3px;border:0;border-radius:999px;background:var(--sg-track);isolation:isolate}" +
+    ".sg.sg>button{position:relative;z-index:1;min-width:0;min-height:32px;padding-top:6px;padding-bottom:6px;border:0;border-radius:999px;background:transparent!important;box-shadow:none!important;color:inherit;font-weight:600;transition:opacity .15s}" +
+    ".sg.sg>button:active{opacity:.6}" +
+    ".sg.sg>.sg-pill{position:absolute;z-index:0;top:3px;bottom:3px;left:0;width:0;border-radius:999px;background:var(--sg-thumb);box-shadow:var(--sg-sh);pointer-events:none;" +
+    "transition:transform .34s cubic-bezier(.3,1.15,.5,1),width .34s cubic-bezier(.3,1.15,.5,1),opacity .2s}" +
+    "@media (prefers-reduced-motion:reduce){.sg.sg>.sg-pill{transition:none}}";
+  var ult = {}, pend = 0;
+  function ativo(c) {
+    for (var i = 0; i < c.children.length; i++) {
+      var b = c.children[i];
+      if (b.tagName !== "BUTTON") continue;
+      for (var j = 0; j < ATIVO.length; j++) if (b.matches(ATIVO[j])) return b;
+    }
+    return null;
+  }
+  function arruma(c) {
+    if (!c.classList.contains("sg")) c.classList.add("sg");
+    var p = c.querySelector(":scope > .sg-pill"), novo = !p;
+    if (novo) { p = document.createElement("i"); p.className = "sg-pill"; p.setAttribute("aria-hidden", "true"); c.insertBefore(p, c.firstChild); }
+    var b = ativo(c);
+    if (!b || !b.offsetWidth) { p.style.opacity = "0"; return; }
+    var k = c.id || c.getAttribute("aria-label") || c.className, x = b.offsetLeft, w = b.offsetWidth;
+    if (novo && ult[k]) {   // o seletor foi desenhado de novo: a pílula sai de onde estava e desliza
+      p.style.transition = "none"; p.style.width = ult[k].w + "px"; p.style.transform = "translateX(" + ult[k].x + "px)";
+      void p.offsetWidth; p.style.transition = "";
+    }
+    if (novo && !ult[k]) { p.style.transition = "none"; }
+    p.style.opacity = "1"; p.style.width = w + "px"; p.style.transform = "translateX(" + x + "px)";
+    if (novo && !ult[k]) { void p.offsetWidth; p.style.transition = ""; }
+    ult[k] = { x: x, w: w };
+  }
+  function tudo() { pend = 0; var l = document.querySelectorAll(SEL); for (var i = 0; i < l.length; i++) arruma(l[i]); }
+  function agenda() { if (!pend) pend = requestAnimationFrame(tudo); }
+  function liga() {
+    var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
+    tudo();
+    new MutationObserver(function (ms) {
+      for (var i = 0; i < ms.length; i++) { var t = ms[i].target; if (!(t.classList && t.classList.contains("sg-pill"))) { agenda(); return; } }
+    }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-checked", "aria-pressed", "class", "hidden"] });
+    window.addEventListener("resize", agenda);
+    window.addEventListener("pageshow", agenda);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", liga); else liga();
+})();

@@ -70,6 +70,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   (`comum/teclado.js` → `ghTeclado`, estilo `.gh-kb` em `cabecalho.css`, o mesmo do 5PILA e do Sando).
   Cada jogo só troca as cores (`--kb-bg`, `--kb-ink`, `--kb-dim`).
 
+- **Seletores** (segmented control, opção "A", 10/11/2026): padrão do iOS 26, em `comum/tema.js` (vale para todas as páginas):
+  trilho em cápsula cinza e pílula clara que desliza até a opção escolhida (`.sg-pill`). Pega `.segx`, `.seg2`, `.modo` (Gerânio),
+  `#theme-seg` (5PILA) e `[data-seg]`; escolhida = `aria-checked`/`aria-pressed="true"` ou `.active`/`.on`. Seletor novo: usar um desses.
+
 ## Publicar
 
 1. Subir a versão do cache em `sw.js` (`const CACHE = "jogos-do-dia-vN"`).
