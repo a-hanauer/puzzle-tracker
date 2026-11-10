@@ -107,7 +107,7 @@ async function salvaPerfil(s) { await setDoc(doc(db, "users", user.uid), { apeli
 // Envia os resultados que ainda não foram (ou mudaram). Lotes pequenos: cada gravação confere nas regras se a pessoa é do
 // grupo (um get() no grupo), e o banco recusa o lote inteiro se passar de 20 consultas — com lotes de 100, o histórico dos
 // dias anteriores nunca subia. Se um lote falhar, tenta um a um, para um resultado estranho não segurar os outros.
-const RES_V = 2;   // subir para reenviar tudo de todo mundo
+const RES_V = 3;   // subir para reenviar tudo de todo mundo (3: 10/11/2026, para garantir o histórico antigo de todos)
 async function enviaResultados(lista) {
   const s = ler(); if (!user || !s.grupos?.length || !navigator.onLine) return;
   if (s.resV !== RES_V) { s.res = {}; s.resV = RES_V; }
@@ -131,8 +131,11 @@ async function enviaResultados(lista) {
     }
     if (i % 80 === 0) gravar({ ...ler(), res: s.res, resV: s.resV });   // guarda o avanço no caminho
   }
-  gravar({ ...ler(), res: s.res, resV: s.resV });
-  return { enviados: novos.length - falhas, falhas };
+  // resumo do que está na nuvem (Ajustes → Conta na nuvem): quantos dias de resultado e desde quando
+  const marcados = Object.keys(s.res), desde = marcados.map(k => k.slice(0, 10)).sort()[0] || "";
+  const envio = { t: Date.now(), total: marcados.length, desde, agora: novos.length - falhas, falhas };
+  gravar({ ...ler(), res: s.res, resV: s.resV, envio });
+  return envio;
 }
 
 window.nuvem = {
@@ -143,7 +146,7 @@ window.nuvem = {
   get estado() {
     const s = ler();
     return { conectado: !!user, anonimo: !!user?.isAnonymous, email: user?.email || "", uid: user?.uid || "",
-      apelido: s.apelido || "", grupos: s.grupos || [], ultimaSync, erro };
+      apelido: s.apelido || "", grupos: s.grupos || [], ultimaSync, erro, envio: s.envio || null };
   },
   // entra sem cadastro (cria a conta anônima na primeira vez) e guarda o apelido
   async entrar(apelido) {
@@ -207,6 +210,8 @@ window.nuvem = {
   },
   async mudaApelido(apelido) { const s = ler(); s.apelido = apelido.trim().slice(0, 20); s.res = {}; await salvaPerfil(s); },
   enviaResultados,
+  // manda de novo todo o histórico para os grupos (Ajustes → "Enviar meu histórico de novo")
+  async reenviaTudo(lista) { const s = ler(); s.res = {}; gravar(s); return enviaResultados(lista); },
   // resultados do grupo entre dois dias (inclusive), já com os nomes dos membros
   async resultados(cod, de, ate) {
     const g = await getDoc(doc(db, "grupos", cod));

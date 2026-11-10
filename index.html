@@ -2746,9 +2746,17 @@ function renderConta() {
   const hora = e.ultimaSync ? new Date(e.ultimaSync).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null;
   el.innerHTML = `<div class="set-note" style="margin-top:0"><b>${escHTML(e.apelido || "Sem apelido")}</b>${e.email ? ` · ${escHTML(e.email)}` : " · conta deste aparelho"}<br>
       ${e.erro ? "Não consegui sincronizar agora." : hora ? `Progresso salvo na nuvem (última vez às ${hora}).` : "Progresso sendo salvo na nuvem…"}</div>
+    ${e.grupos.length ? `<div class="set-note" id="contaHist">${e.envio?.total ? `Histórico no ranking: ${e.envio.total} resultados, desde ${e.envio.desde.split("-").reverse().join("/")}${e.envio.falhas ? ` · ${e.envio.falhas} recusados na última vez` : ""}.` : "Histórico no ranking: ainda enviando…"}
+      <button class="rk-link" id="contaReenv" style="display:block">Enviar meu histórico de novo</button></div>` : ""}
     ${e.anonimo ? `<button class="rk-btn sc" id="contaLigar">Ligar e-mail e senha (para outro aparelho)</button>` : ""}
     <button class="rk-link" id="contaJa">${e.anonimo ? "Já tenho conta com e-mail: entrar nela" : "Sair da conta"}</button><div id="contaForm"></div>`;
   if ($("contaLigar")) $("contaLigar").onclick = () => contaForm("ligar");
+  if ($("contaReenv")) $("contaReenv").onclick = async () => {
+    const b = $("contaReenv"); b.disabled = true; b.textContent = "Enviando…";
+    try { const r = await n.reenviaTudo(resultadosParaRanking()); rkCache = {}; toast(r ? `${r.agora} resultados enviados${r.falhas ? `, ${r.falhas} recusados` : ""}` : "Sem internet agora"); }
+    catch (x) { console.warn(x); toast("Não deu certo agora"); }
+    renderConta();
+  };
   $("contaJa").onclick = () => e.anonimo ? contaForm("entrar") : n.sair().then(renderConta);
 }
 function contaForm(modo) {
@@ -2783,7 +2791,7 @@ render();
 route();
 scheduleMidnight();
 </script>
-<script type="module" src="nuvem.js?v=6"></script>
+<script type="module" src="nuvem.js?v=7"></script>
 <script>
 /* Trava a área segura de baixo no maior valor visto (como no Nightrun): no app instalado o iPhone às vezes muda o
    env(safe-area-inset-bottom) ao trocar de página, e a barra pulava de altura. */

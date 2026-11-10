@@ -53,7 +53,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   `BK_FORA`); ao importar, a conta deste aparelho reenvia tudo e `reentraGrupos` entra de novo nos grupos (`jogosDoDia.reentrar`).
   Num aparelho novo a pessoa vira outro membro do grupo; para seguir a mesma, e-mail e senha.
 - Configurações (aba Ajustes) → Conta na nuvem: apelido, última sincronização, ligar e-mail e senha, entrar numa conta com e-mail
-  ("Esqueci a senha": e-mail de redefinição do próprio Firebase, em pt-BR — `recuperarSenha`).
+  ("Esqueci a senha": e-mail de redefinição do próprio Firebase, em pt-BR — `recuperarSenha`); "Histórico no ranking: N resultados, desde
+  dd/mm" (`estado.envio`) e "Enviar meu histórico de novo" (`reenviaTudo`). `RES_V` em nuvem.js: subir faz todo mundo reenviar tudo (3 desde 10/11/2026).
 - Amigos fora da página de ranking (09/11/2026): o painel guarda os resultados de hoje do 1º grupo em `jogosDoDia.grupo`
   (não vai para a nuvem). Com ele: no fim de cada jogo da casa, `grupoFim` (comum/recorde.js, chamado por `semanaFim`)
   mostra "Nº de M no grupo", o pódio do dia com 💡 e quem ainda não jogou, no mesmo cartão do bloco da semana, logo acima
