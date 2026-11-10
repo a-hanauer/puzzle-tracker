@@ -204,8 +204,10 @@
     // o início fica fixo à esquerda; só a fileira de jogos rola para o lado
     nav.insertAdjacentHTML("beforeend", `<a class="dk-casa" href="${new URL("./", CATALOGO_RAIZ).href}" aria-label="Voltar aos Jogos do Dia">${CASA}</a><span class="dk-sep" aria-hidden="true"></span><div class="dk-lista"></div>`);
     const fila = nav.querySelector(".dk-lista");
-    for (const g of jogos(s).filter(g => g.id !== ATUAL)) {
-      const a = document.createElement("a"), ok = feito(g, s);
+    // em aberto primeiro, feitos no fim (cada grupo na ordem do painel)
+    const outros = jogos(s).filter(g => g.id !== ATUAL), feitos = new Set(outros.filter(g => feito(g, s)).map(g => g.id));
+    for (const g of [...outros.filter(g => !feitos.has(g.id)), ...outros.filter(g => feitos.has(g.id))]) {
+      const a = document.createElement("a"), ok = feitos.has(g.id);
       a.className = "dk-j" + (ok ? " ok" : "");
       a.href = new URL(g.url, CATALOGO_RAIZ).href;
       a.setAttribute("aria-label", `${g.name}${ok ? " (feito)" : ""}`);

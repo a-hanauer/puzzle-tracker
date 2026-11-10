@@ -75,7 +75,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   `#theme-seg` (5PILA) e `[data-seg]`; escolhida = `aria-checked`/`aria-pressed="true"` ou `.active`/`.on`. Seletor novo: usar um desses.
 
 - **Fim de partida** (opção "C", 10/11/2026; `comum/proximo.js` + `cabecalho.css`): a doca de jogos (`.gh-doca`, faixa de vidro com o
-  início fixo e os outros jogos do dia numa fileira que rola para o lado — feitos apagados com ✓, nenhum outro destaque) fica embaixo da faixa de
+  início fixo e os outros jogos do dia numa fileira que rola para o lado — em aberto primeiro, feitos no fim, apagados com ✓; nenhum outro destaque) fica embaixo da faixa de
   resultado no jogo e no pé da bandeja de resultado, no lugar do antigo botão "Próximo". Jogo livre (modo de teste) mantém Início/Jogar outro.
   Bandeja de resultado com ícone menor (64px).
 
