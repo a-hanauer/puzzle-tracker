@@ -22,6 +22,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - **Barra de abas** (09/11/2026, opção "B"; desde 10/11/2026 com 4 abas: Jogos · Ranking · Estatísticas · Ajustes — Amigos entrou no Ranking), no rodapé do painel (a mesma
   cápsula de vidro dos outros apps, com gota sob a aba e encolhendo ao rolar). Substituiu os botões redondos do topo. Abas trocam
   a página com `irPara(hash)` (replaceState, sem empilhar); o perfil de uma pessoa empilha e tem "voltar". Pontinho de amigo novo na aba Ranking.
+- **Topo do painel** (11/11/2026): à direita do título, o resumo do dia (`#resumoDia`: 🔥 sequência = dias seguidos jogando, `seqPainel`, o mesmo
+  número do Ranking e das Estatísticas; anel + "3/13" feitos hoje; toque = Estatísticas). Na linha de baixo, "qua, 11 nov · nível 3" + pontinhos
+  (dia abreviado; "de 7" só onde cabe) e, à direita, o tempo para os novos desafios (`#novos`, ampulheta + "14h 12min"; segundos só na última hora).
+- **Feito** (11/11/2026): igual nas duas listas do painel — o cartão segue normal, com ✓ verde, e vai para o fim da lista (em aberto primeiro, como na doca). Nada riscado.
 - **Área segura**: respeitar `env(safe-area-inset-*)` em cima (notch) e embaixo (barra de gestos).
 
 ## Nuvem e ranking com amigos (Firebase, desde 09/11/2026)
@@ -45,6 +49,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   entrar com código e criar); botão de convidar ao lado; linha com as bolinhas e "N pessoas · você criou"; seções Hoje | Semana | Pessoas
   (`rkModo`). Pessoas (`rkPessoas`): cada um com o que jogou hoje e o duelo da semana com você (você: sequência de dias), convite e
   "Editar grupo". Sem grupo: tela "Jogue com amigos" (criar / "Tenho um código de convite").
+- Ranking (11/11/2026): em Semana não há mais o placar em cima (repetia a classificação): a manchete ("Bia lidera a semana") é o título da
+  classificação. As regras saíram do pé da página: botão "Como funciona o ranking" (`rkComoFunciona`, bandeja). Em Pessoas, o duelo numa linha: "você 1 × 2 Bia".
 - Ranking (09/11/2026): faixa com os 7 dias da semana (fora de hoje, botão "↩ Voltar para hoje"; tocar de novo na aba também volta), placar do dia/semana (opção "B": todo mundo com os 1º lugares, coroa em quem lidera, você primeiro no empate — `rkPlacar`), bolinhas coloridas por pessoa
   (`rkCor`), quem não jogou numa linha só; Semana com barras de 1º lugares e o melhor de cada jogo. Uma consulta por semana (`rkSemanaDados`, cache de 1 min).
   Só quem criou o grupo
@@ -64,6 +70,19 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   (Semana | Mês | Sempre; em cada jogo de cada dia que os dois terminaram), hoje lado a lado e recordes.
 
 ## Consistência visual (muito importante)
+
+- **Revisão geral de 11/11/2026** (o dono pediu para aplicar tudo, sem prévia): manter estes padrões ao mexer.
+  - **Alvos de toque**: 44 px ou mais. Botão pequeno ganha área invisível (`::after` com `inset` negativo), como `.gh-back`, `.gh-btn`, setas da semana.
+  - **Texto**: nada abaixo de 11 px (`.69rem`), fora as iniciais dentro das bolinhas.
+  - **Nível**: sempre "nível N de 7" (painel, jogos, Sando e 5PILA; nada de "3/7" nem "Normal" na linha do dia).
+  - **Desfazer e recomeçar**: os mesmos ícones em todos (desfazer = seta curva para trás; recomeçar = círculo anti-horário; nada de lixeira). Recomeçar sempre
+    dá para desfazer. Ponto Cruz tem Recomeçar ao lado de Anotar. No Brigadeiro os dois seguem em cima da assadeira, longe das setas (decisão anterior).
+  - **Cabeçalho dos jogos**: mesmo topo (12 px + área segura) e laterais (16 px) em todos, inclusive Sando e 5PILA, para não pular ao trocar pela doca.
+  - **Ajustes**: listas agrupadas do iOS (`.set-grupo`: um cartão por assunto, linhas `.set-btn` com ícone, texto `.tx` e seta; `.set-info` para linha só de leitura). Nada de link sublinhado solto.
+  - **Seletor com muitos itens** (jogo das Estatísticas): fileira de ícones que rola (`.jg-rola`), não seletor segmentado.
+  - **Faixa de resultado**: com grupo, mostra a pílula da posição ("🥇 1º de 3", `.fim-pos`, `grupoPos` em comum/recorde.js).
+  - **Instrução fixa embaixo do tabuleiro**: some para quem já terminou o jogo 5 vezes (`jogoVeterano(prefixo)` em comum/tema.js); avisos e contagens continuam.
+  - Sando abre o "Como jogar" na primeira visita, como os outros.
 
 - Reaproveitar sempre os componentes comuns em vez de desenhar de novo em cada jogo:
   cabeçalho (`comum/cabecalho.css/js`), dica (`comum/dica.js`), fim de jogo, e o **teclado**

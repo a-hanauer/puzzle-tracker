@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="color-scheme" content="light dark">
-<script src="../comum/tema.js?v=156"></script>
+<script src="../comum/tema.js?v=157"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -124,7 +124,7 @@
   }
   /* página na altura da tela, com o teclado preso embaixo (mesmo padrão do Quinhentos):
      as fatias ficam centralizadas no espaço livre acima do painel de letras */
-  #app{width:100%;max-width:460px;padding:14px clamp(12px,4vw,18px) max(4px, calc(env(safe-area-inset-bottom,0px) - 16px));
+  #app{width:100%;max-width:460px;padding:12px 16px max(4px, calc(env(safe-area-inset-bottom,0px) - 16px));
     display:flex;flex-direction:column;gap:0;}   /* estica na altura do body (flex) */
   /* espaço livre dividido acima e abaixo das fatias (#app aumenta a especificidade:
      as regras de #hint e #msg mais abaixo definem margin) */
@@ -298,9 +298,9 @@
     padding:10px 15px 12px;margin-bottom:12px;}
   .letters-panel-title{font-size:.9rem;font-stretch:62.5%;font-weight:500;letter-spacing:.1em;color:var(--text-dim);
     text-align:left;text-transform:uppercase;margin-bottom:8px;opacity:.9;}
-  .letters-panel-row{display:flex;flex-wrap:nowrap;gap:0;}
+  .letters-panel-row{display:flex;flex-wrap:nowrap;gap:0;justify-content:space-between;}   /* espaço igual entre as letras (M e W são mais largas) */
   /* letras possíveis: Noto extracondensada, maior e mais legível no mesmo espaço */
-  .lp-letter{flex:1 1 0;min-width:0;text-align:center;color:var(--text);font-weight:600;font-stretch:62.5%;
+  .lp-letter{flex:0 0 auto;min-width:0;text-align:center;color:var(--text);font-weight:600;font-stretch:62.5%;
     text-transform:uppercase;font-size:clamp(.8rem,4.4vw,1.1rem);line-height:1.2;}
   .lp-letter.excluded{color:var(--text-dim);font-weight:400;text-decoration:line-through;opacity:.45;}
 
@@ -469,7 +469,7 @@
   .mode-switch-track{border:0;}
 </style>
 
-<link rel="stylesheet" href="../comum/cabecalho.css?v=159">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=160">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: #fff; --fim-btn-border: 0; --gh-fim-ink: #fff; --gh-fim-border: 0; --gh-fim-border-lose: 0; --mpad: 18px; --gh-ink: var(--text); --gh-muted: var(--text-dim); --gh-surface: var(--card); --gh-track: var(--tile-ghost); --gh-accent: var(--accent); --gh-line: color-mix(in srgb, var(--text) 22%, transparent); }
@@ -681,7 +681,7 @@
 
   function nivelLivre(){ try { var v = localStorage.getItem('sanduba-nivel-livre'); return TRIES_LIVRE[v] ? v : 'normal'; } catch(e){ return 'normal'; } }
   window.sandubaLivre = {
-    diario: NOME_NIVEL[nivelDoDia()],    // o desafio do dia segue a semana (domingo é Difícil)
+    diario: `nível ${(new Date().getDay() + 6) % 7 + 1} de 7`,    // como nos outros jogos da casa (as tentativas seguem a semana: Fácil, Normal, Difícil)
     niveis: [{ v: 'facil', rotulo: 'Fácil', opcao: 'Fácil · 20' }, { v: 'normal', rotulo: 'Normal', opcao: 'Normal · 14' }, { v: 'dificil', rotulo: 'Difícil', opcao: 'Difícil · 10' }],
     atual: nivelLivre,
     aoMudar: function(v){ try { localStorage.setItem('sanduba-nivel-livre', v); } catch(e){} closeModal('end-overlay'); newGame('practice'); window.dispatchEvent(new Event('sanduba-livre')); },
@@ -1208,6 +1208,15 @@
 
   document.getElementById('settings-btn').addEventListener('click', function(){ openModal('settings-overlay'); });
   document.getElementById('help-btn').addEventListener('click', function(){ openModal('help-overlay'); });
+  // primeira visita (nenhuma partida guardada): abre o "Como jogar", como nos outros jogos da casa
+  try {
+    if (!localStorage.getItem('sanduba-viu-ajuda')) {
+      localStorage.setItem('sanduba-viu-ajuda', '1');
+      var jaJogou = false;
+      for (var iK = 0; iK < localStorage.length; iK++) if (/^sanduba-(daily|livre|stats)/.test(localStorage.key(iK))) { jaJogou = true; break; }
+      if (!jaJogou) setTimeout(function(){ openModal('help-overlay'); }, 400);
+    }
+  } catch (e) {}
   document.getElementById('settings-help').addEventListener('click', function(){
     closeModal('settings-overlay'); openModal('help-overlay');
   });
@@ -1336,7 +1345,7 @@
 </script>
 <script src="../comum/catalogo.js?v=154"></script>
 <script src="../comum/celebra.js?v=154"></script>
-<script src="../comum/recorde.js?v=154"></script>
-<script src="../comum/proximo.js?v=162" data-jogo="sanduba"></script>
+<script src="../comum/recorde.js?v=155"></script>
+<script src="../comum/proximo.js?v=163" data-jogo="sanduba"></script>
 </body>
 </html>

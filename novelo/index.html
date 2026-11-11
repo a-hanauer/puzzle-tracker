@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Novelo">
 <title>NOVELO — um fio por todas as casas</title>
 <link rel="icon" type="image/png" href="icon.png?v=21">
-<script src="../comum/tema.js?v=156"></script>
+<script src="../comum/tema.js?v=157"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=21">
@@ -237,7 +237,7 @@
     background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem;
   }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=159">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=160">
 <style>
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
 </style>
@@ -373,7 +373,7 @@
     history = [];
     const now = new Date();
     $("dayInfo").innerHTML = kind === "dia"
-      ? `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`
+      ? `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l} de 7`
       : "";
     if (kind === "livre") ghNivel($("dayInfo"), { niveis: NIVEIS, atual: P.l, aoMudar: l => newFree(l), aoSortear: () => newFree() });
     else $("dayInfo").classList.remove("gh-nivel");
@@ -899,7 +899,7 @@
   function showEnd() {
     $("endTime").textContent = fmt(elapsed);
     const daily = kind === "dia";
-    $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l}/7 · ${N}×${N}` : `Jogo livre · nível ${P.l}/7 · ${N}×${N}`) + (dicaUsada ? " · com dica" : "");
+    $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l} de 7 · ${N}×${N}` : `Jogo livre · nível ${P.l} de 7 · ${N}×${N}`) + (dicaUsada ? " · com dica" : "");
     const rec = daily && window.recordeDoDia ? recordeDoDia("novelo:", dayNum) : null;
     if (window.seloRecorde) seloRecorde($("endSub"), rec && `Seu melhor tempo de ${rec.dia} · antes ${fmt(rec.antes)}`);
     if (window.semanaFim) semanaFim($("endSub"), daily ? semanaTempos("novelo:", dayNum) : null, "tempo");   // últimos 7 dias
@@ -917,12 +917,12 @@
     }
     const nx = nextNum();
     if (nx > K) { t.classList.add("warn"); t.innerHTML = `Chegou no ${K}, mas faltam <b>${C - path.length}</b> casas.<br>Volte o fio e passe por todas.`; }
-    else if (path.length === 1) t.innerHTML = "Arraste a partir do <b>1</b> e passe pelos números em ordem,<br>cobrindo todas as casas.";
+    else if (path.length === 1) t.innerHTML = jogoVeterano(LS) ? "" : "Arraste a partir do <b>1</b> e passe pelos números em ordem,<br>cobrindo todas as casas.";
     else t.innerHTML = `Próximo número: <b>${nx}</b> · faltam <b>${C - path.length}</b> casas`;
   }
 
   $("shareBtn").addEventListener("click", () => {
-    const text = `NOVELO #${dayNum} · nível ${P.l}/7\n🧶 ${fmt(elapsed)}${dicaUsada ? " 💡" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/novelo/`;
+    const text = `NOVELO #${dayNum} · nível ${P.l} de 7\n🧶 ${fmt(elapsed)}${dicaUsada ? " 💡" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/novelo/`;
     ghCompartilhar($("shareBtn"), text);
   });
   $("againBtn").addEventListener("click", () => newFree());
@@ -958,7 +958,7 @@
 </script>
 <script src="../comum/catalogo.js?v=154"></script>
 <script src="../comum/celebra.js?v=154"></script>
-<script src="../comum/recorde.js?v=154"></script>
-<script src="../comum/proximo.js?v=162" data-jogo="novelo"></script>
+<script src="../comum/recorde.js?v=155"></script>
+<script src="../comum/proximo.js?v=163" data-jogo="novelo"></script>
 </body>
 </html>

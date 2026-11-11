@@ -272,6 +272,16 @@
       if (!el.childElementCount) el.hidden = true;
       if (el.hidden !== antes) reajusta = true;
     });
+    // posição no grupo de amigos, na própria faixa de resultado (11/11/2026): "🥇 1º de 3"
+    document.querySelectorAll(".fim-pos").forEach(el => el.remove());
+    const gp = acabou && !livre && window.grupoPos ? grupoPos() : null;
+    if (gp) document.querySelectorAll("#doneBar, .gh-fim-bar").forEach(bar => {
+      if (bar.closest(".modal")) return;
+      const p = document.createElement("span"); p.className = "fim-pos"; p.textContent = `${gp.med ? gp.med + " " : ""}${gp.pos}º de ${gp.total}`;
+      p.setAttribute("aria-label", `${gp.pos}º de ${gp.total} no grupo`);
+      const seta = [...bar.children].reverse().find(x => x.tagName.toLowerCase() === "svg");
+      if (seta) bar.insertBefore(p, seta); else bar.append(p);
+    });
     if (reajusta) window.dispatchEvent(new Event("resize"));   // o tabuleiro se reajusta já, antes de a tela ser desenhada
     const tip = document.getElementById("tip");
     if (tip && document.getElementById("controls")) tip.hidden = acabou;

@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png?v=21">
-<script src="../comum/tema.js?v=156"></script>
+<script src="../comum/tema.js?v=157"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=21">
@@ -251,6 +251,7 @@
   @media (prefers-reduced-motion: reduce) { .controls.play .done-bar * { animation: none !important; } }
   .controls button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
   .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; }
+  .tip.vet { visibility: hidden; }
   .tip b#tipCount { font-variant-numeric: tabular-nums; color: var(--ink); }
   .tip svg { width: 18px; height: 18px; vertical-align: -3.5px; margin: -2px -1px; }
 
@@ -371,7 +372,7 @@
   }
 
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=159">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=160">
 <style>
   /* cores do cabeçalho comum, a partir das cores deste jogo */
   :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
@@ -443,8 +444,8 @@
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
   </div>
-  <button id="clearBtn" aria-label="Limpar tabuleiro" title="Limpar tabuleiro">
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+  <button id="clearBtn" aria-label="Recomeçar" title="Recomeçar">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
   </button>
 </div>
 <div class="tip" id="tip"><span id="tipAll" hidden><b>Visão geral</b>: sóis e luas juntos<br>toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use href="#i-orb"/></svg>&nbsp;→&nbsp;<svg><use href="#i-luna"/></svg>&nbsp;→&nbsp;vazio · a estrela vale nas duas vistas</span><span id="tipPlay"><b id="tipMode">Modo sol</b>: toque = <i class="dt"></i>&nbsp;→&nbsp;<svg><use id="tipSym" href="#i-orb"/></svg>&nbsp;→&nbsp;vazio<br>Estrela <i class="dt"></i> é sua · ponto <i class="dt a"></i> é do jogo · arraste marca vários</span><span id="tipDone" hidden></span></div>
@@ -481,9 +482,9 @@
 <!-- Confirmação para limpar -->
 <div class="overlay" id="clearOverlay">
   <div class="modal" style="max-width:320px;text-align:center">
-    <h2 style="justify-content:center">Limpar o tabuleiro?</h2>
+    <h2 style="justify-content:center">Recomeçar o tabuleiro?</h2>
     <p style="color:var(--muted);margin:0 0 18px">Todas as peças e marcações saem. As peças reveladas ficam. Dá para desfazer depois.</p>
-    <button class="btn" id="clearYes" style="background:var(--bad);color:#fff">Limpar</button>
+    <button class="btn" id="clearYes" style="background:var(--bad);color:#fff">Recomeçar</button>
     <button class="close" data-close style="margin-top:12px;width:auto;padding:0 18px;height:36px;border-radius:99px">Cancelar</button>
   </div>
 </div>
@@ -548,7 +549,7 @@
     dicaUsada = !!saved?.dica;
     history = []; UNITS = null;
     $("dayInfo").innerHTML = kind === "dia"
-      ? `${WEEK[new Date().getDay()]}, ${new Date().getDate()} ${MONTHS[new Date().getMonth()]} · nível ${P.l}/7`
+      ? `${WEEK[new Date().getDay()]}, ${new Date().getDate()} ${MONTHS[new Date().getMonth()]} · nível ${P.l} de 7`
       : "";
     if (kind === "livre") ghNivel($("dayInfo"), { niveis: NIVEIS, atual: P.l, aoMudar: l => newFree(l), aoSortear: () => newFree() });
     else $("dayInfo").classList.remove("gh-nivel");
@@ -1126,7 +1127,7 @@
     $("endTime").textContent = fmt(elapsed);
     const daily = kind === "dia";
     $("endTitle").textContent = "Eclipse completo!";
-    $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l}/7` : `Jogo livre · nível ${P.l}/7`) + (dicaUsada ? " · com dica" : "");
+    $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l} de 7` : `Jogo livre · nível ${P.l} de 7`) + (dicaUsada ? " · com dica" : "");
     const rec = daily && window.recordeDoDia ? recordeDoDia("eclipse:", dayNum) : null;
     if (window.seloRecorde) seloRecorde($("endSub"), rec && `Seu melhor tempo de ${rec.dia} · antes ${fmt(rec.antes)}`);
     if (window.semanaFim) semanaFim($("endSub"), daily ? semanaTempos("eclipse:", dayNum) : null, "tempo");   // últimos 7 dias
@@ -1137,6 +1138,7 @@
   }
   // dica embaixo: instruções durante o jogo; depois, quando vem o próximo desafio
   function updateTip() {
+    $("tip").classList.toggle("vet", !finished && jogoVeterano(LS));   // quem já jogou bastante não precisa da legenda (o lugar fica reservado)
     $("tipPlay").hidden = finished || mode === "E";
     $("tipAll").hidden = finished || mode !== "E";
     $("tipDone").hidden = !finished;
@@ -1153,7 +1155,7 @@
   setInterval(tickCountdown, 1000); tickCountdown();
 
   $("shareBtn").addEventListener("click", () => {
-    const text = `ECLIPSE #${dayNum} · nível ${P.l}/7\n☀️🌙 ${fmt(elapsed)}${dicaUsada ? " 💡" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/eclipse/`;
+    const text = `ECLIPSE #${dayNum} · nível ${P.l} de 7\n☀️🌙 ${fmt(elapsed)}${dicaUsada ? " 💡" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/eclipse/`;
     ghCompartilhar($("shareBtn"), text);
   });
 
@@ -1176,7 +1178,7 @@
 </script>
 <script src="../comum/catalogo.js?v=154"></script>
 <script src="../comum/celebra.js?v=154"></script>
-<script src="../comum/recorde.js?v=154"></script>
-<script src="../comum/proximo.js?v=162" data-jogo="eclipse"></script>
+<script src="../comum/recorde.js?v=155"></script>
+<script src="../comum/proximo.js?v=163" data-jogo="eclipse"></script>
 </body>
 </html>

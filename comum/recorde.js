@@ -105,6 +105,18 @@
   function fmtR(r) {
     return r.tipo === "pts" ? r.valor + " pts" : r.tipo === "tries" ? (r.won ? "" : "✗ ") + r.valor + "/" + (r.max || "?") : r.tipo === "inc" ? String(r.valor) : fmtT(r.valor);
   }
+  // posição de quem joga no grupo, hoje, neste jogo (para a pílula da faixa de resultado): { med, pos, total } ou null
+  window.grupoPos = function () {
+    var id = PASTA[(location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/) || [])[1]];
+    var g = ler("jogosDoDia.grupo"), eu = id && meuResultado(id);
+    if (!g || g.dia !== hojeK() || !eu || typeof eu.valor !== "number" || (eu.tipo === "tries" && !eu.won)) return null;
+    var lista = (g.res || []).filter(function (r) { return r.jogo === id && r.uid !== g.eu; });
+    if (!lista.length) return null;
+    eu.eu = true; lista.push(eu); lista.sort(ordem);
+    var euPos = lista.findIndex(function (r) { return r.eu; }), minha = 0;
+    for (var i = 0; i <= euPos; i++) if (i === 0 || ordem(lista[i - 1], lista[i]) !== 0) minha = i;
+    return { med: MED[minha] || "", pos: minha + 1, total: lista.length };
+  };
   window.grupoFim = function (subEl, mostrar) {
     var box = subEl.parentNode.querySelector(".fim-grupo");
     var id = PASTA[(location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/) || [])[1]];

@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Gerânio">
 <title>GERÂNIO — palavras com as letras da flor</title>
 <link rel="icon" type="image/png" href="icon.png?v=4">
-<script src="../comum/tema.js?v=156"></script>
+<script src="../comum/tema.js?v=157"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=4">
@@ -78,6 +78,7 @@
   @keyframes sobe { 40% { transform: scale(1.18); color: var(--bom); } }
 
   /* ---------- palavras achadas: barra que abre a lista ---------- */
+  .achadas { position: relative; } .achadas::after { content: ""; position: absolute; inset: -7px 0; }   /* área de toque de 44 px */
   .achadas { display: flex; gap: 8px; align-items: center; width: 100%; padding: 6px 2px; border: 0; border-radius: 0;
     background: none; color: var(--muted); font: inherit; font-size: .92rem; white-space: nowrap; overflow: hidden; cursor: pointer; text-align: left; }
   .achadas b { color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -230,7 +231,7 @@
   .niveis .hj { font-weight: 800; color: var(--ink) !important; }
   .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--ink); color: var(--bg); font: inherit; font-weight: 700; font-size: .95rem; }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=159">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=160">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--acc); --gh-line: var(--line); }
   header.gh { flex: none; } .gh-meta { flex: none; }
@@ -363,7 +364,7 @@
     ordem = saved?.ordem && saved.ordem.length === puzzle.f.length ? saved.ordem : [...P.f];
     dicaUsada = !!saved?.dica; alvo = saved?.alvo || null;
     finished = !!saved?.done; document.body.classList.toggle("acabou", finished); avisouPleno = !!(saved?.avisouPleno || saved?.pleno); digitado = ""; ultimasOrdem = [...achadas, ...raras];
-    if (!teste) { const now = new Date(); $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l}/7`; }
+    if (!teste) { const now = new Date(); $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l} de 7`; }
     fechaLista(); desenhaFlor(); fit(); render(false);
     if (dica) dica.atualiza();
   }
@@ -706,7 +707,7 @@
     $("endPts").textContent = `${pts} pts`;
     const pct = Math.round(100 * achadas.length / P.w.length);
     $("endSub").innerHTML = `<b>${achadas.length} de ${P.w.length}</b> palavras do dia (${pct}%)` + (raras.length ? ` · +${raras.length} rara${raras.length > 1 ? "s" : ""}` : "") +
-      `<br>${teste ? "Extra" : "#" + dayNum} · nível ${P.l}/7${dicaUsada ? " · com dica" : ""}`;
+      `<br>${teste ? "Extra" : "#" + dayNum} · nível ${P.l} de 7${dicaUsada ? " · com dica" : ""}`;
     if (window.semanaFim) {
       if (teste) semanaFim($("endSub"), null);
       else {
@@ -766,7 +767,7 @@
 </script>
 <script src="../comum/catalogo.js?v=154"></script>
 <script src="../comum/celebra.js?v=154"></script>
-<script src="../comum/recorde.js?v=154"></script>
-<script src="../comum/proximo.js?v=162" data-jogo="girassol"></script>
+<script src="../comum/recorde.js?v=155"></script>
+<script src="../comum/proximo.js?v=163" data-jogo="girassol"></script>
 </body>
 </html>

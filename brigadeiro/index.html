@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Brigadeiro">
 <title>BRIGADEIRO — incline a assadeira até cada doce cair na forminha</title>
 <link rel="icon" type="image/png" href="icon.png?v=1">
-<script src="../comum/tema.js?v=156"></script>
+<script src="../comum/tema.js?v=157"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=1">
@@ -89,8 +89,9 @@
   .tec [data-d="0"] { grid-column: 2; grid-row: 1; } .tec [data-d="3"] { grid-column: 1; grid-row: 2; }
   .tec [data-d="2"] { grid-column: 2; grid-row: 2; } .tec [data-d="1"] { grid-column: 3; grid-row: 2; }
   .acoes { display: flex; justify-content: center; gap: 8px; margin: 2px 0 8px; }
-  .acoes button { border: 0; height: 36px; padding: 0 13px; border-radius: 99px; background: var(--kb-bg); color: var(--kb-ink); cursor: pointer;
+  .acoes button { position: relative; border: 0; height: 36px; padding: 0 13px; border-radius: 99px; background: var(--kb-bg); color: var(--kb-ink); cursor: pointer;
     display: inline-flex; align-items: center; gap: 6px; font: 700 .8rem/1 inherit; }
+  .acoes button::after { content: ""; position: absolute; inset: -4px 0; }   /* área de toque de 44 px */
   .acoes button:active { transform: translateY(1px); }
   .acoes button:disabled { opacity: .45; cursor: default; }
   .acoes svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
@@ -125,7 +126,7 @@
   .fim-time small { font-size: 1.05rem; font-weight: 700; letter-spacing: 0; color: var(--muted); }
   .demo svg { width: 200px; height: auto; }
 </style>
-<link rel="stylesheet" href="../comum/cabecalho.css?v=159">
+<link rel="stylesheet" href="../comum/cabecalho.css?v=160">
 <style>
   :root { --fim-btn-bg: var(--ink); --fim-btn-ink: var(--bg); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
   .gh .gh-brand b { letter-spacing: .02em; font-stretch: 75%; font-size: 1.15rem; }   /* nome comprido: cabe ao lado da dica */
@@ -143,8 +144,8 @@
 <div class="aviso" id="aviso" aria-live="polite"></div>
 
 <div class="acoes" id="acoes">
-  <button id="desfazBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M6.5 3v4h4"/></svg>Desfazer</button>
-  <button id="recomecaBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg>Recomeçar</button>
+  <button id="desfazBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Desfazer</button>
+  <button id="recomecaBtn" type="button" disabled><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Recomeçar</button>
 </div>
 
 <div class="stage" id="stage"><svg id="tab" data-tabuleiro role="grid" aria-label="Assadeira com brigadeiros e forminhas"></svg></div>
@@ -257,7 +258,7 @@
     dicaUsada = !!saved?.dica;
     finished = !!saved?.done;
     const now = new Date();
-    $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l || (now.getDay() + 6) % 7 + 1}/7`;
+    $("dayInfo").textContent = `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l || (now.getDay() + 6) % 7 + 1} de 7`;
     desenhaFixo(); tamanho(); posiciona(true); placar(); aviso("");
     if (dica) dica.atualiza();
   }
@@ -339,7 +340,7 @@
     const st = $("stage"), t = $("tab");
     t.style.width = t.style.height = "0px";
     const r = (LH + 26) / (LW + 20);
-    const w = Math.max(200, Math.min(st.clientWidth, st.clientHeight / r, 470));
+    const w = Math.max(140, Math.min(st.clientWidth, st.clientHeight / r, 470));   // em tela baixa a assadeira encolhe em vez de cobrir os botões
     t.style.width = w + "px"; t.style.height = w * r + "px";
   }
   window.addEventListener("resize", () => { if (P) tamanho(); });
@@ -552,7 +553,7 @@
 </script>
 <script src="../comum/catalogo.js?v=154"></script>
 <script src="../comum/celebra.js?v=154"></script>
-<script src="../comum/recorde.js?v=154"></script>
-<script src="../comum/proximo.js?v=162" data-jogo="brigadeiro"></script>
+<script src="../comum/recorde.js?v=155"></script>
+<script src="../comum/proximo.js?v=163" data-jogo="brigadeiro"></script>
 </body>
 </html>

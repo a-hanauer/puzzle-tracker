@@ -24,6 +24,10 @@ header.gh {
   width: 34px; height: 34px; margin-left: -8px; border-radius: 50%;
   color: var(--gh-ink); text-decoration: none; opacity: .75;
 }
+/* área de toque de 44 px ou mais, sem mudar o desenho (11/11/2026) */
+.gh .gh-back, .gh .gh-btn { position: relative; }
+.gh .gh-back::after { content: ""; position: absolute; inset: -6px; }
+.gh .gh-btn::after { content: ""; position: absolute; inset: -4px; }
 .gh .gh-back:active { opacity: 1; background: rgba(127, 127, 127, .15); }
 .gh .gh-brand {
   display: flex; align-items: center; gap: 9px; margin-right: auto; min-width: 0;
@@ -93,7 +97,7 @@ header.gh {
 }
 .gh-lv-ops.num button { width: 36px; padding: 0; }
 .gh-lv-ops button[aria-pressed="true"] { background: var(--gh-accent); color: var(--fim-btn-ink, #fff); }
-.gh-lv-esc { display: flex; justify-content: space-between; margin: 7px 4px 0; font-size: .68rem; font-weight: 600; color: var(--gh-muted); }
+.gh-lv-esc { display: flex; justify-content: space-between; margin: 7px 4px 0; font-size: .69rem; font-weight: 600; color: var(--gh-muted); }
 .gh-free {
   display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
   cursor: pointer; font-weight: 500; color: var(--gh-muted); position: relative;
@@ -345,7 +349,7 @@ html.bandeja-aberta, html.bandeja-aberta body { overflow: hidden !important; ove
 .fim-row a.nx { min-height: 70px; width: 104px; padding: 10px 12px 10px 14px; gap: 8px; }
 .fim-row a.nx .nx-col { gap: 5px; }
 .fim-row a.nx .px-ic { width: 36px; height: 36px; }
-.fim-row a.nx small { font-size: .64rem; }
+.fim-row a.nx small { font-size: .69rem; }
 /* próximo jogo: à direita da faixa de resultado e da mesma altura — ícone com "Próximo"
    embaixo e uma seta. Jogo da casa: o botão inteiro tem a cor do cartão dele no painel
    (o ícone tem esse mesmo fundo, então não aparece o quadrado). Jogo externo: painel
@@ -392,13 +396,13 @@ a.nx.tinta .px-ic { background: none; }
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
   padding-top: 16px; border-top: 1px solid rgba(127, 127, 127, .18); text-align: left;
 }
-.fim-foot .cd { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gh-muted); line-height: 1.3; }
+.fim-foot .cd { font-size: .69rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gh-muted); line-height: 1.3; }
 .fim-foot .cd b { display: block; font-size: 1.1rem; letter-spacing: 0; color: var(--gh-ink); font-variant-numeric: tabular-nums; }
 .fim-foot .fim-nxbtn {
   display: inline-flex !important; align-items: center; gap: 9px; width: auto; margin-left: auto; padding: 10px 12px 10px 10px; text-decoration: none;
 }
 .fim-foot .fim-nxbtn .px-ic { width: 30px; height: 30px; border-radius: 8px; font-size: 18px; background: rgba(255, 255, 255, .2); }
-.fim-foot .fim-nxbtn .t small { font-size: .68rem; font-weight: 600; opacity: .75; }
+.fim-foot .fim-nxbtn .t small { font-size: .69rem; font-weight: 600; opacity: .75; }
 .fim-foot .fim-nxbtn .t b { font-weight: 800; }
 /* "‹ Desafio do dia" (no jogo livre, no lugar da chave) */
 .gh-dia {
@@ -492,7 +496,7 @@ html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-
 .fim-grupo .fg-l .fg-n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fim-grupo .fg-l b { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
 .fim-grupo .fg-l.eu { font-weight: 800; }
-.fim-grupo .fg-dc { display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 5px; font-size: .64rem; font-weight: 800; vertical-align: 1px;
+.fim-grupo .fg-dc { display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 5px; font-size: .69rem; font-weight: 800; vertical-align: 1px;
   color: #a8790a; background: color-mix(in srgb, #e0b84f 24%, transparent); }
 .fim-grupo .fg-falta { margin: 4px 0 0 42px; font-size: .76rem; color: var(--gh-muted); }
 .fim-semana { margin: -4px 0 18px; padding: 14px 12px 12px; border-radius: 16px; background: color-mix(in srgb, var(--gh-ink) 5%, transparent); text-align: center; }
@@ -504,9 +508,9 @@ html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-
 .fim-semana .b.hoje i { background: var(--gh-accent); }
 .fim-semana .b.vazio i { background: color-mix(in srgb, var(--gh-ink) 8%, transparent); }
 .fim-semana .b.perdeu i { background: color-mix(in srgb, #e5484d 55%, transparent); }
-.fim-semana .b small { font-size: .62rem; font-weight: 700; line-height: 1; color: var(--gh-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fim-semana .b small { font-size: .69rem; font-weight: 700; line-height: 1; color: var(--gh-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .fim-semana .b.hoje small { color: var(--gh-ink); }
-.fim-semana .sem-dias { padding-top: 6px; font-size: .66rem; font-weight: 700; color: var(--gh-muted); }
+.fim-semana .sem-dias { padding-top: 6px; font-size: .69rem; font-weight: 700; color: var(--gh-muted); }
 .fim-semana .sem-dias .hoje { color: var(--gh-ink); }
 .fim-semana .sem-rodape { margin-top: 10px; font-size: .8rem; color: var(--gh-muted); }
 .fim-semana .sem-rodape b { color: var(--gh-ink); font-variant-numeric: tabular-nums; }
@@ -534,10 +538,10 @@ html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-
 .gh-doca .dk-casa { flex: 0 0 44px; align-self: flex-start; margin-top: 2px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; background: rgba(118, 118, 128, .16); }
 .gh-doca .dk-casa svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .gh-doca .dk-sep { flex: 0 0 1px; height: 36px; margin: 0 2px 0 6px; align-self: flex-start; margin-top: 6px; background: rgba(118, 118, 128, .3); }
-.gh-doca .dk-j { position: relative; flex: 0 0 56px; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; padding-top: 2px; }
+.gh-doca .dk-j { position: relative; flex: 0 0 60px; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; padding-top: 2px; }
 .gh-doca .dk-j:active .px-ic { transform: scale(.92); }
 .gh-doca .dk-j .px-ic { width: 44px; height: 44px; border-radius: 13px; font-size: 24px; transition: transform .15s; }
-.gh-doca .dk-j small { font-size: .6rem; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gh-doca .dk-j small { font-size: .69rem; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gh-doca .dk-j.ok .px-ic { opacity: .42; }
 .gh-doca .dk-j.ok small { color: var(--gh-muted); }
 .gh-doca .dk-j.ok::after {
@@ -552,3 +556,8 @@ html.gh-carregando, html.gh-carregando *, html.gh-carregando *::before, html.gh-
 .modal.fim .fim-art { margin: 0 0 8px; }
 #tip[hidden], .tip[hidden] { display: none !important; }   /* a dica do jogo some quando a partida acaba (a contagem fica na linha de baixo do tabuleiro) */
 .modal .fim-count, .modal .fim-cd { display: none !important; }   /* "Próximo X em": a contagem dos novos desafios fica só no painel */
+
+/* posição no grupo de amigos, na faixa de resultado (comum/proximo.js) */
+.fim-pos { flex: none; margin-left: auto; padding: 5px 10px; border-radius: 99px; background: rgba(255, 255, 255, .2); color: inherit; font-size: .8rem; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fim-pos + svg, .fim-pos + .chev { margin-left: 8px !important; }
+.gh-fim-bar.perdeu .fim-pos { background: rgba(127, 127, 127, .16); }

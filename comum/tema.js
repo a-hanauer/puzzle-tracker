@@ -259,3 +259,16 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", liga); else liga();
 })();
+
+/* Quem já terminou o jogo algumas vezes não precisa da instrução fixa embaixo do tabuleiro (o "?" do topo continua lá).
+   jogoVeterano("novelo:") = true com 5 ou mais dias terminados guardados neste aparelho. */
+window.jogoVeterano = function (prefixo) {
+  try {
+    var n = 0;
+    for (var i = 0; i < localStorage.length && n < 5; i++) {
+      var k = localStorage.key(i);
+      if (k.indexOf(prefixo + "dia:") === 0 && /"done":true/.test(localStorage.getItem(k) || "")) n++;
+    }
+    return n >= 5;
+  } catch (e) { return false; }
+};
