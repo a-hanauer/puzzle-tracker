@@ -96,10 +96,13 @@
   .palavra .c { color: var(--acc); }
   .palavra .cur { display: inline-block; width: 3px; height: 1.8rem; background: var(--acc); margin-left: 3px; border-radius: 2px; animation: pisca 1.1s steps(1) infinite; }
   @keyframes pisca { 50% { opacity: 0; } }
+  /* avisos: podem quebrar em duas linhas (nada cortado pela largura da tela) */
+  .palavra.msg, .palavra.ok { white-space: normal; text-align: center; line-height: 1.2; text-wrap: balance; }
   .palavra.msg { font-size: 1rem; letter-spacing: .01em; font-weight: 600; color: var(--muted); }
   .palavra.msg b { color: var(--ink); }
-  .palavra.ok { color: var(--bom); font-size: 1.15rem; letter-spacing: .02em; }
-  .palavra.ok b { color: var(--ink); font-size: 1.5rem; letter-spacing: .06em; margin-right: 8px; }
+  /* palavra achada (14/11/2026): a palavra em cima e, na linha de baixo, os pontos ("Pangrama! +13 · todas de 7 letras!") */
+  .palavra.ok { color: var(--bom); font-size: 1rem; letter-spacing: .02em; }
+  .palavra.ok b { display: block; color: var(--ink); font-size: 1.5rem; line-height: 1.15; letter-spacing: .06em; margin: 0 0 2px; overflow-wrap: anywhere; }
   .palavra.pang b { color: var(--acc); }
   .palavra.rara { color: var(--acc); }
   .palavra.treme { animation: treme .3s ease; }

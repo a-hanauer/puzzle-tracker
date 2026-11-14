@@ -228,6 +228,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   em `fit()`); 46px em tela baixa. Embaixo: apagar à esquerda (claro), enviar à direita (escuro). Em cima (08/11/2026):
   embaralhar à esquerda; à direita, o olho que liga/desliga as dicas do tabuleiro (números nas letras, ★, pílulas e começo
   vivo; `body.sem-dicas`, guardado em `girassol:dicas-tabuleiro`). A barra de espaço também embaralha.
+- Aviso ao achar palavra (14/11/2026): em duas linhas — a palavra em cima e, embaixo, os pontos ("Pangrama! +13 · todas de 7 letras!");
+  os avisos (`.palavra.msg`, `.palavra.ok`) podem quebrar linha, nada cortado pela largura da tela.
 - Começo vivo (07/11/2026): enquanto digita, com 1–2 letras, uma linha sob a palavra diz quantas do dia faltam com esse começo e
   os tamanhos ("DE… 3 faltam: 8, 9 (×2) letras"; nunca com 3+ letras); a pílula do começo acende e as outras apagam. ★N no alto
   do miolo = pangramas do dia que faltam (some quando acaba).
