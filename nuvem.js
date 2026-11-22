@@ -5,11 +5,13 @@
 // - Ranking: grupos de amigos por código de convite (grupos/{cod}); cada resultado do dia vai para
 //   grupos/{cod}/res/{dia_jogo_uid}. As regras do banco (firestore.rules) garantem que cada um só grava o seu.
 // O painel (index.html) fala com este módulo por window.nuvem; sem internet, nada quebra: tudo continua local.
+// Desde 22/11/2026 os jogos da casa também carregam este módulo (comum/recorde.js, só para quem tem grupo): mandam o
+// resultado na hora em que a partida termina e ouvem ao vivo os resultados de hoje do grupo (ouvirDia).
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInAnonymously, EmailAuthProvider, linkWithCredential,
   signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, where, writeBatch,
-  arrayUnion, arrayRemove, deleteField } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  arrayUnion, arrayRemove, deleteField, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyDgguzFL-6FtOwaKo0x0r5OBI5uhsrG2qA",
@@ -219,6 +221,22 @@ window.nuvem = {
       : query(collection(db, "grupos", cod, "res"), where("dia", ">=", de), where("dia", "<=", ate));
     const r = await getDocs(q);
     return { grupo: g.exists() ? g.data() : null, res: r.docs.map(d => d.data()) };
+  },
+  // resultados de um dia do grupo, ao vivo: cb({ grupo, res }) agora e a cada mudança (alguém terminou um jogo, entrou,
+  // mudou o apelido). Devolve a função que para de ouvir. Sem internet, o Firestore espera e retoma sozinho.
+  ouvirDia(cod, dia, cb) {
+    let grupo, res, vivo = true;
+    const manda = () => { if (vivo && grupo !== undefined && res !== undefined) cb({ grupo, res }); };
+    const erro = e => console.warn("nuvem: ouvir", e);
+    const p1 = onSnapshot(doc(db, "grupos", cod), d => { grupo = d.exists() ? d.data() : null; manda(); }, erro);
+    const p2 = onSnapshot(query(collection(db, "grupos", cod, "res"), where("dia", "==", dia)), q => { res = q.docs.map(d => d.data()); manda(); }, erro);
+    return () => { vivo = false; p1(); p2(); };
+  },
+  // guarda os resultados de hoje do grupo em "jogosDoDia.grupo" (o painel e o fim de cada jogo leem dali)
+  cacheGrupo(cod, dia, dados) {
+    const g = dados.grupo || {};
+    const res = dados.res.filter(r => r.dia === dia).map(({ uid, apelido, jogo, tipo, valor, max, won, dica, t }) => ({ uid, apelido, jogo, tipo, valor, max, won, dica, t }));
+    try { localStorage.setItem("jogosDoDia.grupo", JSON.stringify({ dia, cod, nome: g.nome || "", eu: user?.uid || ler().uid || "", membros: g.membros || [], nomes: g.nomes || {}, res })); } catch {}
   },
   // conta: liga e-mail e senha à conta anônima (para entrar em outro aparelho) ou entra numa conta que já existe
   async ligarEmail(email, senha) { await linkWithCredential(user, EmailAuthProvider.credential(email, senha)); await auth.currentUser.reload(); user = auth.currentUser; avisa(); },

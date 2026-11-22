@@ -3,6 +3,7 @@
    Só vale a partir da segunda vez no nível (a primeira não tem com o que comparar).
    Jogos de palavras: menos tentativas que o melhor anterior (recordeTentativas). */
 (function () {
+  var RAIZ = new URL("../", document.currentScript.src).href;   // pasta do painel (onde fica nuvem.js)
   var DIAS = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
   var TROFEU = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V18h3v3H8v-3h3v-3.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3V3zm0 4H6v1a2 2 0 0 0 1 1.7V7zm10 0v2.7A2 2 0 0 0 18 8V7h-1z"/></svg>';
   function ler(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
@@ -88,14 +89,15 @@
       return { tipo: "tries", valor: s.guesses.length, max: s.max || 14, won: won, dica: !!s.dica };
     }
     if (id === "quinhentos") {
-      var q = ler("quinhentao:game:padrao"); if (!q || !q.finished) return null;
+      var q = ler("quinhentao:game:padrao"), d0 = new Date(); d0.setHours(0, 0, 0, 0);
+      if (!q || !q.finished || q.dayNum !== Math.floor((d0 - new Date(2024, 0, 1)) / 86400000) + 1) return null;   // só a partida de hoje
       return { tipo: "tries", valor: q.guesses.length, max: q.max || 8, won: !!q.won, dica: !!q.dica };
     }
     var ep = EPOCA[id]; if (!ep) return null;
     var n = Math.round((d - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1, p = ler(id + ":dia:" + n);
     if (!p || !p.done) return null;
     if (id === "girassol") return { tipo: "pts", valor: p.pts || 0, won: true, dica: !!p.dica };
-    if (id === "brigadeiro") return { tipo: "inc", valor: p.inc, won: true, dica: !!p.dica };
+    if (id === "brigadeiro") return { tipo: "inc", valor: p.inc, won: true, max: p.min || 0, dica: !!p.dica };
     return { tipo: "time", valor: p.time, won: true, dica: !!p.dica };
   }
   function ordem(a, b) {
@@ -117,7 +119,9 @@
     for (var i = 0; i <= euPos; i++) if (i === 0 || ordem(lista[i - 1], lista[i]) !== 0) minha = i;
     return { med: MED[minha] || "", pos: minha + 1, total: lista.length };
   };
+  var ultimoFim = null;   // o último bloco desenhado, para redesenhar quando chega resultado novo de amigo
   window.grupoFim = function (subEl, mostrar) {
+    ultimoFim = [subEl, mostrar];
     var box = subEl.parentNode.querySelector(".fim-grupo");
     var id = PASTA[(location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/) || [])[1]];
     var g = ler("jogosDoDia.grupo"), eu = id && meuResultado(id);
@@ -144,6 +148,61 @@
       (so ? "" : '<div class="fg-lista">' + linhas.join("") + "</div>") +
       (faltam.length ? '<div class="fg-falta">' + (faltam.length === 1 ? faltam[0] + " ainda não jogou" : faltam.slice(0, -1).join(", ") + " e " + faltam[faltam.length - 1] + " ainda não jogaram") + "</div>" : "");
   };
+
+  /* ---------- Amigos ao vivo nos jogos (22/11/2026) ----------
+     Antes, o resultado só subia para o grupo quando a pessoa voltava ao painel, e o fim de jogo mostrava os amigos
+     como estavam ao abrir o painel. Agora, para quem tem grupo: o jogo carrega a nuvem (nuvem.js, sem atrasar o
+     tabuleiro), ouve ao vivo os resultados de hoje do grupo e manda o próprio resultado assim que a partida termina
+     (e de novo se ele mudar: Gerânio continua somando pontos depois de feito). Sem conta, sem grupo ou sem internet,
+     nada muda: o painel manda depois, como antes. */
+  function idPagina() { return PASTA[(location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/) || [])[1]]; }
+  // o resultado no mesmo formato do painel (resultadosParaRanking), para a nuvem não reenviar o mesmo resultado
+  function paraEnvio(id) {
+    var r = meuResultado(id); if (!r || typeof r.valor !== "number" || !(r.valor >= 0)) return null;
+    var base = { dia: hojeK(), jogo: id, tipo: r.tipo, valor: Math.round(r.valor) };
+    if (id === "sanduba") {
+      if (!r.won && r.valor < r.max) return null;   // ainda jogando
+      base.max = r.max; base.won = r.won; base.dica = !!r.dica; return base;
+    }
+    if (r.tipo === "tries") { base.dica = !!r.dica; base.won = r.won; base.max = r.max || 0; return base; }
+    base.won = true; base.max = r.max || 0; base.dica = !!r.dica; return base;
+  }
+  var nv = null, carregando = null, parar = null, tEnvio = 0;
+  function conta() { var c = ler("jogosDoDia.nuvem"); return c && c.uid && c.grupos && c.grupos.length ? c : null; }
+  function nuvem() {
+    if (nv) return Promise.resolve(nv);
+    if (!carregando) carregando = import(RAIZ + "nuvem.js?v=8").then(function () { return window.nuvem.pronto; })
+      .then(function () { nv = window.nuvem.estado.conectado ? window.nuvem : null; return nv; })
+      .catch(function (e) { console.warn("amigos ao vivo", e); carregando = null; return null; });
+    return carregando;
+  }
+  function ouve() {
+    var c = conta(); if (!c || parar) return;
+    nuvem().then(function (n) {
+      if (!n || parar) return;
+      var cod = c.grupos[0].cod, dia = hojeK();
+      parar = n.ouvirDia(cod, dia, function (dados) {
+        n.cacheGrupo(cod, dia, dados);
+        if (ultimoFim && ultimoFim[0].isConnected) window.grupoFim(ultimoFim[0], ultimoFim[1]);
+        window.dispatchEvent(new Event("grupo-hoje"));   // comum/proximo.js redesenha a pílula da posição
+      });
+    });
+  }
+  // chamado quando a partida termina (comum/proximo.js) e quando o resultado pode ter mudado (Gerânio depois de feito)
+  window.amigosEnvia = function () {
+    clearTimeout(tEnvio);
+    tEnvio = setTimeout(function () {
+      var id = idPagina(), r = id && conta() && paraEnvio(id); if (!r) return;
+      nuvem().then(function (n) { if (n) return n.enviaResultados([r]); }).catch(function (e) { console.warn("amigos ao vivo", e); });
+    }, 600);
+  };
+  if (idPagina() && conta()) {
+    var comeca = function () { setTimeout(ouve, 900); };
+    if (document.readyState === "complete") comeca(); else window.addEventListener("load", comeca);
+    document.addEventListener("visibilitychange", function () { if (document.hidden) { if (parar) { parar(); parar = null; } } else ouve(); });
+    window.addEventListener("pagehide", function () { if (parar) { parar(); parar = null; } });
+  }
+
   // desenha (ou tira, com dias = null) o bloco logo abaixo da linha pequena e do selo de recorde
   window.semanaFim = function (subEl, dias, tipo) {
     if (window.grupoFim) grupoFim(subEl, !!dias);   // posição no grupo de amigos, logo abaixo do resultado

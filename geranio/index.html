@@ -376,6 +376,7 @@
     const pts = pontos();
     save("dia:" + dayNum, { pid: pid(P), found: achadas, raras, ordem, dica: dicaUsada, alvo, done: finished, avisouPleno, started: achadas.length + raras.length > 0,
       pts, max: P.m, meta: corte(META), pleno: pleno(), nAch: achadas.length, nTot: P.w.length, nRar: raras.length, prog: [pts, corte(META)] });
+    if (finished && window.amigosEnvia) amigosEnvia();   // depois de feito, os pontos seguem subindo: o grupo vê na hora
   }
 
   fetch("desafios.json").then(r => r.json()).then(data => {
@@ -770,7 +771,7 @@
 </script>
 <script src="../comum/catalogo.js?v=154"></script>
 <script src="../comum/celebra.js?v=154"></script>
-<script src="../comum/recorde.js?v=155"></script>
-<script src="../comum/proximo.js?v=163" data-jogo="girassol"></script>
+<script src="../comum/recorde.js?v=156"></script>
+<script src="../comum/proximo.js?v=164" data-jogo="girassol"></script>
 </body>
 </html>

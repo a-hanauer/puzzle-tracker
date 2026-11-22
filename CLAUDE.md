@@ -61,6 +61,13 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Configurações (aba Ajustes) → Conta na nuvem: apelido, última sincronização, ligar e-mail e senha, entrar numa conta com e-mail
   ("Esqueci a senha": e-mail de redefinição do próprio Firebase, em pt-BR — `recuperarSenha`); "Histórico no ranking: N resultados, desde
   dd/mm" (`estado.envio`) e "Enviar meu histórico de novo" (`reenviaTudo`). `RES_V` em nuvem.js: subir faz todo mundo reenviar tudo (3 desde 10/11/2026).
+- **Ao vivo** (22/11/2026): o resultado sobe para o grupo **na hora em que a partida termina**, de dentro do próprio jogo
+  (`amigosEnvia` em comum/recorde.js, chamado por comum/proximo.js quando acaba e pelo Gerânio a cada palavra depois de feito; mesmo
+  formato de `resultadosParaRanking`, para não reenviar). Os jogos carregam `nuvem.js` só se há conta com grupo (sem atrasar o tabuleiro) e
+  ouvem os resultados de hoje do 1º grupo (`ouvirDia`, onSnapshot; para ao esconder a página): a pílula da posição (`poePos`, evento
+  `grupo-hoje`) e o bloco do grupo no fim se redesenham quando um amigo termina. O painel aberto também ouve (`ouveGrupoHoje`):
+  faixas dos cartões, pontinho do Ranking e a página do Ranking em hoje (se for o mesmo grupo e não houver perfil ou bandeja aberta).
+  `cacheGrupo` (nuvem.js) é o único que grava `jogosDoDia.grupo`.
 - Amigos fora da página de ranking (09/11/2026): o painel guarda os resultados de hoje do 1º grupo em `jogosDoDia.grupo`
   (não vai para a nuvem). Com ele: no fim de cada jogo da casa, `grupoFim` (comum/recorde.js, chamado por `semanaFim`)
   mostra "Nº de M no grupo", o pódio do dia com 💡 e quem ainda não jogou, no mesmo cartão do bloco da semana, logo acima

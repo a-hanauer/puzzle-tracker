@@ -16,7 +16,7 @@
 <script src="comum/tema.js?v=157"></script>
 <script src="comum/catalogo.js?v=154"></script>
 <script src="comum/celebra.js?v=154"></script>
-<script src="comum/recorde.js?v=155"></script>
+<script src="comum/recorde.js?v=156"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -2370,7 +2370,7 @@ async function nuvemJa() {
     }
     if (n.confereGrupos && Date.now() - (nuvemJa.conf || 0) > 300000) { nuvemJa.conf = Date.now(); await n.confereGrupos(); }
     await n.enviaResultados(resultadosParaRanking());
-    if (n.estado.grupos.length) await guardaGrupoHoje(n);
+    if (n.estado.grupos.length) { await guardaGrupoHoje(n); ouveGrupoHoje(n); }
   } catch (e) { console.warn("nuvem", e); }
   nuvemRodando = false;
   if (!$("viewSettings").hidden) renderConta();
@@ -2407,11 +2407,24 @@ async function guardaGrupoHoje(n, cod, dados) {
   try {
     const e = n.estado; cod ||= e.grupos[0]?.cod; if (!cod) return;
     dados ||= await n.resultados(cod, today(), today());
-    const g = dados.grupo || {};
-    const res = dados.res.filter(r => r.dia === today()).map(({ uid, apelido, jogo, tipo, valor, max, won, dica, t }) => ({ uid, apelido, jogo, tipo, valor, max, won, dica, t }));
-    localStorage.setItem(GRUPO_CACHE, JSON.stringify({ dia: today(), cod, nome: g.nome || "", eu: e.uid, membros: g.membros || [], nomes: g.nomes || {}, res }));
+    n.cacheGrupo(cod, today(), dados);
     decoraGrupo();
   } catch (x) { console.warn("grupo", x); }
+}
+// ao vivo (22/11/2026): com o painel aberto, quem termina um jogo aparece na hora — nas faixas dos cartões, no pontinho
+// do Ranking e na própria página do Ranking (se estiver em hoje). Uma escuta só, no 1º grupo e no dia de hoje.
+let ouvindo = null;
+function ouveGrupoHoje(n) {
+  const cod = n.estado.grupos[0]?.cod, chave = cod + "|" + today();
+  if (!cod) { ouvindo?.para(); ouvindo = null; return; }
+  if (ouvindo?.chave === chave) return;
+  ouvindo?.para();
+  let tRk = 0;
+  const para = n.ouvirDia(cod, today(), dados => {
+    guardaGrupoHoje(n, cod, dados);
+    if (!$("viewRanking").hidden && rkDia === today() && rkCod === cod && !history.state?.pessoa && $("gSheet").hidden) { clearTimeout(tRk); tRk = setTimeout(() => { rkCache = {}; renderRanking(); }, 400); }
+  });
+  ouvindo = { chave, para };
 }
 function decoraGrupo() {
   const g = readJSON(GRUPO_CACHE), ok = !!g && g.dia === today();
@@ -2864,7 +2877,7 @@ render();
 route();
 scheduleMidnight();
 </script>
-<script type="module" src="nuvem.js?v=7"></script>
+<script type="module" src="nuvem.js?v=8"></script>
 <script>
 /* contagem para os novos desafios no topo do painel */
 (function () {
