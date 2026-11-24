@@ -28,7 +28,8 @@ export const EPOCH = [2026, 10, 4];                 // #1 = quarta, 04/11/2026
 // verbetes.py). Os #1 e #2 (7 letras, base.json) ficam como saíram. A versão anterior (7 letras) está no ramo geranio-6.1.
 // #3 a #21: 6 letras e listas de 10–14 (segunda) a 33–50 (domingo); ficam como saíram
 const LETRAS = 7;
-const NIVEL = { 1: [46, 54], 2: [50, 58], 3: [54, 63], 4: [58, 67], 5: [62, 72], 6: [66, 77], 7: [72, 85] };
+// Desde 24/11/2026 as palavras do dia incluem as formas comuns (formas.json: pode, perde, própria, dias) e as faixas subiram um pouco
+const NIVEL = { 1: [55, 65], 2: [61, 71], 3: [67, 78], 4: [73, 85], 5: [79, 92], 6: [85, 99], 7: [91, 110] };
 // vocabulário: fatia das flores (da mais usada à menos usada) que cada nível pega, com uma folga para não faltar flor
 const VOCAB = l => [Math.max(0, (l - 1) / 7 - .03), Math.min(1, l / 7 + .03)];
 
@@ -39,7 +40,9 @@ function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 10139
 
 export function palavras() {
   const v = JSON.parse(readFileSync(join(DIR, "verbetes.json"), "utf8"));
-  return new Map(Object.entries(v).map(([n, w]) => [n.toUpperCase(), w]));   // MAIUSCULA -> escrita com acento
+  // + formas comuns (plurais, femininos, conjugações de uso corrente: formas.py), para palavra comum não cair como rara
+  const f = JSON.parse(readFileSync(join(DIR, "formas.json"), "utf8"));
+  return new Map([...Object.entries(v), ...Object.entries(f)].map(([n, w]) => [n.toUpperCase(), w]));   // MAIUSCULA -> escrita com acento
 }
 
 // todas as flores possíveis: 7 letras de algum pangrama × cada letra no miolo; dif = média de uso das palavras (maior = menos usadas)

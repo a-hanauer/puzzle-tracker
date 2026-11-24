@@ -173,7 +173,13 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   vem do **vocabulário**: `geranio/uso.json` (feito por `geranio/uso.py` a partir do icf do fserb) dá a frequência de cada palavra;
   cada flor tem a média de uso das suas palavras e cada nível pega uma fatia (segunda = flores de palavras mais usadas, domingo =
   menos usadas; `VOCAB` no gerador). **Meta**: Gerânio = metade dos pontos possíveis (`P.v === 3` na página). Os #1–#21 ficam como saíram.
-  Ordem: verbetes.py → grafia.py → uso.py → gerador.mjs.
+  **Formas comuns** (24/11/2026): palavra comum não pode cair como rara ("pode", "perde", "coloca", "própria", "dias" caíam). `geranio/formas.py`
+  → `formas.json`: qualquer forma do dicionário do jogo (plural, feminino, conjugação) de uso comum por si só — icf ≤ 12,5 e ≥ 100 nas
+  legendas, ou icf ≤ 13,5 e ≥ 500, ou ≥ 1500 nas legendas — entra nas palavras do dia (~5,8 mil), menos nomes, lugares, grafias de
+  Portugal e estrangeirismos (revistos à mão: listas `MANTER` e `FORA` no script). Com elas as faixas subiram para ~60 (seg) a ~100 (dom)
+  (`NIVEL`: 55–65, 61–71, 67–78, 73–85, 79–92, 85–99, 91–110). Os dias publicados mantêm as letras; a lista é refeita e o que o jogador
+  achou como rara passa para o lado do dia.
+  Ordem: verbetes.py → grafia.py → formas.py → uso.py → gerador.mjs.
 - **Versão 6.2 (do #3 ao #21, 06 a 24/11/2026):** flor de **5 pétalas** (6 letras); palavras do dia = só **verbetes** de
   dicionário de uso corrente (`geranio/verbetes.json`, feito por `geranio/verbetes.py`: verbete minúsculo do VERO, verbo no
   infinitivo, sem plural/feminino flexionado/conjugação; grafia exata com icf ≤ 14 ou no Cordel; sem estrangeirismos,
