@@ -16,7 +16,7 @@
 <script src="comum/tema.js?v=157"></script>
 <script src="comum/catalogo.js?v=154"></script>
 <script src="comum/celebra.js?v=154"></script>
-<script src="comum/recorde.js?v=156"></script>
+<script src="comum/recorde.js?v=157"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -2598,7 +2598,7 @@ function rkPlacar(e, d, v, maxO, quando, soTitulo) {
   const quem = top.length > 2 ? `${nm(top[0])} e mais ${top.length - 1}` : rkLista(top.map(nm));
   if (soTitulo) return `${escHTML(quem)} ${verbo}`;
   return `<div class="ldB"><div class="hd"><b>${escHTML(quem)} ${verbo}</b><small>1º lugares</small></div><div class="ps" style="--n:${Math.min(ord.length, 5)}">` +
-    ord.map(u => `<div class="p ${top.includes(u) ? "l" : ""} ${u === e.uid ? "eu" : ""}" data-u="${u}">${rkAv(u, d.nomes[u])}<span>${escHTML(nm(u))}</span><em class="${v[u].o ? "" : "z"}">🥇${v[u].o}</em></div>`).join("") + `</div></div>`;
+    ord.map(u => `<div class="p ${top.includes(u) ? "l" : ""} ${u === e.uid ? "eu" : ""}" data-u="${escHTML(u)}">${rkAv(u, d.nomes[u])}<span>${escHTML(nm(u))}</span><em class="${v[u].o ? "" : "z"}">🥇${v[u].o}</em></div>`).join("") + `</div></div>`;
 }
 async function renderRanking() {
   const el = $("rkBody"), n = window.nuvem;
@@ -2616,7 +2616,7 @@ async function renderRanking() {
   catch (x) { console.warn(x); el.innerHTML = `<div class="x-top"><h1>Ranking</h1></div><p class="rk-lead">Não consegui carregar o ranking. Confira a internet e tente de novo.</p>`; return; }
   if (rkCod === e.grupos[0].cod && d.seg <= today() && d.dom >= today()) guardaGrupoHoje(n, rkCod, { grupo: d.grupo, res: d.res });
   const nm = u => u === e.uid ? "Você" : (d.nomes[u] || "?");
-  const linha = (r, pos, sub = "") => `<div class="r ${r.uid === e.uid ? "eu" : ""} ${pos < 0 ? "perdeu" : ""}" data-u="${r.uid}"><span class="m">${pos < 0 ? "·" : rkMed(pos)}</span>${rkAv(r.uid, d.nomes[r.uid], "md")}<span class="n">${escHTML(d.nomes[r.uid] || "?")}${r.uid === e.uid ? '<span class="tag">você</span>' : ""}${r.dica ? '<span class="rk-dc">💡 dica</span>' : ""}${sub}</span><span class="v">${rkFmt(r)}</span></div>`;
+  const linha = (r, pos, sub = "") => `<div class="r ${r.uid === e.uid ? "eu" : ""} ${pos < 0 ? "perdeu" : ""}" data-u="${escHTML(r.uid)}"><span class="m">${pos < 0 ? "·" : rkMed(pos)}</span>${rkAv(r.uid, d.nomes[r.uid], "md")}<span class="n">${escHTML(d.nomes[r.uid] || "?")}${r.uid === e.uid ? '<span class="tag">você</span>' : ""}${r.dica ? '<span class="rk-dc">💡 dica</span>' : ""}${sub}</span><span class="v">${rkFmt(r)}</span></div>`;
   // aba única "Ranking" (opção "B", 10/11/2026): o nome do grupo grande no topo abre o menu do grupo (trocar, entrar, criar,
   // convidar, editar, sair); o botão ao lado convida; embaixo, Hoje | Semana | Pessoas
   const dono = d.grupo.dono === e.uid, outros = d.membros.filter(u => u !== e.uid);
@@ -2666,13 +2666,13 @@ async function renderRanking() {
     let pos = 0;
     h += `<div class="gc sm"><div class="h"><b>${manchete}</b><small>1º lugares</small></div>` + lista.map(([u, x], i) => {
       if (i === 0 || lista[i - 1][1].o !== x.o || lista[i - 1][1].j !== x.j) pos = i;
-      return `<div class="r ${u === e.uid ? "eu" : ""}" data-u="${u}"><span class="m">${x.j ? rkMed(pos) : "·"}</span>${rkAv(u, d.nomes[u], "md")}<span class="n">${escHTML(d.nomes[u] || "?")}${u === e.uid ? '<span class="tag">você</span>' : ""}<small>${x.j} ${x.j === 1 ? "jogo" : "jogos"}${x.dc ? ` · 💡 ${x.dc}` : ""}</small></span><span class="bar"><i style="width:${Math.round(70 * x.o / maxO)}px"></i>${x.o}</span></div>`;
+      return `<div class="r ${u === e.uid ? "eu" : ""}" data-u="${escHTML(u)}"><span class="m">${x.j ? rkMed(pos) : "·"}</span>${rkAv(u, d.nomes[u], "md")}<span class="n">${escHTML(d.nomes[u] || "?")}${u === e.uid ? '<span class="tag">você</span>' : ""}<small>${x.j} ${x.j === 1 ? "jogo" : "jogos"}${x.dc ? ` · 💡 ${x.dc}` : ""}</small></span><span class="bar"><i style="width:${Math.round(70 * x.o / maxO)}px"></i>${x.o}</span></div>`;
     }).join("") + `</div>`;
     // o melhor resultado de cada jogo na semana
     const melhor = {}; d.res.forEach(r => { if (r.tipo === "tries" && !r.won) return; if (!melhor[r.jogo] || rkOrdem(r, melhor[r.jogo]) < 0) melhor[r.jogo] = r; });
     const jogos = [...GAMES.map(g => g.id).filter(id => melhor[id]), ...Object.keys(melhor).filter(id => !GAMES.some(g => g.id === id))];
     if (jogos.length) h += `<div class="gc bj"><div class="h"><b>Melhor de cada jogo</b></div>` + jogos.map(id => { const r = melhor[id], g = GAMES.find(x => x.id === id);
-      return `<div class="r" data-u="${r.uid}">${rkIcone(id)}<span class="n">${escHTML(g?.name || id)}</span>${rkAv(r.uid, d.nomes[r.uid], "md")}<span class="v">${rkFmt(r)}${r.dica ? "💡" : ""}</span></div>`; }).join("") + `</div>`;
+      return `<div class="r" data-u="${escHTML(r.uid)}">${rkIcone(id)}<span class="n">${escHTML(g?.name || id)}</span>${rkAv(r.uid, d.nomes[r.uid], "md")}<span class="v">${rkFmt(r)}${r.dica ? "💡" : ""}</span></div>`; }).join("") + `</div>`;
   }
   h += `<button class="rk-info" id="rkInfo" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.2"/></svg>Como funciona o ranking</button>`;
   el.innerHTML = h;
@@ -2718,7 +2718,7 @@ function rkPessoas(e, d) {
       let dir;
       if (eu) { const sq = Math.max(seqDe(u), seqPainel()); dir = sq ? `🔥 ${sq}<small style="display:block;color:var(--muted)">${sq === 1 ? "dia" : "dias"}</small>` : ""; }
       else { const [a, b] = duelo(u); dir = `<span class="du" aria-label="Duelo da semana: você ${a}, ${escHTML(d.nomes[u] || "?")} ${b}"><small>você</small><b class="${a > b ? "v" : ""}">${a}</b><i>×</i><b class="${b > a ? "v" : ""}">${b}</b><small>${escHTML((d.nomes[u] || "?").split(" ")[0])}</small></span>`; }
-      return `<div class="p" data-u="${u}">${rkAv(u, d.nomes[u], "g")}<span style="min-width:0"><b>${escHTML(d.nomes[u] || "?")}${eu ? '<span class="tag">você</span>' : ""}</b><small>${escHTML(sub)}</small></span><span class="sq">${dir}</span><span class="ch">›</span></div>`;
+      return `<div class="p" data-u="${escHTML(u)}">${rkAv(u, d.nomes[u], "g")}<span style="min-width:0"><b>${escHTML(d.nomes[u] || "?")}${eu ? '<span class="tag">você</span>' : ""}</b><small>${escHTML(sub)}</small></span><span class="sq">${dir}</span><span class="ch">›</span></div>`;
     }).join("") + `</div>
     <div class="inv"><span><small>Convide pelo código</small><span class="cd">${rkCod}</span></span><button onclick="rkConvidar()">${CONV_SVG}Convidar</button></div>
     ${dono ? `<button class="x-sair" style="color:var(--text)" id="amEditar">Editar grupo</button>` : ""}`;
@@ -2770,7 +2770,7 @@ function gSheetEditar(e, d) {
   const g = d.grupo, n = window.nuvem;
   gSheet("Editar grupo", `<div class="x-lbl" style="margin-top:0">Nome do grupo</div><input class="x-in" id="gNome" maxlength="40" value="${escHTML(g.nome || "")}" autocomplete="off">
     <div class="x-lbl">Membros · ${d.membros.length}</div><div class="ml">` +
-    d.membros.map(u => `<div class="p e">${rkAv(u, d.nomes[u])}<span style="min-width:0"><b>${escHTML(d.nomes[u] || "?")}</b><small>${u === e.uid ? "você · criou o grupo" : "membro"}</small></span>${u === e.uid ? "<span></span>" : `<button class="rm" data-u="${u}">Remover</button>`}</div>`).join("") +
+    d.membros.map(u => `<div class="p e">${rkAv(u, d.nomes[u])}<span style="min-width:0"><b>${escHTML(d.nomes[u] || "?")}</b><small>${u === e.uid ? "você · criou o grupo" : "membro"}</small></span>${u === e.uid ? "<span></span>" : `<button class="rm" data-u="${escHTML(u)}">Remover</button>`}</div>`).join("") +
     `</div><div class="x-err" id="gErr"></div><button class="x-sair" id="gSair">Sair do grupo</button>
     <p class="x-nota">Quem for removido some do ranking deste grupo, mas pode voltar com o código de convite. Se você sair, o grupo continua para os outros, sem ninguém para editar.</p>`, "Pronto");
   const err = $("gErr");
@@ -2877,7 +2877,7 @@ render();
 route();
 scheduleMidnight();
 </script>
-<script type="module" src="nuvem.js?v=8"></script>
+<script type="module" src="nuvem.js?v=9"></script>
 <script>
 /* contagem para os novos desafios no topo do painel */
 (function () {

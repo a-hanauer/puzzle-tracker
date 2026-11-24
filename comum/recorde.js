@@ -171,7 +171,7 @@
   function conta() { var c = ler("jogosDoDia.nuvem"); return c && c.uid && c.grupos && c.grupos.length ? c : null; }
   function nuvem() {
     if (nv) return Promise.resolve(nv);
-    if (!carregando) carregando = import(RAIZ + "nuvem.js?v=8").then(function () { return window.nuvem.pronto; })
+    if (!carregando) carregando = import(RAIZ + "nuvem.js?v=9").then(function () { return window.nuvem.pronto; })
       .then(function () { nv = window.nuvem.estado.conectado ? window.nuvem : null; return nv; })
       .catch(function (e) { console.warn("amigos ao vivo", e); carregando = null; return null; });
     return carregando;

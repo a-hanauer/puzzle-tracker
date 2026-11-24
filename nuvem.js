@@ -92,6 +92,18 @@ async function sincroniza() {
 
 // ---------- ranking ----------
 const ALFA = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+// Segurança: o dono de um grupo consegue gravar qualquer texto em "membros"/"nomes" e esses ids vão para atributos do
+// HTML do ranking. Só passam ids no formato do Firebase Auth (letras e números); o resto é descartado na chegada.
+const UID_OK = /^[A-Za-z0-9]{1,128}$/;
+const limpaGrupo = g => {
+  if (!g) return g;
+  const membros = (Array.isArray(g.membros) ? g.membros : []).filter(u => typeof u === "string" && UID_OK.test(u));
+  const nomes = {};
+  for (const [k, v] of Object.entries(g.nomes && typeof g.nomes === "object" ? g.nomes : {})) if (UID_OK.test(k)) nomes[k] = String(v ?? "").slice(0, 40);
+  return { ...g, membros, nomes, dono: UID_OK.test(g.dono || "") ? g.dono : "", nome: String(g.nome ?? "").slice(0, 40) };
+};
+const limpaRes = l => l.filter(r => r && typeof r.uid === "string" && UID_OK.test(r.uid));
+
 const codigo = () => Array.from(crypto.getRandomValues(new Uint8Array(6)), b => ALFA[b % ALFA.length]).join("");
 async function perfil() {
   const s = ler();
@@ -220,7 +232,7 @@ window.nuvem = {
     const q = de === ate ? query(collection(db, "grupos", cod, "res"), where("dia", "==", de))
       : query(collection(db, "grupos", cod, "res"), where("dia", ">=", de), where("dia", "<=", ate));
     const r = await getDocs(q);
-    return { grupo: g.exists() ? g.data() : null, res: r.docs.map(d => d.data()) };
+    return { grupo: g.exists() ? limpaGrupo(g.data()) : null, res: limpaRes(r.docs.map(d => d.data())) };
   },
   // resultados de um dia do grupo, ao vivo: cb({ grupo, res }) agora e a cada mudança (alguém terminou um jogo, entrou,
   // mudou o apelido). Devolve a função que para de ouvir. Sem internet, o Firestore espera e retoma sozinho.
@@ -228,14 +240,14 @@ window.nuvem = {
     let grupo, res, vivo = true;
     const manda = () => { if (vivo && grupo !== undefined && res !== undefined) cb({ grupo, res }); };
     const erro = e => console.warn("nuvem: ouvir", e);
-    const p1 = onSnapshot(doc(db, "grupos", cod), d => { grupo = d.exists() ? d.data() : null; manda(); }, erro);
-    const p2 = onSnapshot(query(collection(db, "grupos", cod, "res"), where("dia", "==", dia)), q => { res = q.docs.map(d => d.data()); manda(); }, erro);
+    const p1 = onSnapshot(doc(db, "grupos", cod), d => { grupo = d.exists() ? limpaGrupo(d.data()) : null; manda(); }, erro);
+    const p2 = onSnapshot(query(collection(db, "grupos", cod, "res"), where("dia", "==", dia)), q => { res = limpaRes(q.docs.map(d => d.data())); manda(); }, erro);
     return () => { vivo = false; p1(); p2(); };
   },
   // guarda os resultados de hoje do grupo em "jogosDoDia.grupo" (o painel e o fim de cada jogo leem dali)
   cacheGrupo(cod, dia, dados) {
-    const g = dados.grupo || {};
-    const res = dados.res.filter(r => r.dia === dia).map(({ uid, apelido, jogo, tipo, valor, max, won, dica, t }) => ({ uid, apelido, jogo, tipo, valor, max, won, dica, t }));
+    const g = limpaGrupo(dados.grupo) || {};
+    const res = limpaRes(dados.res).filter(r => r.dia === dia).map(({ uid, apelido, jogo, tipo, valor, max, won, dica, t }) => ({ uid, apelido, jogo, tipo, valor, max, won, dica, t }));
     try { localStorage.setItem("jogosDoDia.grupo", JSON.stringify({ dia, cod, nome: g.nome || "", eu: user?.uid || ler().uid || "", membros: g.membros || [], nomes: g.nomes || {}, res })); } catch {}
   },
   // conta: liga e-mail e senha à conta anônima (para entrar em outro aparelho) ou entra numa conta que já existe
