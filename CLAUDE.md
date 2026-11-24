@@ -167,7 +167,14 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 
 ## Gerânio (jogo de palavras no estilo Spelling Bee, desde 04/11/2026; chamou-se Girassol até 05/11/2026)
 
-- **Versão 6.2 (em teste, desde o #3 = 06/11/2026):** flor de **5 pétalas** (6 letras); palavras do dia = só **verbetes** de
+- **Versão 7 (desde o #22 = 25/11/2026, `v: 3` no desafio):** de novo **7 letras** (6 pétalas + miolo), com as mesmas palavras do
+  dia de uso corrente da 6.2 (verbetes.json) e o mesmo dicionário largo para as raras (+50%). O dono achava fácil: listas de
+  **~50 (seg) a ~80 (dom)** palavras do dia (`NIVEL`: 46–54, 50–58, 54–63, 58–67, 62–72, 66–77, 72–85) e a dificuldade da semana
+  vem do **vocabulário**: `geranio/uso.json` (feito por `geranio/uso.py` a partir do icf do fserb) dá a frequência de cada palavra;
+  cada flor tem a média de uso das suas palavras e cada nível pega uma fatia (segunda = flores de palavras mais usadas, domingo =
+  menos usadas; `VOCAB` no gerador). **Meta**: Gerânio = metade dos pontos possíveis (`P.v === 3` na página). Os #1–#21 ficam como saíram.
+  Ordem: verbetes.py → grafia.py → uso.py → gerador.mjs.
+- **Versão 6.2 (do #3 ao #21, 06 a 24/11/2026):** flor de **5 pétalas** (6 letras); palavras do dia = só **verbetes** de
   dicionário de uso corrente (`geranio/verbetes.json`, feito por `geranio/verbetes.py`: verbete minúsculo do VERO, verbo no
   infinitivo, sem plural/feminino flexionado/conjugação; grafia exata com icf ≤ 14 ou no Cordel; sem estrangeirismos,
   `nomes-proprios.txt` e lugares). Desde 07/11/2026 entram também as palavras do `lexico` do fserb com icf ≤ 14 (o VERO não

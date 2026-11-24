@@ -334,15 +334,16 @@
   // níveis: fração da meta (Gerânio = 1). Meta (05/11/2026): nos dias de 5 pétalas, os pontos de N palavras do dia médias
   // (média = pontos possíveis ÷ tamanho da lista), N pelo nível: seg 10 … dom 22 — duas ou três palavras longas não bastam.
   // Nos #1 e #2 (6 pétalas, listas longas) continua 35% dos pontos possíveis.
+  // Desde o #22 (25/11/2026, v: 3): 6 pétalas de novo, listas de ~50 a ~80 palavras do dia; Gerânio = metade dos pontos possíveis.
   const NIVEIS = [["Semente", 0], ["Broto", .02 / .35], ["Muda", .05 / .35], ["Botão", .12 / .35], ["Flor", .22 / .35], ["Gerânio", 1]];
   const META = 1, PALAVRAS_META = [0, 10, 11, 13, 15, 17, 19, 22];
-  const base = () => P.f.length > 5 ? P.m * .35 : Math.min(P.m, PALAVRAS_META[P.l] * P.m / P.w.length);
+  const base = () => P.v === 3 ? P.m * .5 : P.f.length > 5 ? P.m * .35 : Math.min(P.m, PALAVRAS_META[P.l] * P.m / P.w.length);
   const corte = f => Math.ceil(base() * f - 1e-9);
-  const RARA = () => P.f.length > 5 ? 2 : 1.5;   // rara: dobro nos #1 e #2; +50% (arredondado para cima) desde o #3
+  const RARA = () => P.f.length > 5 && P.v !== 3 ? 2 : 1.5;   // rara: dobro nos #1 e #2; +50% (arredondado para cima) desde o #3
   const pontosRara = n => Math.ceil(RARA() * pontosDe(n));
 
   // ---------- estado ----------
-  // P = { l: nível, c: miolo, f: as 6 pétalas, w: respostas (com acento), m: pontos possíveis }
+  // P = { v: 3 (desde o #22), l: nível, c: miolo, f: as pétalas, w: respostas (com acento), m: pontos possíveis }
   let P = null, dayNum = 0, RESP = new Map(), achadas = [], raras = [], BLOQ = new Set(), ordem = [], digitado = "", dicaUsada = false, alvo = null, finished = false, avisouPleno = false;
   let DICIO = null, dica = null, GRAF = new Map();   // GRAF: chave sem acento → grafia (só quando difere)
   const pid = p => p.c + p.f;
@@ -411,7 +412,7 @@
   }
   setTimeout(() => dicionario().catch(() => {}), 300);   // toda palavra precisa dele: carrega logo
 
-  // ---------- a flor (SVG): uma pétala em gomo por letra (5 desde o #3; 6 nos dias #1 e #2) em volta do miolo (a obrigatória) ----------
+  // ---------- a flor (SVG): uma pétala em gomo por letra (6 nos dias #1 e #2 e desde o #22; 5 do #3 ao #21) em volta do miolo (a obrigatória) ----------
   // Cada pétala: laterais paralelas (fresta de largura constante), borda de dentro no arco do miolo e ponta de fora numa
   // curva contínua, tangente às laterais (a "mais redonda"). Cantos de dentro arredondados de leve pelo traço da mesma cor.
   // As pétalas são calculadas já giradas (sem transform), para nenhuma ficar com a ponta cortada no iPhone.
