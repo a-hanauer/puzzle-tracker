@@ -152,18 +152,23 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   o resolvedor refaz as possibilidades a cada casa (o lance vale só para achar a próxima casa, como quem não anota).
   As palavras cruzadas antigas foram descartadas.
 
-## Engrenagem (jogo de conta e lógica, desde 27/11/2026)
+## Engrenagem (jogo de lógica com símbolos, desde 27/11/2026)
 
-- Mecanismo de anéis concêntricos com números (1–9, distintos em cada anel) e raios; cada raio tem uma plaquinha com a soma-alvo.
-  Arrastar um anel gira (encaixe por dente, vibração a cada dente); toque = um passo no sentido horário. Resolvido = toda soma bate.
-  Paleta ameixa/veludo com metais (latão, cobre, bronze, aço); cartão do painel lilás (#e0c6f1 / escuro #31203c).
-- `engrenagem/motor.mjs`: `valor`, `somaRaio`, `resolvido`, `resolve(P, permitirExata)` (dedução por limites — mínimo/máximo do
-  que o anel pode dar — e, no fim de semana, por combinação exata), `contaSolucoes`. Desafios guardados na rotação da solução (todos 0)
-  e `ini` com nenhum anel nem raio já certo.
-- `engrenagem/gerador.mjs` (EPOCH 27/11/2026; `NIVEL` = anéis, raios e passos da dedução): seg–sex 3–4 anéis só com limites,
-  sáb–dom pedem a combinação exata; solução única conferida por força bruta. `desafios.json` (400 dias) e `livre.json`.
-- Página baseada no Cortado: geometria calculada (nada de `transform` em texto, que quebrava os números no iPhone), dica pelo motor
-  (gira o anel que a dedução acerta primeiro, com o motivo), desfazer/recomeçar comuns, celebração `ARTE.engrenagem` (duas engrenagens).
+- **Símbolos** (escolha do dono, 27/11/2026, opção "A": cor + forma; o #1 saiu de manhã com contas e foi refeito no mesmo dia):
+  anéis concêntricos e um símbolo de esmalte por fatia — círculo azul, triângulo vermelho, quadrado verde, losango roxo,
+  hexágono ônix (`SIMB`). Tantos símbolos quanto anéis; resolvido = **em cada raio, um símbolo de cada** (sudoku em roda).
+  O anel de dentro (aço) é o **eixo, fixo**; os outros (latão, cobre, bronze, latão claro) giram. Arrastar gira (encaixe por fatia,
+  vibração a cada uma); toque = um passo no sentido horário. Uma luz por raio, na borda, acende (verde) quando o raio fecha.
+  Paleta ameixa/veludo com metais; cartão do painel lilás (#e0c6f1 / escuro #31203c).
+- `engrenagem/motor.mjs`: `valor`, `raioOk`, `certos`, `resolvido`, `resolve(P, permitirFalta)` — "conflito" (numa rotação, o anel
+  repetiria num raio o símbolo que outro anel põe ali com certeza; começa pelo eixo) e "falta" (emparelhamento: os outros não
+  completam o raio; só reserva da dica) —, `contaSolucoes` (eixo parado). Desafios na rotação da solução (todos 0), `v: 2`.
+- `engrenagem/gerador.mjs` (EPOCH 27/11/2026; `NIVEL` = anéis, raios, rodadas de conflito): seg 3 anéis × 6 raios, ter 3 × 8,
+  qua 4 × 6, qui 4 × 8, sex 4 × 8 com 3+ rodadas, sáb 5 × 8, dom 5 × 10; cada raio da solução é uma permutação sorteada, todo anel usa
+  todos os símbolos, solução única, sai só com o conflito. `desafios.json` (400 dias) e `livre.json`.
+- Página: geometria calculada (nada de `transform`), dica pelo motor (gira o anel que a dedução acha primeiro, com o motivo),
+  desfazer/recomeçar comuns, celebração `ARTE.engrenagem`. Partida salva de outro desafio no mesmo dia (o #1 de contas) é
+  descartada, com o tempo nas estatísticas (`loadDaily`).
 
 ## Brigadeiro (no lugar da Panelinha desde 17/10/2026)
 
