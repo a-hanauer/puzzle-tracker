@@ -141,6 +141,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   Jogos de fora na doca em tons de cinza.
   Azulejo (opção "A", 20h25): painel montado = só o contorno, com o fundo da página por dentro (esconde a grade); a prévia do arrasto
   tracejada. Selo de feito da doca em vermelho.
+  Com o painel montado, a etiqueta (número + forma) vai para o meio do painel, a 82% e com folga do contorno (`tagSVG(c, on, p)`).
 
 ## Publicar
 

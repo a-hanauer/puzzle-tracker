@@ -549,9 +549,16 @@
   }
   // tamanho do desenho da etiqueta, em unidades da casa (1 casa = 100)
   const TAG = { q: [62, 62], l: [86, 48], a: [48, 86] };
-  function tagSVG(c, on) {
-    const x = PAD + (c.i % N) * U + U / 2, y = PAD + ((c.i / N) | 0) * U + U / 2;
+  function tagSVG(c, on, p) {
+    let x = PAD + (c.i % N) * U + U / 2, y = PAD + ((c.i / N) | 0) * U + U / 2;
     let s = `<g class="tg${on ? " on" : ""}">`;
+    // modo minimalista, painel montado: a etiqueta vai para o meio do painel e encolhe se precisar, longe do contorno
+    if (on && p && window.jogosMinimal && jogosMinimal.on()) {
+      const pw = p.w * U - 8, ph = p.h * U - 8, [tw, th] = c.f === "*" ? [82, 82] : TAG[c.f], folga = 12;
+      const k = Math.min(.82, (pw - 2 * folga) / tw, (ph - 2 * folga) / th);
+      const cx = PAD + p.c0 * U + p.w * U / 2, cy = PAD + p.r0 * U + p.h * U / 2;
+      s = `<g class="tg on" transform="translate(${cx} ${cy}) scale(${k.toFixed(3)}) translate(${-x} ${-y})">`;
+    }
     if (c.f === "*") {
       // cruz gorda: um retângulo deitado e um em pé, sobrepostos
       const L = 82, T = 46, r = 9;
@@ -578,9 +585,9 @@
     const shown = patches.filter((_, k) => !(drag && drag.moved && k === drag.edit));
     const sts = shown.map(statusOf);
     gP.innerHTML = shown.map((p, k) => patchSVG(p, sts[k], k)).join("");
-    const covered = new Set();
-    shown.forEach((p, k) => { if (sts[k].s >= 0) covered.add(sts[k].s); });
-    gT.innerHTML = clues.map((c, j) => tagSVG(c, covered.has(j))).join("");
+    const covered = new Set(), dono = {};
+    shown.forEach((p, k) => { if (sts[k].s >= 0) { covered.add(sts[k].s); dono[sts[k].s] = p; } });
+    gT.innerHTML = clues.map((c, j) => tagSVG(c, covered.has(j), dono[j])).join("");
     const good = covered.size;
     $("progBar").style.width = (100 * good / clues.length) + "%";
     $("progN").innerHTML = `<b>${good}</b>/${clues.length}`;
@@ -876,7 +883,7 @@
     let s = `<defs>${fabricDefs("dfab" + id)}</defs><rect class="b-bg" width="330" height="330" rx="26"/>`;
     for (let k = 0; k < 9; k++) s += `<rect class="b-cell" x="${PAD + (k % 3) * U + 4}" y="${PAD + ((k / 3) | 0) * U + 4}" width="92" height="92" rx="16"/>`;
     if (solved) s += ps.map((p, k) => patchSVG(p, { s: k }, k).replace(/url\(#fab/g, `url(#dfab${id}`)).join("");
-    s += clues.map(c => tagSVG(c, solved)).join("");
+    s += clues.map((c, j) => tagSVG(c, solved, solved ? ps[j] : null)).join("");
     $(id).innerHTML = s;
     N = saveN; clues = saveClues;
   }
