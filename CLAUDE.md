@@ -155,20 +155,21 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 ## Engrenagem (jogo de lógica com símbolos, desde 27/11/2026)
 
 - **Símbolos** (escolha do dono, 27/11/2026, opção "A": cor + forma; o #1 saiu de manhã com contas e foi refeito no mesmo dia):
-  anéis concêntricos e um símbolo de esmalte por fatia — círculo azul, triângulo vermelho, quadrado verde, losango roxo,
-  hexágono ônix (`SIMB`). Tantos símbolos quanto anéis; resolvido = **em cada raio, um símbolo de cada** (sudoku em roda).
-  O anel de dentro (aço) é o **eixo, fixo**; os outros (latão, cobre, bronze, latão claro) giram. Arrastar gira (encaixe por fatia,
-  vibração a cada uma); toque = um passo no sentido horário. Uma luz por raio, na borda, acende (verde) quando o raio fecha.
-  Paleta ameixa/veludo com metais; cartão do painel lilás (#e0c6f1 / escuro #31203c).
-- `engrenagem/motor.mjs`: `valor`, `raioOk`, `certos`, `resolvido`, `resolve(P, permitirFalta)` — "conflito" (numa rotação, o anel
-  repetiria num raio o símbolo que outro anel põe ali com certeza; começa pelo eixo) e "falta" (emparelhamento: os outros não
-  completam o raio; só reserva da dica) —, `contaSolucoes` (eixo parado). Desafios na rotação da solução (todos 0), `v: 2`.
-- `engrenagem/gerador.mjs` (EPOCH 27/11/2026; `NIVEL` = anéis, raios, rodadas de conflito): seg 3 anéis × 6 raios, ter 3 × 8,
-  qua 4 × 6, qui 4 × 8, sex 4 × 8 com 3+ rodadas, sáb 5 × 8, dom 5 × 10; cada raio da solução é uma permutação sorteada, todo anel usa
-  todos os símbolos, solução única, sai só com o conflito. `desafios.json` (400 dias) e `livre.json`.
-- Página: geometria calculada (nada de `transform`), dica pelo motor (gira o anel que a dedução acha primeiro, com o motivo),
-  desfazer/recomeçar comuns, celebração `ARTE.engrenagem`. Partida salva de outro desafio no mesmo dia (o #1 de contas) é
-  descartada, com o tempo nas estatísticas (`loadDaily`).
+  anéis concêntricos e um símbolo por fatia — círculo azul, triângulo vermelho, quadrado verde, losango roxo, hexágono ônix
+  (`SIMB`). Tantos símbolos quanto anéis; resolvido = **em cada raio, um símbolo de cada** (sudoku em roda).
+  O anel de dentro (tom mais forte) é o **eixo, fixo**; os outros giram. Arrastar gira (encaixe por fatia, vibração a cada uma);
+  toque = um passo no sentido horário. Uma luz por raio, na moldura, acende (verde) e uma cunha verde clara marca o raio certo.
+- **Visual "esmalte liso"** (opção "B", 27/11/2026; a "A", metal polido, foi recusada): anéis em tons de ameixa alternados
+  (`--b-an0/1`, eixo `--b-anE`), frestas finas da cor da moldura (`--b-moldura`), símbolos chapados com sombra curta, nada de
+  metal, degradê ou contorno. Cartão do painel lilás (#e0c6f1 / escuro #31203c).
+- **Estratégia = cadeia** (27/11/2026, o dono achou que parecia aleatório): `cadeia(P)` em motor.mjs — com o eixo travado, sempre
+  há um anel que só cabe numa posição sem repetir símbolo com os já travados; trava e repete. O gerador só aceita desafios com
+  cadeia e solução única; a dica gira o próximo anel da cadeia e diz por quê; o "Como jogar" ensina o método ("Como pensar").
+  (`resolve` com conflito/falta continua no motor, sem uso no gerador.)
+- `engrenagem/gerador.mjs` (EPOCH 27/11/2026; `NIVEL` = [anéis, raios]): seg 3 × 6, ter 3 × 8, qua 4 × 6, qui 4 × 8, sex 4 × 10,
+  sáb 5 × 8, dom 5 × 10; cada raio da solução é uma permutação sorteada, todo anel usa todos os símbolos. `desafios.json` (400 dias,
+  `v: 2`, na rotação da solução) e `livre.json`. Partida salva de outro desafio no mesmo dia é descartada, com o tempo nas
+  estatísticas (`loadDaily`).
 
 ## Brigadeiro (no lugar da Panelinha desde 17/10/2026)
 

@@ -73,6 +73,30 @@ export function resolve(P, permitirFalta = false, cand0 = null) {
   return { cand, passos, rodadas, falta, ok: cand.every(c => c.size === 1) && cand.every(c => c.has(0)) };
 }
 
+// O jeito de gente (desde 27/11/2026, o que o gerador exige): "cadeia". Começa só com o eixo travado; a cada passo, algum
+// anel solto tem UMA posição só em que não repete símbolo, em nenhum raio, com os anéis já travados — trava esse e segue.
+// Devolve a ordem [{ a, sobra: quantas posições ele tinha antes de travar }] ou null se em algum momento nenhum anel é único.
+export function cadeia(P) {
+  const A = P.nums.length, n = P.n, travado = [0], rot = Array(A).fill(null), ordem = [];
+  rot[0] = 0;
+  while (travado.length < A) {
+    let achou = null;
+    for (let a = 1; a < A && !achou; a++) {
+      if (rot[a] !== null) continue;
+      const cabem = [];
+      for (let r = 0; r < n; r++) {
+        let bom = true;
+        for (let j = 0; j < n && bom; j++) { const s = valor(P, a, r, j); for (const b of travado) if (valor(P, b, rot[b], j) === s) { bom = false; break; } }
+        if (bom) cabem.push(r);
+      }
+      if (cabem.length === 1) achou = { a, r: cabem[0] };
+    }
+    if (!achou) return null;
+    rot[achou.a] = achou.r; travado.push(achou.a); ordem.push(achou);
+  }
+  return ordem.every(o => o.r === 0) ? ordem : null;
+}
+
 // quantas posições fecham todos os raios (com o eixo parado) — força bruta, só no gerador
 export function contaSolucoes(P, limite = 2) {
   const A = P.nums.length, rot = Array(A).fill(0); let sol = 0;

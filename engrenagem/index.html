@@ -19,9 +19,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <style>
-  /* Engrenagem: um mecanismo de relojoeiro. Anéis de aço, latão, cobre e bronze sobre um estojo de veludo ameixa;
-     em cada fatia, um símbolo de esmalte (cor + forma). O anel de dentro (aço) é o eixo, parado. Em volta, uma luz por
-     raio, que acende quando o raio tem um símbolo de cada. Tudo é desenhado já na posição de cada rotação (sem transform). */
+  /* Engrenagem: anéis concêntricos em tons de ameixa (esmalte liso), um símbolo chapado por fatia (cor + forma).
+     O anel de dentro, mais escuro, é o eixo, parado. Em volta, uma luz por raio, que acende quando o raio tem um símbolo
+     de cada. Tudo é desenhado já na posição de cada rotação (sem transform). */
   :root {
     --bg: #f3eff5; --surface: #fcfaff; --surface-2: #e6e1ea; --ink: #2c1f33; --muted: #85788c; --line: #e2dae7;
     --veludo1: #4a2d57; --veludo2: #2c1834; --raio: rgba(246, 220, 160, .34);
@@ -62,13 +62,12 @@
   .tab { position: relative; line-height: 0; flex-shrink: 0; }
   #board { display: block; touch-action: none; overflow: visible; }
   .anel { cursor: grab; }
-  .sim { stroke: rgba(255, 250, 238, .92); stroke-width: 1.6; stroke-linejoin: round; pointer-events: none; }
+  /* esmalte liso: tons de ameixa, sem metal */
+  :root { --b-moldura: #fbf8fc; --b-an0: #ece2f1; --b-an1: #e0d2e8; --b-anE: #cdb9d8; --b-ok: #cdeadb; --b-luz: #1fa36b; --b-apagada: #ddd1e3; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --b-moldura: #1d1621; --b-an0: #3a2c42; --b-an1: #32253a; --b-anE: #4b3a55; --b-ok: #23493b; --b-luz: #5fd39d; --b-apagada: #3f3346; } }
+  :root[data-theme="dark"] { --b-moldura: #1d1621; --b-an0: #3a2c42; --b-an1: #32253a; --b-anE: #4b3a55; --b-ok: #23493b; --b-luz: #5fd39d; --b-apagada: #3f3346; }
   .anel.eixo { cursor: default; }
   .anel.vivo .fatia { filter: brightness(1.08); }
-  .luz { fill: rgba(255, 240, 215, .14); stroke: rgba(255, 240, 215, .22); stroke-width: 1; }
-  .luz.ok { fill: #8fe0a2; stroke: #d9f7df; }
-  .raio { stroke: var(--raio); stroke-width: 1.6; stroke-dasharray: 2 5; stroke-linecap: round; }
-  .raio.ok { stroke: rgba(150, 230, 170, .6); stroke-width: 2.4; stroke-dasharray: none; }
   .won .anel .fatia { animation: brilho .8s ease both; }
   @keyframes brilho { 40% { filter: brightness(1.25); } 100% { filter: none; } }
   @media (prefers-reduced-motion: reduce) { .won .anel .fatia { animation: none; } }
@@ -191,7 +190,7 @@
     <p>Gire os <b>anéis</b> até que cada <b>raio</b> tenha <b>um símbolo de cada</b> — como num sudoku em roda.</p>
     <ul>
       <li>Um raio vai do centro até a luz de fora e passa por uma fatia de cada anel. Nenhum símbolo pode se repetir no mesmo raio.</li>
-      <li>O anel de dentro, de aço, é o <b>eixo</b>: não gira. Os outros giram, e girar um muda <b>todos os raios</b> ao mesmo tempo.</li>
+      <li>O anel de dentro, mais escuro, é o <b>eixo</b>: não gira. Os outros giram, e girar um muda <b>todos os raios</b> ao mesmo tempo.</li>
       <li>Quando o raio tem um símbolo de cada, a luz dele acende.</li>
     </ul>
     <div class="demo">
@@ -199,7 +198,13 @@
       <figure><svg id="demoB" viewBox="-200 -200 400 400"></svg>resolvido</figure>
     </div>
     <p><b>Arraste</b> um anel para girá-lo; ele encaixa na fatia mais próxima. Um toque gira um passo. Para voltar várias jogadas de uma vez, <b>arraste a barra de progresso</b>.</p>
-    <p>Todo desafio tem uma única posição certa e sai só com lógica: compare um anel com o eixo — numa posição em que ele repete um símbolo do eixo em algum raio, não pode ficar. Os anéis que você acerta ajudam a achar os outros. A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (3 anéis, 6 raios) e <b>domingo é nível 7</b> (5 anéis, 10 raios) — nunca chute.</p>
+    <p><b>Como pensar</b> (sem chute): o eixo está parado, então comece por ele.</p>
+    <ul>
+      <li>Escolha um anel e gire-o pelas posições. Em quase todas, algum raio repete um símbolo do eixo — essas não servem.</li>
+      <li>Procure o anel que tem <b>uma posição só</b> sem repetir nada com o eixo. Sempre existe um. Deixe-o ali: ele está certo.</li>
+      <li>Agora compare os outros com o eixo <b>e</b> com o anel que você acertou. De novo, um deles só cabe numa posição. Siga assim até o último.</li>
+    </ul>
+    <p>A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (3 anéis, 6 raios) e <b>domingo é nível 7</b> (5 anéis, 10 raios).</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, que não contam nas estatísticas: escolha o <b>nível</b> (1 a 7) no botão ao lado de "Extra" e toque em ↻ para sortear outro.</p>
     <button class="btn-main" data-close>Jogar</button>
   </div>
@@ -314,67 +319,51 @@
 
   // ---------- desenho ----------
   // Geometria (viewBox -200…200): miolo até R0; anéis de R0 a R1; plaquinhas em RP. Ângulo 0 = para cima, sentido horário.
-  const R0 = 34, R1 = 166, RL = 186;
-  // metais: o eixo é de aço; os que giram, latão, cobre, bronze e latão claro
-  const METAL = [["#e2e6ea", "#a9b2ba", "#6c7680"], ["#f6dc8e", "#d6a640", "#9c7020"], ["#f1b98a", "#c97a45", "#8e4c22"], ["#e3c08e", "#ab7c43", "#6e4a22"], ["#f3e2bd", "#c9a46a", "#86622f"]];
-  // símbolos de esmalte: cor e forma juntas (quem não distingue bem as cores ainda tem a forma)
-  const SIMB = [["#2563c9", "círculo"], ["#c8283f", "triângulo"], ["#138a5a", "quadrado"], ["#6c35a8", "losango"], ["#2b2230", "hexágono"]];
+  // Visual "esmalte liso" (escolha do dono, opção B, 27/11/2026): anéis em tons de ameixa, frestas finas da cor da moldura,
+  // símbolos chapados com sombra curta; o eixo num tom mais forte; raio certo = cunha verde clara + luz acesa na moldura.
+  const R0 = 38, R1 = 162, RB = 196, RL = 179;
+  // símbolos: cor e forma juntas (quem não distingue bem as cores ainda tem a forma); [cor, nome]
+  const SIMB = [["#2f6fde", "círculo"], ["#e0344a", "triângulo"], ["#1fa36b", "quadrado"], ["#8a4fd0", "losango"], ["#34303b", "hexágono"]];
   const pt = (r, g) => { const t = g * Math.PI / 180; return [r * Math.sin(t), -r * Math.cos(t)]; };
   const f1 = v => v.toFixed(1);
   const faixa = (A, a) => { const w = (R1 - R0) / A; return [R0 + a * w, R0 + (a + 1) * w]; };
+  const anelPath = (r0, r1) => `M0 ${-r1}A${r1} ${r1} 0 1 1 0 ${r1}A${r1} ${r1} 0 1 1 0 ${-r1}ZM0 ${-r0}A${r0} ${r0} 0 1 0 0 ${r0}A${r0} ${r0} 0 1 0 0 ${-r0}Z`;
   function setor(r0, r1, g0, g1) {
     const [x0, y0] = pt(r1, g0), [x1, y1] = pt(r1, g1), [x2, y2] = pt(r0, g1), [x3, y3] = pt(r0, g0);
     return `M${f1(x0)} ${f1(y0)}A${r1} ${r1} 0 0 1 ${f1(x1)} ${f1(y1)}L${f1(x2)} ${f1(y2)}A${r0} ${r0} 0 0 0 ${f1(x3)} ${f1(y3)}Z`;
   }
-  function simbolo(t, x, y, s) {
-    const c = `class="sim" fill="${SIMB[t][0]}"`, P = pts => `<path ${c} d="M${pts.map(q => q.map(f1).join(" ")).join("L")}Z"/>`;
-    if (t === 0) return `<circle ${c} cx="${f1(x)}" cy="${f1(y)}" r="${f1(s * .8)}"/>`;
-    if (t === 1) return P([[x, y - s * 1.02], [x + s * .98, y + s * .68], [x - s * .98, y + s * .68]]);
-    if (t === 2) return `<rect ${c} x="${f1(x - s * .7)}" y="${f1(y - s * .7)}" width="${f1(s * 1.4)}" height="${f1(s * 1.4)}" rx="2.2"/>`;
-    if (t === 3) return P([[x, y - s], [x + s * .9, y], [x, y + s], [x - s * .9, y]]);
+  function forma(t, x, y, s) {
+    const P = pts => `M${pts.map(q => q.map(f1).join(" ")).join("L")}Z`;
+    if (t === 0) { const r = s * .82; return `M${f1(x - r)} ${f1(y)}a${f1(r)} ${f1(r)} 0 1 0 ${f1(2 * r)} 0a${f1(r)} ${f1(r)} 0 1 0 ${f1(-2 * r)} 0Z`; }
+    if (t === 1) return P([[x, y - s * 1.0], [x + s * .98, y + s * .7], [x - s * .98, y + s * .7]]);
+    if (t === 2) return P([[x - s * .72, y - s * .72], [x + s * .72, y - s * .72], [x + s * .72, y + s * .72], [x - s * .72, y + s * .72]]);
+    if (t === 3) return P([[x, y - s * 1.02], [x + s * .86, y], [x, y + s * 1.02], [x - s * .86, y]]);
     return P([...Array(6).keys()].map(i => [x + s * .9 * Math.cos(i * Math.PI / 3), y + s * .9 * Math.sin(i * Math.PI / 3)]));
   }
-  // dentes do anel de fora (giram com ele): um trapézio a cada meia fatia
-  function dentes(r, g0, nr) {
-    let d = ""; const k = nr * 4, passo = 360 / k;
-    for (let i = 0; i < k; i++) {
-      const c = g0 + i * passo, a = passo * .22, b = passo * .14;
-      const p = [pt(r - 1, c - a), pt(r + 6.5, c - b), pt(r + 6.5, c + b), pt(r - 1, c + a)];
-      d += `M${p.map(q => q.map(f1).join(" ")).join("L")}Z`;
-    }
-    return d;
-  }
-  const defs = (id) => `<defs>
-      <radialGradient id="${id}vel" cx="45%" cy="38%" r="70%"><stop offset="0" style="stop-color:var(--veludo1)"/><stop offset="1" style="stop-color:var(--veludo2)"/></radialGradient>
-      ${METAL.map((m, a) => `<linearGradient id="${id}m${a}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${m[0]}"/><stop offset=".55" stop-color="${m[1]}"/><stop offset="1" stop-color="${m[2]}"/></linearGradient>`).join("")}
-      <radialGradient id="${id}miolo" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#f2f4f6"/><stop offset=".6" stop-color="#9aa4ad"/><stop offset="1" stop-color="#5b646d"/></radialGradient>
-      <filter id="${id}somb" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="rgba(20,5,25,.45)"/></filter></defs>`;
+  const simbolo = (t, x, y, s) => `<path d="${forma(t, x, y + 1.6, s)}" fill="rgba(40,20,50,.16)"/><path d="${forma(t, x, y, s)}" fill="${SIMB[t][0]}"/>`;
   const raiosOk = (nums, rot, n) => [...Array(n).keys()].map(j => new Set(nums.map((a, k) => a[(j + rot[k]) % n])).size === nums.length);
   // desenha um mecanismo inteiro (o jogo e os exemplos do Como jogar usam a mesma função)
-  function mecanismo({ id, nums, rot, desvio, vivo = -1 }) {
-    const A = nums.length, n = nums[0].length, passo = 360 / n, fresta = 1.6;
-    let s = defs(id) + `<circle r="196" fill="url(#${id}vel)"/><circle r="196" fill="none" stroke="rgba(255,240,220,.08)" stroke-width="2"/>`;
-    const ok = raiosOk(nums, rot, n);
-    for (let j = 0; j < n; j++) {
-      const [x0, y0] = pt(R0 - 4, j * passo), [x1, y1] = pt(RL - 8, j * passo);
-      s += `<line class="raio${ok[j] ? " ok" : ""}" x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}"/>`;
-    }
-    // anéis: cada fatia k do anel a está no ângulo (k - rot[a]) * passo (+ o desvio de quem está girando)
+  function mecanismo({ nums, rot, desvio, vivo = -1 }) {
+    const A = nums.length, n = nums[0].length, passo = 360 / n;
+    const ok = raiosOk(nums, rot, n), giro = a => (desvio && desvio.a === a) ? desvio.graus : 0;
+    let s = `<circle r="${RB}" style="fill:var(--b-moldura)"/>`;
     for (let a = 0; a < A; a++) {
-      const [r0, r1] = faixa(A, a), rm = (r0 + r1) / 2, g = (desvio && desvio.a === a) ? desvio.graus : 0;
-      const tam = Math.min((r1 - r0) * .34, rm * Math.PI / n * .54, 13);
-      s += `<g class="anel${a === 0 ? " eixo" : ""}${vivo === a ? " vivo" : ""}" data-a="${a}" filter="url(#${id}somb)">`;
-      if (a === A - 1) s += `<path d="${dentes(r1, -rot[a] * passo + g + passo / 8, n)}" fill="url(#${id}m${a})"/>`;
+      const [r0, r1] = faixa(A, a), g = giro(a);
+      s += `<g class="anel${a === 0 ? " eixo" : ""}${vivo === a ? " vivo" : ""}" data-a="${a}"><path class="fatia" d="${anelPath(r0, r1)}" fill-rule="evenodd" style="fill:var(--b-an${a === 0 ? "E" : a % 2})"/>`;
       for (let k = 0; k < n; k++) {
-        const c = (k - rot[a]) * passo + g;
-        s += `<path class="fatia" d="${setor(r0 + 1.4, r1 - 1.4, c - passo / 2 + fresta / (rm / 60), c + passo / 2 - fresta / (rm / 60))}" fill="url(#${id}m${a})"/>`;
+        const c = (k - rot[a]) * passo + g + passo / 2, [x0, y0] = pt(r0 + 2, c), [x1, y1] = pt(r1 - 2, c);
+        s += `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" style="stroke:var(--b-moldura)" stroke-width="2"/>`;
       }
-      s += `</g>`;
+      s += `</g><circle r="${r1}" fill="none" style="stroke:var(--b-moldura)" stroke-width="2.5"/>`;
+    }
+    // raio certo: uma cunha verde clara atravessando os anéis (por baixo dos símbolos)
+    ok.forEach((v, j) => { if (v) s += `<path d="${setor(R0 + 1, R1 - 1, j * passo - passo / 2 + 1, j * passo + passo / 2 - 1)}" style="fill:var(--b-ok)"/>`; });
+    for (let a = 0; a < A; a++) {
+      const [r0, r1] = faixa(A, a), rm = (r0 + r1) / 2, g = giro(a), tam = Math.min((r1 - r0) * .33, rm * Math.PI / n * .5, 13);
       for (let k = 0; k < n; k++) { const [x, y] = pt(rm, (k - rot[a]) * passo + g); s += simbolo(nums[a][k], x, y, tam); }
     }
-    // miolo: um parafuso de aço (o eixo)
-    s += `<circle r="${R0 - 3}" fill="rgba(0,0,0,.25)"/><circle r="${R0 - 9}" fill="url(#${id}miolo)" filter="url(#${id}somb)"/><path d="M-11 -3.5h22v7h-22z" fill="#3e464e" opacity=".55" transform="rotate(-35)"/>`;
-    for (let j = 0; j < n; j++) { const [x, y] = pt(RL, j * passo); s += `<circle class="luz${ok[j] ? " ok" : ""}" cx="${f1(x)}" cy="${f1(y)}" r="5.5"/>`; }
+    s += `<circle r="${R0 - 2}" style="fill:var(--b-moldura)"/><circle r="${R0 - 10}" style="fill:var(--b-anE)"/><circle r="4" style="fill:var(--b-moldura)"/>`;
+    for (let j = 0; j < n; j++) { const [x, y] = pt(RL, j * passo); s += `<circle cx="${f1(x)}" cy="${f1(y)}" r="5" style="fill:${ok[j] ? "var(--b-luz)" : "var(--b-apagada)"}"/>`; }
     return { svg: s, ok };
   }
   function fit() {
@@ -391,7 +380,7 @@
   function certos() { return raiosOk(NUMS, rot, n).filter(Boolean).length; }
   function render() {
     if (dica) dica.atualiza();
-    const m = mecanismo({ id: "g", nums: NUMS, rot, desvio: desvio && { a: desvio.a, graus: desvio.graus }, vivo: desvio ? desvio.a : -1 });
+    const m = mecanismo({ nums: NUMS, rot, desvio: desvio && { a: desvio.a, graus: desvio.graus }, vivo: desvio ? desvio.a : -1 });
     $("board").innerHTML = m.svg;
     const ok = m.ok.filter(Boolean).length;
     if (!scrub) {
@@ -545,22 +534,16 @@
   async function pedirDica() {
     if (desvio) return "";
     const M = await import("./motor.mjs");
-    const PP = { n, nums: NUMS };
-    const sol = M.resolve(PP, true);
-    // em que passo cada anel ficou com uma posição só (a ordem em que uma pessoa descobriria)
-    const sobra = NUMS.map((_, a) => a === 0 ? 1 : n), quando = Array(A).fill(1e9), porque = Array(A).fill(null);
-    sol.passos.forEach((p, i) => { sobra[p.a]--; if (sobra[p.a] === 1 && quando[p.a] === 1e9) { quando[p.a] = i; porque[p.a] = p; } });
-    const errados = [...Array(A).keys()].filter(a => a > 0 && rot[a] !== 0).sort((x, y) => quando[x] - quando[y]);
-    if (!errados.length) return "";
-    const a = errados[0], p = porque[a];
+    // a ordem da cadeia: o primeiro anel dela que ainda está fora do lugar
+    const ordem = (M.cadeia({ n, nums: NUMS }) || []).map(o => o.a);
+    const a = ordem.find(x => rot[x] !== 0) ?? [...Array(A).keys()].find(x => x > 0 && rot[x] !== 0);
+    if (a == null) return "";
+    const antes = ordem.slice(0, ordem.indexOf(a));
     history.push(pack()); futuro = []; dicaUsada = true;
     const passos = ((rot[a]) % n + n) % n, curto = passos > n / 2 ? passos - n : passos;   // gira pelo lado mais curto
     encaixa(a, 0, curto, () => { giros++; checkWin(); render(); persist(); });
-    const nb = p && p.b != null ? (p.b === 0 ? "o eixo" : nomeAnel(p.b).replace(/^O /, "o ")) : "";
-    const motivo = !p ? "" : p.tipo === "conflito"
-      ? `Era a única posição que sobrava: nas outras, algum raio repetiria um símbolo com ${nb}.`
-      : `Era a única posição que sobrava: nas outras, algum raio ficaria sem como completar os símbolos que faltam.`;
-    return `${nomeAnel(a)} foi para a posição certa. ${motivo}`;
+    const com = antes.length ? `o eixo e ${antes.length === 1 ? nomeAnel(antes[0]).replace(/^O /, "o ") : "os anéis já certos"}` : "o eixo";
+    return `${nomeAnel(a)} foi para a posição certa: junto com ${com}, era a única posição em que nenhum raio repete símbolo.`;
   }
 
   // ---------- vitória ----------
@@ -610,8 +593,8 @@
 
   // exemplo no Como jogar: 3 anéis e 6 raios, o desafio e a solução
   const EX = { nums: [[0, 1, 2, 0, 2, 1], [1, 2, 0, 2, 1, 0], [2, 0, 1, 1, 0, 2]] };
-  $("demoA").innerHTML = mecanismo({ id: "da", ...EX, rot: [0, 2, 1] }).svg;
-  $("demoB").innerHTML = mecanismo({ id: "db", ...EX, rot: [0, 0, 0] }).svg;
+  $("demoA").innerHTML = mecanismo({ ...EX, rot: [0, 2, 1] }).svg;
+  $("demoB").innerHTML = mecanismo({ ...EX, rot: [0, 0, 0] }).svg;
 })();
 </script>
 <script src="../comum/catalogo.js?v=156"></script>
