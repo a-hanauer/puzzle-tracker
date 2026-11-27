@@ -170,16 +170,23 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - **Versão 7 (desde o #22 = 25/11/2026, `v: 3` no desafio):** de novo **7 letras** (6 pétalas + miolo), com as mesmas palavras do
   dia de uso corrente da 6.2 (verbetes.json) e o mesmo dicionário largo para as raras (+50%). O dono achava fácil: listas de
   **~50 (seg) a ~80 (dom)** palavras do dia (`NIVEL`: 46–54, 50–58, 54–63, 58–67, 62–72, 66–77, 72–85) e a dificuldade da semana
-  vem do **vocabulário**: `geranio/uso.json` (feito por `geranio/uso.py` a partir do icf do fserb) dá a frequência de cada palavra;
+  vem do **vocabulário**: `geranio/uso.json` (gravado por `verbetes.py`, a mesma nota de uso na escala do icf) dá a frequência de cada palavra;
   cada flor tem a média de uso das suas palavras e cada nível pega uma fatia (segunda = flores de palavras mais usadas, domingo =
   menos usadas; `VOCAB` no gerador). **Meta**: Gerânio = metade dos pontos possíveis (`P.v === 3` na página). Os #1–#21 ficam como saíram.
-  **Formas comuns** (24/11/2026): palavra comum não pode cair como rara ("pode", "perde", "coloca", "própria", "dias" caíam). `geranio/formas.py`
-  → `formas.json`: qualquer forma do dicionário do jogo (plural, feminino, conjugação) de uso comum por si só — icf ≤ 12,5 e ≥ 100 nas
-  legendas, ou icf ≤ 13,5 e ≥ 500, ou ≥ 1500 nas legendas — entra nas palavras do dia (~5,8 mil), menos nomes, lugares, grafias de
-  Portugal e estrangeirismos (revistos à mão: listas `MANTER` e `FORA` no script). Com elas as faixas subiram para ~60 (seg) a ~100 (dom)
-  (`NIVEL`: 55–65, 61–71, 67–78, 73–85, 79–92, 85–99, 91–110). Os dias publicados mantêm as letras; a lista é refeita e o que o jogador
-  achou como rara passa para o lado do dia.
-  Ordem: verbetes.py → grafia.py → formas.py → uso.py → gerador.mjs.
+  (De 24 a 26/11/2026 houve as "formas comuns", formas.json, com plurais e conjugações nas palavras do dia; o dono pediu para tirar.)
+  **Vocábulos de dicionário** (27/11/2026, valem a partir do #25; os publicados mantêm as letras e refazem a lista): palavras do dia = só
+  vocábulo — lema do **DELAS PB** (dicionário de lemas do pt-BR do NILC/USP, no Unitex: github.com/UnitexGramLab/unitex-lingua,
+  `pt-BR/Dela/DELAS_PB_2018.dic`; sem +Pr e sem contrações), infinitivo, ou `vocabulos-manter.txt` (revista à mão: substantivos que o
+  DELAS só tem como flexão — lógica, editora, chamada, calcinha — e palavras correntes que ele não tem — sozinho, riacho, clicar, meme).
+  Nada de plural, feminino, diminutivo, particípio puro (comprado; cansado fica: mais usado que o verbo ou substantivo no DELAS) nem
+  conjugação (forma de verbo só se o DELAS também a tem como substantivo/adjetivo: busca, volta, olho, começo; `vocabulos-fora.txt` tira
+  as em que o uso é o do verbo: passa, empurra, tento). **Uso corrente** = nota ≥ 2,6 (zipf; `CORTE`), mediana de legendas pt-BR
+  (OpenSubtitles), wordfreq (large_pt), icf do fserb e brWaC (corpus da web brasileira, só as 10 mil mais frequentes), na grafia exata
+  (ariá não herda "ária"). Nenhuma fonte é só Brasil contemporâneo (legendas e wordfreq misturam Portugal; o corpus Carolina não estava
+  acessível): palavras e grafias de Portugal, nomes e estrangeirismos que passam vão para `nomes-proprios.txt`. ~9,7 mil palavras;
+  faixas de ~55 (seg) a ~85 (dom) (`NIVEL`: 50–60, 54–64, 58–68, 62–73, 66–78, 70–83, 75–90). Limite conhecido: palavras de cozinha e
+  da roça aparecem pouco nos textos (untar, aipim, torresmo ficam abaixo do corte, como raras).
+  Ordem: verbetes.py (8 argumentos: ver o cabeçalho) → grafia.py → gerador.mjs.
 - **Versão 6.2 (do #3 ao #21, 06 a 24/11/2026):** flor de **5 pétalas** (6 letras); palavras do dia = só **verbetes** de
   dicionário de uso corrente (`geranio/verbetes.json`, feito por `geranio/verbetes.py`: verbete minúsculo do VERO, verbo no
   infinitivo, sem plural/feminino flexionado/conjugação; grafia exata com icf ≤ 14 ou no Cordel; sem estrangeirismos,

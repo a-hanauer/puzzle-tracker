@@ -1,0 +1,20 @@
+# Palavras do dia que o DELAS (dicionário de lemas) não traz como lema, revistas à mão (26/11/2026). Lidas por verbetes.py.
+# Ainda passam pelo corte de uso e pelos outros filtros.
+# substantivos que o DELAS só conhece como feminino, diminutivo ou particípio de outra palavra
+música defesa proposta chamada física técnica direita tentativa crítica matemática parada química tomada lógica torcida
+retirada marinha característica narrativa jogada mecânica dinâmica emissora estatística estética temática culinária prévia
+bancada boneca genética gráfica despedida crônica ginástica estimativa imobiliária rodoviária cerâmica tática operadora
+pousada plástica pecuária raposa lareira brigada granada escalada camisinha calcinha gaiola milha cabana óptica poltrona
+lixeira retórica pomba travessa goma bronca calculadora corretora gramática acústica castanha pata mula bruxa freira
+empregada média meia sexta quarta quinta segunda escrita rota privada dona presa olhada virada produtora traseira coberta
+torta queimada descida mordida dianteira calma salão caixão sozinho entrada saída partida chegada jornada estrada piada
+vida comida bebida corrida batida ferida medida pegada pisada largada fachada caçada sacada cantada passada mesada
+balada bolada garotada molecada criançada rapaziada palhaçada trapalhada lambida cuspida cutucada
+graduando doutorando formando orientando mestrando tremendo
+# palavras correntes que o DELAS não tem
+troca clique caramba euro deusa clicar conectar futsal vovó vovô monitorar avatar mensalão mangá combo hétero poxa riacho
+viabilizar neon meme nato duquesa priorizar soneca laboral formatar chili surfar agendar sediar graal mousse agilizar
+deletar alavancar diretriz poetisa coliseu tintim óvulo pendrive blogar elfo cusco estiloso impala fofura tofu hindi rímel
+bombar mandala zerar papal rosé enrolação surtar bandana pedicure logar legendagem epifania trampo velcro zeta estatueta
+magenta fornalha espiada lambda fanzine rolê origami livreto guilda palacete robe hexa pegação fritadeira cotonete
+vareta contação machete mariachi tantra corpete clonar sociopata sálvia sabá

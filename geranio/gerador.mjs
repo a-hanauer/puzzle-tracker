@@ -4,14 +4,13 @@
 // da flor (letra pode repetir). Acentos e ç não contam (AÇÃO = ACAO). Todo dia há ao menos um pangrama
 // (palavra que usa as 7 letras).
 //
-// Vale qualquer palavra do dicionário largo (cordel/palavras.txt: com plurais, femininos e conjugações), menos as
-// bloqueadas (palavrões). As "palavras do dia" (a régua, o pleno e as dicas contam só elas) são as comuns: as respostas
-// curadas do Cordel e as flexões comuns delas — geranio/base.json, feito por geranio/comuns.mjs a partir do fserb/pt-br.
-// Palavra válida fora das do dia é "rara" e vale o dobro (a página faz a conta).
+// Vale qualquer palavra do dicionário largo (geranio/palavras.txt: com plurais, femininos e conjugações), menos as
+// bloqueadas (palavrões). As "palavras do dia" (a régua, o pleno e as dicas contam só elas) são os vocábulos de dicionário
+// de uso corrente — geranio/verbetes.json, de verbetes.py. Palavra válida fora das do dia é "rara" (+50%; a página faz a conta).
 //
 // Nível = dia da semana (segunda = 1 … domingo = 7): o número de palavras do dia vai crescendo (faixas em NIVEL).
 // Desde o #22 (25/11/2026): de novo 7 letras (6 pétalas + miolo), listas de ~50 (segunda) a ~80 (domingo), e a dificuldade
-// vem também do vocabulário: cada flor tem a média de uso das suas palavras (geranio/uso.json, de uso.py); segunda pega
+// vem também do vocabulário: cada flor tem a média de uso das suas palavras (geranio/uso.json, de verbetes.py); segunda pega
 // as flores de palavras mais usadas e domingo as de palavras menos usadas (todas ainda de uso corrente). Marcadas com v: 3.
 // Para variar: as mesmas 7 letras não voltam em 150 dias (nem com outro miolo) e o miolo não repete a
 // letra do dia anterior. Dias já publicados mantêm as letras (a lista é refeita pelas regras de hoje).
@@ -28,8 +27,9 @@ export const EPOCH = [2026, 10, 4];                 // #1 = quarta, 04/11/2026
 // verbetes.py). Os #1 e #2 (7 letras, base.json) ficam como saíram. A versão anterior (7 letras) está no ramo geranio-6.1.
 // #3 a #21: 6 letras e listas de 10–14 (segunda) a 33–50 (domingo); ficam como saíram
 const LETRAS = 7;
-// Desde 24/11/2026 as palavras do dia incluem as formas comuns (formas.json: pode, perde, própria, dias) e as faixas subiram um pouco
-const NIVEL = { 1: [55, 65], 2: [61, 71], 3: [67, 78], 4: [73, 85], 5: [79, 92], 6: [85, 99], 7: [91, 110] };
+// Desde 26/11/2026 (a partir do #24) as palavras do dia são de novo só vocábulos de dicionário (verbetes.py: sem plural,
+// feminino, diminutivo nem conjugação), com o uso medido em várias fontes; listas de ~55 (segunda) a ~85 (domingo)
+const NIVEL = { 1: [50, 60], 2: [54, 64], 3: [58, 68], 4: [62, 73], 5: [66, 78], 6: [70, 83], 7: [75, 90] };
 // vocabulário: fatia das flores (da mais usada à menos usada) que cada nível pega, com uma folga para não faltar flor
 const VOCAB = l => [Math.max(0, (l - 1) / 7 - .03), Math.min(1, l / 7 + .03)];
 
@@ -40,9 +40,7 @@ function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 10139
 
 export function palavras() {
   const v = JSON.parse(readFileSync(join(DIR, "verbetes.json"), "utf8"));
-  // + formas comuns (plurais, femininos, conjugações de uso corrente: formas.py), para palavra comum não cair como rara
-  const f = JSON.parse(readFileSync(join(DIR, "formas.json"), "utf8"));
-  return new Map([...Object.entries(v), ...Object.entries(f)].map(([n, w]) => [n.toUpperCase(), w]));   // MAIUSCULA -> escrita com acento
+  return new Map(Object.entries(v).map(([n, w]) => [n.toUpperCase(), w]));   // MAIUSCULA -> escrita com acento
 }
 
 // todas as flores possíveis: 7 letras de algum pangrama × cada letra no miolo; dif = média de uso das palavras (maior = menos usadas)
