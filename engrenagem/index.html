@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cofre">
-<title>COFRE — gire os discos até cada raio ter um símbolo de cada</title>
+<title>COFRE — gire os discos até cada raio ter um número de cada</title>
 <link rel="icon" type="image/png" href="icon.png?v=2">
 <script src="../comum/tema.js?v=157"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
@@ -21,7 +21,7 @@
 <style>
   /* Cofre (pasta e chaves "engrenagem", nome antigo): o mostrador de segredo de um cofre. Discos de alumínio escovado com a
      graduação gravada, trilho preto entre eles, aro cromado; no centro, o eixo preto com a manopla serrilhada e a tampa
-     preta. Um símbolo chapado por fatia (cor + forma). Cada raio tem uma marca no trilho, que fica verde quando destrava.
+     preta. Um número gravado por fatia (1 a N, N = nº de discos). Cada raio tem uma marca no trilho, que fica verde quando destrava.
      O mostrador é um objeto: igual no claro e no escuro (só a página muda). Desenho já na posição de cada rotação (sem transform). */
   :root {
     --bg: #eef0f2; --surface: #fbfcfd; --surface-2: #dfe3e7; --ink: #16191d; --muted: #6c747d; --line: #dfe3e7;
@@ -58,6 +58,9 @@
   #board { display: block; touch-action: none; overflow: visible; }
   .anel { cursor: grab; }
   .anel.eixo { cursor: default; }
+  .num { font-weight: 700; text-anchor: middle; dominant-baseline: central; font-variant-numeric: tabular-nums; fill: #25282c; pointer-events: none; }
+  .num-luz { fill: rgba(255, 255, 255, .75); }
+  .num-eixo { fill: #f2f4f6; }
   .won .anel .fatia { animation: brilho .8s ease both; }
   @keyframes brilho { 40% { filter: brightness(1.25); } 100% { filter: none; } }
   @media (prefers-reduced-motion: reduce) { .won .anel .fatia { animation: none; } }
@@ -177,12 +180,11 @@
 <div class="overlay" id="helpOverlay">
   <div class="modal">
     <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
-    <p>Abra o cofre: gire os <b>discos</b> até que cada <b>raio</b> tenha <b>um símbolo de cada</b> — como num sudoku em roda.</p>
+    <p>Abra o cofre: gire os <b>discos</b> até que cada <b>raio</b> tenha <b>um número de cada</b> — como num sudoku em roda.</p>
     <ul>
-      <li>Um raio vai do centro até a marca branca do trilho e passa por uma fatia de cada disco. Nenhum símbolo pode se repetir no mesmo raio.</li>
+      <li>Um raio vai do centro até a marca branca do trilho e passa por uma fatia de cada disco. Com 4 discos, cada raio precisa ter 1, 2, 3 e 4, sem repetir nenhum.</li>
       <li>O disco preto do centro, em volta da manopla, é o <b>eixo</b>: não gira. Os outros giram, e girar um muda <b>todos os raios</b> ao mesmo tempo.</li>
-      <li>Quando o raio tem um símbolo de cada, a marca dele fica verde: destravou.</li>
-      <li>Quando o raio tem um símbolo de cada, a luz dele acende.</li>
+      <li>Quando o raio tem um número de cada, a marca dele fica verde: destravou.</li>
     </ul>
     <div class="demo">
       <figure><svg id="demoA" viewBox="-200 -200 400 400"></svg>desafio</figure>
@@ -191,7 +193,7 @@
     <p><b>Arraste</b> um disco para girá-lo (ele acende enquanto o dedo está nele); encaixa na fatia mais próxima. Um toque gira um passo. Para voltar várias jogadas de uma vez, <b>arraste a barra de progresso</b>.</p>
     <p><b>Como pensar</b> (sem chute): o eixo está parado, então comece por ele.</p>
     <ul>
-      <li>Escolha um disco e gire-o pelas posições. Em quase todas, algum raio repete um símbolo do eixo — essas não servem.</li>
+      <li>Escolha um disco e gire-o pelas posições. Em quase todas, algum raio repete um número do eixo — essas não servem.</li>
       <li>Procure o disco que tem <b>uma posição só</b> sem repetir nada com o eixo. Sempre existe um. Deixe-o ali: ele está certo.</li>
       <li>Agora compare os outros com o eixo <b>e</b> com o disco que você acertou. De novo, um deles só cabe numa posição. Siga assim até o último.</li>
     </ul>
@@ -238,7 +240,7 @@
   const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
 
   // ---------- estado ----------
-  // P = { v: 2, l, n (raios), nums: ["012021", …] (símbolos de cada anel, de dentro para fora, já na rotação da solução), ini: [...] }
+  // P = { v: 2, l, n (raios), nums: ["012021", …] (números de cada disco, 0 = 1, de dentro para fora, já na rotação da solução), ini: [...] }
   // rot[a] = rotação do anel a: o raio j recebe nums[a][(j + rot[a]) % n]; a solução é tudo 0.
   let P = null, A = 0, n = 0, NUMS = null, rot = [], PID = "";
   let history = [], futuro = [], scrub = null, finished = false, kind = "dia", dayNum = 0, DAILY = null, FREE = null, freeIdx = -1;
@@ -274,7 +276,7 @@
 
   function loadDaily() {
     const { data } = DAILY, pz = data.puzzles[Math.min(dayNum, data.puzzles.length) - 1], sv = load("dia:" + dayNum, null);
-    // o #1 foi refeito (contas → símbolos): partida de outro desafio neste dia não vale, nem o tempo dela nas estatísticas
+    // o #1 foi refeito (contas → símbolos → números): partida de outro desafio neste dia não vale, nem o tempo dela nas estatísticas
     if (sv && sv.pid !== pz.nums.join("|")) { const st = load("stats", null); if (st && st.times[dayNum] != null) { delete st.times[dayNum]; save("stats", recomputeStats(st)); } }
     setup(pz, sv, "dia");
     persist();
@@ -313,8 +315,7 @@
   // Geometria (viewBox -200…200): manopla até R0; discos de R0 a R1; trilho preto com as marcas dos raios até RB (aro).
   // Discos largos de propósito (manopla e trilho estreitos): é a área de toque de cada anel.
   const R0 = 30, R1 = 171, RB = 198;
-  // símbolos: cor e forma juntas (quem não distingue bem as cores ainda tem a forma); [cor no metal, cor no eixo preto, nome]
-  const SIMB = [["#2f6fde", "#5b95ff", "círculo"], ["#e0344a", "#ff5a6e", "triângulo"], ["#1fa36b", "#33cf8a", "quadrado"], ["#8a4fd0", "#b07cff", "losango"], ["#34303b", "#e8e4da", "hexágono"]];
+  // números gravados: 1 a N (o valor guardado 0 aparece como 1)
   const pt = (r, g) => { const t = g * Math.PI / 180; return [r * Math.sin(t), -r * Math.cos(t)]; };
   const f1 = v => v.toFixed(1);
   const faixa = (A, a) => { const w = (R1 - R0) / A; return [R0 + a * w, R0 + (a + 1) * w]; };
@@ -322,14 +323,6 @@
   function setor(r0, r1, g0, g1) {
     const [x0, y0] = pt(r1, g0), [x1, y1] = pt(r1, g1), [x2, y2] = pt(r0, g1), [x3, y3] = pt(r0, g0);
     return `M${f1(x0)} ${f1(y0)}A${r1} ${r1} 0 0 1 ${f1(x1)} ${f1(y1)}L${f1(x2)} ${f1(y2)}A${r0} ${r0} 0 0 0 ${f1(x3)} ${f1(y3)}Z`;
-  }
-  function forma(t, x, y, s) {
-    const P = pts => `M${pts.map(q => q.map(f1).join(" ")).join("L")}Z`;
-    if (t === 0) { const r = s * .82; return `M${f1(x - r)} ${f1(y)}a${f1(r)} ${f1(r)} 0 1 0 ${f1(2 * r)} 0a${f1(r)} ${f1(r)} 0 1 0 ${f1(-2 * r)} 0Z`; }
-    if (t === 1) return P([[x, y - s * 1.0], [x + s * .98, y + s * .7], [x - s * .98, y + s * .7]]);
-    if (t === 2) return P([[x - s * .72, y - s * .72], [x + s * .72, y - s * .72], [x + s * .72, y + s * .72], [x - s * .72, y + s * .72]]);
-    if (t === 3) return P([[x, y - s * 1.02], [x + s * .86, y], [x, y + s * 1.02], [x - s * .86, y]]);
-    return P([...Array(6).keys()].map(i => [x + s * .9 * Math.cos(i * Math.PI / 3), y + s * .9 * Math.sin(i * Math.PI / 3)]));
   }
   const raiosOk = (nums, rot, n) => [...Array(n).keys()].map(j => new Set(nums.map((a, k) => a[(j + rot[k]) % n])).size === nums.length);
   const DEFS = `<defs>
@@ -359,10 +352,12 @@
     // o anel sob o dedo: contorno claro, para não girar o vizinho sem perceber
     if (vivo > 0) { const [r0, r1] = faixa(A, vivo); s += `<path d="${anelPath(r0 + 1, r1 - 1)}" fill-rule="evenodd" fill="rgba(255,255,255,.14)"/><circle r="${r0 + 1.6}" fill="none" stroke="#fff" stroke-width="2.2"/><circle r="${r1 - 1.6}" fill="none" stroke="#fff" stroke-width="2.2"/>`; }
     for (let a = 0; a < A; a++) {
-      const [r0, r1] = faixa(A, a), rm = (r0 + r1) / 2 - 2.5, g = giro(a), tam = Math.min((r1 - r0) * .3, rm * Math.PI / n * .46, 12.5);
+      const [r0, r1] = faixa(A, a), rm = (r0 + r1) / 2 - 2.5, g = giro(a), fs = Math.min((r1 - r0) * .62, rm * Math.PI / n * .95, 21);
       for (let k = 0; k < n; k++) {
         const [x, y] = pt(rm, (k - rot[a]) * passo + g), t = nums[a][k];
-        s += `<path d="${forma(t, x, y + 1, tam)}" fill="rgba(0,0,0,.22)"/><path d="${forma(t, x, y, tam)}" fill="${SIMB[t][a === 0 ? 1 : 0]}"/>`;
+        // gravado: no metal, cinza escuro com um fio de luz embaixo; no eixo preto, branco
+        s += a === 0 ? `<text class="num num-eixo" x="${f1(x)}" y="${f1(y)}" font-size="${f1(fs)}">${t + 1}</text>`
+          : `<text class="num num-luz" x="${f1(x)}" y="${f1(y + .9)}" font-size="${f1(fs)}">${t + 1}</text><text class="num" x="${f1(x)}" y="${f1(y)}" font-size="${f1(fs)}">${t + 1}</text>`;
       }
     }
     // manopla serrilhada com a tampa preta, no meio do eixo (não gira)
@@ -545,8 +540,7 @@
 
   // ---------- dica (comum/dica.js): põe no lugar o anel que a dedução acha primeiro, com o motivo ----------
   const nomeAnel = a => a === A - 1 ? "O disco de fora" : `O ${a + 1}º disco`;
-  const SN = t => SIMB[t][1];
-  async function pedirDica() {
+    async function pedirDica() {
     if (desvio) return "";
     const M = await import("./motor.mjs");
     // a ordem da cadeia: o primeiro anel dela que ainda está fora do lugar
@@ -558,7 +552,7 @@
     const passos = ((rot[a]) % n + n) % n, curto = passos > n / 2 ? passos - n : passos;   // gira pelo lado mais curto
     encaixa(a, 0, curto, () => { giros++; checkWin(); render(); persist(); });
     const com = antes.length ? `o eixo e ${antes.length === 1 ? nomeAnel(antes[0]).replace(/^O /, "o ") : "os discos já certos"}` : "o eixo";
-    return `${nomeAnel(a)} foi para a posição certa: junto com ${com}, era a única posição em que nenhum raio repete símbolo.`;
+    return `${nomeAnel(a)} foi para a posição certa: junto com ${com}, era a única posição em que nenhum raio repete número.`;
   }
 
   // ---------- vitória ----------
@@ -587,7 +581,7 @@
   function updateTip(ok) {
     const t = $("tip");
     if (finished) { t.innerHTML = kind === "dia" ? "" : "Desafio extra resolvido · não conta nas estatísticas"; return; }
-    if (!giros) t.innerHTML = jogoVeterano(LS) ? "" : "Arraste um disco para girá-lo; o preto do centro é fixo.<br>Em cada raio, um símbolo de cada.";
+    if (!giros) t.innerHTML = jogoVeterano(LS) ? "" : "Arraste um disco para girá-lo; o preto do centro é fixo.<br>Em cada raio, um número de cada.";
     else t.innerHTML = n - ok === 1 ? "Falta <b>1</b> raio" : `Faltam <b>${n - ok}</b> raios`;
   }
 
@@ -612,7 +606,7 @@
   $("demoB").innerHTML = mecanismo({ ...EX, rot: [0, 0, 0], ids: false }).svg;
 })();
 </script>
-<script src="../comum/catalogo.js?v=157"></script>
+<script src="../comum/catalogo.js?v=158"></script>
 <script src="../comum/celebra.js?v=156"></script>
 <script src="../comum/recorde.js?v=158"></script>
 <script src="../comum/proximo.js?v=164" data-jogo="engrenagem"></script>

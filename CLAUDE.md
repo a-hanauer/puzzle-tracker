@@ -152,13 +152,13 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   o resolvedor refaz as possibilidades a cada casa (o lance vale só para achar a próxima casa, como quem não anota).
   As palavras cruzadas antigas foram descartadas.
 
-## Cofre (pasta, id e chaves "engrenagem"; jogo de lógica com símbolos, desde 27/11/2026; chamou-se Engrenagem no 1º dia)
+## Cofre (pasta, id e chaves "engrenagem"; jogo de lógica com números, desde 27/11/2026; chamou-se Engrenagem no 1º dia)
 
-- **Símbolos** (escolha do dono, 27/11/2026, cor + forma; o #1 saiu de manhã com contas e foi refeito no mesmo dia):
-  discos concêntricos e um símbolo por fatia — círculo azul, triângulo vermelho, quadrado verde, losango roxo, hexágono ônix
-  (`SIMB`: cor no metal e cor mais viva no eixo preto). Tantos símbolos quanto discos; resolvido = **em cada raio, um símbolo de
-  cada** (sudoku em roda). O disco preto do centro é o **eixo, fixo**; os outros giram. Arrastar gira (encaixe por fatia,
-  vibração a cada uma); toque = um passo no sentido horário.
+- **Números** (27/11/2026 à tarde, escolha do dono "para manter a estética" do cofre; de manhã foram contas, depois símbolos de
+  cor + forma): discos concêntricos e um número gravado por fatia, de 1 a N (N = nº de discos; o valor guardado 0 aparece como 1):
+  cinza escuro com fio de luz embaixo no metal, branco no eixo preto. Resolvido = **em cada raio, um número de cada** (sudoku em
+  roda; com 4 discos, 1, 2, 3 e 4 em todo raio). Os desafios são os mesmos (só muda o desenho). O disco preto do centro é o
+  **eixo, fixo**; os outros giram. Arrastar gira (encaixe por fatia, vibração a cada uma); toque = um passo no sentido horário.
 - **Visual = mostrador de segredo de cofre** (o dono mandou a foto de um, 27/11/2026; antes houve "esmalte liso" e "metal
   polido"): aro cromado, trilho preto, discos de alumínio escovado com a graduação gravada (5 risquinhos por fatia, giram com o
   disco) e brilho fixo de cima; no centro, a manopla serrilhada com tampa preta. Cada raio tem uma marca branca no trilho
