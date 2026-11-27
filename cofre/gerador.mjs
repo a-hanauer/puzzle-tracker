@@ -1,4 +1,4 @@
-// Engrenagem — gerador dos desafios (node engrenagem/gerador.mjs [dias])
+// Engrenagem — gerador dos desafios (node cofre/gerador.mjs [dias])
 //
 // Desde 27/11/2026 (v: 2): símbolos. A anéis, A símbolos, n raios; em cada raio da solução, um símbolo de cada (cada raio
 // é uma permutação sorteada). O anel de dentro é fixo. O desafio só entra se tiver solução única e se sair só por dedução

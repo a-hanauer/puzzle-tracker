@@ -461,7 +461,7 @@
   }).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ["class"] });
 
   // modo minimalista: no lugar da arte, o glifo do jogo desenhado a traço (o mesmo dos ícones, em comum/tema.js)
-  const PASTA = { pingado: "cortado", girassol: "geranio", retalhos: "azulejo", quinhentos: "5pila", sanduba: "sando" };
+  const PASTA = { pingado: "cortado", girassol: "geranio", retalhos: "azulejo", quinhentos: "5pila", sanduba: "sando", engrenagem: "cofre" };
   function arteMin(jogo) {
     const G = window.GLIFOS || {}, g = G[PASTA[jogo] || jogo];
     if (!g) return null;

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="gh-carregando" data-espera data-fixa>
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#eef0f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101215" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cofre">
+<title>COFRE — gire os discos até cada raio ter um número de cada</title>
+<link rel="icon" type="image/png" href="icon.png?v=2">
+<script src="../comum/tema.js?v=159"></script>
+<script src="../comum/cabecalho.js?v=154"></script>
+<script src="../comum/dica.js?v=154"></script>
+<link rel="apple-touch-icon" href="icon.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
+<style>
+  /* Cofre (pasta e chaves "engrenagem", nome antigo): o mostrador de segredo de um cofre. Discos de alumínio escovado com a
+     graduação gravada, trilho preto entre eles, aro cromado; no centro, o eixo preto com a manopla serrilhada e a tampa
+     preta. Um número gravado por fatia (1 a N, N = nº de discos). Cada raio tem uma marca no trilho, que fica verde quando destrava.
+     O mostrador é um objeto: igual no claro e no escuro (só a página muda). Desenho já na posição de cada rotação (sem transform). */
+  :root {
+    --bg: #eef0f2; --surface: #fbfcfd; --surface-2: #dfe3e7; --ink: #16191d; --muted: #6c747d; --line: #dfe3e7;
+    --accent: #1b1e22; --on-accent: #fff;
+    --shadow: 0 1px 2px rgba(20, 25, 30, .07), 0 6px 18px rgba(20, 25, 30, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101215; --surface: #1c1f23; --surface-2: #2a2e33; --ink: #eef1f4; --muted: #9aa2ab; --line: #2a2e33;
+      --accent: #c3c9d0; --on-accent: #101215;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
+    }
+  }
+  :root[data-theme="dark"] {
+      --bg: #101215; --surface: #1c1f23; --surface-2: #2a2e33; --ink: #eef1f4; --muted: #9aa2ab; --line: #2a2e33;
+      --accent: #c3c9d0; --on-accent: #101215;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body, a, button { touch-action: manipulation; }
+  html { height: 100%; background: var(--bg); -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0 auto; max-width: 520px; background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: calc(12px + env(safe-area-inset-top)) 16px max(8px, calc(env(safe-area-inset-bottom) - 12px));
+    min-height: calc(100% + var(--sobra, 0px)); display: flex; flex-direction: column;
+    -webkit-font-smoothing: antialiased; -webkit-user-select: none; user-select: none;
+  }
+
+  /* ---------- mecanismo ---------- */
+  .stage { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 0; }
+  .stage > .fim-subrow { align-self: stretch; }
+  .tab { position: relative; line-height: 0; flex-shrink: 0; }
+  #board { display: block; touch-action: none; overflow: visible; }
+  .anel { cursor: grab; }
+  .anel.eixo { cursor: default; }
+  .num { font-weight: 700; text-anchor: middle; dominant-baseline: central; font-variant-numeric: tabular-nums; fill: #25282c; pointer-events: none; }
+  .num-luz { fill: rgba(255, 255, 255, .75); }
+  .num-eixo { fill: #f2f4f6; }
+  .won .anel .fatia { animation: brilho .8s ease both; }
+  @keyframes brilho { 40% { filter: brightness(1.25); } 100% { filter: none; } }
+  @media (prefers-reduced-motion: reduce) { .won .anel .fatia { animation: none; } }
+
+  /* ---------- controles (os mesmos dos outros jogos de lógica) ---------- */
+  .controls { display: flex; gap: 10px; padding-top: 14px; }
+  .controls > button {
+    flex: 0 0 52px; height: 56px; padding: 0; border-radius: 16px; border: none; cursor: pointer;
+    background: var(--surface); color: var(--muted); box-shadow: var(--shadow);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: flex-basis .45s ease, margin .45s ease, opacity .25s ease; overflow: hidden;
+  }
+  .controls > button:active { transform: scale(.95); }
+  .controls > button:disabled { opacity: .45; }
+  .controls > button svg { width: 22px; height: 22px; }
+  .prog {
+    position: relative; overflow: hidden; flex: 1; height: 56px; border-radius: 16px;
+    background: var(--surface); box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 12px; padding: 0 18px; transition: background .5s ease;
+  }
+  .prog .bar { flex: 1; height: 8px; border-radius: 9px; background: var(--surface-2); position: relative; overflow: visible; margin: 0 6px; }
+  .prog .bar i { display: block; height: 100%; width: 0; border-radius: 9px; background: var(--accent); transition: width .2s ease; }
+  .prog { touch-action: none; cursor: grab; }
+  .prog .bar u { position: absolute; top: 50%; left: 0; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%;
+    background: var(--surface); box-shadow: 0 0 0 3px var(--accent), 0 2px 6px rgba(0,0,0,.18); transition: left .2s ease, transform .15s ease; pointer-events: none; }
+  .prog.sem-hist .bar u { opacity: 0; }
+  .prog.scrub { cursor: grabbing; }
+  .prog.scrub .bar i, .prog.scrub .bar u { transition: none; }
+  .prog.scrub .bar u { transform: scale(1.2); }
+  .prog .n { font-weight: 700; font-size: .95rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .prog .n b { color: var(--ink); font-weight: 800; }
+  .prog .n small { font-size: .72rem; font-weight: 700; }
+  .prog > .bar, .prog > .n { transition: opacity .25s ease; }
+  .controls.done > button { flex-basis: 0; opacity: 0; pointer-events: none; }
+  .controls.done #undoBtn { margin-right: -10px; }
+  .controls.done #clearBtn { margin-left: -10px; }
+  .controls.done .prog { background: linear-gradient(120deg, #15171a 0%, #3a3f46 55%, #8b939b 100%); box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(20, 25, 30, .3); }
+  .controls.done .prog > .bar, .controls.done .prog > .n { opacity: 0; }
+  .done-bar {
+    position: absolute; inset: 0; display: flex; align-items: center; gap: 12px;
+    padding: 0 18px; margin: 0; border: 0; background: none; color: #fff; font: inherit; text-align: left; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity .3s ease .15s;
+  }
+  .controls.done .done-bar { opacity: 1; pointer-events: auto; }
+  .done-bar .ic { width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; }
+  .done-bar .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .done-bar .txt b { font-size: 1.32rem; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .done-bar .txt span { font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .done-bar .chev { margin-left: auto; width: 18px; height: 18px; flex-shrink: 0; stroke: rgba(255,255,255,.75); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .controls.play .done-bar .ic { animation: gira-in .7s cubic-bezier(.3,1.4,.4,1) .15s both; }
+  @keyframes gira-in { from { transform: scale(.3) rotate(-90deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .tip { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 12px; line-height: 1.45; height: 2.9em; }   /* altura fixa: o mecanismo não pula quando o texto muda */
+  .tip b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* ---------- janelas ---------- */
+  .overlay { position: fixed; inset: 0; z-index: 10; display: none; align-items: center; justify-content: center; padding: 20px;
+    background: rgba(10, 12, 15, .42); backdrop-filter: blur(3px); }
+  .overlay.open { display: flex; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal { width: 100%; max-width: 400px; max-height: 88vh; overflow: auto; background: var(--surface); border-radius: 22px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .modal h2 { margin: 0 0 12px; font-size: 1.25rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+  .modal .close { border: none; background: var(--surface-2); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; position: relative; }
+  .modal .close::after { content: ""; position: absolute; inset: -6px; }
+  .modal p, .modal li { font-size: .92rem; line-height: 1.5; color: var(--ink); }
+  .modal ul { padding-left: 20px; margin: 8px 0; }
+  .modal li { margin: 4px 0; }
+  .demo { display: flex; justify-content: center; gap: 18px; margin: 14px 0 6px; }
+  .demo figure { margin: 0; text-align: center; font-size: .72rem; color: var(--muted); font-weight: 600; }
+  .demo svg { display: block; width: 132px; height: 132px; margin: 0 auto 6px; }
+  .btn-main { width: 100%; padding: 13px; border-radius: 14px; border: none; cursor: pointer; background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; font-size: .95rem; }
+</style>
+<link rel="stylesheet" href="../comum/cabecalho.css?v=160">
+<style>
+  :root { --fim-btn-bg: var(--accent); --fim-btn-ink: var(--on-accent); --mpad: 22px; --gh-ink: var(--ink); --gh-muted: var(--muted); --gh-surface: var(--surface); --gh-track: var(--surface-2); --gh-accent: var(--accent); --gh-line: var(--line); }
+  /* nome longo: letras um pouco mais juntas, para caber ao lado do tempo e dos botões */
+  .gh .gh-brand b { letter-spacing: 0; font-size: 1.1rem; }
+</style>
+</head>
+<body>
+
+<header class="gh">
+  <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+  <a class="gh-brand" href="./" aria-label="Cofre — recarregar"><img src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt=""><b>COFRE</b></a>
+  <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
+  <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
+</header>
+
+<div class="gh-meta">
+  <span class="gh-info" id="dayInfo"></span>
+  <label class="gh-free" title="Desafios extras, que não contam nas estatísticas">
+    <span>Jogo livre</span>
+    <input type="checkbox" id="freeToggle"><span class="gh-switch"></span>
+  </label>
+</div>
+
+<div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro data-haptico><svg id="board" viewBox="-200 -200 400 400" role="img" aria-label="Cofre"></svg></div></div>
+
+<div class="controls" id="controls">
+  <button id="undoBtn" disabled aria-label="Desfazer" title="Desfazer">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+  </button>
+  <div class="prog" aria-live="polite">
+    <span class="bar"><i id="progBar"></i><u id="progKnob"></u></span><span class="n" id="progN"><b>0</b>/0</span>
+    <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
+      <img class="ic" src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt="">
+      <span class="txt"><b id="doneTitle">Cofre aberto</b><span id="doneSub"></span></span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <button id="clearBtn" aria-label="Recomeçar" title="Recomeçar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+  </button>
+</div>
+<div class="tip" id="tip"></div>
+
+<!-- Como jogar -->
+<div class="overlay" id="helpOverlay">
+  <div class="modal">
+    <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
+    <p>Abra o cofre: gire os <b>discos</b> até que cada <b>raio</b> tenha <b>um número de cada</b> — como num sudoku em roda.</p>
+    <ul>
+      <li>Um raio vai do centro até a marca branca do trilho e passa por uma fatia de cada disco. Com 4 discos, cada raio precisa ter 1, 2, 3 e 4, sem repetir nenhum.</li>
+      <li>O disco <span class="cor-eixo">preto</span> do centro, em volta da manopla, é o <b>eixo</b>: não gira. Os outros giram, e girar um muda <b>todos os raios</b> ao mesmo tempo.</li>
+      <li>Quando o raio tem um número de cada, a marca dele fica verde: destravou.</li>
+    </ul>
+    <div class="demo">
+      <figure><svg id="demoA" viewBox="-200 -200 400 400"></svg>desafio</figure>
+      <figure><svg id="demoB" viewBox="-200 -200 400 400"></svg>resolvido</figure>
+    </div>
+    <p><b>Arraste</b> um disco para girá-lo (ele acende enquanto o dedo está nele); encaixa na fatia mais próxima. Um toque gira um passo. Para voltar várias jogadas de uma vez, <b>arraste a barra de progresso</b>.</p>
+    <p><b>Como pensar</b> (sem chute): o eixo está parado, então comece por ele.</p>
+    <ul>
+      <li>Escolha um disco e gire-o pelas posições. Em quase todas, algum raio repete um número do eixo — essas não servem.</li>
+      <li>Procure o disco que tem <b>uma posição só</b> sem repetir nada com o eixo. Sempre existe um. Deixe-o ali: ele está certo.</li>
+      <li>Agora compare os outros com o eixo <b>e</b> com o disco que você acertou. De novo, um deles só cabe numa posição. Siga assim até o último.</li>
+    </ul>
+    <p>A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (3 discos, 6 raios) e <b>domingo é nível 7</b> (5 discos, 10 raios).</p>
+    <p>No <b>Jogo livre</b> você joga desafios extras, que não contam nas estatísticas: escolha o <b>nível</b> (1 a 7) no botão ao lado de "Extra" e toque em ↻ para sortear outro.</p>
+    <button class="btn-main" data-close>Jogar</button>
+  </div>
+</div>
+
+<!-- Confirmação para recomeçar -->
+<div class="overlay" id="clearOverlay">
+  <div class="modal" style="max-width:320px;text-align:center">
+    <h2 style="justify-content:center">Voltar ao começo?</h2>
+    <p style="color:var(--muted);margin:0 0 18px">Os discos voltam para onde estavam no início. Dá para desfazer depois.</p>
+    <button class="btn-main" id="clearYes">Recomeçar</button>
+    <button class="close" data-close style="margin-top:12px;width:auto;padding:0 18px;height:36px;border-radius:99px">Cancelar</button>
+  </div>
+</div>
+
+<!-- Fim de jogo -->
+<div class="overlay" id="endOverlay">
+  <div class="modal fim">
+    <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fim-art"><img src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(50,30,60,.15)"></div>
+    <h2 class="fim-title" id="endTitle">Cofre aberto!</h2>
+    <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
+    <p class="fim-sub" id="endSub"></p>
+    <button class="fim-btn" id="againBtn" hidden>Jogar outro</button>
+    <div class="fim-count" id="nextBox">Próximo Cofre em <b id="countdown" data-contagem>--:--:--</b></div>
+    <div data-proximo hidden></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const WEEK = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+  const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const LS = "engrenagem:";
+  const load = (k, d) => { try { const v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
+  const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  const dayNumber = ep => Math.max(1, Math.round((today0() - new Date(ep[0], ep[1], ep[2])) / 86400000) + 1);
+
+  // ---------- estado ----------
+  // P = { v: 2, l, n (raios), nums: ["012021", …] (números de cada disco, 0 = 1, de dentro para fora, já na rotação da solução), ini: [...] }
+  // rot[a] = rotação do anel a: o raio j recebe nums[a][(j + rot[a]) % n]; a solução é tudo 0.
+  let P = null, A = 0, n = 0, NUMS = null, rot = [], PID = "";
+  let history = [], futuro = [], scrub = null, finished = false, kind = "dia", dayNum = 0, DAILY = null, FREE = null, freeIdx = -1;
+  let timer = null, startedAt = 0, elapsed = 0, giros = 0;
+  let desvio = null;          // giro em andamento (arrastar ou encaixar): { a, graus }
+  let dicaUsada = false, dica = null;
+
+  function recomputeStats(st) {
+    const days = Object.keys(st.times).map(Number).sort((a, b) => a - b);
+    let best = 0, run = 0, prev = -9;
+    for (const d of days) { run = d === prev + 1 ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+    st.played = days.length; st.best = best; st.streak = run; st.lastDay = days.at(-1) || 0;
+    return st;
+  }
+
+  function setup(puzzle, saved, k) {
+    stopTimer();
+    kind = k; P = puzzle; A = P.nums.length; n = P.n;
+    NUMS = P.nums.map(s => [...s].map(Number));
+    PID = P.nums.join("|");
+    if (saved && saved.pid !== PID) saved = null;
+    rot = saved?.rot ? saved.rot.split(",").map(Number) : P.ini.slice();
+    if (rot.length !== A) rot = P.ini.slice();
+    elapsed = saved?.elapsed || 0; finished = !!saved?.done; dicaUsada = !!saved?.dica; giros = saved?.giros || 0;
+    history = []; futuro = []; desvio = null;
+    const now = new Date();
+    $("dayInfo").innerHTML = kind === "dia" ? `${WEEK[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} · nível ${P.l} de 7` : "";
+    if (kind === "livre") ghNivel($("dayInfo"), { niveis: NIVEIS, atual: P.l, aoMudar: l => newFree(l), aoSortear: () => newFree() });
+    else $("dayInfo").classList.remove("gh-nivel");
+    fit(); render(); showTime();
+  }
+  const pack = () => rot.join(",");
+
+  function loadDaily() {
+    const { data } = DAILY, pz = data.puzzles[Math.min(dayNum, data.puzzles.length) - 1], sv = load("dia:" + dayNum, null);
+    // o #1 foi refeito (contas → símbolos → números): partida de outro desafio neste dia não vale, nem o tempo dela nas estatísticas
+    if (sv && sv.pid !== pz.nums.join("|")) { const st = load("stats", null); if (st && st.times[dayNum] != null) { delete st.times[dayNum]; save("stats", recomputeStats(st)); } }
+    setup(pz, sv, "dia");
+    persist();
+  }
+  const NIVEIS = [1, 2, 3, 4, 5, 6, 7].map(l => ({ v: l, rotulo: `Nível ${l}`, curto: String(l) }));
+  async function loadFree(forceNew) {
+    if (!FREE) FREE = await fetch("livre.json").then(r => r.json());
+    const nivel = load("nivel-livre", 4), saved = load("livre", null);
+    const doNivel = [...FREE.puzzles.keys()].filter(k => FREE.puzzles[k].l === nivel);
+    const lista = doNivel.length ? doNivel : [...FREE.puzzles.keys()];
+    if (!forceNew && saved && !saved.done && FREE.puzzles[saved.idx] && lista.includes(saved.idx)) freeIdx = saved.idx;
+    else { let k; do { k = lista[Math.floor(Math.random() * lista.length)]; } while (lista.length > 1 && k === saved?.idx); freeIdx = k; }
+    setup(FREE.puzzles[freeIdx], saved && saved.idx === freeIdx ? saved : null, "livre");
+    persist();
+    if (!finished) startTimer();
+  }
+  function newFree(nivel) { if (nivel) save("nivel-livre", nivel); closeAll(); loadFree(true); }
+  $("freeToggle").addEventListener("change", async e => {
+    persist();
+    if (e.target.checked) await loadFree(false);
+    else { loadDaily(); if (!finished) startTimer(); }
+  });
+
+  fetch("desafios.json").then(r => r.json()).then(data => {
+    requestAnimationFrame(() => window.ghPronto && ghPronto());
+    dayNum = dayNumber(data.epoch);
+    DAILY = { data };
+    loadDaily();
+    if (finished) { /* já terminado: a faixa de fim fica à mostra; a bandeja só abre pelo toque nela */ }
+    else if (!load("viu-regras", false)) { openModal("helpOverlay"); save("viu-regras", true); }
+    else startTimer();
+  }).catch(() => { $("stage").innerHTML = '<p class="tip">Não foi possível carregar o desafio. Verifique a conexão e tente de novo.</p>'; });
+
+  // ---------- desenho ----------
+  // Geometria (viewBox -200…200): miolo até R0; anéis de R0 a R1; plaquinhas em RP. Ângulo 0 = para cima, sentido horário.
+  // Geometria (viewBox -200…200): manopla até R0; discos de R0 a R1; trilho preto com as marcas dos raios até RB (aro).
+  // Discos largos de propósito (manopla e trilho estreitos): é a área de toque de cada anel.
+  const R0 = 30, R1 = 171, RB = 198;
+  if (window.jogosMinimal && jogosMinimal.on()) document.querySelectorAll(".cor-eixo").forEach(e => e.textContent = "cheio");
+  // números gravados: 1 a N (o valor guardado 0 aparece como 1)
+  const pt = (r, g) => { const t = g * Math.PI / 180; return [r * Math.sin(t), -r * Math.cos(t)]; };
+  const f1 = v => v.toFixed(1);
+  const faixa = (A, a) => { const w = (R1 - R0) / A; return [R0 + a * w, R0 + (a + 1) * w]; };
+  const anelPath = (r0, r1) => `M0 ${-r1}A${r1} ${r1} 0 1 1 0 ${r1}A${r1} ${r1} 0 1 1 0 ${-r1}ZM0 ${-r0}A${r0} ${r0} 0 1 0 0 ${r0}A${r0} ${r0} 0 1 0 0 ${-r0}Z`;
+  function setor(r0, r1, g0, g1) {
+    const [x0, y0] = pt(r1, g0), [x1, y1] = pt(r1, g1), [x2, y2] = pt(r0, g1), [x3, y3] = pt(r0, g0);
+    return `M${f1(x0)} ${f1(y0)}A${r1} ${r1} 0 0 1 ${f1(x1)} ${f1(y1)}L${f1(x2)} ${f1(y2)}A${r0} ${r0} 0 0 0 ${f1(x3)} ${f1(y3)}Z`;
+  }
+  const raiosOk = (nums, rot, n) => [...Array(n).keys()].map(j => new Set(nums.map((a, k) => a[(j + rot[k]) % n])).size === nums.length);
+  const DEFS = `<defs>
+      <radialGradient id="cfEsc" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="2.2" spreadMethod="repeat"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".5" stop-color="#000" stop-opacity=".07"/><stop offset="1" stop-color="#fff" stop-opacity=".16"/></radialGradient>
+      <linearGradient id="cfLuz" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".62" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient>
+      <linearGradient id="cfAro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f8f9"/><stop offset=".35" stop-color="#b9bec4"/><stop offset=".55" stop-color="#e9ecef"/><stop offset="1" stop-color="#7f868e"/></linearGradient>
+      <linearGradient id="cfTampa" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#3a3c40"/><stop offset=".5" stop-color="#141517"/><stop offset="1" stop-color="#050506"/></linearGradient>
+      <radialGradient id="cfLed"><stop offset="0" stop-color="#7dffa8" stop-opacity=".6"/><stop offset="1" stop-color="#7dffa8" stop-opacity="0"/></radialGradient></defs>`;
+  // desenha o mostrador inteiro (o jogo e os exemplos do Como jogar usam a mesma função). vivo = o anel sob o dedo
+  function mecanismo({ nums, rot, desvio, vivo = -1, ids = true }) {
+    const A = nums.length, n = nums[0].length, passo = 360 / n, ok = raiosOk(nums, rot, n), giro = a => (desvio && desvio.a === a) ? desvio.graus : 0;
+    if (window.jogosMinimal && jogosMinimal.on()) return mecanismoMin(A, n, passo, ok, giro, nums, rot, vivo);
+    let s = (ids ? DEFS : "") + `<circle r="${RB}" fill="url(#cfAro)"/><circle r="${RB - 1}" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1"/><circle r="${RB - 6}" fill="#0e0f11"/><circle r="${R1 + 2}" fill="url(#cfAro)"/>`;
+    for (let a = 0; a < A; a++) {
+      const [r0, r1] = faixa(A, a), g = giro(a), eixo = a === 0;
+      s += `<g class="anel${eixo ? " eixo" : ""}" data-a="${a}"><path d="${anelPath(r0, r1)}" fill-rule="evenodd" fill="${eixo ? "#141518" : a % 2 ? "#d5d9dd" : "#c8cdd2"}"/>`;
+      if (!eixo) s += `<path d="${anelPath(r0, r1)}" fill-rule="evenodd" fill="url(#cfEsc)"/>`;
+      // graduação gravada na borda de fora do anel: 5 risquinhos por fatia, o da divisa maior (gira com o anel)
+      for (let k = 0; k < n * 5; k++) {
+        const c = (k / 5 - rot[a]) * passo + g - passo / 2, L = k % 5 === 0 ? 7 : 3.5, [x0, y0] = pt(r1 - 1.2, c), [x1, y1] = pt(r1 - 1.2 - L, c);
+        s += `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" stroke="${eixo ? "rgba(255,255,255,.45)" : "rgba(30,33,37,.62)"}" stroke-width="${k % 5 === 0 ? 1.3 : .9}"/>`;
+      }
+      s += `</g>`;
+      if (!eixo) s += `<path d="${anelPath(r0, r1)}" fill-rule="evenodd" fill="url(#cfLuz)" pointer-events="none"/>`;
+      s += `<circle r="${r1}" fill="none" stroke="#0e0f11" stroke-width="2.4"/>`;
+    }
+    ok.forEach((v, j) => { if (v) s += `<path d="${setor(R0 + 1, R1 - 1.5, j * passo - passo / 2 + 1.2, j * passo + passo / 2 - 1.2)}" fill="rgba(46,204,113,.2)"/>`; });
+    // o anel sob o dedo: contorno claro, para não girar o vizinho sem perceber
+    if (vivo > 0) { const [r0, r1] = faixa(A, vivo); s += `<path d="${anelPath(r0 + 1, r1 - 1)}" fill-rule="evenodd" fill="rgba(255,255,255,.14)"/><circle r="${r0 + 1.6}" fill="none" stroke="#fff" stroke-width="2.2"/><circle r="${r1 - 1.6}" fill="none" stroke="#fff" stroke-width="2.2"/>`; }
+    for (let a = 0; a < A; a++) {
+      const [r0, r1] = faixa(A, a), rm = (r0 + r1) / 2 - 2.5, g = giro(a), fs = Math.min((r1 - r0) * .62, rm * Math.PI / n * .95, 21);
+      for (let k = 0; k < n; k++) {
+        const [x, y] = pt(rm, (k - rot[a]) * passo + g), t = nums[a][k];
+        // gravado: no metal, cinza escuro com um fio de luz embaixo; no eixo preto, branco
+        s += a === 0 ? `<text class="num num-eixo" x="${f1(x)}" y="${f1(y)}" font-size="${f1(fs)}">${t + 1}</text>`
+          : `<text class="num num-luz" x="${f1(x)}" y="${f1(y + .9)}" font-size="${f1(fs)}">${t + 1}</text><text class="num" x="${f1(x)}" y="${f1(y)}" font-size="${f1(fs)}">${t + 1}</text>`;
+      }
+    }
+    // manopla serrilhada com a tampa preta, no meio do eixo (não gira)
+    const rk = R0 - 1;
+    s += `<circle r="${rk + 1.5}" fill="#0e0f11"/><circle r="${rk}" fill="url(#cfAro)"/>`;
+    for (let i = 0; i < 40; i++) { const [x0, y0] = pt(rk - .5, i * 9), [x1, y1] = pt(rk - 4.5, i * 9); s += `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" stroke="${i % 2 ? "rgba(255,255,255,.75)" : "rgba(40,44,48,.45)"}" stroke-width="1.3"/>`; }
+    s += `<circle r="${rk - 5}" fill="url(#cfTampa)"/><ellipse cx="-5" cy="-7" rx="9" ry="4" fill="rgba(255,255,255,.1)" transform="rotate(-30 -5 -7)"/>`;
+    // marcas dos raios no trilho preto: risco branco; o raio certo fica verde e brilha
+    for (let j = 0; j < n; j++) {
+      const [x0, y0] = pt(R1 + 7, j * passo), [x1, y1] = pt(RB - 10, j * passo), [cx, cy] = pt((R1 + RB) / 2 - 1, j * passo);
+      s += (ok[j] ? `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="12" fill="url(#cfLed)"/>` : "") + `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" stroke="${ok[j] ? "#5bf08f" : "rgba(255,255,255,.85)"}" stroke-width="3" stroke-linecap="round"/>`;
+    }
+    return { svg: s, ok };
+  }
+  // modo minimalista: círculos de traço, graduação em pontinhos, eixo = o único disco cheio, marca vermelha no raio destravado
+  function mecanismoMin(A, n, passo, ok, giro, nums, rot, vivo) {
+    let s = `<circle r="${RB}" fill="none" stroke="var(--m-ink)" stroke-width="1.6"/>`;
+    ok.forEach((v, j) => { if (v) s += `<path d="${setor(R0 + 1, R1, j * passo - passo / 2, j * passo + passo / 2)}" fill="var(--m-red)" opacity=".1"/>`; });
+    for (let a = 0; a < A; a++) {
+      const [r0, r1] = faixa(A, a), g = giro(a), eixo = a === 0;
+      s += `<g class="anel${eixo ? " eixo" : ""}" data-a="${a}"><path d="${anelPath(r0, r1)}" fill-rule="evenodd" fill="${eixo ? "var(--m-ink)" : "transparent"}"/>`;
+      for (let k = 0; k < n * 5; k++) {
+        const c = (k / 5 - rot[a]) * passo + g - passo / 2, [x, y] = pt(r1 - 5, c);
+        s += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${k % 5 === 0 ? 1.5 : .8}" fill="${eixo ? "var(--m-bg)" : "var(--m-sub)"}"/>`;
+      }
+      s += `</g><circle r="${r1}" fill="none" stroke="var(--m-ink)" stroke-width="1.3"/>`;
+    }
+    if (vivo > 0) { const [r0, r1] = faixa(A, vivo); s += `<circle r="${r0 + 1.5}" fill="none" stroke="var(--m-red)" stroke-width="2.4"/><circle r="${r1 - 1.5}" fill="none" stroke="var(--m-red)" stroke-width="2.4"/>`; }
+    for (let a = 0; a < A; a++) {
+      const [r0, r1] = faixa(A, a), rm = (r0 + r1) / 2 - 2.5, g = giro(a), fs = Math.min((r1 - r0) * .62, rm * Math.PI / n * .95, 21);
+      for (let k = 0; k < n; k++) {
+        const [x, y] = pt(rm, (k - rot[a]) * passo + g);
+        s += `<text x="${f1(x)}" y="${f1(y)}" font-size="${f1(fs)}" text-anchor="middle" dominant-baseline="central" style="font-family:var(--m-num);font-weight:900" fill="${a === 0 ? "var(--m-bg)" : "var(--m-ink)"}" pointer-events="none">${nums[a][k] + 1}</text>`;
+      }
+    }
+    s += `<circle r="${R0 - 1}" fill="var(--m-bg)" stroke="var(--m-ink)" stroke-width="1.3"/><circle r="4" fill="var(--m-ink)"/>`;
+    for (let j = 0; j < n; j++) {
+      const [x0, y0] = pt(R1 + 8, j * passo), [x1, y1] = pt(RB - 8, j * passo), [cx, cy] = pt((R1 + RB) / 2 + 1, j * passo);
+      s += ok[j] ? `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="6" fill="var(--m-red)"/>` : `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" stroke="var(--m-ink)" stroke-width="2" stroke-linecap="round"/>`;
+    }
+    return { svg: s, ok };
+  }
+  function fit() {
+    const st = $("stage"), b = $("board");
+    if (!st || !b) return;
+    b.style.width = b.style.height = "0px";
+    const sub = st.querySelector(".fim-subrow:not([hidden])");
+    const size = Math.floor(Math.min(st.clientWidth, st.clientHeight - 8 - (sub ? sub.offsetHeight + 10 : 0), 470));
+    b.style.width = b.style.height = Math.max(200, size) + "px";
+  }
+  window.addEventListener("resize", () => { if (n) fit(); });
+  if (window.visualViewport) visualViewport.addEventListener("resize", () => { if (n) fit(); });
+
+  function certos() { return raiosOk(NUMS, rot, n).filter(Boolean).length; }
+  function render() {
+    if (dica) dica.atualiza();
+    const m = mecanismo({ nums: NUMS, rot, desvio: desvio && { a: desvio.a, graus: desvio.graus }, vivo: drag ? drag.a : desvio ? desvio.a : -1 });
+    $("board").innerHTML = m.svg;
+    const ok = m.ok.filter(Boolean).length;
+    if (!scrub) {
+      $("progBar").style.width = $("progKnob").style.left = (100 * ok / n) + "%";
+      $("progN").innerHTML = `<b>${ok}</b>/${n}`;
+    }
+    document.querySelector(".prog").classList.toggle("sem-hist", finished || (!history.length && !futuro.length));
+    $("undoBtn").disabled = finished || !history.length;
+    $("clearBtn").disabled = finished || pack() === P.ini.join(",");
+    $("board").classList.toggle("won", finished);
+    $("controls").classList.toggle("done", finished);
+    if (!finished) $("controls").classList.remove("play");
+    $("doneBar").tabIndex = finished ? 0 : -1;
+    if (finished) {
+      $("doneTitle").textContent = fmt(elapsed);
+      const rec = kind === "dia" && window.recordeDoDia ? recordeDoDia("engrenagem:", dayNum) : null;
+      $("doneSub").textContent = `${kind === "dia" ? (rec ? `recorde de ${rec.dia}` : "Cofre aberto") : "Resolvido"}${dicaUsada ? " · com dica" : ""}${kind === "dia" ? "" : " · jogar outro"}`;
+    }
+    updateTip(ok);
+    $("board").setAttribute("aria-label", `Cofre com ${A} discos e ${n} raios: ${ok} de ${n} raios fechados`);
+  }
+
+  function persist() {
+    if (!P) return;
+    const ok = certos();
+    const data = { pid: PID, rot: pack(), elapsed: currentElapsed(), done: finished, prog: [ok, n], started: giros > 0, dica: dicaUsada, giros };
+    if (kind === "livre") { save("livre", { idx: freeIdx, ...data }); return; }
+    save("dia:" + dayNum, { ...data, time: finished ? elapsed : null });
+  }
+
+  // ---------- girar ----------
+  // Arrastar: o anel segue o dedo; ao soltar, encaixa na fatia mais próxima (uma animação curta).
+  // Toque (sem arrastar): um passo no sentido horário. Cada fatia que passa por um raio dá um toque de vibração.
+  const passoG = () => 360 / n;
+  function anelEm(e) {
+    const r = $("board").getBoundingClientRect(), k = 400 / r.width;
+    const x = (e.clientX - r.left) * k - 200, y = (e.clientY - r.top) * k - 200, d = Math.hypot(x, y);
+    if (d < R0 || d > 202) return -1;                      // manopla (parada) ou fora do mostrador
+    if (d >= R1) return A - 1;                             // trilho e aro: anel de fora
+    const w = (R1 - R0) / A, f = (d - R0) / w, a = Math.min(A - 1, Math.floor(f));
+    if (a === 0) return f > .7 ? 1 : -1;                   // eixo: não gira (a beirada de fora vale como o 1º anel)
+    return a;
+  }
+  const angulo = e => { const r = $("board").getBoundingClientRect(); return Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2))) * 180 / Math.PI; };
+  let drag = null, anima = 0;
+  function encaixa(a, graus, passos, depois) {
+    // graus: onde o anel está agora (desvio); passos: quantas fatias girou (horário +)
+    cancelAnimationFrame(anima);
+    const alvoG = passos * passoG(), t0 = performance.now(), dur = 170;
+    const vai = t => {
+      const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      desvio = { a, graus: graus + (alvoG - graus) * e }; render();
+      if (p < 1) { anima = requestAnimationFrame(vai); return; }
+      desvio = null;
+      if (passos) rot[a] = ((rot[a] - passos) % n + n) % n;
+      depois && depois();
+    };
+    anima = requestAnimationFrame(vai);
+  }
+  $("tab").addEventListener("pointerdown", e => {
+    if (finished || !n || desvio) return;
+    const a = anelEm(e); if (a < 0) return;
+    e.preventDefault();
+    drag = { id: e.pointerId, a, g0: angulo(e), graus: 0, notch: 0, antes: pack(), t: Date.now() };
+    try { e.target.setPointerCapture(e.pointerId); } catch {}
+    render();   // acende o anel sob o dedo antes de girar
+    startTimer();
+  });
+  $("tab").addEventListener("pointermove", e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    let d = angulo(e) - drag.g0; if (d > 180) d -= 360; if (d < -180) d += 360;
+    drag.graus = d; desvio = { a: drag.a, graus: d };
+    const nt = Math.round(d / passoG());
+    if (nt !== drag.notch) { drag.notch = nt; if (window.jogosHaptico) jogosHaptico(); }
+    render();
+  });
+  const fimDrag = e => {
+    if (!drag || (e && e.pointerId !== undefined && e.pointerId !== drag.id)) return;
+    const d = drag; drag = null;
+    let passos = Math.round(d.graus / passoG());
+    if (Math.abs(d.graus) < 6 && Date.now() - d.t < 450) { passos = 1; if (window.jogosHaptico) jogosHaptico(); }   // toque: um passo
+    encaixa(d.a, d.graus, passos, () => {
+      if (pack() !== d.antes) { history.push(d.antes); futuro = []; if (history.length > 300) history.shift(); giros++; }
+      checkWin(); render(); persist();
+    });
+  };
+  window.addEventListener("pointerup", fimDrag);
+  window.addEventListener("pointercancel", fimDrag);
+
+  const unpack = s => { rot = s.split(",").map(Number); };
+  $("undoBtn").addEventListener("click", () => {
+    if (!history.length || finished || desvio) return;
+    futuro.unshift(pack()); unpack(history.pop()); render(); persist();
+  });
+  $("clearBtn").addEventListener("click", () => { if (!finished && pack() !== P.ini.join(",")) openModal("clearOverlay"); });
+  $("clearYes").addEventListener("click", () => {
+    closeModal($("clearOverlay"));
+    if (finished) return;
+    history.push(pack()); futuro = []; rot = P.ini.slice(); render(); persist();
+  });
+
+  // ---------- barra arrastável: linha do tempo dos giros (como nos outros jogos de lógica) ----------
+  function scrubTo(e) {
+    const bar = document.querySelector(".prog .bar").getBoundingClientRect();
+    const f = Math.min(1, Math.max(0, (e.clientX - bar.left) / bar.width)), k = Math.round(f * scrub.total);
+    if (k !== scrub.k) { scrub.k = k; unpack(scrub.linha[k]); if (window.jogosHaptico) jogosHaptico(); render(); }
+    const pct = 100 * k / Math.max(1, scrub.total);
+    $("progBar").style.width = $("progKnob").style.left = pct + "%";
+    $("progN").innerHTML = `<small>giro</small> <b>${k}</b>/${scrub.total}`;
+  }
+  const prog = document.querySelector(".prog");
+  prog.addEventListener("pointerdown", e => {
+    if (finished || !n || desvio || e.target.closest(".done-bar")) return;
+    if (!history.length && !futuro.length) return;
+    e.preventDefault();
+    const linha = [...history, pack(), ...futuro];
+    scrub = { id: e.pointerId, linha, total: linha.length - 1, k: history.length };
+    prog.classList.add("scrub");
+    try { prog.setPointerCapture(e.pointerId); } catch {}
+    scrubTo(e);
+  });
+  prog.addEventListener("pointermove", e => { if (scrub && e.pointerId === scrub.id) scrubTo(e); });
+  const fimScrub = e => {
+    if (!scrub || (e.pointerId !== undefined && e.pointerId !== scrub.id)) return;
+    const { linha, k } = scrub;
+    history = linha.slice(0, k); futuro = linha.slice(k + 1);
+    scrub = null; prog.classList.remove("scrub");
+    checkWin(); render(); persist(); startTimer();
+  };
+  prog.addEventListener("pointerup", fimScrub);
+  prog.addEventListener("pointercancel", fimScrub);
+
+  // ---------- cronômetro ----------
+  const fmt = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`; };
+  const currentElapsed = () => elapsed + (timer ? (Date.now() - startedAt) / 1000 : 0);
+  function showTime() { $("timer").textContent = fmt(currentElapsed()); }
+  function startTimer() {
+    if (timer || finished || document.hidden || !n) return;
+    startedAt = Date.now(); timer = setInterval(showTime, 500); showTime();
+  }
+  function stopTimer() {
+    if (!timer) return;
+    elapsed = currentElapsed(); clearInterval(timer); timer = null; showTime();
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (!n) return;
+    if (document.hidden) { stopTimer(); persist(); }
+    else if (!finished && !document.querySelector(".overlay.open")) startTimer();
+  });
+  setInterval(() => { if (timer) persist(); }, 5000);
+
+  // ---------- dica (comum/dica.js): põe no lugar o anel que a dedução acha primeiro, com o motivo ----------
+  const nomeAnel = a => a === A - 1 ? "O disco de fora" : `O ${a + 1}º disco`;
+    async function pedirDica() {
+    if (desvio) return "";
+    const M = await import("./motor.mjs");
+    // a ordem da cadeia: o primeiro anel dela que ainda está fora do lugar
+    const ordem = (M.cadeia({ n, nums: NUMS }) || []).map(o => o.a);
+    const a = ordem.find(x => rot[x] !== 0) ?? [...Array(A).keys()].find(x => x > 0 && rot[x] !== 0);
+    if (a == null) return "";
+    const antes = ordem.slice(0, ordem.indexOf(a));
+    history.push(pack()); futuro = []; dicaUsada = true;
+    const passos = ((rot[a]) % n + n) % n, curto = passos > n / 2 ? passos - n : passos;   // gira pelo lado mais curto
+    encaixa(a, 0, curto, () => { giros++; checkWin(); render(); persist(); });
+    const com = antes.length ? `o eixo e ${antes.length === 1 ? nomeAnel(antes[0]).replace(/^O /, "o ") : "os discos já certos"}` : "o eixo";
+    return `${nomeAnel(a)} foi para a posição certa: junto com ${com}, era a única posição em que nenhum raio repete número.`;
+  }
+
+  // ---------- vitória ----------
+  function checkWin() {
+    if (finished || !n || desvio || certos() !== n) return;
+    stopTimer(); finished = true;
+    $("controls").classList.add("play");
+    elapsed = Math.round(elapsed); showTime();
+    if (kind === "dia") {
+      const st = load("stats", { played: 0, streak: 0, best: 0, lastDay: 0, times: {} });
+      if (st.times[dayNum] == null) { st.times[dayNum] = elapsed; save("stats", recomputeStats(st)); }
+    }
+    persist();
+    celebrar("engrenagem", { alvo: $("stage"), esmaecer: $("board") }).then(() => setTimeout(showEnd, 200));
+  }
+  function showEnd() {
+    $("endTime").textContent = fmt(elapsed);
+    const daily = kind === "dia";
+    $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l} de 7` : `Jogo livre · nível ${P.l} de 7`) + ` · ${A} discos · ${giros} ${giros === 1 ? "giro" : "giros"}` + (dicaUsada ? " · com dica" : "");
+    const rec = daily && window.recordeDoDia ? recordeDoDia("engrenagem:", dayNum) : null;
+    if (window.seloRecorde) seloRecorde($("endSub"), rec && `Seu melhor tempo de ${rec.dia} · antes ${fmt(rec.antes)}`);
+    if (window.semanaFim) semanaFim($("endSub"), daily ? semanaTempos("engrenagem:", dayNum) : null, "tempo");
+    $("shareBtn").hidden = !daily; $("againBtn").hidden = daily; $("nextBox").hidden = !daily;
+    openModal("endOverlay");
+  }
+  function updateTip(ok) {
+    const t = $("tip");
+    if (finished) { t.innerHTML = kind === "dia" ? "" : "Desafio extra resolvido · não conta nas estatísticas"; return; }
+    if (!giros) t.innerHTML = jogoVeterano(LS) ? "" : `Arraste um disco para girá-lo; o ${window.jogosMinimal && jogosMinimal.on() ? "disco cheio" : "preto"} do centro é fixo.<br>Em cada raio, um número de cada.`;
+    else t.innerHTML = n - ok === 1 ? "Falta <b>1</b> raio" : `Faltam <b>${n - ok}</b> raios`;
+  }
+
+  $("shareBtn").addEventListener("click", () => {
+    const text = `COFRE #${dayNum} · nível ${P.l} de 7\n🔐 ${fmt(elapsed)}${dicaUsada ? " 💡" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/cofre/`;
+    ghCompartilhar($("shareBtn"), text);
+  });
+  $("againBtn").addEventListener("click", () => newFree());
+  $("doneBar").addEventListener("click", () => { if (finished) (kind === "dia" ? showEnd() : newFree()); });
+
+  // ---------- janelas ----------
+  function openModal(id) { $(id).classList.add("open"); stopTimer(); }
+  function closeAll() { document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open")); }
+  function closeModal(el) { el.classList.remove("open"); if (!finished && !document.querySelector(".overlay.open")) startTimer(); }
+  document.querySelectorAll(".overlay").forEach(o => o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-close]")) closeModal(o); }));
+  dica = ghDica({ usada: () => dicaUsada, bloqueada: () => finished || !n, pedir: pedirDica });
+  $("helpBtn").addEventListener("click", () => openModal("helpOverlay"));
+
+  // exemplo no Como jogar: 3 anéis e 6 raios, o desafio e a solução
+  const EX = { nums: [[0, 1, 2, 0, 2, 1], [1, 2, 0, 2, 1, 0], [2, 0, 1, 1, 0, 2]] };
+  $("demoA").innerHTML = mecanismo({ ...EX, rot: [0, 2, 1] }).svg;
+  $("demoB").innerHTML = mecanismo({ ...EX, rot: [0, 0, 0], ids: false }).svg;
+})();
+</script>
+<script src="../comum/catalogo.js?v=159"></script>
+<script src="../comum/celebra.js?v=158"></script>
+<script src="../comum/recorde.js?v=158"></script>
+<script src="../comum/proximo.js?v=165" data-jogo="engrenagem"></script>
+</body>
+</html>

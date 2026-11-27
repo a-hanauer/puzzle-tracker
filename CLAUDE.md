@@ -164,7 +164,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   o resolvedor refaz as possibilidades a cada casa (o lance vale só para achar a próxima casa, como quem não anota).
   As palavras cruzadas antigas foram descartadas.
 
-## Cofre (pasta, id e chaves "engrenagem"; jogo de lógica com números, desde 27/11/2026; chamou-se Engrenagem no 1º dia)
+## Cofre (pasta `cofre/` desde 27/11/2026, `engrenagem/` só redireciona; id e chaves "engrenagem"; jogo de lógica com números, desde 27/11/2026; chamou-se Engrenagem no 1º dia)
 
 - **Números** (27/11/2026 à tarde, escolha do dono "para manter a estética" do cofre; de manhã foram contas, depois símbolos de
   cor + forma): discos concêntricos e um número gravado por fatia, de 1 a N (N = nº de discos; o valor guardado 0 aparece como 1):
@@ -184,7 +184,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - **Estratégia = cadeia** (27/11/2026): `cadeia(P)` em motor.mjs — com o eixo travado, sempre há um disco que só cabe numa
   posição sem repetir símbolo com os já travados; trava e repete. O gerador só aceita desafios com cadeia e solução única; a
   dica gira o próximo disco da cadeia e diz por quê; o "Como jogar" ensina o método ("Como pensar").
-- `engrenagem/gerador.mjs` (EPOCH 27/11/2026; `NIVEL` = [discos, raios]): seg 3 × 6, ter 3 × 8, qua 4 × 6, qui 4 × 8, sex 4 × 10,
+- `cofre/gerador.mjs` (EPOCH 27/11/2026; `NIVEL` = [discos, raios]): seg 3 × 6, ter 3 × 8, qua 4 × 6, qui 4 × 8, sex 4 × 10,
   sáb 5 × 8, dom 5 × 10; cada raio da solução é uma permutação sorteada, todo disco usa todos os símbolos. `desafios.json` (400 dias,
   `v: 2`, na rotação da solução) e `livre.json`. Partida salva de outro desafio no mesmo dia é descartada, com o tempo nas
   estatísticas (`loadDaily`).

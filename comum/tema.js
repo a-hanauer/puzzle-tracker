@@ -280,7 +280,7 @@ window.jogoVeterano = function (prefixo) {
    usados também no painel, na doca e na celebração. <html data-jogo="pasta"> diz em que jogo está (ou "painel"). */
 (function () {
   var KEY = "jogosDoDia.minimal", root = document.documentElement;
-  var JOGOS = ["sando", "5pila", "eclipse", "novelo", "azulejo", "cordel", "geranio", "brigadeiro", "cruzadinha", "cortado", "engrenagem"];
+  var JOGOS = ["sando", "5pila", "eclipse", "novelo", "azulejo", "cordel", "geranio", "brigadeiro", "cruzadinha", "cortado", "cofre"];
   var on = function () { try { return localStorage.getItem(KEY) === "1"; } catch (e) { return false; } };
   var cs = document.currentScript, base = cs && cs.src ? cs.src.replace(/tema\.js.*$/, "") : "comum/";
   var m = location.pathname.match(/\/([^\/]+)\/(?:index\.html)?$/), pasta = m && JOGOS.indexOf(m[1]) >= 0 ? m[1] : "painel";
@@ -297,7 +297,7 @@ window.jogoVeterano = function (prefixo) {
     brigadeiro: '<path d="M9 19l2.5 8h11l2.5-8z"/><circle cx="17" cy="13.5" r="6.5"/>',
     cruzadinha: '<rect x="6" y="6" width="22" height="22" rx="4"/><circle cx="11.5" cy="11.5" r="1.7" fill="currentColor"/><circle cx="17" cy="17" r="1.7" fill="currentColor"/><circle cx="22.5" cy="22.5" r="1.7" fill="currentColor"/>',
     cortado: '<path d="M7 11h17v8a7 7 0 0 1-7 7h-3a7 7 0 0 1-7-7z"/><path d="M24 13.5h1.5a3 3 0 0 1 0 6H24M7 16.5h17"/>',
-    engrenagem: '<circle cx="17" cy="17" r="11"/><circle cx="17" cy="17" r="6"/><circle cx="17" cy="17" r="2" fill="currentColor"/><path d="M17 4v3"/>',
+    cofre: '<circle cx="17" cy="17" r="11"/><circle cx="17" cy="17" r="6"/><circle cx="17" cy="17" r="2" fill="currentColor"/><path d="M17 4v3"/>',
     painel: '<rect x="5" y="5" width="10" height="10" rx="2.5"/><rect x="19" y="5" width="10" height="10" rx="2.5" fill="currentColor"/><rect x="5" y="19" width="10" height="10" rx="2.5"/><rect x="19" y="19" width="10" height="10" rx="2.5"/>',
   };
   // svg do glifo; cor = traço (para <img>, que não herda a cor do texto)
