@@ -152,22 +152,28 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   o resolvedor refaz as possibilidades a cada casa (o lance vale só para achar a próxima casa, como quem não anota).
   As palavras cruzadas antigas foram descartadas.
 
-## Engrenagem (jogo de lógica com símbolos, desde 27/11/2026)
+## Cofre (pasta, id e chaves "engrenagem"; jogo de lógica com símbolos, desde 27/11/2026; chamou-se Engrenagem no 1º dia)
 
-- **Símbolos** (escolha do dono, 27/11/2026, opção "A": cor + forma; o #1 saiu de manhã com contas e foi refeito no mesmo dia):
-  anéis concêntricos e um símbolo por fatia — círculo azul, triângulo vermelho, quadrado verde, losango roxo, hexágono ônix
-  (`SIMB`). Tantos símbolos quanto anéis; resolvido = **em cada raio, um símbolo de cada** (sudoku em roda).
-  O anel de dentro (tom mais forte) é o **eixo, fixo**; os outros giram. Arrastar gira (encaixe por fatia, vibração a cada uma);
-  toque = um passo no sentido horário. Uma luz por raio, na moldura, acende (verde) e uma cunha verde clara marca o raio certo.
-- **Visual "esmalte liso"** (opção "B", 27/11/2026; a "A", metal polido, foi recusada): anéis em tons de ameixa alternados
-  (`--b-an0/1`, eixo `--b-anE`), frestas finas da cor da moldura (`--b-moldura`), símbolos chapados com sombra curta, nada de
-  metal, degradê ou contorno. Cartão do painel lilás (#e0c6f1 / escuro #31203c).
-- **Estratégia = cadeia** (27/11/2026, o dono achou que parecia aleatório): `cadeia(P)` em motor.mjs — com o eixo travado, sempre
-  há um anel que só cabe numa posição sem repetir símbolo com os já travados; trava e repete. O gerador só aceita desafios com
-  cadeia e solução única; a dica gira o próximo anel da cadeia e diz por quê; o "Como jogar" ensina o método ("Como pensar").
-  (`resolve` com conflito/falta continua no motor, sem uso no gerador.)
-- `engrenagem/gerador.mjs` (EPOCH 27/11/2026; `NIVEL` = [anéis, raios]): seg 3 × 6, ter 3 × 8, qua 4 × 6, qui 4 × 8, sex 4 × 10,
-  sáb 5 × 8, dom 5 × 10; cada raio da solução é uma permutação sorteada, todo anel usa todos os símbolos. `desafios.json` (400 dias,
+- **Símbolos** (escolha do dono, 27/11/2026, cor + forma; o #1 saiu de manhã com contas e foi refeito no mesmo dia):
+  discos concêntricos e um símbolo por fatia — círculo azul, triângulo vermelho, quadrado verde, losango roxo, hexágono ônix
+  (`SIMB`: cor no metal e cor mais viva no eixo preto). Tantos símbolos quanto discos; resolvido = **em cada raio, um símbolo de
+  cada** (sudoku em roda). O disco preto do centro é o **eixo, fixo**; os outros giram. Arrastar gira (encaixe por fatia,
+  vibração a cada uma); toque = um passo no sentido horário.
+- **Visual = mostrador de segredo de cofre** (o dono mandou a foto de um, 27/11/2026; antes houve "esmalte liso" e "metal
+  polido"): aro cromado, trilho preto, discos de alumínio escovado com a graduação gravada (5 risquinhos por fatia, giram com o
+  disco) e brilho fixo de cima; no centro, a manopla serrilhada com tampa preta. Cada raio tem uma marca branca no trilho
+  (como o "zero"), que fica verde e brilha quando o raio destrava, com uma cunha verde clara. O mostrador é igual no claro e no
+  escuro; a página é cinza-aço. Fim: "Cofre aberto!"; celebração `ARTE.engrenagem` = o mostrador gira e para no zero, a marca
+  acende. Cartão do painel aço (#d9dde2 / escuro #25292e), emoji 🔐.
+- **Área de toque** (27/11/2026, o dono pediu contra toque no disco errado): discos largos (manopla R0 = 30, discos até
+  R1 = 171, aro RB = 198 no viewBox de 400); `anelEm` pega o disco pela faixa, sem sobreposição; manopla e eixo não respondem,
+  salvo a beirada de fora do eixo (vale como o 1º disco); trilho e aro valem como o disco de fora. O disco sob o dedo acende
+  (contorno branco) já no toque, antes de girar.
+- **Estratégia = cadeia** (27/11/2026): `cadeia(P)` em motor.mjs — com o eixo travado, sempre há um disco que só cabe numa
+  posição sem repetir símbolo com os já travados; trava e repete. O gerador só aceita desafios com cadeia e solução única; a
+  dica gira o próximo disco da cadeia e diz por quê; o "Como jogar" ensina o método ("Como pensar").
+- `engrenagem/gerador.mjs` (EPOCH 27/11/2026; `NIVEL` = [discos, raios]): seg 3 × 6, ter 3 × 8, qua 4 × 6, qui 4 × 8, sex 4 × 10,
+  sáb 5 × 8, dom 5 × 10; cada raio da solução é uma permutação sorteada, todo disco usa todos os símbolos. `desafios.json` (400 dias,
   `v: 2`, na rotação da solução) e `livre.json`. Partida salva de outro desafio no mesmo dia é descartada, com o tempo nas
   estatísticas (`loadDaily`).
 

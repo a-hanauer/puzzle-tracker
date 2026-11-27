@@ -35,7 +35,7 @@ const BASE_GAMES = [
   { id: "brigadeiro", name: "Brigadeiro", emoji: "🍫", desc: "Incline até as forminhas",      url: "brigadeiro/", icon: "brigadeiro/icon.png?v=1", iconDark: "brigadeiro/icon-escuro.png?v=1", iconFull: true, cor: ["#f6d3de", "#4a2030", "#3a2228", "#f7e6ec"] },
   { id: "cruzadinha", name: "Ponto Cruz", emoji: "🪡", desc: "Sudoku de dados bordados",      url: "cruzadinha/", icon: "cruzadinha/icon.png?v=24", iconDark: "cruzadinha/icon-escuro.png?v=24", iconFull: true, cor: ["#dfe9b8", "#2f3a12", "#2f3620", "#f1f4e6"] },
   { id: "pingado",    name: "Cortado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "cortado/", icon: "cortado/icon.png?v=21", iconDark: "cortado/icon-escuro.png?v=21", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
-  { id: "engrenagem", name: "Engrenagem", emoji: "⚙️", desc: "Gire os anéis: um símbolo de cada em cada raio", url: "engrenagem/", icon: "engrenagem/icon.png?v=1", iconDark: "engrenagem/icon-escuro.png?v=1", iconFull: true, cor: ["#e0c6f1", "#2c163b", "#31203c", "#f1eaf5"] },
+  { id: "engrenagem", name: "Cofre", emoji: "🔐", desc: "Gire os discos: um símbolo de cada em cada raio", url: "engrenagem/", icon: "engrenagem/icon.png?v=2", iconDark: "engrenagem/icon-escuro.png?v=2", iconFull: true, cor: ["#d9dde2", "#1b1f24", "#25292e", "#eef1f4"] },
 ];
 
 /* ============================================================ */

@@ -4,45 +4,40 @@
 <meta charset="UTF-8">
 <meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#f3eff5" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#151118" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eef0f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101215" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Engrenagem">
-<title>ENGRENAGEM — gire os anéis até cada raio ter um símbolo de cada</title>
-<link rel="icon" type="image/png" href="icon.png?v=1">
+<meta name="apple-mobile-web-app-title" content="Cofre">
+<title>COFRE — gire os discos até cada raio ter um símbolo de cada</title>
+<link rel="icon" type="image/png" href="icon.png?v=2">
 <script src="../comum/tema.js?v=157"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
-<link rel="apple-touch-icon" href="icon.png?v=1">
+<link rel="apple-touch-icon" href="icon.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <style>
-  /* Engrenagem: anéis concêntricos em tons de ameixa (esmalte liso), um símbolo chapado por fatia (cor + forma).
-     O anel de dentro, mais escuro, é o eixo, parado. Em volta, uma luz por raio, que acende quando o raio tem um símbolo
-     de cada. Tudo é desenhado já na posição de cada rotação (sem transform). */
+  /* Cofre (pasta e chaves "engrenagem", nome antigo): o mostrador de segredo de um cofre. Discos de alumínio escovado com a
+     graduação gravada, trilho preto entre eles, aro cromado; no centro, o eixo preto com a manopla serrilhada e a tampa
+     preta. Um símbolo chapado por fatia (cor + forma). Cada raio tem uma marca no trilho, que fica verde quando destrava.
+     O mostrador é um objeto: igual no claro e no escuro (só a página muda). Desenho já na posição de cada rotação (sem transform). */
   :root {
-    --bg: #f3eff5; --surface: #fcfaff; --surface-2: #e6e1ea; --ink: #2c1f33; --muted: #85788c; --line: #e2dae7;
-    --veludo1: #4a2d57; --veludo2: #2c1834; --raio: rgba(246, 220, 160, .34);
-    --esmalte: #fdfaf4; --esmalte-ink: #2c1f33; --esmalte-sub: #8a7a6a; --ok: #3f8f55; --ok-soft: #dcefe0; --ok-ink: #24653a;
-    --accent: #6d3f86; --on-accent: #fff;
-    --shadow: 0 1px 2px rgba(50, 30, 60, .07), 0 6px 18px rgba(50, 30, 60, .08);
+    --bg: #eef0f2; --surface: #fbfcfd; --surface-2: #dfe3e7; --ink: #16191d; --muted: #6c747d; --line: #dfe3e7;
+    --accent: #1b1e22; --on-accent: #fff;
+    --shadow: 0 1px 2px rgba(20, 25, 30, .07), 0 6px 18px rgba(20, 25, 30, .08);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #151118; --surface: #221d26; --surface-2: #2f2833; --ink: #f1eaf5; --muted: #a197a8; --line: #2f2833;
-      --veludo1: #33203b; --veludo2: #1a101e; --raio: rgba(246, 220, 160, .22);
-      --esmalte: #efe8dc; --esmalte-ink: #2c1f33; --esmalte-sub: #7d6e60; --ok: #5cb874; --ok-soft: #d4ecd9; --ok-ink: #24653a;
-      --accent: #b98ad4; --on-accent: #1a1020;
+      --bg: #101215; --surface: #1c1f23; --surface-2: #2a2e33; --ink: #eef1f4; --muted: #9aa2ab; --line: #2a2e33;
+      --accent: #c3c9d0; --on-accent: #101215;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
     }
   }
   :root[data-theme="dark"] {
-      --bg: #151118; --surface: #221d26; --surface-2: #2f2833; --ink: #f1eaf5; --muted: #a197a8; --line: #2f2833;
-      --veludo1: #33203b; --veludo2: #1a101e; --raio: rgba(246, 220, 160, .22);
-      --esmalte: #efe8dc; --esmalte-ink: #2c1f33; --esmalte-sub: #7d6e60; --ok: #5cb874; --ok-soft: #d4ecd9; --ok-ink: #24653a;
-      --accent: #b98ad4; --on-accent: #1a1020;
+      --bg: #101215; --surface: #1c1f23; --surface-2: #2a2e33; --ink: #eef1f4; --muted: #9aa2ab; --line: #2a2e33;
+      --accent: #c3c9d0; --on-accent: #101215;
       --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .22);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -62,12 +57,7 @@
   .tab { position: relative; line-height: 0; flex-shrink: 0; }
   #board { display: block; touch-action: none; overflow: visible; }
   .anel { cursor: grab; }
-  /* esmalte liso: tons de ameixa, sem metal */
-  :root { --b-moldura: #fbf8fc; --b-an0: #ece2f1; --b-an1: #e0d2e8; --b-anE: #cdb9d8; --b-ok: #cdeadb; --b-luz: #1fa36b; --b-apagada: #ddd1e3; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --b-moldura: #1d1621; --b-an0: #3a2c42; --b-an1: #32253a; --b-anE: #4b3a55; --b-ok: #23493b; --b-luz: #5fd39d; --b-apagada: #3f3346; } }
-  :root[data-theme="dark"] { --b-moldura: #1d1621; --b-an0: #3a2c42; --b-an1: #32253a; --b-anE: #4b3a55; --b-ok: #23493b; --b-luz: #5fd39d; --b-apagada: #3f3346; }
   .anel.eixo { cursor: default; }
-  .anel.vivo .fatia { filter: brightness(1.08); }
   .won .anel .fatia { animation: brilho .8s ease both; }
   @keyframes brilho { 40% { filter: brightness(1.25); } 100% { filter: none; } }
   @media (prefers-reduced-motion: reduce) { .won .anel .fatia { animation: none; } }
@@ -104,7 +94,7 @@
   .controls.done > button { flex-basis: 0; opacity: 0; pointer-events: none; }
   .controls.done #undoBtn { margin-right: -10px; }
   .controls.done #clearBtn { margin-left: -10px; }
-  .controls.done .prog { background: linear-gradient(120deg, #2c1834 0%, #5a3468 50%, #b8863c 100%); box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(60, 30, 70, .3); }
+  .controls.done .prog { background: linear-gradient(120deg, #15171a 0%, #3a3f46 55%, #8b939b 100%); box-shadow: 0 1px 2px rgba(0,0,0,.15), 0 8px 22px rgba(20, 25, 30, .3); }
   .controls.done .prog > .bar, .controls.done .prog > .n { opacity: 0; }
   .done-bar {
     position: absolute; inset: 0; display: flex; align-items: center; gap: 12px;
@@ -124,7 +114,7 @@
 
   /* ---------- janelas ---------- */
   .overlay { position: fixed; inset: 0; z-index: 10; display: none; align-items: center; justify-content: center; padding: 20px;
-    background: rgba(20, 12, 25, .42); backdrop-filter: blur(3px); }
+    background: rgba(10, 12, 15, .42); backdrop-filter: blur(3px); }
   .overlay.open { display: flex; animation: fade .2s ease; }
   @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
   .modal { width: 100%; max-width: 400px; max-height: 88vh; overflow: auto; background: var(--surface); border-radius: 22px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
@@ -150,7 +140,7 @@
 
 <header class="gh">
   <a class="gh-back" href="../" aria-label="Voltar aos Jogos do Dia" title="Jogos do Dia"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-  <a class="gh-brand" href="./" aria-label="Engrenagem — recarregar"><img src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt=""><b>ENGRENAGEM</b></a>
+  <a class="gh-brand" href="./" aria-label="Cofre — recarregar"><img src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt=""><b>COFRE</b></a>
   <div class="gh-pill" id="timer" aria-label="Tempo">0:00</div>
   <button class="gh-btn" id="helpBtn" aria-label="Como jogar" title="Como jogar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><path d="M12 17.6h.01"/></svg></button>
 </header>
@@ -163,7 +153,7 @@
   </label>
 </div>
 
-<div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro data-haptico><svg id="board" viewBox="-200 -200 400 400" role="img" aria-label="Mecanismo"></svg></div></div>
+<div class="stage" id="stage"><div class="tab" id="tab" data-tabuleiro data-haptico><svg id="board" viewBox="-200 -200 400 400" role="img" aria-label="Cofre"></svg></div></div>
 
 <div class="controls" id="controls">
   <button id="undoBtn" disabled aria-label="Desfazer" title="Desfazer">
@@ -172,8 +162,8 @@
   <div class="prog" aria-live="polite">
     <span class="bar"><i id="progBar"></i><u id="progKnob"></u></span><span class="n" id="progN"><b>0</b>/0</span>
     <button class="done-bar" id="doneBar" tabindex="-1" aria-label="Jogo completo: ver resultado">
-      <img class="ic" src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt="">
-      <span class="txt"><b id="doneTitle">Engrenagem travada</b><span id="doneSub"></span></span>
+      <img class="ic" src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt="">
+      <span class="txt"><b id="doneTitle">Cofre aberto</b><span id="doneSub"></span></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
   </div>
@@ -187,24 +177,25 @@
 <div class="overlay" id="helpOverlay">
   <div class="modal">
     <h2>Como jogar <button class="close" data-close aria-label="Fechar">✕</button></h2>
-    <p>Gire os <b>anéis</b> até que cada <b>raio</b> tenha <b>um símbolo de cada</b> — como num sudoku em roda.</p>
+    <p>Abra o cofre: gire os <b>discos</b> até que cada <b>raio</b> tenha <b>um símbolo de cada</b> — como num sudoku em roda.</p>
     <ul>
-      <li>Um raio vai do centro até a luz de fora e passa por uma fatia de cada anel. Nenhum símbolo pode se repetir no mesmo raio.</li>
-      <li>O anel de dentro, mais escuro, é o <b>eixo</b>: não gira. Os outros giram, e girar um muda <b>todos os raios</b> ao mesmo tempo.</li>
+      <li>Um raio vai do centro até a marca branca do trilho e passa por uma fatia de cada disco. Nenhum símbolo pode se repetir no mesmo raio.</li>
+      <li>O disco preto do centro, em volta da manopla, é o <b>eixo</b>: não gira. Os outros giram, e girar um muda <b>todos os raios</b> ao mesmo tempo.</li>
+      <li>Quando o raio tem um símbolo de cada, a marca dele fica verde: destravou.</li>
       <li>Quando o raio tem um símbolo de cada, a luz dele acende.</li>
     </ul>
     <div class="demo">
       <figure><svg id="demoA" viewBox="-200 -200 400 400"></svg>desafio</figure>
       <figure><svg id="demoB" viewBox="-200 -200 400 400"></svg>resolvido</figure>
     </div>
-    <p><b>Arraste</b> um anel para girá-lo; ele encaixa na fatia mais próxima. Um toque gira um passo. Para voltar várias jogadas de uma vez, <b>arraste a barra de progresso</b>.</p>
+    <p><b>Arraste</b> um disco para girá-lo (ele acende enquanto o dedo está nele); encaixa na fatia mais próxima. Um toque gira um passo. Para voltar várias jogadas de uma vez, <b>arraste a barra de progresso</b>.</p>
     <p><b>Como pensar</b> (sem chute): o eixo está parado, então comece por ele.</p>
     <ul>
-      <li>Escolha um anel e gire-o pelas posições. Em quase todas, algum raio repete um símbolo do eixo — essas não servem.</li>
-      <li>Procure o anel que tem <b>uma posição só</b> sem repetir nada com o eixo. Sempre existe um. Deixe-o ali: ele está certo.</li>
-      <li>Agora compare os outros com o eixo <b>e</b> com o anel que você acertou. De novo, um deles só cabe numa posição. Siga assim até o último.</li>
+      <li>Escolha um disco e gire-o pelas posições. Em quase todas, algum raio repete um símbolo do eixo — essas não servem.</li>
+      <li>Procure o disco que tem <b>uma posição só</b> sem repetir nada com o eixo. Sempre existe um. Deixe-o ali: ele está certo.</li>
+      <li>Agora compare os outros com o eixo <b>e</b> com o disco que você acertou. De novo, um deles só cabe numa posição. Siga assim até o último.</li>
     </ul>
-    <p>A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (3 anéis, 6 raios) e <b>domingo é nível 7</b> (5 anéis, 10 raios).</p>
+    <p>A dificuldade sobe ao longo da semana: <b>segunda é nível 1</b> (3 discos, 6 raios) e <b>domingo é nível 7</b> (5 discos, 10 raios).</p>
     <p>No <b>Jogo livre</b> você joga desafios extras, que não contam nas estatísticas: escolha o <b>nível</b> (1 a 7) no botão ao lado de "Extra" e toque em ↻ para sortear outro.</p>
     <button class="btn-main" data-close>Jogar</button>
   </div>
@@ -214,7 +205,7 @@
 <div class="overlay" id="clearOverlay">
   <div class="modal" style="max-width:320px;text-align:center">
     <h2 style="justify-content:center">Voltar ao começo?</h2>
-    <p style="color:var(--muted);margin:0 0 18px">Os anéis voltam para onde estavam no início. Dá para desfazer depois.</p>
+    <p style="color:var(--muted);margin:0 0 18px">Os discos voltam para onde estavam no início. Dá para desfazer depois.</p>
     <button class="btn-main" id="clearYes">Recomeçar</button>
     <button class="close" data-close style="margin-top:12px;width:auto;padding:0 18px;height:36px;border-radius:99px">Cancelar</button>
   </div>
@@ -224,12 +215,12 @@
 <div class="overlay" id="endOverlay">
   <div class="modal fim">
     <div class="fim-top"><button class="fim-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fim-art"><img src="icon.png?v=1" data-escuro="icon-escuro.png?v=1" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(50,30,60,.15)"></div>
-    <h2 class="fim-title" id="endTitle">Engrenagem travada!</h2>
+    <div class="fim-art"><img src="icon.png?v=2" data-escuro="icon-escuro.png?v=2" alt="" style="height:96px;border-radius:24px;box-shadow:0 4px 14px rgba(50,30,60,.15)"></div>
+    <h2 class="fim-title" id="endTitle">Cofre aberto!</h2>
     <div class="fim-result"><div class="fim-time" id="endTime">0:00</div><button class="fim-share" id="shareBtn" aria-label="Compartilhar resultado" title="Compartilhar"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="sh"><path d="M12 3.5v11"/><path d="M8 7.5l4-4 4 4"/><path d="M7.5 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 17.5 11h-1"/></g><path class="ok" d="M5.5 12.5l4 4 9-9"/></svg></button></div>
     <p class="fim-sub" id="endSub"></p>
     <button class="fim-btn" id="againBtn" hidden>Jogar outro</button>
-    <div class="fim-count" id="nextBox">Próxima Engrenagem em <b id="countdown" data-contagem>--:--:--</b></div>
+    <div class="fim-count" id="nextBox">Próximo Cofre em <b id="countdown" data-contagem>--:--:--</b></div>
     <div data-proximo hidden></div>
   </div>
 </div>
@@ -319,11 +310,11 @@
 
   // ---------- desenho ----------
   // Geometria (viewBox -200…200): miolo até R0; anéis de R0 a R1; plaquinhas em RP. Ângulo 0 = para cima, sentido horário.
-  // Visual "esmalte liso" (escolha do dono, opção B, 27/11/2026): anéis em tons de ameixa, frestas finas da cor da moldura,
-  // símbolos chapados com sombra curta; o eixo num tom mais forte; raio certo = cunha verde clara + luz acesa na moldura.
-  const R0 = 38, R1 = 162, RB = 196, RL = 179;
-  // símbolos: cor e forma juntas (quem não distingue bem as cores ainda tem a forma); [cor, nome]
-  const SIMB = [["#2f6fde", "círculo"], ["#e0344a", "triângulo"], ["#1fa36b", "quadrado"], ["#8a4fd0", "losango"], ["#34303b", "hexágono"]];
+  // Geometria (viewBox -200…200): manopla até R0; discos de R0 a R1; trilho preto com as marcas dos raios até RB (aro).
+  // Discos largos de propósito (manopla e trilho estreitos): é a área de toque de cada anel.
+  const R0 = 30, R1 = 171, RB = 198;
+  // símbolos: cor e forma juntas (quem não distingue bem as cores ainda tem a forma); [cor no metal, cor no eixo preto, nome]
+  const SIMB = [["#2f6fde", "#5b95ff", "círculo"], ["#e0344a", "#ff5a6e", "triângulo"], ["#1fa36b", "#33cf8a", "quadrado"], ["#8a4fd0", "#b07cff", "losango"], ["#34303b", "#e8e4da", "hexágono"]];
   const pt = (r, g) => { const t = g * Math.PI / 180; return [r * Math.sin(t), -r * Math.cos(t)]; };
   const f1 = v => v.toFixed(1);
   const faixa = (A, a) => { const w = (R1 - R0) / A; return [R0 + a * w, R0 + (a + 1) * w]; };
@@ -340,30 +331,50 @@
     if (t === 3) return P([[x, y - s * 1.02], [x + s * .86, y], [x, y + s * 1.02], [x - s * .86, y]]);
     return P([...Array(6).keys()].map(i => [x + s * .9 * Math.cos(i * Math.PI / 3), y + s * .9 * Math.sin(i * Math.PI / 3)]));
   }
-  const simbolo = (t, x, y, s) => `<path d="${forma(t, x, y + 1.6, s)}" fill="rgba(40,20,50,.16)"/><path d="${forma(t, x, y, s)}" fill="${SIMB[t][0]}"/>`;
   const raiosOk = (nums, rot, n) => [...Array(n).keys()].map(j => new Set(nums.map((a, k) => a[(j + rot[k]) % n])).size === nums.length);
-  // desenha um mecanismo inteiro (o jogo e os exemplos do Como jogar usam a mesma função)
-  function mecanismo({ nums, rot, desvio, vivo = -1 }) {
-    const A = nums.length, n = nums[0].length, passo = 360 / n;
-    const ok = raiosOk(nums, rot, n), giro = a => (desvio && desvio.a === a) ? desvio.graus : 0;
-    let s = `<circle r="${RB}" style="fill:var(--b-moldura)"/>`;
+  const DEFS = `<defs>
+      <radialGradient id="cfEsc" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="2.2" spreadMethod="repeat"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".5" stop-color="#000" stop-opacity=".07"/><stop offset="1" stop-color="#fff" stop-opacity=".16"/></radialGradient>
+      <linearGradient id="cfLuz" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".62" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient>
+      <linearGradient id="cfAro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f8f9"/><stop offset=".35" stop-color="#b9bec4"/><stop offset=".55" stop-color="#e9ecef"/><stop offset="1" stop-color="#7f868e"/></linearGradient>
+      <linearGradient id="cfTampa" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#3a3c40"/><stop offset=".5" stop-color="#141517"/><stop offset="1" stop-color="#050506"/></linearGradient>
+      <radialGradient id="cfLed"><stop offset="0" stop-color="#7dffa8" stop-opacity=".6"/><stop offset="1" stop-color="#7dffa8" stop-opacity="0"/></radialGradient></defs>`;
+  // desenha o mostrador inteiro (o jogo e os exemplos do Como jogar usam a mesma função). vivo = o anel sob o dedo
+  function mecanismo({ nums, rot, desvio, vivo = -1, ids = true }) {
+    const A = nums.length, n = nums[0].length, passo = 360 / n, ok = raiosOk(nums, rot, n), giro = a => (desvio && desvio.a === a) ? desvio.graus : 0;
+    let s = (ids ? DEFS : "") + `<circle r="${RB}" fill="url(#cfAro)"/><circle r="${RB - 1}" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1"/><circle r="${RB - 6}" fill="#0e0f11"/><circle r="${R1 + 2}" fill="url(#cfAro)"/>`;
     for (let a = 0; a < A; a++) {
-      const [r0, r1] = faixa(A, a), g = giro(a);
-      s += `<g class="anel${a === 0 ? " eixo" : ""}${vivo === a ? " vivo" : ""}" data-a="${a}"><path class="fatia" d="${anelPath(r0, r1)}" fill-rule="evenodd" style="fill:var(--b-an${a === 0 ? "E" : a % 2})"/>`;
-      for (let k = 0; k < n; k++) {
-        const c = (k - rot[a]) * passo + g + passo / 2, [x0, y0] = pt(r0 + 2, c), [x1, y1] = pt(r1 - 2, c);
-        s += `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" style="stroke:var(--b-moldura)" stroke-width="2"/>`;
+      const [r0, r1] = faixa(A, a), g = giro(a), eixo = a === 0;
+      s += `<g class="anel${eixo ? " eixo" : ""}" data-a="${a}"><path d="${anelPath(r0, r1)}" fill-rule="evenodd" fill="${eixo ? "#141518" : a % 2 ? "#d5d9dd" : "#c8cdd2"}"/>`;
+      if (!eixo) s += `<path d="${anelPath(r0, r1)}" fill-rule="evenodd" fill="url(#cfEsc)"/>`;
+      // graduação gravada na borda de fora do anel: 5 risquinhos por fatia, o da divisa maior (gira com o anel)
+      for (let k = 0; k < n * 5; k++) {
+        const c = (k / 5 - rot[a]) * passo + g - passo / 2, L = k % 5 === 0 ? 7 : 3.5, [x0, y0] = pt(r1 - 1.2, c), [x1, y1] = pt(r1 - 1.2 - L, c);
+        s += `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" stroke="${eixo ? "rgba(255,255,255,.45)" : "rgba(30,33,37,.62)"}" stroke-width="${k % 5 === 0 ? 1.3 : .9}"/>`;
       }
-      s += `</g><circle r="${r1}" fill="none" style="stroke:var(--b-moldura)" stroke-width="2.5"/>`;
+      s += `</g>`;
+      if (!eixo) s += `<path d="${anelPath(r0, r1)}" fill-rule="evenodd" fill="url(#cfLuz)" pointer-events="none"/>`;
+      s += `<circle r="${r1}" fill="none" stroke="#0e0f11" stroke-width="2.4"/>`;
     }
-    // raio certo: uma cunha verde clara atravessando os anéis (por baixo dos símbolos)
-    ok.forEach((v, j) => { if (v) s += `<path d="${setor(R0 + 1, R1 - 1, j * passo - passo / 2 + 1, j * passo + passo / 2 - 1)}" style="fill:var(--b-ok)"/>`; });
+    ok.forEach((v, j) => { if (v) s += `<path d="${setor(R0 + 1, R1 - 1.5, j * passo - passo / 2 + 1.2, j * passo + passo / 2 - 1.2)}" fill="rgba(46,204,113,.2)"/>`; });
+    // o anel sob o dedo: contorno claro, para não girar o vizinho sem perceber
+    if (vivo > 0) { const [r0, r1] = faixa(A, vivo); s += `<path d="${anelPath(r0 + 1, r1 - 1)}" fill-rule="evenodd" fill="rgba(255,255,255,.14)"/><circle r="${r0 + 1.6}" fill="none" stroke="#fff" stroke-width="2.2"/><circle r="${r1 - 1.6}" fill="none" stroke="#fff" stroke-width="2.2"/>`; }
     for (let a = 0; a < A; a++) {
-      const [r0, r1] = faixa(A, a), rm = (r0 + r1) / 2, g = giro(a), tam = Math.min((r1 - r0) * .33, rm * Math.PI / n * .5, 13);
-      for (let k = 0; k < n; k++) { const [x, y] = pt(rm, (k - rot[a]) * passo + g); s += simbolo(nums[a][k], x, y, tam); }
+      const [r0, r1] = faixa(A, a), rm = (r0 + r1) / 2 - 2.5, g = giro(a), tam = Math.min((r1 - r0) * .3, rm * Math.PI / n * .46, 12.5);
+      for (let k = 0; k < n; k++) {
+        const [x, y] = pt(rm, (k - rot[a]) * passo + g), t = nums[a][k];
+        s += `<path d="${forma(t, x, y + 1, tam)}" fill="rgba(0,0,0,.22)"/><path d="${forma(t, x, y, tam)}" fill="${SIMB[t][a === 0 ? 1 : 0]}"/>`;
+      }
     }
-    s += `<circle r="${R0 - 2}" style="fill:var(--b-moldura)"/><circle r="${R0 - 10}" style="fill:var(--b-anE)"/><circle r="4" style="fill:var(--b-moldura)"/>`;
-    for (let j = 0; j < n; j++) { const [x, y] = pt(RL, j * passo); s += `<circle cx="${f1(x)}" cy="${f1(y)}" r="5" style="fill:${ok[j] ? "var(--b-luz)" : "var(--b-apagada)"}"/>`; }
+    // manopla serrilhada com a tampa preta, no meio do eixo (não gira)
+    const rk = R0 - 1;
+    s += `<circle r="${rk + 1.5}" fill="#0e0f11"/><circle r="${rk}" fill="url(#cfAro)"/>`;
+    for (let i = 0; i < 40; i++) { const [x0, y0] = pt(rk - .5, i * 9), [x1, y1] = pt(rk - 4.5, i * 9); s += `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" stroke="${i % 2 ? "rgba(255,255,255,.75)" : "rgba(40,44,48,.45)"}" stroke-width="1.3"/>`; }
+    s += `<circle r="${rk - 5}" fill="url(#cfTampa)"/><ellipse cx="-5" cy="-7" rx="9" ry="4" fill="rgba(255,255,255,.1)" transform="rotate(-30 -5 -7)"/>`;
+    // marcas dos raios no trilho preto: risco branco; o raio certo fica verde e brilha
+    for (let j = 0; j < n; j++) {
+      const [x0, y0] = pt(R1 + 7, j * passo), [x1, y1] = pt(RB - 10, j * passo), [cx, cy] = pt((R1 + RB) / 2 - 1, j * passo);
+      s += (ok[j] ? `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="12" fill="url(#cfLed)"/>` : "") + `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" stroke="${ok[j] ? "#5bf08f" : "rgba(255,255,255,.85)"}" stroke-width="3" stroke-linecap="round"/>`;
+    }
     return { svg: s, ok };
   }
   function fit() {
@@ -380,7 +391,7 @@
   function certos() { return raiosOk(NUMS, rot, n).filter(Boolean).length; }
   function render() {
     if (dica) dica.atualiza();
-    const m = mecanismo({ nums: NUMS, rot, desvio: desvio && { a: desvio.a, graus: desvio.graus }, vivo: desvio ? desvio.a : -1 });
+    const m = mecanismo({ nums: NUMS, rot, desvio: desvio && { a: desvio.a, graus: desvio.graus }, vivo: drag ? drag.a : desvio ? desvio.a : -1 });
     $("board").innerHTML = m.svg;
     const ok = m.ok.filter(Boolean).length;
     if (!scrub) {
@@ -397,10 +408,10 @@
     if (finished) {
       $("doneTitle").textContent = fmt(elapsed);
       const rec = kind === "dia" && window.recordeDoDia ? recordeDoDia("engrenagem:", dayNum) : null;
-      $("doneSub").textContent = `${kind === "dia" ? (rec ? `recorde de ${rec.dia}` : "Engrenagem travada") : "Resolvido"}${dicaUsada ? " · com dica" : ""}${kind === "dia" ? "" : " · jogar outro"}`;
+      $("doneSub").textContent = `${kind === "dia" ? (rec ? `recorde de ${rec.dia}` : "Cofre aberto") : "Resolvido"}${dicaUsada ? " · com dica" : ""}${kind === "dia" ? "" : " · jogar outro"}`;
     }
     updateTip(ok);
-    $("board").setAttribute("aria-label", `Mecanismo com ${A} anéis e ${n} raios: ${ok} de ${n} raios fechados`);
+    $("board").setAttribute("aria-label", `Cofre com ${A} discos e ${n} raios: ${ok} de ${n} raios fechados`);
   }
 
   function persist() {
@@ -418,8 +429,11 @@
   function anelEm(e) {
     const r = $("board").getBoundingClientRect(), k = 400 / r.width;
     const x = (e.clientX - r.left) * k - 200, y = (e.clientY - r.top) * k - 200, d = Math.hypot(x, y);
-    for (let a = 1; a < A; a++) { const [r0, r1] = faixa(A, a); if (d >= r0 - 3 && d <= r1 + (a === A - 1 ? 9 : 3)) return a; }   // o eixo (a = 0) não gira
-    return -1;
+    if (d < R0 || d > 202) return -1;                      // manopla (parada) ou fora do mostrador
+    if (d >= R1) return A - 1;                             // trilho e aro: anel de fora
+    const w = (R1 - R0) / A, f = (d - R0) / w, a = Math.min(A - 1, Math.floor(f));
+    if (a === 0) return f > .7 ? 1 : -1;                   // eixo: não gira (a beirada de fora vale como o 1º anel)
+    return a;
   }
   const angulo = e => { const r = $("board").getBoundingClientRect(); return Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2))) * 180 / Math.PI; };
   let drag = null, anima = 0;
@@ -443,6 +457,7 @@
     e.preventDefault();
     drag = { id: e.pointerId, a, g0: angulo(e), graus: 0, notch: 0, antes: pack(), t: Date.now() };
     try { e.target.setPointerCapture(e.pointerId); } catch {}
+    render();   // acende o anel sob o dedo antes de girar
     startTimer();
   });
   $("tab").addEventListener("pointermove", e => {
@@ -529,7 +544,7 @@
   setInterval(() => { if (timer) persist(); }, 5000);
 
   // ---------- dica (comum/dica.js): põe no lugar o anel que a dedução acha primeiro, com o motivo ----------
-  const nomeAnel = a => a === A - 1 ? "O anel de fora" : `O ${a + 1}º anel`;
+  const nomeAnel = a => a === A - 1 ? "O disco de fora" : `O ${a + 1}º disco`;
   const SN = t => SIMB[t][1];
   async function pedirDica() {
     if (desvio) return "";
@@ -542,7 +557,7 @@
     history.push(pack()); futuro = []; dicaUsada = true;
     const passos = ((rot[a]) % n + n) % n, curto = passos > n / 2 ? passos - n : passos;   // gira pelo lado mais curto
     encaixa(a, 0, curto, () => { giros++; checkWin(); render(); persist(); });
-    const com = antes.length ? `o eixo e ${antes.length === 1 ? nomeAnel(antes[0]).replace(/^O /, "o ") : "os anéis já certos"}` : "o eixo";
+    const com = antes.length ? `o eixo e ${antes.length === 1 ? nomeAnel(antes[0]).replace(/^O /, "o ") : "os discos já certos"}` : "o eixo";
     return `${nomeAnel(a)} foi para a posição certa: junto com ${com}, era a única posição em que nenhum raio repete símbolo.`;
   }
 
@@ -562,7 +577,7 @@
   function showEnd() {
     $("endTime").textContent = fmt(elapsed);
     const daily = kind === "dia";
-    $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l} de 7` : `Jogo livre · nível ${P.l} de 7`) + ` · ${A} anéis · ${giros} ${giros === 1 ? "giro" : "giros"}` + (dicaUsada ? " · com dica" : "");
+    $("endSub").textContent = (daily ? `#${dayNum} · nível ${P.l} de 7` : `Jogo livre · nível ${P.l} de 7`) + ` · ${A} discos · ${giros} ${giros === 1 ? "giro" : "giros"}` + (dicaUsada ? " · com dica" : "");
     const rec = daily && window.recordeDoDia ? recordeDoDia("engrenagem:", dayNum) : null;
     if (window.seloRecorde) seloRecorde($("endSub"), rec && `Seu melhor tempo de ${rec.dia} · antes ${fmt(rec.antes)}`);
     if (window.semanaFim) semanaFim($("endSub"), daily ? semanaTempos("engrenagem:", dayNum) : null, "tempo");
@@ -572,12 +587,12 @@
   function updateTip(ok) {
     const t = $("tip");
     if (finished) { t.innerHTML = kind === "dia" ? "" : "Desafio extra resolvido · não conta nas estatísticas"; return; }
-    if (!giros) t.innerHTML = jogoVeterano(LS) ? "" : "Arraste um anel para girá-lo; o de dentro é fixo.<br>Em cada raio, um símbolo de cada.";
+    if (!giros) t.innerHTML = jogoVeterano(LS) ? "" : "Arraste um disco para girá-lo; o preto do centro é fixo.<br>Em cada raio, um símbolo de cada.";
     else t.innerHTML = n - ok === 1 ? "Falta <b>1</b> raio" : `Faltam <b>${n - ok}</b> raios`;
   }
 
   $("shareBtn").addEventListener("click", () => {
-    const text = `ENGRENAGEM #${dayNum} · nível ${P.l} de 7\n⚙️ ${fmt(elapsed)}${dicaUsada ? " 💡" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/engrenagem/`;
+    const text = `COFRE #${dayNum} · nível ${P.l} de 7\n🔐 ${fmt(elapsed)}${dicaUsada ? " 💡" : ""}\nhttps://a-hanauer.github.io/puzzle-tracker/engrenagem/`;
     ghCompartilhar($("shareBtn"), text);
   });
   $("againBtn").addEventListener("click", () => newFree());
@@ -594,11 +609,11 @@
   // exemplo no Como jogar: 3 anéis e 6 raios, o desafio e a solução
   const EX = { nums: [[0, 1, 2, 0, 2, 1], [1, 2, 0, 2, 1, 0], [2, 0, 1, 1, 0, 2]] };
   $("demoA").innerHTML = mecanismo({ ...EX, rot: [0, 2, 1] }).svg;
-  $("demoB").innerHTML = mecanismo({ ...EX, rot: [0, 0, 0] }).svg;
+  $("demoB").innerHTML = mecanismo({ ...EX, rot: [0, 0, 0], ids: false }).svg;
 })();
 </script>
-<script src="../comum/catalogo.js?v=156"></script>
-<script src="../comum/celebra.js?v=155"></script>
+<script src="../comum/catalogo.js?v=157"></script>
+<script src="../comum/celebra.js?v=156"></script>
 <script src="../comum/recorde.js?v=158"></script>
 <script src="../comum/proximo.js?v=164" data-jogo="engrenagem"></script>
 </body>

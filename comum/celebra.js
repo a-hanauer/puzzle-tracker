@@ -48,12 +48,12 @@
   @keyframes cel-gira-flor { from { transform: rotate(-70deg); } to { transform: none; } }
   @keyframes cel-petala { from { transform: scale(.25); opacity: 0; } 30% { opacity: 1; } to { transform: none; opacity: 1; } }
 
-  /* Engrenagem: duas engrenagens entram girando e se encaixam (a grande no sentido horário, a pequena ao contrário) */
-  .celebra .eng-g { transform-box: fill-box; transform-origin: center; }
-  .celebra .eng-a { animation: cel-eng-a 1.1s cubic-bezier(.2, .8, .3, 1) .1s both; }
-  .celebra .eng-b { animation: cel-eng-b 1.1s cubic-bezier(.2, .8, .3, 1) .2s both; }
-  @keyframes cel-eng-a { from { transform: rotate(-120deg) scale(.4); opacity: 0; } 25% { opacity: 1; } to { transform: none; opacity: 1; } }
-  @keyframes cel-eng-b { from { transform: rotate(200deg) scale(.4); opacity: 0; } 25% { opacity: 1; } to { transform: none; opacity: 1; } }
+  /* Cofre: o mostrador de segredo entra girando e para no zero (a manopla fica parada); a marca acende */
+  .celebra .eng-g { transform-box: view-box; transform-origin: 0 0; }
+  .celebra .eng-a { animation: cel-eng-a 1.2s cubic-bezier(.2, .8, .3, 1) .1s both; }
+  .celebra .eng-b { animation: cel-eng-b .35s ease 1.1s both; }
+  @keyframes cel-eng-a { from { transform: rotate(-300deg); } to { transform: none; } }
+  @keyframes cel-eng-b { from { opacity: 0; } to { opacity: 1; } }
 
   /* Cortado: xícara com latte art */
   .celebra .cafe-gota { animation: cel-cai .33s ease-in .3s both; }
@@ -339,25 +339,22 @@
           <filter id="cel-ns" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(60,30,100,.3)"/></filter></defs>`
         + nota(28, 8, .1, -60, false) + nota(12, -6, .37, 40, false) + nota(-6, -2, .63, -30, true);
     },
-    // Engrenagem: a engrenagem grande de latão e a pequena de cobre, encaixadas
+    // Cofre (id "engrenagem"): o mostrador de segredo — aro cromado, trilho preto, disco escovado com graduação, manopla
+    // serrilhada com tampa preta e a marca do zero no alto
     engrenagem: () => {
-      const roda = (cx, cy, R, r, dentes, giro, grad, furos) => {
-        let d = "";
-        for (let k = 0; k < dentes; k++) {
-          const c = (k / dentes) * Math.PI * 2 + giro, w = Math.PI / dentes, p = (rr, a) => `${(cx + rr * Math.sin(a)).toFixed(1)} ${(cy - rr * Math.cos(a)).toFixed(1)}`;
-          d += `${k ? "L" : "M"}${p(r, c - w)}L${p(R, c - w * .62)}L${p(R, c + w * .62)}L${p(r, c + w)}`;
-        }
-        let h = "";
-        for (let k = 0; k < furos; k++) { const a = k / furos * Math.PI * 2 + giro; h += `<circle cx="${(cx + r * .55 * Math.sin(a)).toFixed(1)}" cy="${(cy - r * .55 * Math.cos(a)).toFixed(1)}" r="${(r * .17).toFixed(1)}" fill="rgba(40,20,5,.45)"/>`; }
-        return `<path d="${d}Z" fill="url(#${grad})" stroke="rgba(60,30,5,.35)" stroke-width="1.5"/><circle cx="${cx}" cy="${cy}" r="${(r * .82).toFixed(1)}" fill="none" stroke="rgba(255,245,215,.35)" stroke-width="2"/>${h}
-          <circle cx="${cx}" cy="${cy}" r="${(r * .24).toFixed(1)}" fill="url(#cel-eng-miolo)" stroke="rgba(60,30,5,.4)" stroke-width="1.2"/>`;
-      };
-      return `<defs><linearGradient id="cel-eng-lat" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8df92"/><stop offset=".55" stop-color="#d4a23e"/><stop offset="1" stop-color="#8e6418"/></linearGradient>
-          <linearGradient id="cel-eng-cob" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4bf92"/><stop offset=".55" stop-color="#c97a45"/><stop offset="1" stop-color="#7f421c"/></linearGradient>
-          <radialGradient id="cel-eng-miolo" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#fff4cf"/><stop offset="1" stop-color="#a87b2a"/></radialGradient>
-          <filter id="cel-eng-s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="rgba(30,10,35,.35)"/></filter></defs>
-        <g filter="url(#cel-eng-s)"><g class="eng-g eng-b">${roda(56, -46, 38, 30, 9, Math.PI / 9 + .12, "cel-eng-cob", 4)}</g>
-        <g class="eng-g eng-a">${roda(-14, 18, 66, 55, 14, 0, "cel-eng-lat", 6)}</g></g>`;
+      const p = (r, g) => { const t = g * Math.PI / 180; return [(r * Math.sin(t)).toFixed(1), (-r * Math.cos(t)).toFixed(1)]; };
+      let risco = "", serr = "";
+      for (let k = 0; k < 60; k++) { const L = k % 5 === 0 ? 8 : 4, [x0, y0] = p(66, k * 6), [x1, y1] = p(66 - L, k * 6); risco += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="rgba(30,33,37,.6)" stroke-width="${k % 5 ? 1 : 1.6}"/>`; }
+      for (let k = 0; k < 36; k++) { const [x0, y0] = p(36, k * 10), [x1, y1] = p(30, k * 10); serr += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="${k % 2 ? "rgba(255,255,255,.8)" : "rgba(40,44,48,.5)"}" stroke-width="2.2"/>`; }
+      return `<defs><linearGradient id="cel-cf-aro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f8f9"/><stop offset=".35" stop-color="#b9bec4"/><stop offset=".55" stop-color="#eceff2"/><stop offset="1" stop-color="#737a82"/></linearGradient>
+          <radialGradient id="cel-cf-esc" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="2.4" spreadMethod="repeat"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".5" stop-color="#000" stop-opacity=".07"/><stop offset="1" stop-color="#fff" stop-opacity=".18"/></radialGradient>
+          <linearGradient id="cel-cf-luz" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
+          <linearGradient id="cel-cf-tampa" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#45474c"/><stop offset=".5" stop-color="#16171a"/><stop offset="1" stop-color="#050506"/></linearGradient>
+          <filter id="cel-cf-s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="rgba(10,12,15,.4)"/></filter></defs>
+        <g filter="url(#cel-cf-s)"><circle r="88" fill="url(#cel-cf-aro)"/><circle r="81" fill="#0e0f11"/>
+        <g class="eng-g eng-a"><circle r="70" fill="#d3d7db"/><circle r="70" fill="url(#cel-cf-esc)"/>${risco}<circle r="70" fill="url(#cel-cf-luz)"/></g>
+        <circle r="40" fill="#0e0f11"/><circle r="37" fill="url(#cel-cf-aro)"/>${serr}<circle r="28" fill="url(#cel-cf-tampa)"/><ellipse cx="-8" cy="-11" rx="13" ry="5.5" fill="rgba(255,255,255,.12)" transform="rotate(-30 -8 -11)"/>
+        <line x1="0" y1="-84" x2="0" y2="-74" stroke="#fff" stroke-width="4" stroke-linecap="round"/><g class="eng-b"><line x1="0" y1="-84" x2="0" y2="-74" stroke="#5bf08f" stroke-width="4" stroke-linecap="round"/></g></g>`;
     },
     sanduba: () => {
       const poros = (y0, h) => Array.from({ length: 14 }, (_, k) => `<ellipse cx="${(-58 + (k * 37) % 116).toFixed(0)}" cy="${(y0 + 8 + (k * 13) % (h - 16)).toFixed(0)}" rx="${(1.6 + (k % 3) * .7).toFixed(1)}" ry="1.1" fill="#c9a160" opacity=".45"/>`).join("");
