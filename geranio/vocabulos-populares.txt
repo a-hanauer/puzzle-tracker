@@ -1,0 +1,7 @@
+# Palavras de uso popular no Brasil que quase não aparecem nas legendas (traduzidas) e por isso ficariam abaixo do corte
+# de uso: comida, cultura, bichos e coisas do dia a dia. Entram como palavras do dia (verbetes.py). Revista à mão, 27/11/2026.
+caboclo caatinga frevo saci internauta pendrive jabuti sambódromo chimarrão tiririca marmanjo rapadura balaio motociclismo
+sambista arroba botijão xodó capivara gambiarra acarajé batuque polvilho malagueta acerola paçoca empada pirão canjica
+macaxeira goiabada jabuticaba cangaço truco micareta festejo peleja magreza mordomia arremate avulso vaquejada mesmice
+recalque imbróglio maracatu vinheta verbete hexa goleador líbero triplex lúdico tátil epopeia aroeira taipa paio
+tropeiro apressado

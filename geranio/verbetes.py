@@ -14,8 +14,12 @@
 #   mais como adjetivo que o verbo (cansado sim, comprado não); vocabulos-fora.txt tira as formas em que o substantivo
 #   do DELAS é raro e o uso é o do verbo (passa, empurra, tento).
 #
-# O que é uso corrente: nota = mediana da frequência (zipf) em três ou quatro fontes de português, para nenhuma puxar
-# sozinha (cada uma tem um viés):
+# O que é uso corrente (revisto em 27/11/2026, o dono via palavras de igreja, de repartição e de jornal como "comuns"):
+# nota = metade a fala (legendas) + metade a mediana das fontes escritas (wordfreq, icf, brWaC). As fontes escritas são
+# texto da internet, cheio de notícia, documento e site religioso; a fala puxa para a língua do dia a dia. A fala sozinha
+# perde as palavras brasileiras de comida e cultura (as legendas são traduzidas): essas ficam em vocabulos-populares.txt.
+# O vocabulário de igreja e da Bíblia pouco usado fora dela fica em vocabulos-religiosos.txt (vale como rara).
+# Antes era a mediana das quatro fontes juntas. As fontes:
 #   - legendas pt-BR de filmes e séries (OpenSubtitles 2018, github.com/hermitdave/FrequencyWords, pt_br_full.txt): a fala;
 #   - wordfreq (github.com/rspeer/wordfreq, large_pt: Wikipédia, legendas, notícias, web, Twitter, Reddit, até 2021);
 #   - icf do fserb/pt-br (texto da internet, atualizado em 2025);
@@ -37,7 +41,7 @@ STOP = set("""aragao nago nanga einstein tete nara date tate tata iate itati fac
 # grafias anteriores ao Acordo de 1990 que o VERO ainda traz como verbete
 OBSOLETAS = set("pára péla pélo pêlo pólo pêra côa".split())
 # corte da nota de uso (zipf; 3 ≈ uma vez a cada milhão de palavras)
-CORTE = float(os.environ.get('CORTE', '2.6'))
+CORTE = float(os.environ.get('CORTE', '2.5'))
 
 # ---------- frequência ----------
 icf = {}; icfx = {}
@@ -61,10 +65,11 @@ for row in list(csv.reader(open(sys.argv[8], encoding='utf8')))[1:]:
 def nota(w):
     n = w; i = icfx.get(w)
     # icf → zipf pela reta ajustada às palavras que estão nas duas listas (zipf ≈ 9,32 − 0,473 · icf)
-    vs = sorted([LEG.get(n, 0.0), WF.get(n, 0.0), (9.32 - .4734 * i) if i else 0.0] + ([BR[n]] if n in BR else []))
+    vs = sorted([WF.get(n, 0.0), (9.32 - .4734 * i) if i else 0.0] + ([BR[n]] if n in BR else []))
     m = len(vs)
-    return vs[m // 2] if m % 2 else (vs[m // 2 - 1] + vs[m // 2]) / 2
-corrente = lambda w: nota(w) >= CORTE
+    escrita = vs[m // 2] if m % 2 else (vs[m // 2 - 1] + vs[m // 2]) / 2
+    return .5 * LEG.get(n, 0.0) + .5 * escrita
+corrente = lambda w: w in POPULARES or nota(w) >= CORTE
 
 # ---------- o que é vocábulo ----------
 DELAS = {}; PROPRIO = set()
@@ -85,6 +90,8 @@ conj = set(open(os.path.join(sys.argv[2], 'conjugações'), encoding='utf8').rea
 # substantivos que os dicionários só trazem como flexão ou particípio de outra palavra, mas que são palavras à parte
 lista = lambda f: {w for l in open(os.path.join(aqui, f), encoding='utf8') for w in l.split('#')[0].split()}
 MANTER = lista('vocabulos-manter.txt')
+POPULARES = lista('vocabulos-populares.txt'); MANTER |= POPULARES
+RELIGIOSOS = lista('vocabulos-religiosos.txt')
 # formas de verbo que o DELAS também traz como substantivo raro (a passa, o tento): o uso é o do verbo
 VERBAIS = lista('vocabulos-fora.txt')
 def infs_de(w, ks=(1, 2)):
@@ -111,12 +118,23 @@ lugares = set()
 for f in ('paises', 'estados-br', 'continentes'):
     lugares |= {w.strip().lower() for w in open(os.path.join(sys.argv[2], 'listas', f), encoding='utf8').read().splitlines() if w.strip()}
 municipios = {w.strip().lower() for w in open(os.path.join(sys.argv[2], 'listas', 'municipios-br'), encoding='utf8').read().splitlines() if w.strip()}
-lugar = lambda w: w in lugares or (w in municipios and nota(w) < 3.9)
+# município só sai se não for também palavra comum do dicionário (raposa, granada, pedreira, formiga ficam)
+lugar = lambda w: w in lugares or (w in municipios and nota(w) < 3.9 and w not in nominal)
 neg = {norm(w) for w in open(os.path.join(sys.argv[2], 'listas', 'negativas'), encoding='utf8').read().split()}
 respw = {w.lower() for w in json.load(open(os.path.join(aqui, '..', 'cordel', 'respostas.json'), encoding='utf8')).values()}
 resp = {norm(w) for w in respw}
 for l in open(os.path.join(aqui, 'nomes-proprios.txt'), encoding='utf8'):
     if not l.startswith('#'): STOP |= {norm(w) for w in l.split()}
+# da lista acima, ficam fora mesmo sendo palavra do DELAS: Portugal (gajo, autocarro), estrangeirismos, nomes de gente e lugar,
+# e o "português de legenda" (meritíssimo, perjúrio, caubói) que quase só existe em tradução
+PORTUGAL = {norm(w) for w in """gajo gaja autocarro telemovel comboio carrinha noutra noutro excepto facto basebol foste fostes miudo miuda
+  rapariga frigorifico talho secção polaco relvado batota bêbedo ateia descente fecharia
+  acapulco adão augusto batista belém cairo castro coreia gaza genebra havana lázaro madalena madona maia mariana mariano marta
+  melissa messias mona nina pandora paulina piracicaba plutão sansão satã silva sobral lulu rani greta marcela hortense punjabi
+  papua maori lombardo pareci gora jimbo mandi paco malo puna druida gris mono lise timo
+  blazer boom campus corpus fondue freezer gangster jingle homo marine miss mister poodle topless trailer zoom teflon telex tabasco
+  abracadabra meritíssimo perjúrio caubói ianque hurra logar loco rogo cusco acórdão estase septo isótopo petista malaio
+  marino amaro olmo arriba cássia ducado bardo""".split()}
 # grafia brasileira: só vale o que o VERO (pt-BR) conhece com essa grafia
 formas = set(open(sys.argv[4], encoding='utf8').read().split())
 lexico = set(open(os.path.join(sys.argv[2], 'lexico'), encoding='utf8').read().split())
@@ -133,8 +151,13 @@ for w in set(vero) | set(DELAS) | MANTER:
     if not w or not re.fullmatch(r'[a-zà-üç]+', w) or len(w) < 4 or fora(w) or w in OBSOLETAS or w not in formas: continue
     n = norm(w)
     if n in neg or len(set(n)) > 7: continue
+    if w in RELIGIOSOS or n in PORTUGAL: continue
     if n in resp: cand.setdefault(n, set()).update(r for r in respw if norm(r) == n); continue
-    if n in STOP or lugar(w) or plural(w) or not vocabulo(w) or not corrente(w): continue
+    if w in RELIGIOSOS or n in PORTUGAL: continue
+    # nomes-proprios.txt traz sobrenomes que também são palavras comuns (guerra, leite, jardim, barata): ficam se o DELAS
+    # os tem como palavra comum e se falam bastante (legendas); as palavras de Portugal da lista (gajo, autocarro) saem sempre
+    nome = n in STOP and not (w in nominal and LEG.get(w, 0) >= 3 and n not in PORTUGAL)
+    if nome or lugar(w) or plural(w) or not vocabulo(w) or not corrente(w): continue
     cand.setdefault(n, set()).add(w)
 out = {n: min(ws, key=lambda w: (-nota(w), w)) for n, ws in cand.items()}
 json.dump(out, open(sys.argv[3], 'w', encoding='utf8'), ensure_ascii=False)

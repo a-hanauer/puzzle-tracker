@@ -242,6 +242,14 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   acessível): palavras e grafias de Portugal, nomes e estrangeirismos que passam vão para `nomes-proprios.txt`. ~9,7 mil palavras;
   faixas de ~55 (seg) a ~85 (dom) (`NIVEL`: 50–60, 54–64, 58–68, 62–73, 66–78, 70–83, 75–90). Limite conhecido: palavras de cozinha e
   da roça aparecem pouco nos textos (untar, aipim, torresmo ficam abaixo do corte, como raras).
+  **Uso corrente revisto (27/11/2026, à noite; o dono via palavras de igreja, de repartição e de jornal como comuns e palavras do dia a
+  dia como raras):** nota = ½ fala (legendas) + ½ mediana das fontes escritas (wordfreq, icf, brWaC), corte 2,5. `vocabulos-populares.txt`
+  = palavras brasileiras de comida/cultura que as legendas (traduzidas) não têm (paçoca, chimarrão, capivara); `vocabulos-religiosos.txt`
+  = vocabulário de igreja/Bíblia pouco usado fora dela (vale como rara; igreja, padre, missa, rezar seguem do dia). Sobrenomes e municípios
+  que também são palavra comum voltam (guerra, leite, jardim, barata, raposa, pedreira): `nomes-proprios.txt` e a lista de municípios só
+  tiram o que não é palavra comum do DELAS ou não se fala; `PORTUGAL` em verbetes.py veta de vez (Portugal, estrangeirismos, nomes,
+  "português de legenda" como meritíssimo). Sem acesso à rede nesse dia: não houve fonte de livros nova (fica a ideia de somar um corpus
+  de livros/literatura popular do Brasil quando der).
   Ordem: verbetes.py (8 argumentos: ver o cabeçalho) → grafia.py → gerador.mjs.
 - **Versão 6.2 (do #3 ao #21, 06 a 24/11/2026):** flor de **5 pétalas** (6 letras); palavras do dia = só **verbetes** de
   dicionário de uso corrente (`geranio/verbetes.json`, feito por `geranio/verbetes.py`: verbete minúsculo do VERO, verbo no

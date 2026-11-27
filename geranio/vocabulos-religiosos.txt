@@ -1,0 +1,11 @@
+# Vocabulário de igreja e da Bíblia que é comum em texto religioso da internet, mas pouco usado no dia a dia: fica valendo
+# como rara (verbetes.py). As palavras religiosas correntes (igreja, padre, missa, anjo, rezar, pecado, milagre) seguem do dia.
+# Revista à mão, 27/11/2026.
+novena cálice divindade redentor abade ascensão abadia celestial capelão adoração relíquia vigário congregação mosteiro
+beato trindade apóstolo diácono consagrar convento advento unção louvor encarnação éden madre frei pregação quaresma
+peregrino comunhão pagão clero sermão idolatria hóstia arcanjo salmo bíblico penitência profano pecar rabino satânico
+apostolado homilia canonização pontifício ermida círio messe apostasia cânone cânon canônico salesiano exortação
+mediunidade orixá xangô umbanda oratório gregoriano edificar
+natividade querubim relicário prelado profanação iniquidade fornicação ímpio crucificar jejuar consolação
+priorado graal
+rabi mórmon
