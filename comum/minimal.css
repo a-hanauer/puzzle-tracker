@@ -3,13 +3,13 @@
    Títulos e números em Doto (matriz de pontos), o resto em Space Mono. Cheio = estado (marcado, no lugar, achado).
    Os seletores usam :not(#_) para ganhar das cores que cada jogo define em :root (inclusive as do modo escuro). */
 :root[data-minimal]:not(#_) {
-  --m-bg: #f2f2f0; --m-cel: #fbfbfa; --m-ink: #0d0d0d; --m-sub: #6e6e6a; --m-fraco: #c9c9c4; --m-dot: #c4c4bf; --m-red: #d71921; --m-on-red: #fff;
+  --m-bg: #f2f2f0; --m-cel: #fbfbfa; --m-ink: #0d0d0d; --m-sub: #6e6e6a; --m-fraco: #c9c9c4; --m-dot: #dcdcd8; --m-tom: rgba(13,13,13,.06); --m-hair: #d6d6d1; --m-red: #d71921; --m-on-red: #fff;
   --m-num: Doto, "Space Mono", ui-monospace, monospace; --m-txt: "Space Mono", ui-monospace, monospace;
 }
 @media (prefers-color-scheme: dark) {
-  :root[data-minimal]:not(#_):not([data-theme="light"]) { --m-bg: #000; --m-cel: #0b0b0b; --m-ink: #f2f2f2; --m-sub: #8f8f8a; --m-fraco: #383836; --m-dot: #262624; --m-red: #ff2b2b; }
+  :root[data-minimal]:not(#_):not([data-theme="light"]) { --m-bg: #000; --m-cel: #0b0b0b; --m-ink: #f2f2f2; --m-sub: #8f8f8a; --m-fraco: #383836; --m-dot: #1a1a19; --m-tom: rgba(242,242,242,.08); --m-hair: #262625; --m-red: #ff2b2b; }
 }
-:root[data-minimal][data-theme="dark"]:not(#_) { --m-bg: #000; --m-cel: #0b0b0b; --m-ink: #f2f2f2; --m-sub: #8f8f8a; --m-fraco: #383836; --m-dot: #262624; --m-red: #ff2b2b; }
+:root[data-minimal][data-theme="dark"]:not(#_) { --m-bg: #000; --m-cel: #0b0b0b; --m-ink: #f2f2f2; --m-sub: #8f8f8a; --m-fraco: #383836; --m-dot: #1a1a19; --m-tom: rgba(242,242,242,.08); --m-hair: #262625; --m-red: #ff2b2b; }
 
 /* as cores que os jogos usam, todas para o preto e branco */
 :root[data-minimal]:not(#_) {
@@ -27,7 +27,7 @@
 
 /* tela de pontos e letra mono */
 html[data-minimal], html[data-minimal] body {
-  background: var(--m-bg) radial-gradient(circle, var(--m-dot) 1px, transparent 1.3px) 0 0 / 12px 12px fixed !important;
+  background: var(--m-bg) radial-gradient(circle, var(--m-dot) .7px, transparent 1px) 0 0 / 4px 4px fixed !important;
   color: var(--m-ink) !important;
 }
 html[data-minimal] body, html[data-minimal] button, html[data-minimal] input, html[data-minimal] select, html[data-minimal] textarea {
@@ -40,18 +40,19 @@ html[data-minimal] .modal h2, html[data-minimal] .done-bar .txt b, html[data-min
 }
 
 /* cabeçalho dos jogos */
-html[data-minimal] .gh-pill, html[data-minimal] .gh-btn, html[data-minimal] .gh-back { background: transparent !important; border: 1.5px solid var(--m-ink) !important; color: var(--m-ink) !important; }
-html[data-minimal] .gh-back { border: 0 !important; }
+html[data-minimal] .gh-pill, html[data-minimal] .gh-btn, html[data-minimal] .gh-back { background: transparent !important; border: 0 !important; color: var(--m-ink) !important; }
+html[data-minimal] .gh-pill { padding-inline: 4px !important; }
 html[data-minimal] .gh-brand img { border-radius: 9px !important; background: none !important; }
 html[data-minimal] .gh-meta, html[data-minimal] .gh-info { color: var(--m-sub) !important; }
-html[data-minimal] .gh-switch { background: transparent !important; border: 1.5px solid var(--m-ink) !important; }
+html[data-minimal] .gh-switch { background: var(--m-tom) !important; border: 0 !important; }
 html[data-minimal] .gh-free input:checked + .gh-switch { background: var(--m-red) !important; border-color: var(--m-red) !important; }
 
 /* controles embaixo do tabuleiro (desfazer · barra · recomeçar) */
-html[data-minimal] .controls > button, html[data-minimal] .prog { background: transparent !important; border: 1.5px solid var(--m-ink) !important; color: var(--m-ink) !important; }
-html[data-minimal] .prog .bar { background: transparent !important; border: 1.3px solid var(--m-ink); height: 10px !important; border-radius: 3px !important; }
-html[data-minimal] .prog .bar i { background: var(--m-ink) !important; border-radius: 1px !important; }
-html[data-minimal] .prog .bar u { background: var(--m-bg) !important; border: 2px solid var(--m-ink) !important; }
+html[data-minimal] .controls > button, html[data-minimal] .prog { background: transparent !important; border: 0 !important; color: var(--m-ink) !important; }
+html[data-minimal] .controls > button:disabled { opacity: .3 !important; }
+html[data-minimal] .prog .bar { background: var(--m-fraco) !important; border: 0 !important; height: 2px !important; border-radius: 0 !important; }
+html[data-minimal] .prog .bar i { background: var(--m-ink) !important; border-radius: 0 !important; }
+html[data-minimal] .prog .bar u { background: var(--m-ink) !important; border: 0 !important; width: 8px !important; height: 8px !important; }
 html[data-minimal] .prog .n, html[data-minimal] .prog .n b { color: var(--m-ink) !important; }
 html[data-minimal] .controls.done .prog { background: var(--m-red) !important; border-color: var(--m-red) !important; }
 html[data-minimal] .done-bar, html[data-minimal] .done-bar .txt span { color: var(--m-on-red) !important; }
@@ -61,27 +62,27 @@ html[data-minimal] .tip b { color: var(--m-ink) !important; }
 
 /* faixa de resultado e doca (comum/proximo.js) */
 html[data-minimal] .gh-fim-bar, html[data-minimal] .gh-fim { background: var(--m-red) !important; color: var(--m-on-red) !important; border: 0 !important; }
-html[data-minimal] .gh-doca { background: var(--m-bg) !important; border: 1.5px solid var(--m-ink) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+html[data-minimal] .gh-doca { background: var(--m-bg) !important; border: 0 !important; border-top: 1px solid var(--m-hair) !important; border-radius: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 html[data-minimal] .gh-doca img { background: none !important; }
 
 /* bandejas e janelas */
 html[data-minimal] .overlay, html[data-minimal] .sheet-bg { background: rgba(0, 0, 0, .55) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-html[data-minimal] .modal, html[data-minimal] .sheet { background: var(--m-bg) !important; border: 1.5px solid var(--m-ink) !important; color: var(--m-ink) !important; }
+html[data-minimal] .modal, html[data-minimal] .sheet { background: var(--m-bg) !important; border: 1px solid var(--m-hair) !important; color: var(--m-ink) !important; }
 html[data-minimal] .modal p, html[data-minimal] .modal li { color: var(--m-ink) !important; }
 html[data-minimal] .btn-main, html[data-minimal] .fim-btn { background: var(--m-ink) !important; color: var(--m-bg) !important; border: 0 !important; }
-html[data-minimal] .close, html[data-minimal] .fim-close, html[data-minimal] .fim-share { background: transparent !important; border: 1.5px solid var(--m-ink) !important; color: var(--m-ink) !important; }
+html[data-minimal] .close, html[data-minimal] .fim-close, html[data-minimal] .fim-share { background: var(--m-tom) !important; border: 0 !important; color: var(--m-ink) !important; }
 html[data-minimal] .fim-art img { box-shadow: none !important; border-radius: 22px !important; }
 html[data-minimal] .fim-semana, html[data-minimal] .fim-grupo, html[data-minimal] .rec-pill, html[data-minimal] .fim-pos {
-  background: transparent !important; border: 1.5px solid var(--m-ink) !important; color: var(--m-ink) !important;
+  background: transparent !important; border: 1px solid var(--m-hair) !important; color: var(--m-ink) !important;
 }
 html[data-minimal] .fim-semana i, html[data-minimal] .fim-semana .b, html[data-minimal] .fim-semana [class*="barra"] { background: var(--m-ink) !important; }
 
 /* teclado comum (5PILA, Sando, Gerânio) */
-html[data-minimal] .gh-kb-key, html[data-minimal] .key { background: transparent !important; border: 1.3px solid var(--m-ink) !important; color: var(--m-ink) !important; border-radius: 8px !important; }
+html[data-minimal] .gh-kb-key, html[data-minimal] .key { background: var(--m-tom) !important; border: 0 !important; color: var(--m-ink) !important; border-radius: 6px !important; }
 
 /* seletores (comum/tema.js) e chaves */
 html[data-minimal] .sg-pill { background: var(--m-ink) !important; }
-html[data-minimal] .segx, html[data-minimal] .seg2, html[data-minimal] [data-seg] { background: transparent !important; border: 1.5px solid var(--m-ink) !important; }
+html[data-minimal] .segx, html[data-minimal] .seg2, html[data-minimal] [data-seg] { background: var(--m-tom) !important; border: 0 !important; }
 html[data-minimal] .segx [aria-checked="true"], html[data-minimal] .seg2 [aria-checked="true"], html[data-minimal] [data-seg] [aria-pressed="true"], html[data-minimal] [data-seg] .active { color: var(--m-bg) !important; }
 
 /* celebração (comum/celebra.js desenha o glifo em traço) */
@@ -89,47 +90,50 @@ html[data-minimal] .celebra { background: transparent !important; }
 
 /* ---------- Novelo: grade de pontos, números em círculos de traço, o fio numa linha só ---------- */
 html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important; }
-[data-minimal][data-jogo="novelo"] .b-bg { fill: transparent !important; stroke: var(--m-ink) !important; }
+[data-minimal][data-jogo="novelo"] .b-bg { fill: transparent !important; stroke: var(--m-ink) !important; stroke-width: 2 !important; }
 [data-minimal][data-jogo="novelo"] .b-weave, [data-minimal][data-jogo="novelo"] .b-hem, [data-minimal][data-jogo="novelo"] .wall-st,
 [data-minimal][data-jogo="novelo"] .fio-base, [data-minimal][data-jogo="novelo"] .fio-sob, [data-minimal][data-jogo="novelo"] .tw-a,
 [data-minimal][data-jogo="novelo"] .tw-b, [data-minimal][data-jogo="novelo"] .btn-shadow, [data-minimal][data-jogo="novelo"] .btn-rim { display: none !important; }
-[data-minimal][data-jogo="novelo"] .b-mark { stroke: var(--m-sub) !important; }
-[data-minimal][data-jogo="novelo"] .wall { stroke: var(--m-ink) !important; stroke-width: 7 !important; }
-[data-minimal][data-jogo="novelo"] .fio-a, [data-minimal][data-jogo="novelo"] .fio-b, [data-minimal][data-jogo="novelo"] .fio-c { stroke: var(--m-ink) !important; stroke-width: 9 !important; }
-[data-minimal][data-jogo="novelo"] .head { fill: var(--m-ink) !important; stroke: var(--m-bg) !important; stroke-width: 6 !important; }
+[data-minimal][data-jogo="novelo"] .b-mark { stroke: var(--m-fraco) !important; }
+[data-minimal][data-jogo="novelo"] .wall { stroke: var(--m-fraco) !important; stroke-width: 12 !important; stroke-linecap: butt !important; }
+[data-minimal][data-jogo="novelo"] .fio-min { fill: none; stroke: var(--m-ink); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+[data-minimal][data-jogo="novelo"] .head { fill: var(--m-ink) !important; stroke: none !important; r: 13px; }
 [data-minimal][data-jogo="novelo"] .head-ring, [data-minimal][data-jogo="novelo"] .next-ring { stroke: var(--m-red) !important; stroke-width: 3.5 !important; }
-[data-minimal][data-jogo="novelo"] .btn { fill: var(--m-bg) !important; stroke: var(--m-ink) !important; stroke-width: 2.5 !important; }
+[data-minimal][data-jogo="novelo"] .btn { fill: var(--m-bg) !important; stroke: var(--m-ink) !important; stroke-width: 2 !important; }
 [data-minimal][data-jogo="novelo"] .btn-n { fill: var(--m-ink) !important; font-family: var(--m-num) !important; font-weight: 900 !important; }
 [data-minimal][data-jogo="novelo"] .won .th-sheen { stroke: var(--m-red) !important; }
 [data-minimal][data-jogo="novelo"] #piscada { display: none !important; }
 
 /* ---------- Eclipse: regiões em traço grosso, casas em traço fino; sol cheio, lua meia ---------- */
-[data-minimal][data-jogo="eclipse"] .board { background: transparent !important; border: 2.5px solid var(--m-ink) !important; }
-[data-minimal][data-jogo="eclipse"] .board .regions .seams { stroke: var(--m-fraco) !important; stroke-width: 1.5 !important; }
-[data-minimal][data-jogo="eclipse"] .board .regions .reg-min { fill: none; stroke: var(--m-ink); stroke-width: 3; stroke-linejoin: round; }
+[data-minimal][data-jogo="eclipse"] .board { background: transparent !important; border: 1.5px solid var(--m-ink) !important; }
+[data-minimal][data-jogo="eclipse"] .board .regions .seams { stroke: var(--m-hair) !important; stroke-width: 1 !important; }
+[data-minimal][data-jogo="eclipse"] .board .regions .reg-min { fill: none; stroke: var(--m-ink); stroke-width: 2; stroke-linejoin: round; }
 [data-minimal][data-jogo="eclipse"] .cell { background: transparent !important; }
 [data-minimal][data-jogo="eclipse"] .cell > svg.sun, [data-minimal][data-jogo="eclipse"] .cell > svg.moon, [data-minimal][data-jogo="eclipse"] .seg button svg { filter: none !important; }
 [data-minimal][data-jogo="eclipse"] .cell > svg.dot { fill: var(--m-sub) !important; }
-[data-minimal][data-jogo="eclipse"] .cell.given::after { border-color: var(--m-ink) !important; background: none !important; }
-[data-minimal][data-jogo="eclipse"] .seg { background: transparent !important; border: 1.5px solid var(--m-ink) !important; }
+[data-minimal][data-jogo="eclipse"] .cell.given::after { border: 1px solid var(--m-ink) !important; background: none !important; }
+[data-minimal][data-jogo="eclipse"] .cell.bad::before { border: 1.5px solid var(--m-red); background: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--m-red) 45%, transparent) 4px 5.5px) !important; }
+[data-minimal][data-jogo="eclipse"]:not(#_) { --veil: var(--m-ink); --veu-auto: .045; --veu-fora: .06; --veu-nada: .1; }
+[data-minimal][data-jogo="eclipse"] .seg { background: var(--m-tom) !important; border: 0 !important; }
 [data-minimal][data-jogo="eclipse"] .seg button { background: transparent !important; color: var(--m-ink) !important; }
-[data-minimal][data-jogo="eclipse"] .seg button[aria-pressed="true"] { border: 2px solid var(--m-red) !important; }
+[data-minimal][data-jogo="eclipse"] .seg button { border: 0 !important; }
+[data-minimal][data-jogo="eclipse"] .seg button[aria-pressed="true"] { background: var(--m-bg) !important; outline: 1.5px solid var(--m-red) !important; outline-offset: -1.5px; }
 [data-minimal][data-jogo="eclipse"] .cnt .pips s { background: transparent !important; border: 1px solid var(--m-ink); }
 [data-minimal][data-jogo="eclipse"] .cnt .pips s.on, [data-minimal][data-jogo="eclipse"] .cnt .pips s.cheio { background: var(--m-ink) !important; }
-[data-minimal][data-jogo="eclipse"] .controls button { background: transparent !important; border: 1.5px solid var(--m-ink) !important; color: var(--m-ink) !important; }
+[data-minimal][data-jogo="eclipse"] .controls > button { background: transparent !important; border: 0 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="eclipse"] .controls.done .seg { background: var(--m-red) !important; border-color: var(--m-red) !important; }
 [data-minimal][data-jogo="eclipse"] .seg button.completo { background: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="eclipse"] .seg button.completo svg.sun, [data-minimal][data-jogo="eclipse"] .seg button.completo svg.moon { filter: invert(1) !important; }
 
 /* ---------- Azulejo: casas em traço fino; etiqueta = forma de traço com o número; painel montado = cheio, número vazado ---------- */
 [data-minimal][data-jogo="azulejo"] .b-bg { fill: transparent !important; }
-[data-minimal][data-jogo="azulejo"] .b-cell { fill: transparent !important; stroke: var(--m-fraco) !important; stroke-width: 2.5 !important; }
+[data-minimal][data-jogo="azulejo"] .b-cell { fill: transparent !important; stroke: var(--m-hair) !important; stroke-width: 1.5 !important; }
 [data-minimal][data-jogo="azulejo"] .b-cell-sombra, [data-minimal][data-jogo="azulejo"] .p-shadow { display: none !important; }
 [data-minimal][data-jogo="azulejo"] .p-min { fill: var(--m-ink); }
 [data-minimal][data-jogo="azulejo"] .p-empty, [data-minimal][data-jogo="azulejo"] .p-bad { fill: transparent !important; }
 [data-minimal][data-jogo="azulejo"] .p-st, [data-minimal][data-jogo="azulejo"] .p-st.e { stroke: var(--m-ink) !important; }
 [data-minimal][data-jogo="azulejo"] .p-st.b { stroke: var(--m-red) !important; }
-[data-minimal][data-jogo="azulejo"] .tg-sh { fill: transparent !important; stroke: var(--m-ink) !important; stroke-width: 3 !important; filter: none !important; }
+[data-minimal][data-jogo="azulejo"] .tg-sh { fill: transparent !important; stroke: var(--m-ink) !important; stroke-width: 2 !important; filter: none !important; }
 [data-minimal][data-jogo="azulejo"] .tg-n { fill: var(--m-ink) !important; font-family: var(--m-num) !important; font-weight: 900 !important; }
 [data-minimal][data-jogo="azulejo"] .tg.on .tg-sh { fill: transparent !important; stroke: var(--m-bg) !important; }
 [data-minimal][data-jogo="azulejo"] .tg.on .tg-n { fill: var(--m-bg) !important; }
@@ -141,7 +145,7 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 
 /* ---------- Ponto Cruz: faces de pontos (sem as cores dos dados); botões em traço ---------- */
 [data-minimal][data-jogo="cruzadinha"] .tec button, [data-minimal][data-jogo="cruzadinha"] .nota-barra, [data-minimal][data-jogo="cruzadinha"] .dados button {
-  background: transparent !important; background-image: none !important; border: 1.5px solid var(--m-ink) !important; outline: 0 !important; color: var(--m-ink) !important; }
+  background: var(--m-tom) !important; background-image: none !important; border: 0 !important; outline: 0 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="cruzadinha"] .nota-barra.on { background: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="cruzadinha"] .prog { background: var(--m-red) !important; }
 [data-minimal][data-jogo="cruzadinha"] .aviso, [data-minimal][data-jogo="cruzadinha"] .aviso b { color: var(--m-ink) !important; }
@@ -151,7 +155,7 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="cortado"] #board > rect[stroke="rgba(255,255,255,.18)"] { display: none !important; }
 [data-minimal][data-jogo="cortado"] .b-cell, [data-minimal][data-jogo="cortado"] .b-cell.vaz, [data-minimal][data-jogo="cortado"] .b-cell.v1, [data-minimal][data-jogo="cortado"] .b-cell.v2,
 [data-minimal][data-jogo="cortado"] .b-cell.fix, [data-minimal][data-jogo="cortado"] .b-cell.fix.v1, [data-minimal][data-jogo="cortado"] .b-cell.fix.v2 {
-  fill: transparent !important; stroke: var(--m-fraco) !important; stroke-width: 2.5 !important; filter: none !important; }
+  fill: transparent !important; stroke: var(--m-hair) !important; stroke-width: 1.5 !important; filter: none !important; }
 [data-minimal][data-jogo="cortado"] .b-cell.bad { fill: transparent !important; stroke: var(--m-ink) !important; stroke-dasharray: 8 7; stroke-width: 3 !important; }
 [data-minimal][data-jogo="cortado"] .fix-mark.m1, [data-minimal][data-jogo="cortado"] .fix-mark.m2 { stroke: var(--m-sub) !important; stroke-width: 2 !important; stroke-dasharray: 3 5; }
 [data-minimal][data-jogo="cortado"] .m-cafe { fill: var(--m-ink); }
@@ -162,13 +166,13 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="cortado"] svg.g { filter: none !important; }
 
 /* ---------- Brigadeiro: grade de pontos, barras = quadrados cheios; doce e forminha pela FORMA; doce na forminha = cheio ---------- */
-[data-minimal][data-jogo="brigadeiro"] .m-bandeja { fill: none; stroke: var(--m-ink); stroke-width: 5; }
-[data-minimal][data-jogo="brigadeiro"] .m-ponto { fill: var(--m-sub); }
-[data-minimal][data-jogo="brigadeiro"] .m-parede { fill: var(--m-ink); }
-[data-minimal][data-jogo="brigadeiro"] .m-forminha { fill: none; stroke: var(--m-ink); stroke-width: 3.5; stroke-dasharray: 7 7; }
-[data-minimal][data-jogo="brigadeiro"] .m-doce { fill: var(--m-bg); stroke: var(--m-ink); stroke-width: 5; }
+[data-minimal][data-jogo="brigadeiro"] .m-bandeja { fill: none; stroke: var(--m-ink); stroke-width: 2.5; }
+[data-minimal][data-jogo="brigadeiro"] .m-ponto { fill: var(--m-fraco); }
+[data-minimal][data-jogo="brigadeiro"] .m-parede { fill: color-mix(in srgb, var(--m-ink) 22%, transparent); }
+[data-minimal][data-jogo="brigadeiro"] .m-forminha { fill: none; stroke: var(--m-sub); stroke-width: 2; stroke-dasharray: 5 6; }
+[data-minimal][data-jogo="brigadeiro"] .m-doce { fill: var(--m-bg); stroke: var(--m-ink); stroke-width: 3.5; }
 [data-minimal][data-jogo="brigadeiro"] .chegou .m-doce, [data-minimal][data-jogo="brigadeiro"] .m-doce.m-cheia { fill: var(--m-red); stroke: var(--m-red); }
-[data-minimal][data-jogo="brigadeiro"] .tec button, [data-minimal][data-jogo="brigadeiro"] .acoes button { background: transparent !important; background-image: none !important; border: 1.5px solid var(--m-ink) !important; color: var(--m-ink) !important; }
+[data-minimal][data-jogo="brigadeiro"] .tec button, [data-minimal][data-jogo="brigadeiro"] .acoes button { background: var(--m-tom) !important; background-image: none !important; border: 0 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="brigadeiro"] .tec .seta-btn.empurra { background: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="brigadeiro"] .prog { background: var(--m-red) !important; }
 [data-minimal][data-jogo="brigadeiro"] .cont, [data-minimal][data-jogo="brigadeiro"] .aviso { color: var(--m-sub) !important; }
@@ -179,25 +183,25 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
   --dica: var(--m-red); --sel: color-mix(in srgb, var(--m-red) 28%, transparent); --letra: Doto; }
 [data-minimal][data-jogo="cordel"] .le { font-family: var(--m-num) !important; font-weight: 900 !important; }
 [data-minimal][data-jogo="cordel"] .letras, [data-minimal][data-jogo="cordel"] .achadas { filter: none !important; }
-[data-minimal][data-jogo="cordel"] .et { background: transparent !important; border: 1.5px solid var(--m-ink) !important; color: var(--m-ink) !important; }
+[data-minimal][data-jogo="cordel"] .et { background: var(--m-tom) !important; border: 0 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="cordel"] .et.tema { background: var(--m-ink) !important; color: var(--m-bg) !important; }
-[data-minimal][data-jogo="cordel"] .et.chave { background: var(--m-red) !important; border-color: var(--m-red) !important; color: var(--m-on-red) !important; }
+[data-minimal][data-jogo="cordel"] .et.chave { background: var(--m-red) !important; color: var(--m-on-red) !important; }
 [data-minimal][data-jogo="cordel"] .atual { font-family: var(--m-num) !important; }
 [data-minimal][data-jogo="cordel"] .controls.done .prog { background: var(--m-red) !important; }
 
 /* ---------- Gerânio: círculos de traço, miolo cheio; régua e dicas em traço; vermelho = a letra/palavra de agora ---------- */
 [data-minimal][data-jogo="geranio"]:not(#_) { --petala: transparent; --letra: var(--m-ink); --miolo: var(--m-ink); --miolo-txt: var(--m-bg); --acc: var(--m-red); --bom: var(--m-ink);
   --folha: var(--m-ink); --rara: var(--m-sub); --rara-txt: var(--m-sub); --line: var(--m-fraco); }
-[data-minimal][data-jogo="geranio"] .m-pet { fill: var(--m-bg); stroke: var(--m-ink); stroke-width: 2.5; }
+[data-minimal][data-jogo="geranio"] .m-pet { fill: var(--m-bg); stroke: var(--m-ink); stroke-width: 2; }
 [data-minimal][data-jogo="geranio"] .m-miolo { fill: var(--m-ink); }
 [data-minimal][data-jogo="geranio"] .flor text { font-family: var(--m-num) !important; font-weight: 900 !important; }
 [data-minimal][data-jogo="geranio"] .flor .cnt, [data-minimal][data-jogo="geranio"] .flor .pgc { font-family: var(--m-txt) !important; font-weight: 700 !important; }
 [data-minimal][data-jogo="geranio"] .flor .pt.aperta .m-pet { fill: var(--m-ink); } [data-minimal][data-jogo="geranio"] .flor .pt.aperta text.le { fill: var(--m-bg); }
 [data-minimal][data-jogo="geranio"] .palavra, [data-minimal][data-jogo="geranio"] .palavra.ok b, [data-minimal][data-jogo="geranio"] .rank b { font-family: var(--m-num) !important; font-weight: 900 !important; }
-[data-minimal][data-jogo="geranio"] .trilha { background: transparent !important; border: 1.3px solid var(--m-ink); height: 8px !important; }
-[data-minimal][data-jogo="geranio"] .inis span, [data-minimal][data-jogo="geranio"] .ini div { background: transparent !important; border: 1.3px solid var(--m-ink) !important; }
-[data-minimal][data-jogo="geranio"] .inis span.acesa { background: var(--m-red) !important; border-color: var(--m-red) !important; color: var(--m-on-red) !important; }
-[data-minimal][data-jogo="geranio"] .tam .bar i { background: transparent !important; border: 1.2px solid var(--m-ink); }
+[data-minimal][data-jogo="geranio"] .trilha { background: var(--m-fraco) !important; border: 0 !important; height: 2px !important; }
+[data-minimal][data-jogo="geranio"] .inis span, [data-minimal][data-jogo="geranio"] .ini div { background: var(--m-tom) !important; border: 0 !important; }
+[data-minimal][data-jogo="geranio"] .inis span.acesa { background: var(--m-red) !important; color: var(--m-on-red) !important; }
+[data-minimal][data-jogo="geranio"] .tam .bar i { background: var(--m-fraco) !important; border: 0 !important; }
 [data-minimal][data-jogo="geranio"] .tam .bar i.on { background: var(--m-ink) !important; }
 [data-minimal][data-jogo="geranio"] .tam .bar i.ra { background: var(--m-sub) !important; border-color: var(--m-sub); }
 [data-minimal][data-jogo="geranio"] .lista { background: var(--m-bg) !important; }
@@ -206,14 +210,14 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="sando"]:not(#_) { --crust: transparent; --crust-win: transparent; --crust-lose: transparent; --tile: transparent; --tile-ghost: transparent;
   --text: var(--m-ink); --text-dim: var(--m-sub); --accent: var(--m-ink); --accent-soft: transparent; --key: transparent; --cheese: transparent; --rail: var(--m-sub);
   --card: var(--m-bg); --border: var(--m-ink); --good: var(--m-red); --good-soft: transparent; --bad: var(--m-red); --ink: var(--m-ink); --bread-2: transparent; --casca1: transparent; --casca2: transparent; }
-[data-minimal][data-jogo="sando"] .tile { border: 1.3px solid var(--m-ink); font-family: var(--m-num) !important; font-weight: 900 !important; }
-[data-minimal][data-jogo="sando"] .tile-row.input .tile { border-style: dashed; }
+[data-minimal][data-jogo="sando"] .tile { border: 1px solid var(--m-ink); font-family: var(--m-num) !important; font-weight: 900 !important; }
+[data-minimal][data-jogo="sando"] .tile-row.input .tile { border-color: var(--m-hair); }
 [data-minimal][data-jogo="sando"] .tile-row.input .tile.cur { border: 2.2px solid var(--m-red) !important; }
-[data-minimal][data-jogo="sando"] .tile-row.input .tile.filled { border-style: solid; }
+[data-minimal][data-jogo="sando"] .tile-row.input .tile.filled { border-color: var(--m-ink); }
 [data-minimal][data-jogo="sando"] .tile-row.win .tile { background: var(--m-red) !important; border-color: var(--m-red); color: var(--m-on-red) !important; }
 [data-minimal][data-jogo="sando"] .tile-row.lose .tile { background: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="sando"] .tile-row.input { border-color: transparent !important; }
-[data-minimal][data-jogo="sando"] .kb-key { background: transparent !important; border: 1.3px solid var(--m-ink) !important; color: var(--m-ink) !important; }
+[data-minimal][data-jogo="sando"] .kb-key { background: var(--m-tom) !important; border: 0 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="sando"] .kb-key.kb-enter { background: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="sando"] .bubble { background: transparent !important; border: 1.3px solid var(--m-ink); color: var(--m-ink) !important; }
 [data-minimal][data-jogo="sando"] .bubble::after { background: var(--m-bg) !important; border: 1.3px solid var(--m-ink); }
@@ -221,16 +225,16 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="sando"] .dot-pip.used::after { background: var(--m-ink) !important; }
 [data-minimal][data-jogo="sando"] .dot-pip.active::after { background: var(--m-red) !important; border-color: var(--m-red); }
 [data-minimal][data-jogo="sando"] .dot-pip.win::after { background: var(--m-red) !important; border-color: var(--m-red); }
-[data-minimal][data-jogo="sando"] .letters-panel { background: transparent !important; border: 1.5px solid var(--m-ink) !important; }
+[data-minimal][data-jogo="sando"] .letters-panel { background: transparent !important; border: 0 !important; border-top: 1px solid var(--m-hair) !important; border-radius: 0 !important; }
 [data-minimal][data-jogo="sando"] .lp-letter { font-family: var(--m-num) !important; font-weight: 900 !important; }
 
 /* ---------- 5PILA: casas em traço; certa = vermelho cheio, lugar errado = preto cheio, ausente = apagada ---------- */
 [data-minimal][data-jogo="5pila"]:not(#_) { --bg-tint: transparent; --panel: transparent; --panel-2: var(--m-fraco); --ink-dim: var(--m-sub); --line: var(--m-ink);
   --accent: var(--m-red); --accent-ink: var(--m-on-red); --present: var(--m-ink); --present-ink: var(--m-bg); --absent: var(--m-fraco); --danger: var(--m-sub); --danger-ink: var(--m-bg);
   --key-bg: transparent; --key-ink: var(--m-ink); --font-display: Doto, "Space Mono", monospace; --font-body: "Space Mono", monospace; --font-num: Doto, "Space Mono", monospace; }
-[data-minimal][data-jogo="5pila"] .tile { background: transparent !important; border: 1.3px solid var(--m-ink) !important; color: var(--m-ink) !important;
+[data-minimal][data-jogo="5pila"] .tile { background: transparent !important; border: 1px solid var(--m-ink) !important; color: var(--m-ink) !important;
   font-family: var(--m-num) !important; font-weight: 900 !important; border-radius: 10px; margin-bottom: 0; }
-[data-minimal][data-jogo="5pila"] .tile:not(.filled):not(.correct):not(.present):not(.absent):not(.maybe) { border-style: dashed !important; border-color: var(--m-sub) !important; }
+[data-minimal][data-jogo="5pila"] .tile:not(.filled):not(.correct):not(.present):not(.absent):not(.maybe) { border-color: var(--m-fraco) !important; }
 [data-minimal][data-jogo="5pila"] .tile.cursor { border: 2.2px solid var(--m-red) !important; }
 [data-minimal][data-jogo="5pila"] .tile.correct { background: var(--m-red) !important; border-color: var(--m-red) !important; color: var(--m-on-red) !important; }
 [data-minimal][data-jogo="5pila"] .tile.present { background: var(--m-ink) !important; color: var(--m-bg) !important; }
@@ -238,45 +242,73 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
   background: linear-gradient(to top right, transparent calc(50% - .7px), var(--m-sub) calc(50% - .7px) calc(50% + .7px), transparent calc(50% + .7px)) !important; }
 [data-minimal][data-jogo="5pila"] .tile.maybe { background: repeating-linear-gradient(135deg, var(--m-red) 0 6px, var(--m-ink) 6px 12px) !important; border-color: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="5pila"] .row.falta .tile { border-style: dotted !important; }
-[data-minimal][data-jogo="5pila"] .cnt, [data-minimal][data-jogo="5pila"] .cnt:not(.empty) { background: transparent !important; border: 1.3px solid var(--m-ink) !important; border-radius: 10px; }
-[data-minimal][data-jogo="5pila"] .cnt.empty { border-style: dashed !important; border-color: var(--m-sub) !important; }
+[data-minimal][data-jogo="5pila"] .cnt, [data-minimal][data-jogo="5pila"] .cnt:not(.empty) { background: transparent !important; border: 1px solid var(--m-ink) !important; border-radius: 10px; }
+[data-minimal][data-jogo="5pila"] .cnt.empty { border-color: var(--m-fraco) !important; }
 [data-minimal][data-jogo="5pila"] .cnt .count-cell, [data-minimal][data-jogo="5pila"] .cnt .virg { background: transparent !important; font-family: var(--m-num) !important; font-weight: 900 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="5pila"] .cnt .count-cell.cg { color: var(--m-red) !important; }
 [data-minimal][data-jogo="5pila"] .cnt .count-cell.cr { color: var(--m-sub) !important; }
 [data-minimal][data-jogo="5pila"] .legend .pilas { background: transparent; border: 1.3px solid var(--m-ink); color: var(--m-ink); font-family: var(--m-num); }
 [data-minimal][data-jogo="5pila"] .legend .pilas .g { color: var(--m-red); } [data-minimal][data-jogo="5pila"] .legend .pilas .y { color: var(--m-ink); } [data-minimal][data-jogo="5pila"] .legend .pilas .r { color: var(--m-sub); }
-[data-minimal][data-jogo="5pila"] .key { background: transparent !important; border: 1.3px solid var(--m-ink) !important; color: var(--m-ink) !important; }
+[data-minimal][data-jogo="5pila"] .key { background: var(--m-tom) !important; border: 0 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="5pila"] .key.correct { background: var(--m-red) !important; border-color: var(--m-red) !important; color: var(--m-on-red) !important; }
 [data-minimal][data-jogo="5pila"] .key.present { background: var(--m-ink) !important; color: var(--m-bg) !important; }
-[data-minimal][data-jogo="5pila"] .key.absent { border-color: var(--m-fraco) !important; color: var(--m-sub) !important; }
+[data-minimal][data-jogo="5pila"] .key.absent { background: transparent !important; color: var(--m-fraco) !important; }
 [data-minimal][data-jogo="5pila"] .tile.cursor { border-style: solid !important; }
 
 
-/* ---------- Painel: cartões de traço, ícones em glifo (tema.js), feito = círculo vermelho cheio ---------- */
-[data-minimal][data-jogo="painel"]:not(#_) { --surface: var(--m-bg); --surface-2: var(--m-fraco); --border: var(--m-ink); --text: var(--m-ink); --muted: var(--m-sub); --faint: var(--m-sub);
+/* ---------- Painel: lista de linhas finas (sem cartões), glifos sem moldura, feito = ponto vermelho; barra de abas plana ---------- */
+[data-minimal][data-jogo="painel"]:not(#_) { --surface: transparent; --surface-2: var(--m-tom); --border: var(--m-hair); --text: var(--m-ink); --muted: var(--m-sub); --faint: var(--m-sub);
   --green: var(--m-red); --green-soft: transparent; --tile-bg: transparent; --shadow: none;
   --tb-vidro: var(--m-bg); --tb-gota: transparent; --tb-gota-pousa: transparent; --tb-acc: var(--m-ink); --tb-sombra: transparent; --tb-aro-hi: transparent; --tb-aro-lo: transparent;
-  --gelo: var(--m-ink); --gelo-ink: var(--m-ink); --gelo-soft: transparent; }
-[data-minimal][data-jogo="painel"] .icon { background: transparent !important; box-shadow: none !important; filter: none !important; }
-[data-minimal][data-jogo="painel"] .icon:not(:has(img[data-min])) { border: 1.3px solid var(--m-ink); }
-[data-minimal][data-jogo="painel"] .icon img:not([data-min]) { filter: grayscale(1) contrast(1.15); }
+  --gelo: var(--m-ink); --gelo-ink: var(--m-ink); --gelo-soft: var(--m-tom); }
+[data-minimal][data-jogo="painel"] .list, [data-minimal][data-jogo="painel"] .grid { gap: 0 !important; }
+[data-minimal][data-jogo="painel"] .row, [data-minimal][data-jogo="painel"] .app { background: transparent !important; border: 0 !important; border-bottom: 1px solid var(--m-hair) !important; border-radius: 0 !important; }
+[data-minimal][data-jogo="painel"] .row a.game, [data-minimal][data-jogo="painel"] .app a.game { padding-left: 2px !important; }
+[data-minimal][data-jogo="painel"] .icon { background: transparent !important; box-shadow: none !important; filter: none !important; border-radius: 0 !important; }
+[data-minimal][data-jogo="painel"] .icon img[data-min] { width: 30px !important; height: 30px !important; }
+[data-minimal][data-jogo="painel"] .icon img:not([data-min]) { filter: grayscale(1) contrast(1.15); border-radius: 6px; }
 [data-minimal][data-jogo="painel"] .icon:not(:has(img)) { filter: grayscale(1) !important; }
-[data-minimal][data-jogo="painel"] .check { border: 1.5px solid var(--m-ink) !important; background: transparent !important; }
+[data-minimal][data-jogo="painel"] .name { font-weight: 700; }
+[data-minimal][data-jogo="painel"] .check { width: 14px !important; height: 14px !important; border: 1.2px solid var(--m-sub) !important; background: transparent !important; }
+[data-minimal][data-jogo="painel"] .check svg { display: none; }
 [data-minimal][data-jogo="painel"] .toggle[aria-checked="true"] .check { background: var(--m-red) !important; border-color: var(--m-red) !important; }
-[data-minimal][data-jogo="painel"] .check svg { stroke: var(--m-on-red); }
+[data-minimal][data-jogo="painel"] .ring .tr, [data-minimal][data-jogo="painel"] .ring circle:first-child { stroke: var(--m-fraco) !important; }
 [data-minimal][data-jogo="painel"] .dia-nivel { font-size: .82rem; letter-spacing: 0; font-stretch: 100%; }
-[data-minimal][data-jogo="painel"] .dia-nivel .nv i { background: var(--m-ink); }
-[data-minimal][data-jogo="painel"] .dia-nivel .nv i.on { background: var(--m-red); opacity: 1; }
-[data-minimal][data-jogo="painel"] .tabbar { border: 1.3px solid var(--m-ink); -webkit-backdrop-filter: none; backdrop-filter: none; }
-[data-minimal][data-jogo="painel"] .tabbar::after { display: none; }
-[data-minimal][data-jogo="painel"] .tb-gota.pousa, [data-minimal][data-jogo="painel"] .tb-gota.on { border: 1.3px solid var(--m-ink); }
-[data-minimal][data-jogo="painel"] .tabbar a[aria-current="page"] svg { color: var(--m-red); }
-[data-minimal][data-jogo="painel"] .tabbar a .novo { background: var(--m-red); box-shadow: 0 0 0 2px var(--m-bg); }
+[data-minimal][data-jogo="painel"] .dia-nivel .nv i { background: var(--m-fraco); opacity: 1; }
+[data-minimal][data-jogo="painel"] .dia-nivel .nv i.on { background: var(--m-ink); }
+[data-minimal][data-jogo="painel"] .resumo { border: 0 !important; background: transparent !important; padding-right: 2px !important; }
+[data-minimal][data-jogo="painel"] .resumo .fogo { filter: none !important; opacity: 1 !important; font-size: 0 !important; display: inline-block; width: 11px; height: 14px; }
+[data-minimal][data-jogo="painel"] .resumo .fogo::before { content: ""; position: absolute; inset: 0; background: var(--m-ink);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 14'%3E%3Cpath d='M5.5 1C6 4 9.5 5.5 9.5 9a4 4 0 0 1-8 0c0-2 1.2-3 2-4 .2 1.3.8 2 1.5 2.2C4.6 5 4.8 3 5.5 1z' fill='none' stroke='%23000' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 14'%3E%3Cpath d='M5.5 1C6 4 9.5 5.5 9.5 9a4 4 0 0 1-8 0c0-2 1.2-3 2-4 .2 1.3.8 2 1.5 2.2C4.6 5 4.8 3 5.5 1z' fill='none' stroke='%23000' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+[data-minimal][data-jogo="painel"] .resumo .fogo.zero::before { background: var(--m-sub); }
+[data-minimal][data-jogo="painel"] .resumo .gl-b { font-size: .69rem !important; top: -9px; left: -12px; }
+[data-minimal][data-jogo="painel"] .resumo .gl-b { background: var(--m-red); color: var(--m-on-red); }
 [data-minimal][data-jogo="painel"] .app-mark h1, [data-minimal][data-jogo="painel"] .page-head h1 { font-family: var(--m-num); font-weight: 900; letter-spacing: 0; }
-[data-minimal][data-jogo="painel"] .resumo b, [data-minimal][data-jogo="painel"] .tiles b, [data-minimal][data-jogo="painel"] .tile-n { font-family: var(--m-num); font-weight: 900; }
+[data-minimal][data-jogo="painel"] .resumo, [data-minimal][data-jogo="painel"] .tiles b, [data-minimal][data-jogo="painel"] .tile-n { font-family: var(--m-num) !important; font-weight: 900; }
+/* barra de abas: plana, presa embaixo, linha fina em cima; aba atual = ícone e nome em tinta com um traço vermelho em cima; sem encolher */
+[data-minimal][data-jogo="painel"] .tabbar, [data-minimal][data-jogo="painel"] .tabbar.min {
+  left: 0 !important; width: 100% !important; bottom: 0 !important; height: calc(56px + env(safe-area-inset-bottom, 0px)) !important; border-radius: 0 !important;
+  padding: 0 max(8px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(8px, env(safe-area-inset-left, 0px)) !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important; background: var(--m-bg) !important; border: 0 !important; border-top: 1px solid var(--m-hair) !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important; transition: none !important; }
+[data-minimal][data-jogo="painel"] .tabbar::after, [data-minimal][data-jogo="painel"] .tb-gota { display: none !important; }
+[data-minimal][data-jogo="painel"] .tabbar.min a { display: flex !important; }
+[data-minimal][data-jogo="painel"] .tabbar.min a span { display: inline !important; }
+[data-minimal][data-jogo="painel"] .tabbar a { color: var(--m-sub) !important; font-weight: 400 !important; font-size: .69rem !important; }
+[data-minimal][data-jogo="painel"] .tabbar a svg { width: 22px !important; height: 22px !important; stroke-width: 1.5 !important; }
+[data-minimal][data-jogo="painel"] .tabbar a[aria-current="page"] { color: var(--m-ink) !important; font-weight: 700 !important; }
+[data-minimal][data-jogo="painel"] .tabbar a[aria-current="page"]::before { content: ""; position: absolute; top: -1px; left: 50%; width: 22px; height: 2px; margin-left: -11px; background: var(--m-red); }
+[data-minimal][data-jogo="painel"] .tabbar a .novo { background: var(--m-red); box-shadow: 0 0 0 2px var(--m-bg); }
+/* Ajustes e Estatísticas: grupos em linha fina, sem caixa */
+[data-minimal][data-jogo="painel"] .set-grupo, [data-minimal][data-jogo="painel"] .gelo-card, [data-minimal][data-jogo="painel"] .tile, [data-minimal][data-jogo="painel"] .card {
+  background: transparent !important; border: 1px solid var(--m-hair) !important; }
 [data-minimal][data-jogo="painel"] .set-sw i { background: transparent; border: 1.3px solid var(--m-ink); }
 [data-minimal][data-jogo="painel"] .set-sw i::after { top: .7px; left: .7px; background: var(--m-ink); transform: scale(.7); }
 [data-minimal][data-jogo="painel"] .set-sw input:checked + i { background: transparent; }
 [data-minimal][data-jogo="painel"] .set-sw input:checked + i::after { background: var(--m-red); transform: translateX(20px) scale(.7); }
 [data-minimal][data-jogo="painel"] .set-sw small { font-weight: 400; }
 html[data-minimal] .celebra > svg { filter: none !important; }
+[data-minimal][data-jogo="painel"] .hrow .em, [data-minimal][data-jogo="painel"] .gl-ics i, [data-minimal][data-jogo="painel"] .gelo-aviso .gi, [data-minimal][data-jogo="painel"] .gelo-regras i { filter: grayscale(1) contrast(1.2); }
+[data-minimal][data-jogo="painel"] .track i { background: var(--m-ink) !important; }
+[data-minimal][data-jogo="painel"] .track { background: var(--m-fraco) !important; height: 2px !important; }

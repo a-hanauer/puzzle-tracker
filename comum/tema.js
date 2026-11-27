@@ -318,8 +318,8 @@ window.jogoVeterano = function (prefixo) {
       var mm = s.match(RX), p = mm ? mm[1] : (/^icon(?:-escuro|-claro)?\.png/.test(s) && pasta !== "painel" ? pasta : (/apple-touch-icon|icone-painel|(?:^|\/)icon-192\.png/.test(s) ? "painel" : null));
       if (!p) continue;
       im.setAttribute("data-min", p);
-      im.setAttribute("data-claro", url(glifo(p, "#0d0d0d", true)));
-      im.setAttribute("data-escuro", url(glifo(p, "#f2f2f2", true)));
+      im.setAttribute("data-claro", url(glifo(p, "#0d0d0d", false)));
+      im.setAttribute("data-escuro", url(glifo(p, "#f2f2f2", false)));
       im.style.boxShadow = "none"; im.style.background = "none"; mudou = true;
     }
     if (mudou && window.jogosTema) jogosTema.trocaIcones();
@@ -329,7 +329,7 @@ window.jogoVeterano = function (prefixo) {
     var h = document.head || root;
     var f = document.createElement("link"); f.rel = "stylesheet"; f.id = "min-fontes";
     f.href = "https://fonts.googleapis.com/css2?family=Doto:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap"; h.appendChild(f);
-    var l = document.createElement("link"); l.rel = "stylesheet"; l.id = "min-css"; l.href = base + "minimal.css?v=1"; h.appendChild(l);
+    var l = document.createElement("link"); l.rel = "stylesheet"; l.id = "min-css"; l.href = base + "minimal.css?v=2"; h.appendChild(l);
   }
   if (on()) { root.setAttribute("data-minimal", ""); injeta(); }
   window.GLIFOS = G;

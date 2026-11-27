@@ -422,8 +422,8 @@
     congela(svg);
     // o voo tem o tamanho final da arte da janela: por baixo, uma cópia do ícone (que vai aparecendo);
     // por cima, o desenho, no lugar exato em que ele está dentro do ícone (mesmo enquadramento)
-    const MIN = !!svg.querySelector(".cel-min");      // glifo do modo minimalista: o ícone é o glifo a .74 num quadro de 34
-    const [qx, qy, ql] = MIN ? [-128, -128, 257] : QUADRO[jogo] || [-106, -106, 212];
+    const MIN = !!svg.querySelector(".cel-min");      // glifo do modo minimalista: o ícone é o próprio glifo, sem moldura
+    const [qx, qy, ql] = MIN ? [-95, -95, 190] : QUADRO[jogo] || [-106, -106, 212];
     const S = para.width, H = para.height, u = S / ql;
     const voo = document.createElement("div");
     voo.className = "cel-voo";

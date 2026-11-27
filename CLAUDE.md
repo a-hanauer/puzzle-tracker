@@ -123,7 +123,11 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Ícones viram glifos de traço (`GLIFOS` em tema.js, troca as `<img>` …/icon*.png sozinho); celebração = o glifo se desenhando a traço
   (`arteMin` em celebra.js). Quem carrega ícone com `onload` deve tratar só a 1ª carga (o modo troca o `src` depois; senão vira laço).
 - CSS em `comum/minimal.css` (seletores `[data-minimal][data-jogo="x"]`); desenho próprio no JS quando o CSS não basta:
-  `jogosMinimal.on()` (Eclipse, Azulejo, Ponto Cruz, Cortado, Brigadeiro, Cordel, Gerânio, Cofre — `mecanismoMin`). Mexeu num jogo: conferir os dois modos.
+  `jogosMinimal.on()` (Eclipse, Azulejo, Ponto Cruz, Cortado, Brigadeiro, Cordel, Gerânio, Cofre — `mecanismoMin`, Novelo — o fio vira uma linha só). Mexeu num jogo: conferir os dois modos.
+- **Revisão de 27/11/2026 à noite** (o dono achou confuso): **só os objetos do jogo levam contorno** (casas, peças, tabuleiro); botões, teclas,
+  seletores e etiquetas ficam sem borda, com fundo leve (`--m-tom`); cabeçalho e controles = só ícones; progresso = linha de 2 px; divisórias
+  em `--m-hair`. Fundo = textura fina (pontos de .7 px a cada 4 px). Glifos sem moldura. Painel = lista com linha fina entre os jogos, feito =
+  pontinho vermelho; barra de abas plana presa embaixo (linha fina em cima, aba atual em tinta com traço vermelho, não encolhe).
 
 ## Publicar
 
