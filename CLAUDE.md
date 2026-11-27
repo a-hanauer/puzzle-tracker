@@ -139,6 +139,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   Cofre sem a graduação dos discos nem o pontinho do centro.
   Cinzas de apoio (19h50, estavam quase invisíveis): claro `--m-hair` #c2c2bc, `--m-fraco` #a9a9a3, `--m-sub` #66665f; escuro #3d3d3a, #5a5a56, #9c9c96.
   Jogos de fora na doca em tons de cinza.
+  Azulejo (opção "A", 20h25): painel montado = só o contorno, com o fundo da página por dentro (esconde a grade); a prévia do arrasto
+  tracejada. Selo de feito da doca em vermelho.
 
 ## Publicar
 

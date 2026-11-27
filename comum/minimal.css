@@ -154,15 +154,15 @@ html[data-minimal][data-jogo="eclipse"] .cell.bad:not(#_):not(#_):not(#_)::befor
 [data-minimal][data-jogo="azulejo"] .b-bg { fill: transparent !important; }
 [data-minimal][data-jogo="azulejo"] .b-cell { fill: transparent !important; stroke: var(--m-hair) !important; stroke-width: 1.5 !important; }
 [data-minimal][data-jogo="azulejo"] .b-cell-sombra, [data-minimal][data-jogo="azulejo"] .p-shadow { display: none !important; }
-[data-minimal][data-jogo="azulejo"] .p-min { fill: var(--m-ink); }
+[data-minimal][data-jogo="azulejo"] .p-min { fill: var(--m-bg); stroke: var(--m-ink); stroke-width: 4; }   /* painel montado = só o contorno (opção "A"); o fundo esconde a grade */
 [data-minimal][data-jogo="azulejo"] .p-empty, [data-minimal][data-jogo="azulejo"] .p-bad { fill: transparent !important; }
 [data-minimal][data-jogo="azulejo"] .p-st, [data-minimal][data-jogo="azulejo"] .p-st.e { stroke: var(--m-ink) !important; }
 [data-minimal][data-jogo="azulejo"] .p-st.b { stroke: var(--m-red) !important; }
 [data-minimal][data-jogo="azulejo"] .tg-sh { fill: transparent !important; stroke: var(--m-ink) !important; stroke-width: 2 !important; filter: none !important; }
 [data-minimal][data-jogo="azulejo"] .tg-n { fill: var(--m-ink) !important; font-family: var(--m-num) !important; font-weight: 900 !important; }
-[data-minimal][data-jogo="azulejo"] .tg.on .tg-sh { fill: transparent !important; stroke: var(--m-bg) !important; }
-[data-minimal][data-jogo="azulejo"] .tg.on .tg-n { fill: var(--m-bg) !important; }
-[data-minimal][data-jogo="azulejo"] .prev { fill: transparent !important; stroke: var(--m-ink) !important; }
+[data-minimal][data-jogo="azulejo"] .tg.on .tg-sh { fill: transparent !important; stroke: var(--m-ink) !important; }
+[data-minimal][data-jogo="azulejo"] .tg.on .tg-n { fill: var(--m-ink) !important; }
+[data-minimal][data-jogo="azulejo"] .prev { fill: transparent !important; stroke: var(--m-ink) !important; stroke-dasharray: 6 5; }
 [data-minimal][data-jogo="azulejo"] .prev.ok { stroke: var(--m-red) !important; }
 [data-minimal][data-jogo="azulejo"] .prev-badge { fill: var(--m-ink) !important; } [data-minimal][data-jogo="azulejo"] .prev-badge.ok { fill: var(--m-red) !important; }
 [data-minimal][data-jogo="azulejo"] .prev-t { fill: var(--m-bg) !important; font-family: var(--m-num) !important; }
@@ -358,3 +358,4 @@ html[data-minimal] .gh-brand img { display: none !important; }
 
 /* jogos de fora na doca: sem cor, como no painel */
 html[data-minimal] .gh-doca img:not([data-min]) { filter: grayscale(1) contrast(1.15); }
+html[data-minimal] .gh-doca .dk-j.ok::after { background: var(--m-red) !important; color: var(--m-on-red) !important; }
