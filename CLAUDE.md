@@ -25,6 +25,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - **Topo do painel** (11/11/2026): à direita do título, o resumo do dia (`#resumoDia`: 🔥 sequência = dias seguidos jogando, `seqPainel`, o mesmo
   número do Ranking e das Estatísticas; anel + "3/13" feitos hoje; toque = Estatísticas). Na linha de baixo, "qua, 11 nov · nível 3" + pontinhos
   (dia abreviado; "de 7" só onde cabe) e, à direita, o tempo para os novos desafios (`#novos`, ampulheta + "14h 12min"; segundos só na última hora).
+- **Protetor de sequência ❄️** (25/11/2026; marcador opção "B", 27/11/2026): um a cada 7 dias seguidos jogando e um a mais em 30, 100 e 365
+  dias; limite 2 (3 com 30 dias, 4 com 100, 5 com 365); um dia sem jogo gasta um sozinho e a sequência continua (o dia não soma). Tudo
+  refeito do histórico (`gelo()` em index.html, sem estado guardado). No topo, selo azul com o número na chama (`.gl-b`); nas Estatísticas,
+  cartão `#geloCard` (toque = "como funciona"); aviso `#geloAviso` quando um foi gasto; dia protegido em azul-gelo no gráfico e no calendário.
 - **Feito** (11/11/2026): igual nas duas listas do painel — o cartão segue normal, com ✓ verde, e vai para o fim da lista (em aberto primeiro, como na doca). Nada riscado.
 - **Área segura**: respeitar `env(safe-area-inset-*)` em cima (notch) e embaixo (barra de gestos).
 

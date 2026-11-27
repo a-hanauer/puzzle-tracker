@@ -661,6 +661,35 @@
   .vbar.full i { background: var(--green); }
   .vbar.lost i { background: var(--faint); }
   .vbar.none i { height: 3px !important; background: var(--surface-2); border-radius: 2px; }
+  /* protetor de sequência (❄️): dia protegido nas barras e no calendário, em azul-gelo */
+  :root { --gelo: #7cc4ef; --gelo-soft: #dff1fc; --gelo-ink: #0f5d8c; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --gelo: #5fb4e6; --gelo-soft: #17303f; --gelo-ink: #a9dcfa; } }
+  :root[data-theme="dark"] { --gelo: #5fb4e6; --gelo-soft: #17303f; --gelo-ink: #a9dcfa; }
+  .vbar.gelo i { height: 10px !important; background: var(--gelo); border-radius: 3px; }
+  .cal-grid .cell.gelo { background: var(--gelo); }
+  .gelo-card { display: flex; align-items: center; gap: 12px; margin: 10px 0 12px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); cursor: pointer; width: 100%; font: inherit; color: var(--text); text-align: left; }
+  .gelo-card .gl-ics { display: flex; gap: 3px; flex: none; }
+  .gelo-card .gl-ics i { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-style: normal; font-size: 15px; background: var(--gelo-soft); }
+  .gelo-card .gl-ics i.vazio { background: var(--surface-2); filter: grayscale(1); opacity: .45; }
+  .gelo-card .gl-tx { flex: 1; min-width: 0; font-size: .9rem; font-weight: 800; line-height: 1.25; }
+  .gelo-card .gl-tx small { display: block; font-size: .78rem; font-weight: 600; color: var(--muted); margin-top: 2px; }
+  .gelo-card::after { content: ""; flex: none; width: 7px; height: 7px; border: solid var(--faint); border-width: 2px 2px 0 0; transform: rotate(45deg); margin-right: 2px; }
+  .gelo-aviso { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; padding: 11px 12px 11px 14px; border-radius: 16px; background: var(--gelo-soft); color: var(--gelo-ink); font-size: .86rem; font-weight: 600; line-height: 1.35; }
+  .gelo-aviso b { font-weight: 800; }
+  .gelo-aviso .gi { font-size: 1.35rem; flex: none; }
+  .gelo-aviso .gt { flex: 1; min-width: 0; }
+  .gelo-aviso button { flex: none; width: 32px; height: 32px; border: 0; border-radius: 50%; background: none; color: inherit; font-size: 1.1rem; cursor: pointer; position: relative; opacity: .7; }
+  .gelo-aviso button::after { content: ""; position: absolute; inset: -6px; }
+  .resumo .gl { color: var(--gelo-ink); }
+  .resumo .gl[hidden] { display: none; }
+  .resumo .fogo { position: relative; font-style: normal; }
+  .resumo .gl-b { position: absolute; top: -8px; left: -10px; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 99px; background: var(--gelo); color: #fff; font-size: .69rem; font-weight: 800; line-height: 1; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--surface); font-style: normal; }   /* protetores guardados (opção "B", 27/11/2026) */
+  .gelo-regras > div { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 12px 2px; border-bottom: 1px solid var(--border); font-size: .86rem; line-height: 1.45; color: var(--muted); }
+  .gelo-regras > div:last-child { border-bottom: 0; } .gelo-regras i { font-style: normal; font-size: 1.1rem; text-align: center; }
+  .gelo-regras b { display: block; color: var(--text); font-size: .94rem; margin-bottom: 1px; }
+  .gelo-tab { width: 100%; border-collapse: collapse; margin: 4px 0 6px; font-size: .86rem; }
+  .gelo-tab th, .gelo-tab td { padding: 7px 4px; border-bottom: 1px solid var(--border); text-align: left; } .gelo-tab th { color: var(--muted); font-weight: 700; font-size: .78rem; }
+  .gelo-tab td:last-child, .gelo-tab th:last-child { text-align: right; } .gelo-tab tr.eu td { font-weight: 800; color: var(--gelo-ink); }
   .vbar.sel i { outline: 2px solid var(--text); outline-offset: 1px; }
   .axis { display: flex; justify-content: space-between; font-size: .69rem; color: var(--faint); font-weight: 600; margin-top: 5px; }
   .readout { font-size: .8rem; color: var(--muted); margin-top: 8px; min-height: 1.2em; }
@@ -1030,6 +1059,7 @@
   </header>
 
   <div class="tiles" id="hTiles"></div>
+  <button class="gelo-card" id="geloCard" type="button"></button>
 
   <!-- atividade: um só quadro, com o período escolhido no controle -->
   <div class="card">
@@ -1058,6 +1088,7 @@
 </section>
 
 <div id="viewToday">
+<div class="gelo-aviso" id="geloAviso" hidden></div>
 <div class="cat cat-vazia" id="catNative" aria-hidden="true"></div>   <!-- sem título: os cartões dos jogos da casa vêm logo abaixo do dia -->
 <ul class="grid" id="gridNative"></ul>
 <div class="cat" id="catExternal"><span>Outros jogos</span></div>
@@ -1430,9 +1461,11 @@ function render() {
   }
   {                                                    // resumo do dia no topo: sequência (dias seguidos jogando) e feitos hoje
     const sq = seqPainel(), C = 2 * Math.PI * 6.2, rs = $("resumoDia");
-    rs.innerHTML = `<span><i class="fogo${sq ? "" : " zero"}" aria-hidden="true">🔥</i>${sq}</span><span><svg viewBox="0 0 16 16" aria-hidden="true"><circle class="tr" cx="8" cy="8" r="6.2"/><circle class="ar" cx="8" cy="8" r="6.2" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - (total ? n / total : 0))}"/></svg>${n}<small>/${total}</small></span>`;
-    rs.setAttribute("aria-label", `Sequência de ${sq} ${sq === 1 ? "dia" : "dias"}. ${n} de ${total} jogos feitos hoje. Abrir estatísticas`);
+    const gl = gelo();
+    rs.innerHTML = `<span><i class="fogo${sq ? "" : " zero"}" aria-hidden="true">🔥${gl.estoque ? `<b class="gl-b">${gl.estoque}</b>` : ""}</i>${sq}</span><span><svg viewBox="0 0 16 16" aria-hidden="true"><circle class="tr" cx="8" cy="8" r="6.2"/><circle class="ar" cx="8" cy="8" r="6.2" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - (total ? n / total : 0))}"/></svg>${n}<small>/${total}</small></span>`;
+    rs.setAttribute("aria-label", `Sequência de ${sq} ${sq === 1 ? "dia" : "dias"}${gl.estoque ? `, ${gl.estoque} ${gl.estoque === 1 ? "protetor guardado" : "protetores guardados"}` : ""}. ${n} de ${total} jogos feitos hoje. Abrir estatísticas`);
   }
+  geloAviso();
   const complete = n === total && total > 0, db = $("diaBtn");
   if (complete && db.dataset.complete !== "1") db.classList.add("celebrate");   // ao completar (ou abrir já completo): brilho uma vez
   if (!complete) db.classList.remove("celebrate");
@@ -1968,15 +2001,65 @@ function iconHTML(g) {
   const extra = img.dataset.escuro ? ` data-claro="${esc(img.dataset.claro)}" data-escuro="${esc(img.dataset.escuro)}"` : "";
   return `<img src="${esc(img.src)}"${extra} alt="">`;
 }
-function bestStreak() {
-  const ks = Object.keys(state.history).sort();
-  if (!ks.length) return 0;
-  let best = 0, run = 0;
-  for (let d = new Date(ks[0] + "T00:00:00"); d <= startOfToday(); d = addDays(d, 1)) {
-    run = countOn(dayKey(d)) >= 1 ? run + 1 : 0;        // dias seguidos jogando (o mesmo critério do topo do painel)
-    best = Math.max(best, run);
+function bestStreak() { return gelo().melhor; }
+
+// aviso no topo da lista, uma vez, quando um protetor foi gasto desde a última vez que o painel abriu
+const GELO_VISTO = "jogosDoDia.geloVisto";
+function geloAviso() {
+  const g = gelo(), el = $("geloAviso"), ult = g.congelados[g.congelados.length - 1];
+  const visto = localStorage.getItem(GELO_VISTO) || "";
+  if (!ult || ult <= visto || ult < dayKey(addDays(startOfToday(), -3))) { el.hidden = true; return; }
+  const novos = g.congelados.filter(k => k > visto), um = novos.length === 1;
+  const quando = um ? (ult === dayKey(addDays(startOfToday(), -1)) ? "Ontem ficou protegido" : `${fmtDay(new Date(ult + "T00:00:00"))} ficou protegido`) : `${novos.length} dias ficaram protegidos`;
+  el.innerHTML = `<span class="gi" aria-hidden="true">❄️</span><span class="gt"><b>${quando}.</b> Sua sequência de ${g.seq} ${g.seq === 1 ? "dia" : "dias"} continua · ${g.estoque ? `${g.estoque} ${g.estoque === 1 ? "protetor guardado" : "protetores guardados"}` : "nenhum protetor guardado"}</span><button type="button" aria-label="Fechar">✕</button>`;
+  el.hidden = false;
+  el.querySelector("button").onclick = () => { localStorage.setItem(GELO_VISTO, ult); el.hidden = true; };
+}
+function geloComoFunciona() {
+  const g = gelo();
+  gSheet("Protetor de sequência", `<div class="gelo-regras">
+    <div><i>🔥</i><span><b>Sequência</b>Dias seguidos com pelo menos um jogo feito.</span></div>
+    <div><i>❄️</i><span><b>Ganhar</b>Um protetor a cada 7 dias jogados seguidos, e um a mais ao chegar a 30, 100 e 365 dias.</span></div>
+    <div><i>🛡️</i><span><b>Usar</b>Sozinho: se um dia passa sem nenhum jogo, um protetor é gasto e a sequência continua (o dia protegido não soma). Sem protetor, ela volta a zero.</span></div>
+    <div><i>📦</i><span><b>Limite</b>Até 2 guardados; 3 a partir de 30 dias de sequência, 4 a partir de 100 e 5 a partir de 365.</span></div>
+  </div>
+  <table class="gelo-tab"><tr><th>Sequência</th><th>Guardados (sem faltar)</th><th>Limite</th></tr>
+  ${[[7, 1, 2, 14], [14, 2, 2, 30], [30, 3, 3, 100], [100, 4, 4, 365], [365, 5, 5, 1e9]].map(([d, q, l, ate]) => `<tr class="${g.seq >= d && g.seq < ate ? "eu" : ""}"><td>${d} dias</td><td>${"❄️".repeat(q)}</td><td>${l}</td></tr>`).join("")}</table>
+  <p class="x-nota">Tudo sai do seu histórico: vale em qualquer aparelho e já conta os dias que você jogou antes.</p>`);
+}
+
+/* ---------- Protetor de sequência (❄️, 25/11/2026) ----------
+   Sequência = dias seguidos com pelo menos um jogo feito. Quem está em constância ganha protetores: um a cada 7 dias jogados
+   seguidos e um a mais nos marcos de 30, 100 e 365 dias, até um limite que cresce com a sequência (2; 3 a partir de 30 dias;
+   4 a partir de 100; 5 a partir de 365). Um dia sem jogo gasta um protetor sozinho: a sequência continua (o dia protegido não
+   soma, só não quebra). Sem protetor, a sequência volta a zero. Hoje só conta depois da meia-noite.
+   Tudo sai do histórico (state.history), refeito a cada vez: não há estado a guardar, vale igual em todo aparelho e já
+   protege o histórico antigo. */
+const GELO = { cada: 7, marcos: [30, 100, 365], limite: n => n >= 365 ? 5 : n >= 100 ? 4 : n >= 30 ? 3 : 2 };
+let geloCache = null;
+function gelo() {
+  const hoje = today(), chave = hoje + "|" + JSON.stringify(state.history).length + "|" + (state.history[hoje] || []).length;
+  if (geloCache?.chave === chave) return geloCache;
+  const ks = Object.keys(state.history).filter(k => (state.history[k] || []).length).sort();
+  let seq = 0, estoque = 0, melhor = 0, congelados = [], ganhos = [];
+  if (ks.length) {
+    const ganha = (k) => {
+      const antes = estoque;
+      if (seq % GELO.cada === 0) estoque++;
+      if (GELO.marcos.includes(seq)) estoque++;
+      estoque = Math.min(estoque, GELO.limite(seq));
+      if (estoque > antes) ganhos.push(k);
+    };
+    for (let d = new Date(ks[0] + "T00:00:00"); dayKey(d) <= hoje; d = addDays(d, 1)) {
+      const k = dayKey(d), jogou = (state.history[k] || []).length > 0;
+      if (jogou) { seq++; ganha(k); melhor = Math.max(melhor, seq); }
+      else if (k === hoje) break;                                  // hoje ainda dá tempo
+      else if (seq > 0 && estoque > 0) { estoque--; congelados.push(k); }
+      else { seq = 0; estoque = 0; congelados = []; ganhos = []; }
+    }
   }
-  return best;
+  const prox = GELO.cada - (seq % GELO.cada);                      // dias jogados até o próximo protetor
+  return (geloCache = { chave, seq, estoque, melhor, limite: GELO.limite(seq), prox, cheio: estoque >= GELO.limite(seq), congelados, ganhos });
 }
 
 let histPeriod = 30, histGame = null, histSel = null;
@@ -1998,6 +2081,12 @@ function renderHistory() {
     [Math.round(100 * winDone / (winDays * total)), "%", `Feito · ${perLabel}`],
   ].map(([v, u, l]) => `<div class="tile"><div class="v">${v}<small>${u}</small></div><div class="l">${l}</div></div>`).join("");
 
+  { const g = gelo(), c = $("geloCard");
+    c.innerHTML = `<span class="gl-ics" aria-hidden="true">${[...Array(g.limite)].map((_, i) => `<i class="${i < g.estoque ? "" : "vazio"}">❄️</i>`).join("")}</span>` +
+      `<span class="gl-tx">${g.estoque ? `${g.estoque} ${g.estoque === 1 ? "protetor guardado" : "protetores guardados"}` : "Nenhum protetor guardado"}` +
+      `<small>${g.cheio ? `No limite (${g.limite}). Ele sobe com a sequência.` : g.seq ? `Próximo em ${g.prox} ${g.prox === 1 ? "dia jogado" : "dias jogados"}` : "Jogue 7 dias seguidos para ganhar o primeiro"}` +
+      `${g.congelados.length ? ` · ${g.congelados.length} ${g.congelados.length === 1 ? "dia protegido" : "dias protegidos"} nesta sequência` : ""}</small></span>`;
+    c.onclick = geloComoFunciona; }
   document.querySelectorAll("#perSeg button").forEach(b => b.setAttribute("aria-checked", String(+b.dataset.p === histPeriod)));
   if (histPeriod === 84) renderCalendar(t0, first, total); else renderDayBars(t0, first, total, histPeriod);
   showDay(histSel || dayKey(t0), total);
@@ -2029,6 +2118,7 @@ function renderCalendar(t0, first, total) {
       if (day > t0) cls += " future";
       else if (day < first) cls += " before";
       else if (n) cls += " l" + Math.max(1, Math.min(4, Math.ceil(4 * n / total)));
+      else if (gelo().congelados.includes(k)) cls += " gelo";
       const pick = day <= t0 && day >= first;
       cells += `<button class="${cls}" ${pick ? `data-day="${k}"` : "disabled"} aria-label="${esc(fmtDay(day))}: ${n} de ${total}"></button>`;
     }
@@ -2048,7 +2138,7 @@ function renderDayBars(t0, first, total, n) {
   const days = [...Array(n)].map((_, i) => addDays(t0, i - (n - 1)));
   const bars = days.map(d => {
     const k = dayKey(d), c = countOn(k);
-    const cls = "vbar" + (c >= total ? " full" : "") + (c === 0 ? " none" : "");
+    const cls = "vbar" + (c >= total ? " full" : "") + (c === 0 ? (gelo().congelados.includes(k) ? " gelo" : " none") : "");
     return `<button class="${cls}" data-day="${k}" aria-label="${esc(fmtDay(d))}: ${c} de ${total}"><i style="height:${100 * c / total}%"></i></button>`;
   }).join("");
   const axis = n === 7
@@ -2065,7 +2155,7 @@ function showDay(k, total) {
   document.querySelectorAll("#actChart .sel").forEach(c => c.classList.remove("sel"));
   document.querySelector(`#actChart [data-day="${k}"]`)?.classList.add("sel");
   const d = new Date(k + "T00:00:00"), ids = state.history[k] || [], n = countOn(k), res = state.results[k] || {};
-  $("actDetail").innerHTML = `<b>${fmtDay(d)}</b> · ${n} de ${total} jogo${total > 1 ? "s" : ""}${n >= total ? " · tudo feito" : ""}
+  $("actDetail").innerHTML = `<b>${fmtDay(d)}</b> · ${n} de ${total} jogo${total > 1 ? "s" : ""}${n >= total ? " · tudo feito" : ""}${!n && gelo().congelados.includes(k) ? " · ❄️ protegido" : ""}
     <div class="chips">${GAMES.map(g => {
       const r = res[g.id], extra = !r ? "" : r.time != null ? ` ${fmtTime(r.time)}` : r.won ? ` ${r.tries}/${r.max}` : " ✗";
       return `<span class="chip${ids.includes(g.id) ? " on" : ""}">${esc(g.name)}${extra}</span>`;
@@ -2728,7 +2818,7 @@ async function rkConvidar() {
   try { if (navigator.share) await navigator.share({ text: txt }); else { await navigator.clipboard.writeText(txt); toast("Convite copiado"); } } catch {}
 }
 // minha sequência de dias com algum jogo feito, pelo histórico do painel (a da semana do grupo não vê além de segunda)
-function seqPainel() { const d = new Date(); const tem = k => (state.history[k] || []).length > 0; if (!tem(dayKey(d))) d.setDate(d.getDate() - 1); let n = 0; while (tem(dayKey(d))) { n++; d.setDate(d.getDate() - 1); } return n; }
+function seqPainel() { return gelo().seq; }
 function rkPessoas(e, d) {
   const g = d.grupo, dono = g.dono === e.uid, totJogos = GAMES.length;
   const hoje = {}; d.res.filter(r => r.dia === today()).forEach(r => (hoje[r.uid] = (hoje[r.uid] || 0) + 1));
