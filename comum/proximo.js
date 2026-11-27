@@ -65,6 +65,7 @@
       const src = tries.shift(); if (!src) return;
       const img = new Image(); img.alt = ""; img.referrerPolicy = "no-referrer";
       img.onload = () => {
+        img.onload = null;   // só a 1ª carga (o modo minimalista troca o src depois)
         if (src.includes("google.com/s2") && img.naturalWidth <= 16) return next();
         if (g.iconFull) img.className = "full";
         box.textContent = ""; box.appendChild(img);

@@ -272,3 +272,79 @@ window.jogoVeterano = function (prefixo) {
     return n >= 5;
   } catch (e) { return false; }
 };
+
+/* Modo minimalista (27/11/2026, chave em Ajustes → Aparência; referência: a interface do Nothing Phone).
+   jogosDoDia.minimal = "1" → <html data-minimal>: tela de pontos, só traço, preto e branco e um vermelho para "certo / feito / agora";
+   títulos e números em Doto (matriz de pontos), o resto em Space Mono. comum/minimal.css cuida do que é comum; cada jogo troca o
+   próprio desenho quando vê html[data-minimal] (window.jogosMinimal.on). Os ícones dos jogos viram glifos de traço (GLIFOS, abaixo),
+   usados também no painel, na doca e na celebração. <html data-jogo="pasta"> diz em que jogo está (ou "painel"). */
+(function () {
+  var KEY = "jogosDoDia.minimal", root = document.documentElement;
+  var JOGOS = ["sando", "5pila", "eclipse", "novelo", "azulejo", "cordel", "geranio", "brigadeiro", "cruzadinha", "cortado", "engrenagem"];
+  var on = function () { try { return localStorage.getItem(KEY) === "1"; } catch (e) { return false; } };
+  var cs = document.currentScript, base = cs && cs.src ? cs.src.replace(/tema\.js.*$/, "") : "comum/";
+  var m = location.pathname.match(/\/([^\/]+)\/(?:index\.html)?$/), pasta = m && JOGOS.indexOf(m[1]) >= 0 ? m[1] : "painel";
+  root.setAttribute("data-jogo", pasta);
+  // glifos de traço (viewBox 0 0 34 34), por pasta
+  var G = {
+    sando: '<rect x="5" y="8" width="24" height="5" rx="2.5"/><path d="M5 17h24"/><rect x="5" y="21" width="24" height="5" rx="2.5"/>',
+    "5pila": '<rect x="5" y="9" width="24" height="16" rx="3"/><path d="M13 13h7M13 13v4h5a2.5 2.5 0 0 1 0 5h-5"/>',
+    eclipse: '<circle cx="17" cy="17" r="10"/><path d="M17 7a10 10 0 0 1 0 20z" fill="currentColor"/>',
+    novelo: '<circle cx="17" cy="17" r="11"/><path d="M8.5 12.5c5.5 2 11.5 2 17 0M7 18c6.5 2 13.5 2 20 0M9.5 23.5c5 1.5 10 1.5 15 0"/>',
+    azulejo: '<rect x="6" y="6" width="10" height="10" rx="1.5"/><rect x="18" y="6" width="10" height="10" rx="1.5" fill="currentColor"/><rect x="6" y="18" width="10" height="10" rx="1.5" fill="currentColor"/><rect x="18" y="18" width="10" height="10" rx="1.5"/>',
+    cordel: '<path d="M10 9l14 16M10 25l5-5.5"/><path d="M23 6v6M20 9h6" />',
+    geranio: '<circle cx="17" cy="17" r="4" fill="currentColor"/><circle cx="17" cy="8" r="4"/><circle cx="24.8" cy="12.5" r="4"/><circle cx="24.8" cy="21.5" r="4"/><circle cx="17" cy="26" r="4"/><circle cx="9.2" cy="21.5" r="4"/><circle cx="9.2" cy="12.5" r="4"/>',
+    brigadeiro: '<path d="M9 19l2.5 8h11l2.5-8z"/><circle cx="17" cy="13.5" r="6.5"/>',
+    cruzadinha: '<rect x="6" y="6" width="22" height="22" rx="4"/><circle cx="11.5" cy="11.5" r="1.7" fill="currentColor"/><circle cx="17" cy="17" r="1.7" fill="currentColor"/><circle cx="22.5" cy="22.5" r="1.7" fill="currentColor"/>',
+    cortado: '<path d="M7 11h17v8a7 7 0 0 1-7 7h-3a7 7 0 0 1-7-7z"/><path d="M24 13.5h1.5a3 3 0 0 1 0 6H24M7 16.5h17"/>',
+    engrenagem: '<circle cx="17" cy="17" r="11"/><circle cx="17" cy="17" r="6"/><circle cx="17" cy="17" r="2" fill="currentColor"/><path d="M17 4v3"/>',
+    painel: '<rect x="5" y="5" width="10" height="10" rx="2.5"/><rect x="19" y="5" width="10" height="10" rx="2.5" fill="currentColor"/><rect x="5" y="19" width="10" height="10" rx="2.5"/><rect x="19" y="19" width="10" height="10" rx="2.5"/>',
+  };
+  // svg do glifo; cor = traço (para <img>, que não herda a cor do texto)
+  function glifo(p, cor, tile) {
+    var c = cor || "currentColor", g = (G[p] || G.painel).replace(/currentColor/g, c);
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" fill="none" stroke="' + c + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' +
+      (tile ? '<rect x="1" y="1" width="32" height="32" rx="8" stroke-width="1.3"/>' : "") + '<g transform="translate(17 17) scale(' + (tile ? .74 : 1) + ') translate(-17 -17)">' + g + "</g></svg>";
+  }
+  var url = function (svg) { return "data:image/svg+xml," + encodeURIComponent(svg); };
+  // as figuras dos jogos (<img> com …/icon.png ou o ícone do próprio jogo) viram o glifo, nas duas cores do tema
+  var RX = new RegExp("(?:^|/)(" + JOGOS.join("|") + ")/icon(?:-escuro|-claro)?\\.png");
+  function trocaFiguras() {
+    if (!root.hasAttribute("data-minimal")) return;
+    var imgs = document.querySelectorAll("img"), mudou = false;
+    for (var i = 0; i < imgs.length; i++) {
+      var im = imgs[i], s = im.getAttribute("src") || "";
+      if (/^data:image\/svg/.test(im.getAttribute("data-claro") || "")) { if (!/^data:image\/svg/.test(s)) mudou = true; continue; }
+      var mm = s.match(RX), p = mm ? mm[1] : (/^icon(?:-escuro|-claro)?\.png/.test(s) && pasta !== "painel" ? pasta : (/apple-touch-icon|icone-painel|(?:^|\/)icon-192\.png/.test(s) ? "painel" : null));
+      if (!p) continue;
+      im.setAttribute("data-min", p);
+      im.setAttribute("data-claro", url(glifo(p, "#0d0d0d", true)));
+      im.setAttribute("data-escuro", url(glifo(p, "#f2f2f2", true)));
+      im.style.boxShadow = "none"; im.style.background = "none"; mudou = true;
+    }
+    if (mudou && window.jogosTema) jogosTema.trocaIcones();
+  }
+  function injeta() {
+    if (document.getElementById("min-css")) return;
+    var h = document.head || root;
+    var f = document.createElement("link"); f.rel = "stylesheet"; f.id = "min-fontes";
+    f.href = "https://fonts.googleapis.com/css2?family=Doto:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap"; h.appendChild(f);
+    var l = document.createElement("link"); l.rel = "stylesheet"; l.id = "min-css"; l.href = base + "minimal.css?v=1"; h.appendChild(l);
+  }
+  if (on()) { root.setAttribute("data-minimal", ""); injeta(); }
+  window.GLIFOS = G;
+  window.jogosMinimal = {
+    on: function () { return root.hasAttribute("data-minimal"); },
+    get: on,
+    glifo: glifo,
+    // ligar/desligar recarrega a página: cada jogo desenha o tabuleiro de um jeito
+    set: function (v) { try { localStorage.setItem(KEY, v ? "1" : "0"); } catch (e) {} location.reload(); },
+  };
+  var observa = function () {
+    trocaFiguras();
+    if (root.hasAttribute("data-minimal")) new MutationObserver(function () { trocaFiguras(); }).observe(document.body, { childList: true, subtree: true });
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", observa); else observa();
+  window.addEventListener("storage", function (e) { if (e.key === KEY) location.reload(); });
+  window.addEventListener("pageshow", function (e) { if (e.persisted && on() !== root.hasAttribute("data-minimal")) location.reload(); });
+})();

@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Cortado">
 <title>CORTADO — café e leite em equilíbrio</title>
 <link rel="icon" type="image/png" href="icon.png?v=21">
-<script src="../comum/tema.js?v=157"></script>
+<script src="../comum/tema.js?v=158"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=21">
@@ -438,6 +438,7 @@
   function dropSVG(v, x, y, s = 1, cls = "") {
     const path = "M0 -29C8 -19 21 -6 21 8A21 21 0 0 1 -21 8C-21 -6 -8 -19 0 -29Z";
     const t = `translate(${x} ${y + 2}) scale(${s})`;
+    if (window.jogosMinimal && jogosMinimal.on()) return `<g transform="translate(${x} ${y}) scale(${s})"><g class="drop${cls}">${v === 1 ? '<circle r="23" class="m-cafe"/>' : '<circle r="21" class="m-leite"/>'}</g></g>`;   // modo minimalista: café cheio, leite contorno
     // a posição fica no <g> de fora; a animação (CSS transform) só no de dentro
     if (v === 1) return `<g transform="translate(${x} ${y}) scale(${s}) rotate(-28)"><g class="drop${cls}"><g class="d-sombra"><ellipse class="d-cafe" rx="19" ry="26"/></g><path class="d-cafe-slit" d="M1.5 -20C-9 -7 9 7 -1.5 20"/><ellipse class="d-cafe-luz" cx="-8" cy="-10" rx="4" ry="8"/></g></g>`;
     return `<g transform="${t}"><g class="drop${cls}"><g class="d-sombra"><path class="d-leite" d="${path}"/></g><ellipse class="d-leite-sh" cx="-8" cy="4" rx="4" ry="8"/></g></g>`;
@@ -823,8 +824,8 @@
 })();
 </script>
 <script src="../comum/catalogo.js?v=158"></script>
-<script src="../comum/celebra.js?v=156"></script>
+<script src="../comum/celebra.js?v=157"></script>
 <script src="../comum/recorde.js?v=158"></script>
-<script src="../comum/proximo.js?v=164" data-jogo="pingado"></script>
+<script src="../comum/proximo.js?v=165" data-jogo="pingado"></script>
 </body>
 </html>

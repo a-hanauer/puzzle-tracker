@@ -109,6 +109,18 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   reloginho + tempo restante "12:28:15", pequeno e discreto) — todos os jogos da casa trocam à meia-noite; nada de "Próximo X em" nos jogos
   nem nas bandejas (`.fim-count`/`.fim-cd` escondidos em cabecalho.css).
 
+## Modo minimalista (27/11/2026)
+
+- Chave em Ajustes ("Modo minimalista", `#minimalSw`) → `localStorage["jogosDoDia.minimal"] = "1"` e recarrega; vale em todas as páginas
+  (`comum/tema.js`: põe `<html data-minimal>` e `data-jogo="pasta|painel"`, carrega `comum/minimal.css` e as fontes Doto + Space Mono).
+- Estética Nothing Phone (escolhas do dono): **mono + 1 acento** (vermelho `--m-red` = certo/feito/agora; onde a cor era regra, vira forma —
+  Brigadeiro: círculo, quadrado, triângulo, losango; 5PILA: certa vermelha cheia, lugar errado preta cheia, ausente riscada); **contorno sempre,
+  cheio = estado**; fundo pontilhado; números/títulos em Doto (pontos), texto em Space Mono; sem sombras.
+- Ícones viram glifos de traço (`GLIFOS` em tema.js, troca as `<img>` …/icon*.png sozinho); celebração = o glifo se desenhando a traço
+  (`arteMin` em celebra.js). Quem carrega ícone com `onload` deve tratar só a 1ª carga (o modo troca o `src` depois; senão vira laço).
+- CSS em `comum/minimal.css` (seletores `[data-minimal][data-jogo="x"]`); desenho próprio no JS quando o CSS não basta:
+  `jogosMinimal.on()` (Eclipse, Azulejo, Ponto Cruz, Cortado, Brigadeiro, Cordel, Gerânio, Cofre — `mecanismoMin`). Mexeu num jogo: conferir os dois modos.
+
 ## Publicar
 
 1. Subir a versão do cache em `sw.js` (`const CACHE = "jogos-do-dia-vN"`).

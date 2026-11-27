@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Cordel">
 <title>CORDEL — palavras de um tema, ligadas como num fio</title>
 <link rel="icon" type="image/png" href="icon.png?v=22">
-<script src="../comum/tema.js?v=157"></script>
+<script src="../comum/tema.js?v=158"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=22">
@@ -384,6 +384,7 @@
     for (const s of seg) g.bezierCurveTo(...s[1], ...s[2], ...s[3]);
     if (!seg.length) g.lineTo(...xy(p[0]));
     g.stroke();
+    if (window.jogosMinimal && jogosMinimal.on()) return;   // modo minimalista: só a cápsula lisa pelo rastro
     const base = new Path2D(); base.moveTo(...(seg.length ? seg[0][0] : xy(p[0]))); for (const s2 of seg) base.bezierCurveTo(...s2[1], ...s2[2], ...s2[3]);
     // amostra a curva (ponto e direção) a cada ~7 unidades
     const am = [];
@@ -427,6 +428,11 @@
     }
   }
   function pintaEstrela(g, i, cor) {
+    if (window.jogosMinimal && jogosMinimal.on()) {          // modo minimalista: asterisco de traço
+      const [cx, cy] = xy(i); g.strokeStyle = cor; g.lineWidth = 4; g.lineCap = "round"; g.beginPath();
+      for (let k = 0; k < 3; k++) { const a = k * Math.PI / 3 + Math.PI / 2; g.moveTo(cx + Math.cos(a) * 20, cy + Math.sin(a) * 20); g.lineTo(cx - Math.cos(a) * 20, cy - Math.sin(a) * 20); }
+      g.stroke(); return;
+    }
     const r = sorte(String(letras).slice(0, 12) + i), [cx, cy] = xy(i);
     const n = 6 + Math.floor(r() * 5), giro = r() * Math.PI, raio = 22 + r() * 6;
     g.fillStyle = cor; g.beginPath();
@@ -708,8 +714,8 @@
 })();
 </script>
 <script src="../comum/catalogo.js?v=158"></script>
-<script src="../comum/celebra.js?v=156"></script>
+<script src="../comum/celebra.js?v=157"></script>
 <script src="../comum/recorde.js?v=158"></script>
-<script src="../comum/proximo.js?v=164" data-jogo="cordel"></script>
+<script src="../comum/proximo.js?v=165" data-jogo="cordel"></script>
 </body>
 </html>

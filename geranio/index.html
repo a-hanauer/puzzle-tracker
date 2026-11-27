@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Gerânio">
 <title>GERÂNIO — palavras com as letras da flor</title>
 <link rel="icon" type="image/png" href="icon.png?v=4">
-<script src="../comum/tema.js?v=157"></script>
+<script src="../comum/tema.js?v=158"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=4">
@@ -437,6 +437,14 @@
   function desenhaFlor() {
     let s = `<svg id="florSvg" viewBox="-184 -184 368 368" role="group" aria-label="Letras da flor">`;
     const np = P.f.length;
+    if (window.jogosMinimal && jogosMinimal.on()) {            // modo minimalista: um círculo de traço por letra; o miolo, o único cheio
+      for (let i = 0; i < np; i++) {
+        const [x, y] = pos(i, 104, np);
+        s += `<g class="pt" data-i="${i}"><circle class="lu m-pet" cx="${f1(x)}" cy="${f1(y)}" r="50"/><text class="le" x="${f1(x)}" y="${f1(y)}" fill="var(--m-ink)"></text><text class="cnt" x="${f1(x + 26)}" y="${f1(y + 22)}" fill="var(--m-sub)"></text></g>`;
+      }
+      s += `<g class="pt" data-i="c"><circle class="m-miolo" r="50"/><text x="0" y="0" fill="var(--m-bg)" style="font-size:40px">${P.c}</text><text class="cnt" x="26" y="22" fill="var(--m-bg)"></text><text class="pgc" x="0" y="-30" fill="var(--m-bg)"></text></g></svg>`;
+      $("flor").innerHTML = s; letrasPetalas(); return;
+    }
     for (let i = 0; i < np; i++) {
       const [x, y] = pos(i, RAIO_LETRA, np);
       s += `<g class="pt" data-i="${i}"><path class="lu" d="${petalaGirada(360 / np * i, np)}" fill="var(--petala)" stroke="var(--petala)" stroke-width="10" stroke-linejoin="round"/>
@@ -771,8 +779,8 @@
 })();
 </script>
 <script src="../comum/catalogo.js?v=158"></script>
-<script src="../comum/celebra.js?v=156"></script>
+<script src="../comum/celebra.js?v=157"></script>
 <script src="../comum/recorde.js?v=158"></script>
-<script src="../comum/proximo.js?v=164" data-jogo="girassol"></script>
+<script src="../comum/proximo.js?v=165" data-jogo="girassol"></script>
 </body>
 </html>

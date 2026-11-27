@@ -13,9 +13,9 @@
 <link rel="icon" id="favicon" type="image/png" href="icon-192.png?v=6">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
-<script src="comum/tema.js?v=157"></script>
+<script src="comum/tema.js?v=158"></script>
 <script src="comum/catalogo.js?v=158"></script>
-<script src="comum/celebra.js?v=156"></script>
+<script src="comum/celebra.js?v=157"></script>
 <script src="comum/recorde.js?v=158"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -488,6 +488,16 @@
   .set-grupo .set-btn::after { content: ""; flex: none; width: 7px; height: 7px; margin: 0 2px 0 auto; border: solid var(--faint); border-width: 2px 2px 0 0; transform: rotate(45deg); }
   .set-grupo .set-btn .tx { flex: 1; min-width: 0; } .set-grupo .set-btn small, .set-info small { display: block; font-size: .78rem; font-weight: 500; color: var(--muted); margin-top: 1px; line-height: 1.35; }
   .set-grupo .set-btn:disabled { opacity: .5; }
+  .set-sw { display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 9px 14px; cursor: pointer; font-weight: 700; color: var(--text); }
+  .set-sw > svg { width: 22px; height: 22px; flex: none; color: var(--muted); }
+  .set-sw .tx { flex: 1; min-width: 0; }
+  .set-sw small { display: block; font-size: .78rem; font-weight: 500; color: var(--muted); margin-top: 1px; line-height: 1.35; }
+  .set-sw input { position: absolute; opacity: 0; pointer-events: none; }
+  .set-sw i { flex: none; position: relative; width: 51px; height: 31px; border-radius: 99px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--border); transition: background .2s; }
+  .set-sw i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,.22); transition: transform .22s cubic-bezier(.3,.9,.3,1.1); }
+  .set-sw input:checked + i { background: var(--green); box-shadow: none; }
+  .set-sw input:checked + i::after { transform: translateX(20px); }
+  .set-sw input:focus-visible + i { outline: 2px solid var(--text); outline-offset: 2px; }
   .set-info { padding: 12px 14px; font-size: .92rem; font-weight: 600; }
   .set-info.cab { display: flex; align-items: center; gap: 12px; } .set-info.cab > span { min-width: 0; } .set-info.cab b { display: block; font-size: 1rem; font-weight: 800; }
   #contaForm:not(:empty) { margin-top: 4px; }
@@ -984,6 +994,9 @@
       <button data-theme="light" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>Claro</button>
       <button data-theme="dark" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="currentColor"/></svg>Escuro</button>
     </div>
+    <div class="set-grupo" style="margin:12px 0 20px">
+      <label class="set-sw"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="4"/><rect x="13" y="13" width="7.5" height="7.5" rx="1"/><path d="M15 4.5l4.5 4.5M19.5 4.5L15 9"/><path d="M3.5 20.5l4.5-7 4.5 7z"/></svg><span class="tx">Modo minimalista<small>Só traços e formas, em todos os jogos</small></span><input type="checkbox" role="switch" id="minimalSw"><i aria-hidden="true"></i></label>
+    </div>
     <div class="set-label">Abrir jogos externos</div>
     <div class="seg2" role="radiogroup" aria-label="Abrir jogos externos">
       <button data-tab="same" role="radio"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Mesma aba</button>
@@ -1129,6 +1142,7 @@ function loadIcon(g, box) {
     img.alt = "";
     img.referrerPolicy = "no-referrer";
     img.onload = () => {
+      img.onload = null;                        // só a 1ª carga (o modo minimalista troca o src depois)
       // o serviço do Google devolve um globo genérico de 16px quando não acha o ícone
       if (src.includes("google.com/s2") && img.naturalWidth <= 16) return next();
       if (g.iconFull) img.className = "full";      // ícone ocupa o quadrado inteiro
@@ -1141,6 +1155,14 @@ function loadIcon(g, box) {
   };
   next();
 }
+
+/* ---------- Modo minimalista (comum/tema.js guarda e aplica em todas as páginas) ---------- */
+(() => {
+  const sw = document.getElementById("minimalSw");
+  if (!sw || !window.jogosMinimal) return;
+  sw.checked = jogosMinimal.on();
+  sw.addEventListener("change", () => setTimeout(() => jogosMinimal.set(sw.checked), 260));   // deixa a chave deslizar antes de recarregar
+})();
 
 /* ---------- Estado ---------- */
 const KEY = "jogosDoDia.v1";

@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Ponto Cruz">
 <title>PONTO CRUZ — sudoku de dados bordados</title>
 <link rel="icon" type="image/png" href="icon.png?v=24">
-<script src="../comum/tema.js?v=157"></script>
+<script src="../comum/tema.js?v=158"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=24">
@@ -304,7 +304,10 @@
   const xis = (x, y, r, cls) => `<path class="${cls}" d="M${(x - r).toFixed(1)} ${(y - r).toFixed(1)}L${(x + r).toFixed(1)} ${(y + r).toFixed(1)}M${(x + r).toFixed(1)} ${(y - r).toFixed(1)}L${(x - r).toFixed(1)} ${(y + r).toFixed(1)}"/>`;
   // face do dado centrada em (cx, cy); tam = lado da casa
   // grosso: espessura relativa do ponto; contorno: cor de uma linha mais larga por baixo (destaca as reveladas)
+  const MIN = !!(window.jogosMinimal && jogosMinimal.on());          // modo minimalista: pontos cheios no lugar do ponto-cruz
+  const pipsMin = (n, cx, cy, tam, cor) => PIPS[n].map(([i, j]) => `<circle cx="${(cx + (i - 1) * tam * .26).toFixed(1)}" cy="${(cy + (j - 1) * tam * .26).toFixed(1)}" r="${(tam * .085).toFixed(1)}" style="fill:${cor}"/>`).join("");
   function face(n, cx, cy, tam, cor, nota, grosso = 1, contorno = null) {
+    if (MIN) return pipsMin(n, cx, cy, tam, nota ? "var(--m-sub)" : "var(--m-ink)");
     const g = tam * .27, r = tam * .085, w = tam * .048 * grosso;
     let sob = "", top = "", luz = "";
     for (const [i, j] of PIPS[n]) { const x = cx + (i - 1) * g, y = cy + (j - 1) * g; if (!nota) { sob += xis(x + tam * .012, y + tam * .016, r, "pt-sob"); luz += xis(x - tam * .006, y - tam * .008, r * .78, "pt-luz"); } top += xis(x, y, r, "pt"); }
@@ -329,7 +332,10 @@
     const fio = v("--fio"), acc = v("--accent"), err = v("--errada"), muted = v("--muted");
     const bad = conflitos(), sel = finished ? -1 : cur;
     const rS = sel >= 0 ? (sel / N | 0) : -9, cS = sel >= 0 ? sel % N : -9, bS = sel >= 0 ? bloco(sel) : -9, vS = sel >= 0 ? val[sel] : 0;
-    let s = `<defs><pattern id="risco" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="12" fill="${err}" opacity=".16"/></pattern>
+    let s;
+    if (MIN) s = tabMin(bad, sel, rS, cS, bS, vS, pulam);
+    else {
+    s = `<defs><pattern id="risco" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="12" fill="${err}" opacity=".16"/></pattern>
       <pattern id="aida" width="10" height="10" patternUnits="userSpaceOnUse" x="${PAD}" y="${PAD}"><rect x="1.3" y="1.3" width="7.4" height="7.4" rx="2.2" style="fill:var(--trama)"/><path d="M1.3 3.5h7.4M1.3 6.5h7.4" style="stroke:var(--trama2)" stroke-width=".7"/><circle cx="0" cy="0" r="1.25" style="fill:var(--furo2)"/><circle cx="10" cy="0" r="1.25" style="fill:var(--furo2)"/><circle cx="0" cy="10" r="1.25" style="fill:var(--furo2)"/><circle cx="10" cy="10" r="1.25" style="fill:var(--furo2)"/></pattern>
       <radialGradient id="vinheta" cx="50%" cy="45%" r="75%"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#3a2a10" stop-opacity=".07"/></radialGradient>
       <style>.pt{fill:none;stroke:var(--cor);stroke-width:calc(var(--w)*1px);stroke-linecap:round}.pt-sob{fill:none;stroke:var(--sob,rgba(40,25,5,.28));stroke-width:calc(var(--ws)*1px);stroke-linecap:round}.pt-luz{fill:none;stroke:rgba(255,255,255,.42);stroke-width:calc(var(--w)*.32px);stroke-linecap:round}</style></defs>`;
@@ -378,6 +384,7 @@
       const nome = val[i] ? `${val[i]}${dadas[i] ? ", revelada" : ""}` : "vazia";
       s += `<g class="casa" data-i="${i}" role="gridcell" aria-label="linha ${(i / N | 0) + 1}, coluna ${i % N + 1}: ${nome}"><rect x="${x}" y="${y}" width="${U}" height="${U}" fill="transparent"/>${conteudo}</g>`;
     }
+    }
     const t = $("tab"); t.setAttribute("viewBox", `0 0 ${W} ${W}`); t.innerHTML = s;
     // botões
     const usados = n => val.filter(x => x === n).length;
@@ -390,6 +397,39 @@
       $("doneSub").textContent = `Ponto Cruz completo${dicaUsada ? " · com dica" : ""}`;
       $("tip").innerHTML = `Próximo Ponto Cruz em <b data-contagem>${$("countdown").textContent}</b>`;
     }
+  }
+  // modo minimalista: casas em traço fino, blocos 2×3 em traço grosso; revelada = casa cheia com os pontos vazados;
+  // a casa escolhida em vermelho; erro = casa riscada em X
+  function tabMin(bad, sel, rS, cS, bS, vS, pulam) {
+    let s = "";
+    for (let i = 0; i < 36; i++) {
+      const x = PAD + (i % N) * U, y = PAD + (i / N | 0) * U;
+      if (i !== sel && ((i / N | 0) === rS || i % N === cS || bloco(i) === bS || (vS && val[i] === vS))) s += `<rect x="${x}" y="${y}" width="${U}" height="${U}" style="fill:var(--m-fraco)" opacity=".45"/>`;
+    }
+    let fino = "", grosso = "";
+    for (let k = 1; k < N; k++) {
+      const x = PAD + k * U, y = PAD + k * U;
+      if (k === 3) grosso += `M${x} ${PAD}V${PAD + N * U}`; else fino += `M${x} ${PAD}V${PAD + N * U}`;
+      if (k % 2 === 0) grosso += `M${PAD} ${y}H${PAD + N * U}`; else fino += `M${PAD} ${y}H${PAD + N * U}`;
+    }
+    s += `<path d="${fino}" fill="none" style="stroke:var(--m-fraco)" stroke-width="2"/><path d="${grosso}" fill="none" style="stroke:var(--m-ink)" stroke-width="4.5"/>`;
+    s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" rx="8" fill="none" style="stroke:var(--m-ink)" stroke-width="4.5"/>`;
+    for (let i = 0; i < 36; i++) {
+      const x = PAD + (i % N) * U, y = PAD + (i / N | 0) * U, cx = x + U / 2, cy = y + U / 2;
+      let c = "";
+      if (val[i]) {
+        const dada = !!dadas[i];
+        if (dada) c += `<rect x="${x + 9}" y="${y + 9}" width="${U - 18}" height="${U - 18}" rx="12" style="fill:var(--m-ink)"/>`;
+        if (bad.has(i)) c += `<path d="M${x + 14} ${y + 14}L${x + U - 14} ${y + U - 14}M${x + U - 14} ${y + 14}L${x + 14} ${y + U - 14}" style="stroke:var(--m-ink)" stroke-width="3" stroke-linecap="round" opacity=".55"/>`;
+        c += `<g${pulam && pulam.has(i) ? ' class="pula"' : ""}>${pipsMin(val[i], cx, cy, U, dada ? "var(--m-bg)" : "var(--m-ink)")}</g>`;
+      } else if (notas[i]) {
+        for (let m = 1; m <= 6; m++) if (notas[i] & (1 << m)) c += pipsMin(m, x + 18 + ((m - 1) % 3) * 32, y + 30 + ((m - 1) / 3 | 0) * 40, 30, "var(--m-sub)");
+      }
+      if (i === sel) c += `<rect x="${x + 5}" y="${y + 5}" width="${U - 10}" height="${U - 10}" rx="12" fill="none" style="stroke:var(--m-red)" stroke-width="4"/>`;
+      const nome = val[i] ? `${val[i]}${dadas[i] ? ", revelada" : ""}` : "vazia";
+      s += `<g class="casa" data-i="${i}" role="gridcell" aria-label="linha ${(i / N | 0) + 1}, coluna ${i % N + 1}: ${nome}"><rect x="${x}" y="${y}" width="${U}" height="${U}" fill="transparent"/>${c}</g>`;
+    }
+    return s;
   }
   // os seis botões de dado (e os exemplos do Como jogar)
   function botoes() {
@@ -651,8 +691,8 @@
 })();
 </script>
 <script src="../comum/catalogo.js?v=158"></script>
-<script src="../comum/celebra.js?v=156"></script>
+<script src="../comum/celebra.js?v=157"></script>
 <script src="../comum/recorde.js?v=158"></script>
-<script src="../comum/proximo.js?v=164" data-jogo="cruzadinha"></script>
+<script src="../comum/proximo.js?v=165" data-jogo="cruzadinha"></script>
 </body>
 </html>

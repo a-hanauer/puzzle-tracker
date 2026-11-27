@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Brigadeiro">
 <title>BRIGADEIRO — incline a assadeira até cada doce cair na forminha</title>
 <link rel="icon" type="image/png" href="icon.png?v=1">
-<script src="../comum/tema.js?v=157"></script>
+<script src="../comum/tema.js?v=158"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=1">
@@ -318,7 +318,27 @@
     <filter id="sbt" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="10" stdDeviation="12" style="flood-color:var(--sombra)"/></filter>
     <pattern id="papel" width="${U / 4}" height="${U / 4}" patternUnits="userSpaceOnUse" x="${B}" y="${B}"><path d="M0 .5H${U / 4}M.5 0V${U / 4}" style="stroke:var(--quadricula)" stroke-width="1.2"/></pattern></defs>`;
   const LW = W * U + 2 * B, LH = H * U + 2 * B;
+  // modo minimalista: a cor do granulado vira FORMA — doce e forminha com a mesma forma (círculo, quadrado, triângulo, losango);
+  // a forminha é tracejada, o doce é contorno e fica cheio quando cai nela; as barras de chocolate são quadrados cheios
+  const MIN = !!(window.jogosMinimal && jogosMinimal.on());
+  function formaMin(t, x, y, z, cls) {
+    const c = `class="${cls}"`;
+    if (t === 1) return `<rect ${c} x="${x - z * .82}" y="${y - z * .82}" width="${z * 1.64}" height="${z * 1.64}" rx="${z * .14}"/>`;
+    if (t === 2) return `<path ${c} d="M${x} ${y - z * 1.02}L${x + z * 1.05} ${y + z * .78}L${x - z * 1.05} ${y + z * .78}Z"/>`;
+    if (t === 3) return `<path ${c} d="M${x} ${y - z * 1.1}L${x + z * 1.02} ${y}L${x} ${y + z * 1.1}L${x - z * 1.02} ${y}Z"/>`;
+    return `<circle ${c} cx="${x}" cy="${y}" r="${z * .95}"/>`;
+  }
+  function desenhaMin() {
+    let s = `<g id="bandeja"><rect class="m-bandeja" x="4" y="4" width="${LW - 8}" height="${LH - 8}" rx="30"/>`;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) s += `<circle class="m-ponto" cx="${X(x) + 50}" cy="${Y(y) + 50}" r="3"/>`;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (T.parede[y * W + x]) s += `<rect class="m-parede" x="${X(x) + 10}" y="${Y(y) + 10}" width="${U - 20}" height="${U - 20}" rx="10"/>`;
+    T.forminhas.forEach(f => { s += formaMin(f.cor, X(f.i % W) + 50, Y(f.i / W | 0) + 50, 34, "m-forminha"); });
+    doces.forEach((d, k) => { s += `<g class="peca doce" id="doce${k}"><g><g class="gran">${formaMin(d.cor ?? 0, 0, 0, 25, "m-doce")}</g></g></g>`; });
+    s += `</g>`;
+    const t = $("tab"); t.setAttribute("viewBox", `-10 -6 ${LW + 20} ${LH + 26}`); t.innerHTML = s;
+  }
   function desenhaFixo() {
+    if (MIN) return desenhaMin();
     let s = DEFS + `<g id="bandeja">`;
     s += `<rect x="0" y="0" width="${LW}" height="${LH}" rx="42" fill="url(#aro)" filter="url(#sbt)"/>`;
     s += `<rect x="9" y="9" width="${LW - 18}" height="${LH - 18}" rx="34" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="3"/>`;
@@ -363,7 +383,7 @@
     });
   }
   function placar() {
-    const mini = (cheia, cor) => `<svg viewBox="-50 -50 100 100" aria-hidden="true">${forminha(0, 0, CUPS[cor])}${cheia ? `<circle r="27" fill="#4a2a17"/><ellipse cx="-9" cy="-11" rx="8" ry="4.5" fill="rgba(255,235,215,.25)"/>` : ""}</svg>`;
+    const mini = (cheia, cor) => MIN ? `<svg viewBox="-50 -50 100 100" aria-hidden="true">${formaMin(cor, 0, 0, 32, cheia ? "m-doce m-cheia" : "m-forminha")}</svg>` : `<svg viewBox="-50 -50 100 100" aria-hidden="true">${forminha(0, 0, CUPS[cor])}${cheia ? `<circle r="27" fill="#4a2a17"/><ellipse cx="-9" cy="-11" rx="8" ry="4.5" fill="rgba(255,235,215,.25)"/>` : ""}</svg>`;
     $("cups").innerHTML = T.forminhas.map((f, k) => mini((cheias >> k) & 1, f.cor)).join("");
     $("cups").setAttribute("aria-label", `${caidos()} de ${T.doces.length} brigadeiros nas forminhas`);
     $("cont").innerHTML = `<b>${inc}</b> ${inc === 1 ? "inclinação" : "inclinações"}<br>mínimo ${P.m}`;
@@ -552,8 +572,8 @@
 })();
 </script>
 <script src="../comum/catalogo.js?v=158"></script>
-<script src="../comum/celebra.js?v=156"></script>
+<script src="../comum/celebra.js?v=157"></script>
 <script src="../comum/recorde.js?v=158"></script>
-<script src="../comum/proximo.js?v=164" data-jogo="brigadeiro"></script>
+<script src="../comum/proximo.js?v=165" data-jogo="brigadeiro"></script>
 </body>
 </html>
