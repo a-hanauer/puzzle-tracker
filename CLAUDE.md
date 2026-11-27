@@ -135,6 +135,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   Sando com a fatia de cima igual à de baixo; gráfico da semana no fim com barras finas (hoje em vermelho).
   Eclipse: sem estrelas nem brilho no fim (`ceu()` não roda no modo); marcas só em ponto — a sua = ponto cheio, a do jogo = ponto em contorno.
   Cordel: palavra achada = traço reto casa a casa, largura constante (`pintaBloco`; a curva e a borda irregular só no modo normal).
+  Sem enfeites (19h40): sem o ícone ao lado do nome no cabeçalho dos jogos, sem a ponta (losango) dos balões da régua do Sando,
+  Cofre sem a graduação dos discos nem o pontinho do centro.
 
 ## Publicar
 

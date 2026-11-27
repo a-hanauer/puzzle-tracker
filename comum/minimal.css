@@ -351,3 +351,7 @@ html[data-minimal] .tip :not(b) { color: var(--m-ink) !important; }
 [data-minimal][data-jogo="eclipse"] .cell > svg.dot, [data-minimal][data-jogo="eclipse"] .cell > svg.dot.auto { fill: initial !important; opacity: 1 !important; transform: none !important; }
 [data-minimal][data-jogo="eclipse"] .tip .dt { clip-path: none !important; border-radius: 50%; width: 7px; height: 7px; background: var(--m-ink) !important; vertical-align: 1px; }
 [data-minimal][data-jogo="eclipse"] .tip .dt.a { background: transparent !important; border: 1.2px solid var(--m-sub); box-sizing: border-box; opacity: 1; }
+/* sem enfeites: o ícone ao lado do nome no cabeçalho repete o nome; a ponta (losango) dos balões do Sando não diz nada */
+html[data-minimal] .gh-brand img { display: none !important; }
+[data-minimal][data-jogo="sando"] .bubble::after { display: none !important; }
+[data-minimal][data-jogo="sando"] .bubble.top { margin-bottom: 4px; } [data-minimal][data-jogo="sando"] .bubble.bot { margin-top: 4px; }
