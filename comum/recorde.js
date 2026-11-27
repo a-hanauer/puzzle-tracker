@@ -73,9 +73,9 @@
      O painel guarda em "jogosDoDia.grupo" os resultados de hoje do grupo de amigos (nuvem.js). Aqui, no fim da
      partida, junta o resultado de quem joga (lido do próprio jogo) com os dos amigos e mostra a posição no grupo.
      Sem grupo (ou sem conta), não aparece nada. */
-  var PASTA = { eclipse: "eclipse", novelo: "novelo", azulejo: "retalhos", cortado: "pingado", cordel: "cordel", cruzadinha: "cruzadinha",
+  var PASTA = { engrenagem: "engrenagem", eclipse: "eclipse", novelo: "novelo", azulejo: "retalhos", cortado: "pingado", cordel: "cordel", cruzadinha: "cruzadinha",
     geranio: "girassol", brigadeiro: "brigadeiro", sando: "sanduba", "5pila": "quinhentos" };
-  var EPOCA = { eclipse: [2026, 8, 27], novelo: [2026, 8, 28], retalhos: [2026, 8, 28], pingado: [2026, 8, 28], cordel: [2026, 9, 4],
+  var EPOCA = { engrenagem: [2026, 10, 27], eclipse: [2026, 8, 27], novelo: [2026, 8, 28], retalhos: [2026, 8, 28], pingado: [2026, 8, 28], cordel: [2026, 9, 4],
     cruzadinha: [2026, 9, 10], brigadeiro: [2026, 9, 17], girassol: [2026, 10, 4] };
   var MED = ["🥇", "🥈", "🥉"];
   function hojeK() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }

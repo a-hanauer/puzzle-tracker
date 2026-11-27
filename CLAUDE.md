@@ -152,6 +152,19 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   o resolvedor refaz as possibilidades a cada casa (o lance vale só para achar a próxima casa, como quem não anota).
   As palavras cruzadas antigas foram descartadas.
 
+## Engrenagem (jogo de conta e lógica, desde 27/11/2026)
+
+- Mecanismo de anéis concêntricos com números (1–9, distintos em cada anel) e raios; cada raio tem uma plaquinha com a soma-alvo.
+  Arrastar um anel gira (encaixe por dente, vibração a cada dente); toque = um passo no sentido horário. Resolvido = toda soma bate.
+  Paleta ameixa/veludo com metais (latão, cobre, bronze, aço); cartão do painel lilás (#e0c6f1 / escuro #31203c).
+- `engrenagem/motor.mjs`: `valor`, `somaRaio`, `resolvido`, `resolve(P, permitirExata)` (dedução por limites — mínimo/máximo do
+  que o anel pode dar — e, no fim de semana, por combinação exata), `contaSolucoes`. Desafios guardados na rotação da solução (todos 0)
+  e `ini` com nenhum anel nem raio já certo.
+- `engrenagem/gerador.mjs` (EPOCH 27/11/2026; `NIVEL` = anéis, raios e passos da dedução): seg–sex 3–4 anéis só com limites,
+  sáb–dom pedem a combinação exata; solução única conferida por força bruta. `desafios.json` (400 dias) e `livre.json`.
+- Página baseada no Cortado: geometria calculada (nada de `transform` em texto, que quebrava os números no iPhone), dica pelo motor
+  (gira o anel que a dedução acerta primeiro, com o motivo), desfazer/recomeçar comuns, celebração `ARTE.engrenagem` (duas engrenagens).
+
 ## Brigadeiro (no lugar da Panelinha desde 17/10/2026)
 
 - Inclinar a assadeira (7 × 8): cada seta faz TODOS os brigadeiros rolarem juntos até bater (chocolate, borda, outro doce,

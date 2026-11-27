@@ -48,6 +48,13 @@
   @keyframes cel-gira-flor { from { transform: rotate(-70deg); } to { transform: none; } }
   @keyframes cel-petala { from { transform: scale(.25); opacity: 0; } 30% { opacity: 1; } to { transform: none; opacity: 1; } }
 
+  /* Engrenagem: duas engrenagens entram girando e se encaixam (a grande no sentido horário, a pequena ao contrário) */
+  .celebra .eng-g { transform-box: fill-box; transform-origin: center; }
+  .celebra .eng-a { animation: cel-eng-a 1.1s cubic-bezier(.2, .8, .3, 1) .1s both; }
+  .celebra .eng-b { animation: cel-eng-b 1.1s cubic-bezier(.2, .8, .3, 1) .2s both; }
+  @keyframes cel-eng-a { from { transform: rotate(-120deg) scale(.4); opacity: 0; } 25% { opacity: 1; } to { transform: none; opacity: 1; } }
+  @keyframes cel-eng-b { from { transform: rotate(200deg) scale(.4); opacity: 0; } 25% { opacity: 1; } to { transform: none; opacity: 1; } }
+
   /* Cortado: xícara com latte art */
   .celebra .cafe-gota { animation: cel-cai .33s ease-in .3s both; }
   .celebra .cafe-coracao { transform-origin: 50% 30%; animation: cel-leite .67s cubic-bezier(.25, .8, .3, 1) .5s both; }
@@ -331,6 +338,26 @@
           <pattern id="cel-gui" width="40" height="16" patternUnits="userSpaceOnUse"><path d="M0 8Q10 0 20 8T40 8M0 12Q10 4 20 12T40 12" fill="none" stroke="#7b59b3" stroke-opacity=".18" stroke-width="1"/></pattern>
           <filter id="cel-ns" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(60,30,100,.3)"/></filter></defs>`
         + nota(28, 8, .1, -60, false) + nota(12, -6, .37, 40, false) + nota(-6, -2, .63, -30, true);
+    },
+    // Engrenagem: a engrenagem grande de latão e a pequena de cobre, encaixadas
+    engrenagem: () => {
+      const roda = (cx, cy, R, r, dentes, giro, grad, furos) => {
+        let d = "";
+        for (let k = 0; k < dentes; k++) {
+          const c = (k / dentes) * Math.PI * 2 + giro, w = Math.PI / dentes, p = (rr, a) => `${(cx + rr * Math.sin(a)).toFixed(1)} ${(cy - rr * Math.cos(a)).toFixed(1)}`;
+          d += `${k ? "L" : "M"}${p(r, c - w)}L${p(R, c - w * .62)}L${p(R, c + w * .62)}L${p(r, c + w)}`;
+        }
+        let h = "";
+        for (let k = 0; k < furos; k++) { const a = k / furos * Math.PI * 2 + giro; h += `<circle cx="${(cx + r * .55 * Math.sin(a)).toFixed(1)}" cy="${(cy - r * .55 * Math.cos(a)).toFixed(1)}" r="${(r * .17).toFixed(1)}" fill="rgba(40,20,5,.45)"/>`; }
+        return `<path d="${d}Z" fill="url(#${grad})" stroke="rgba(60,30,5,.35)" stroke-width="1.5"/><circle cx="${cx}" cy="${cy}" r="${(r * .82).toFixed(1)}" fill="none" stroke="rgba(255,245,215,.35)" stroke-width="2"/>${h}
+          <circle cx="${cx}" cy="${cy}" r="${(r * .24).toFixed(1)}" fill="url(#cel-eng-miolo)" stroke="rgba(60,30,5,.4)" stroke-width="1.2"/>`;
+      };
+      return `<defs><linearGradient id="cel-eng-lat" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8df92"/><stop offset=".55" stop-color="#d4a23e"/><stop offset="1" stop-color="#8e6418"/></linearGradient>
+          <linearGradient id="cel-eng-cob" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4bf92"/><stop offset=".55" stop-color="#c97a45"/><stop offset="1" stop-color="#7f421c"/></linearGradient>
+          <radialGradient id="cel-eng-miolo" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#fff4cf"/><stop offset="1" stop-color="#a87b2a"/></radialGradient>
+          <filter id="cel-eng-s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="rgba(30,10,35,.35)"/></filter></defs>
+        <g filter="url(#cel-eng-s)"><g class="eng-g eng-b">${roda(56, -46, 38, 30, 9, Math.PI / 9 + .12, "cel-eng-cob", 4)}</g>
+        <g class="eng-g eng-a">${roda(-14, 18, 66, 55, 14, 0, "cel-eng-lat", 6)}</g></g>`;
     },
     sanduba: () => {
       const poros = (y0, h) => Array.from({ length: 14 }, (_, k) => `<ellipse cx="${(-58 + (k * 37) % 116).toFixed(0)}" cy="${(y0 + 8 + (k * 13) % (h - 16)).toFixed(0)}" rx="${(1.6 + (k % 3) * .7).toFixed(1)}" ry="1.1" fill="#c9a160" opacity=".45"/>`).join("");

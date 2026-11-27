@@ -14,9 +14,9 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <link rel="manifest" href="manifest.json">
 <script src="comum/tema.js?v=157"></script>
-<script src="comum/catalogo.js?v=154"></script>
-<script src="comum/celebra.js?v=154"></script>
-<script src="comum/recorde.js?v=157"></script>
+<script src="comum/catalogo.js?v=155"></script>
+<script src="comum/celebra.js?v=155"></script>
+<script src="comum/recorde.js?v=158"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wdth,wght@62.5..100,400..900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -310,6 +310,7 @@
   .app[data-g="cordel"]     { --tile-bg: #2b2a28; --tile-ink: #f1e7d6; --tile-muted: rgba(241,231,214,.62); --tile-track: rgba(255,255,255,.18); }
   .app[data-g="girassol"]   { --tile-bg: #3c2220; --tile-ink: #f7ebe9; --tile-muted: rgba(247,235,233,.62); --tile-track: rgba(255,255,255,.18); }
   .app[data-g="cruzadinha"] { --tile-bg: #2f3620; --tile-ink: #f1f4e6; --tile-muted: rgba(241,244,230,.62); --tile-track: rgba(255,255,255,.18); }
+  .app[data-g="engrenagem"] { --tile-bg: #31203c; --tile-ink: #f1eaf5; --tile-muted: rgba(241,234,245,.62); --tile-track: rgba(255,255,255,.18); }
   @media (prefers-color-scheme: light) {
     :root:not([data-theme="dark"]) .app[data-g="sanduba"]    { --tile-bg: #f1e7c6; --tile-border: transparent; --tile-ink: #3b3316; --tile-muted: rgba(59,51,22,.62); --tile-track: rgba(59,51,22,.15); }
     :root:not([data-theme="dark"]) .app[data-g="quinhentos"] { --tile-bg: #c6f1da; --tile-border: transparent; --tile-ink: #163b28; --tile-muted: rgba(22,59,40,.62); --tile-track: rgba(22,59,40,.15); }
@@ -320,6 +321,7 @@
     :root:not([data-theme="dark"]) .app[data-g="brigadeiro"] { --tile-bg: #f6d3de; --tile-border: transparent; --tile-ink: #4a2030; --tile-muted: rgba(74,32,48,.62); --tile-track: rgba(74,32,48,.15); }
     :root:not([data-theme="dark"]) .app[data-g="cordel"]     { --tile-bg: #dcd9d2; --tile-border: transparent; --tile-ink: #141210; --tile-muted: rgba(20,18,16,.62); --tile-track: rgba(20,18,16,.15); }
     :root:not([data-theme="dark"]) .app[data-g="girassol"]   { --tile-bg: #f7cdc6; --tile-border: transparent; --tile-ink: #4a1410; --tile-muted: rgba(74,20,16,.62); --tile-track: rgba(74,20,16,.15); }
+    :root:not([data-theme="dark"]) .app[data-g="engrenagem"] { --tile-bg: #e0c6f1; --tile-border: transparent; --tile-ink: #2c163b; --tile-muted: rgba(44,22,59,.62); --tile-track: rgba(44,22,59,.15); }
     :root:not([data-theme="dark"]) .app[data-g="cruzadinha"] { --tile-bg: #dfe9b8; --tile-border: transparent; --tile-ink: #2f3a12; --tile-muted: rgba(47,58,18,.62); --tile-track: rgba(47,58,18,.15); }
   }
   :root[data-theme="light"] .app[data-g="sanduba"]    { --tile-bg: #f1e7c6; --tile-border: transparent; --tile-ink: #3b3316; --tile-muted: rgba(59,51,22,.62); --tile-track: rgba(59,51,22,.15); }
@@ -331,6 +333,7 @@
   :root[data-theme="light"] .app[data-g="brigadeiro"] { --tile-bg: #f6d3de; --tile-border: transparent; --tile-ink: #4a2030; --tile-muted: rgba(74,32,48,.62); --tile-track: rgba(74,32,48,.15); }
   :root[data-theme="light"] .app[data-g="cordel"]     { --tile-bg: #dcd9d2; --tile-border: transparent; --tile-ink: #141210; --tile-muted: rgba(20,18,16,.62); --tile-track: rgba(20,18,16,.15); }
   :root[data-theme="light"] .app[data-g="girassol"]   { --tile-bg: #f7cdc6; --tile-border: transparent; --tile-ink: #4a1410; --tile-muted: rgba(74,20,16,.62); --tile-track: rgba(74,20,16,.15); }
+  :root[data-theme="light"] .app[data-g="engrenagem"] { --tile-bg: #e0c6f1; --tile-border: transparent; --tile-ink: #2c163b; --tile-muted: rgba(44,22,59,.62); --tile-track: rgba(44,22,59,.15); }
   :root[data-theme="light"] .app[data-g="cruzadinha"] { --tile-bg: #dfe9b8; --tile-border: transparent; --tile-ink: #2f3a12; --tile-muted: rgba(47,58,18,.62); --tile-track: rgba(47,58,18,.15); }
 
   a.game {
@@ -1311,7 +1314,7 @@ const ST_ICON = {
   dica: '<svg class="si" viewBox="0 0 24 24" fill="currentColor" aria-label="com dica"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zM9 20h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/></svg>',
 };
 // jogos de lógica: nível = dia da semana (segunda = 1); número do desafio conta a partir da estreia de cada um
-const LOGICA = { eclipse: { pre: "eclipse:", ep: [2026, 8, 27] }, novelo: { pre: "novelo:", ep: [2026, 8, 28] }, retalhos: { pre: "retalhos:", ep: [2026, 8, 28] }, pingado: { pre: "pingado:", ep: [2026, 8, 28] }, brigadeiro: { pre: "brigadeiro:", ep: [2026, 9, 17] }, cruzadinha: { pre: "cruzadinha:", ep: [2026, 9, 10] }, cordel: { pre: "cordel:", ep: [2026, 9, 4] } };
+const LOGICA = { engrenagem: { pre: "engrenagem:", ep: [2026, 10, 27] }, eclipse: { pre: "eclipse:", ep: [2026, 8, 27] }, novelo: { pre: "novelo:", ep: [2026, 8, 28] }, retalhos: { pre: "retalhos:", ep: [2026, 8, 28] }, pingado: { pre: "pingado:", ep: [2026, 8, 28] }, brigadeiro: { pre: "brigadeiro:", ep: [2026, 9, 17] }, cruzadinha: { pre: "cruzadinha:", ep: [2026, 9, 10] }, cordel: { pre: "cordel:", ep: [2026, 9, 4] } };
 function recordeHoje(g, p) {
   if (p.inc != null) return p.won && p.inc <= p.min;   // Brigadeiro: troféu = resolvido no mínimo possível
   if (p.pts != null) return !!p.pleno;                 // Gerânio: troféu = achou todas as palavras
@@ -1801,7 +1804,7 @@ $("rsShare").addEventListener("click", () => setTimeout(async () => {    // setT
 /* ---------- Backup: exportar / importar ----------
    Junta tudo o que os Jogos do Dia guardam neste navegador (painel e jogos da casa)
    num código de texto. Importar substitui esses dados e recarrega. */
-const BK_PREFIXOS = ["jogosDoDia.", "girassol:", "eclipse:", "novelo:", "retalhos:", "pingado:", "cordel:", "brigadeiro:", "cruzadinha:", "quinhentao:", "sanduba-"];
+const BK_PREFIXOS = ["jogosDoDia.", "girassol:", "engrenagem:", "eclipse:", "novelo:", "retalhos:", "pingado:", "cordel:", "brigadeiro:", "cruzadinha:", "quinhentao:", "sanduba-"];
 const ehNosso = k => BK_PREFIXOS.some(p => k.startsWith(p));
 const b64 = str => btoa(unescape(encodeURIComponent(str)));
 const deb64 = str => decodeURIComponent(escape(atob(str)));
@@ -2124,7 +2127,7 @@ function renderNative(t0) {
       ${dist}`;
   }
   // Eclipse, Novelo, Retalhos e Pingado: o desempenho é o tempo
-  const TIMED = [{ id: "eclipse", epoch: [2026, 8, 27] }, { id: "novelo", epoch: [2026, 8, 28] }, { id: "retalhos", epoch: [2026, 8, 28] }, { id: "pingado", epoch: [2026, 8, 28] }, { id: "cordel", epoch: [2026, 9, 4] }, { id: "brigadeiro", epoch: [2026, 9, 17] }, { id: "cruzadinha", epoch: [2026, 9, 10] }];
+  const TIMED = [{ id: "engrenagem", epoch: [2026, 10, 27] }, { id: "eclipse", epoch: [2026, 8, 27] }, { id: "novelo", epoch: [2026, 8, 28] }, { id: "retalhos", epoch: [2026, 8, 28] }, { id: "pingado", epoch: [2026, 8, 28] }, { id: "cordel", epoch: [2026, 9, 4] }, { id: "brigadeiro", epoch: [2026, 9, 17] }, { id: "cruzadinha", epoch: [2026, 9, 10] }];
   const DIAS3 = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], DIAS_L = ["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"];
   const nvHoje = (t0.getDay() + 6) % 7;                    // nível = dia da semana (segunda = 1)
   for (const tg of TIMED) {
@@ -2294,7 +2297,7 @@ window.addEventListener("hashchange", route);
 /* ---------- Nuvem: progresso salvo na conta e ranking com amigos (nuvem.js, Firebase; desde 09/11/2026) ----------
    O painel continua gravando tudo no aparelho; o nuvem.js copia as chaves dos jogos para a conta e traz de volta o
    que mudou em outro aparelho. Os resultados de cada dia (os mesmos de state.results) vão para os grupos de amigos. */
-const RK_EPOCAS = { eclipse: [2026, 8, 27], novelo: [2026, 8, 28], retalhos: [2026, 8, 28], pingado: [2026, 8, 28], cordel: [2026, 9, 4],
+const RK_EPOCAS = { engrenagem: [2026, 10, 27], eclipse: [2026, 8, 27], novelo: [2026, 8, 28], retalhos: [2026, 8, 28], pingado: [2026, 8, 28], cordel: [2026, 9, 4],
   cruzadinha: [2026, 9, 10], brigadeiro: [2026, 9, 17], girassol: [2026, 10, 4] };
 const RK_CRIT = { pts: "mais pontos", tries: "menos tentativas", inc: "menos inclinações", time: "menor tempo", fora: "tempo aprox." };
 function chaveDoDia(id, dia) {

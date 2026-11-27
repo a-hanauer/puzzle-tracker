@@ -35,6 +35,7 @@ const BASE_GAMES = [
   { id: "brigadeiro", name: "Brigadeiro", emoji: "🍫", desc: "Incline até as forminhas",      url: "brigadeiro/", icon: "brigadeiro/icon.png?v=1", iconDark: "brigadeiro/icon-escuro.png?v=1", iconFull: true, cor: ["#f6d3de", "#4a2030", "#3a2228", "#f7e6ec"] },
   { id: "cruzadinha", name: "Ponto Cruz", emoji: "🪡", desc: "Sudoku de dados bordados",      url: "cruzadinha/", icon: "cruzadinha/icon.png?v=24", iconDark: "cruzadinha/icon-escuro.png?v=24", iconFull: true, cor: ["#dfe9b8", "#2f3a12", "#2f3620", "#f1f4e6"] },
   { id: "pingado",    name: "Cortado",    emoji: "☕", desc: "Café e leite em equilíbrio",    url: "cortado/", icon: "cortado/icon.png?v=21", iconDark: "cortado/icon-escuro.png?v=21", iconFull: true, cor: ["#e9c3aa", "#3b2516", "#3c2b20", "#f4efeb"] },
+  { id: "engrenagem", name: "Engrenagem", emoji: "⚙️", desc: "Gire até cada raio fechar a conta", url: "engrenagem/", icon: "engrenagem/icon.png?v=1", iconDark: "engrenagem/icon-escuro.png?v=1", iconFull: true, cor: ["#e0c6f1", "#2c163b", "#31203c", "#f1eaf5"] },
 ];
 
 /* ============================================================ */
@@ -77,6 +78,8 @@ const LOCAL_PROGRESS = {
   novelo() { return progressoPorTempo("novelo"); },
   retalhos() { return progressoPorTempo("retalhos"); },
   pingado() { return progressoPorTempo("pingado"); },
+  // Engrenagem: desafio #1 = 27/11/2026; prog = [raios fechados, total]
+  engrenagem() { return progressoPorTempo("engrenagem", [2026, 10, 27]); },
   // Cordel: desafio #1 = 04/10/2026; prog = [palavras achadas, total]
   cordel() { return progressoPorTempo("cordel", [2026, 9, 4]); },
   // Ponto Cruz (pasta e id "cruzadinha", o nome antigo): desafio #1 = 10/10/2026; prog = [casas preenchidas, total]
