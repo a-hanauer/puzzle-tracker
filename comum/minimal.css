@@ -3,13 +3,13 @@
    Títulos e números em Doto (matriz de pontos), o resto em Space Mono. Cheio = estado (marcado, no lugar, achado).
    Os seletores usam :not(#_) para ganhar das cores que cada jogo define em :root (inclusive as do modo escuro). */
 :root[data-minimal]:not(#_) {
-  --m-bg: #f2f2f0; --m-cel: #fbfbfa; --m-ink: #0d0d0d; --m-sub: #6e6e6a; --m-fraco: #c9c9c4; --m-dot: #dcdcd8; --m-tom: rgba(13,13,13,.06); --m-hair: #d6d6d1; --m-red: #d71921; --m-on-red: #fff;
+  --m-bg: #f2f2f0; --m-cel: #fbfbfa; --m-ink: #0d0d0d; --m-sub: #66665f; --m-fraco: #a9a9a3; --m-dot: #dcdcd8; --m-tom: rgba(13,13,13,.07); --m-hair: #c2c2bc; --m-red: #d71921; --m-on-red: #fff;
   --m-num: Doto, "Space Mono", ui-monospace, monospace; --m-txt: "Space Mono", ui-monospace, monospace;
 }
 @media (prefers-color-scheme: dark) {
-  :root[data-minimal]:not(#_):not([data-theme="light"]) { --m-bg: #000; --m-cel: #0b0b0b; --m-ink: #f2f2f2; --m-sub: #8f8f8a; --m-fraco: #383836; --m-dot: #1a1a19; --m-tom: rgba(242,242,242,.08); --m-hair: #262625; --m-red: #ff2b2b; }
+  :root[data-minimal]:not(#_):not([data-theme="light"]) { --m-bg: #000; --m-cel: #0b0b0b; --m-ink: #f2f2f2; --m-sub: #9c9c96; --m-fraco: #5a5a56; --m-dot: #1a1a19; --m-tom: rgba(242,242,242,.1); --m-hair: #3d3d3a; --m-red: #ff2b2b; }
 }
-:root[data-minimal][data-theme="dark"]:not(#_) { --m-bg: #000; --m-cel: #0b0b0b; --m-ink: #f2f2f2; --m-sub: #8f8f8a; --m-fraco: #383836; --m-dot: #1a1a19; --m-tom: rgba(242,242,242,.08); --m-hair: #262625; --m-red: #ff2b2b; }
+:root[data-minimal][data-theme="dark"]:not(#_) { --m-bg: #000; --m-cel: #0b0b0b; --m-ink: #f2f2f2; --m-sub: #9c9c96; --m-fraco: #5a5a56; --m-dot: #1a1a19; --m-tom: rgba(242,242,242,.1); --m-hair: #3d3d3a; --m-red: #ff2b2b; }
 
 /* as cores que os jogos usam, todas para o preto e branco */
 :root[data-minimal]:not(#_) {
@@ -355,3 +355,6 @@ html[data-minimal] .tip :not(b) { color: var(--m-ink) !important; }
 html[data-minimal] .gh-brand img { display: none !important; }
 [data-minimal][data-jogo="sando"] .bubble::after { display: none !important; }
 [data-minimal][data-jogo="sando"] .bubble.top { margin-bottom: 4px; } [data-minimal][data-jogo="sando"] .bubble.bot { margin-top: 4px; }
+
+/* jogos de fora na doca: sem cor, como no painel */
+html[data-minimal] .gh-doca img:not([data-min]) { filter: grayscale(1) contrast(1.15); }

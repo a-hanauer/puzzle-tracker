@@ -137,6 +137,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   Cordel: palavra achada = traço reto casa a casa, largura constante (`pintaBloco`; a curva e a borda irregular só no modo normal).
   Sem enfeites (19h40): sem o ícone ao lado do nome no cabeçalho dos jogos, sem a ponta (losango) dos balões da régua do Sando,
   Cofre sem a graduação dos discos nem o pontinho do centro.
+  Cinzas de apoio (19h50, estavam quase invisíveis): claro `--m-hair` #c2c2bc, `--m-fraco` #a9a9a3, `--m-sub` #66665f; escuro #3d3d3a, #5a5a56, #9c9c96.
+  Jogos de fora na doca em tons de cinza.
 
 ## Publicar
 
