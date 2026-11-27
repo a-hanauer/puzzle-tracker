@@ -133,6 +133,7 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   são informação (5PILA ausente/talvez, erro do Eclipse). Regras do jogo com `#id … !important` pedem seletor com `:is(#id)` para ganhar.
   Cartão do painel = glifo, nome e círculo (sem descrição nem faixa de amigos). Brigadeiro sem giro das formas nem inclinação da assadeira;
   Sando com a fatia de cima igual à de baixo; gráfico da semana no fim com barras finas (hoje em vermelho).
+  Eclipse: sem estrelas nem brilho no fim (`ceu()` não roda no modo); marcas só em ponto — a sua = ponto cheio, a do jogo = ponto em contorno.
 
 ## Publicar
 

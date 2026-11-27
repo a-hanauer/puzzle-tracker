@@ -345,3 +345,9 @@ html[data-minimal] .fim-pos, html[data-minimal] .fim-grupo, html[data-minimal] .
 [data-minimal][data-jogo="painel"] .desc, [data-minimal][data-jogo="painel"] a.game .ds, [data-minimal][data-jogo="painel"] .gs, [data-minimal][data-jogo="painel"] .amg { display: none !important; }
 [data-minimal][data-jogo="painel"] a.game { padding-block: 8px !important; }
 html[data-minimal] .tip :not(b) { color: var(--m-ink) !important; }
+/* Eclipse: sem brilho nem estrelas no fim; marcas só em ponto (sua = cheio, do jogo = contorno) */
+[data-minimal][data-jogo="eclipse"] .ceu { display: none !important; }
+[data-minimal][data-jogo="eclipse"] .board.won .cell > svg.sun, [data-minimal][data-jogo="eclipse"] .board.won .cell > svg.moon, [data-minimal][data-jogo="eclipse"] .cell > svg { filter: none !important; }
+[data-minimal][data-jogo="eclipse"] .cell > svg.dot, [data-minimal][data-jogo="eclipse"] .cell > svg.dot.auto { fill: initial !important; opacity: 1 !important; transform: none !important; }
+[data-minimal][data-jogo="eclipse"] .tip .dt { clip-path: none !important; border-radius: 50%; width: 7px; height: 7px; background: var(--m-ink) !important; vertical-align: 1px; }
+[data-minimal][data-jogo="eclipse"] .tip .dt.a { background: transparent !important; border: 1.2px solid var(--m-sub); box-sizing: border-box; opacity: 1; }
