@@ -422,8 +422,7 @@
     congela(svg);
     // o voo tem o tamanho final da arte da janela: por baixo, uma cópia do ícone (que vai aparecendo);
     // por cima, o desenho, no lugar exato em que ele está dentro do ícone (mesmo enquadramento)
-    const MIN = !!svg.querySelector(".cel-min");      // glifo do modo minimalista: o ícone é o próprio glifo, sem moldura
-    const [qx, qy, ql] = MIN ? [-95, -95, 190] : QUADRO[jogo] || [-106, -106, 212];
+    const [qx, qy, ql] = QUADRO[jogo] || [-106, -106, 212];
     const S = para.width, H = para.height, u = S / ql;
     const voo = document.createElement("div");
     voo.className = "cel-voo";
@@ -432,7 +431,7 @@
     copia.style.cssText += `;position:absolute;left:0;top:0;width:${S}px;height:${H}px;margin:0;opacity:0;`;
     const caixa = document.createElement("div");
     caixa.style.cssText = `position:absolute;left:${(-100 - qx) * u}px;top:${(-100 - qy) * u + (H - S) / 2}px;width:${200 * u}px;height:${200 * u}px;`;
-    svg.style.cssText = "display:block;width:100%;height:100%;overflow:visible;" + (MIN ? "" : "filter:drop-shadow(0 10px 24px rgba(30, 20, 10, .28));");
+    svg.style.cssText = "display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 10px 24px rgba(30, 20, 10, .28));";
     caixa.append(svg); voo.append(copia, caixa); document.body.append(voo); el.remove();
     slot.style.visibility = "hidden";
     // começo: a caixa do desenho coincide com o desenho no tabuleiro
@@ -445,7 +444,7 @@
     // e o desenho se apaga por cima, já do mesmo tamanho e no mesmo lugar
     copia.animate([{ opacity: 0 }, { opacity: 1 }], { duration: T * .5, delay: T * .45, easing: "ease-out", fill: "both" });
     caixa.animate([{ opacity: 1 }, { opacity: 0 }], { duration: T * .4, delay: T * .6, easing: "ease-in", fill: "both" });
-    if (!MIN) svg.animate([{ filter: "drop-shadow(0 10px 24px rgba(30, 20, 10, .28))" }, { filter: "drop-shadow(0 2px 4px rgba(30, 20, 10, 0))" }], { duration: T, easing: curva, fill: "both" });
+    svg.animate([{ filter: "drop-shadow(0 10px 24px rgba(30, 20, 10, .28))" }, { filter: "drop-shadow(0 2px 4px rgba(30, 20, 10, 0))" }], { duration: T, easing: curva, fill: "both" });
     // a janela surge (escala + opacidade) em volta do desenho, que chega ao lugar da arte
     modal.animate([{ opacity: 0, transform: "scale(.92)" }, { opacity: 1, transform: "none" }], { duration: T * .75, delay: T * .1, easing: "cubic-bezier(.2, .9, .3, 1)", fill: "backwards" });
     ov.animate([{ backgroundColor: "transparent", backdropFilter: "blur(0px)" }, {}], { duration: T * .7 });
@@ -460,24 +459,9 @@
     }
   }).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ["class"] });
 
-  // modo minimalista: no lugar da arte, o glifo do jogo desenhado a traço (o mesmo dos ícones, em comum/tema.js)
-  const PASTA = { pingado: "cortado", girassol: "geranio", retalhos: "azulejo", quinhentos: "5pila", sanduba: "sando", engrenagem: "cofre" };
-  function arteMin(jogo) {
-    const G = window.GLIFOS || {}, g = G[PASTA[jogo] || jogo];
-    if (!g) return null;
-    const corpo = g.replace(/currentColor/g, "var(--m-ink)").replace(/<(path|circle|rect|line|polyline|polygon|ellipse)\b/g, '<$1 pathLength="1"');
-    return () => `<circle class="cel-min-bg" r="98" fill="var(--m-bg)"/><g class="cel-min" transform="scale(5.6) translate(-17 -17)" fill="none" stroke="var(--m-ink)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${corpo}</g>`
-      + `<circle class="cel-min-ok" cx="76" cy="-76" r="11" fill="var(--m-red)"/>`;
-  }
-  const CSS_MIN = `.celebra .cel-min > *{stroke-dasharray:1;stroke-dashoffset:1;fill-opacity:0;animation:cel-traco 1s cubic-bezier(.5,0,.2,1) forwards,cel-cheio .3s ease .9s forwards}
-    .celebra .cel-min > *:nth-child(2){animation-delay:.12s,1s}.celebra .cel-min > *:nth-child(3){animation-delay:.24s,1.1s}.celebra .cel-min > *:nth-child(n+4){animation-delay:.36s,1.2s}
-    .celebra .cel-min-ok{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:cel-ponto .35s cubic-bezier(.3,1.6,.5,1) 1.15s forwards}
-        .celebra .cel-min-bg{opacity:0;animation:cel-cheio-bg .3s ease forwards}@keyframes cel-cheio-bg{to{opacity:.92}}
-    @keyframes cel-traco{to{stroke-dashoffset:0}}@keyframes cel-cheio{to{fill-opacity:1}}@keyframes cel-ponto{to{transform:scale(1)}}`;
   window.celebrar = function (jogo, opts = {}) {
-    const minimo = window.jogosMinimal && jogosMinimal.on() ? arteMin(jogo) : null;
-    if (minimo && !document.getElementById("cel-min-css")) { const s = document.createElement("style"); s.id = "cel-min-css"; s.textContent = CSS_MIN; document.head.append(s); }
-    const alvo = opts.alvo, arte = minimo || ARTE[jogo];
+    if (window.jogosMinimal && jogosMinimal.on()) return Promise.resolve();   // modo minimalista: sem animação de fim
+    const alvo = opts.alvo, arte = ARTE[jogo];
     if (!alvo || !arte) return Promise.resolve();
     if (!estilo) { const s = document.createElement("style"); s.textContent = CSS; document.head.append(s); estilo = true; }
     const esm = [].concat(opts.esmaecer || alvo).filter(Boolean);

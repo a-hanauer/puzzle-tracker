@@ -54,14 +54,32 @@ html[data-minimal] .prog .bar { background: var(--m-fraco) !important; border: 0
 html[data-minimal] .prog .bar i { background: var(--m-ink) !important; border-radius: 0 !important; }
 html[data-minimal] .prog .bar u { background: var(--m-ink) !important; border: 0 !important; width: 8px !important; height: 8px !important; }
 html[data-minimal] .prog .n, html[data-minimal] .prog .n b { color: var(--m-ink) !important; }
-html[data-minimal] .controls.done .prog { background: var(--m-red) !important; border-color: var(--m-red) !important; }
-html[data-minimal] .done-bar, html[data-minimal] .done-bar .txt span { color: var(--m-on-red) !important; }
-html[data-minimal] .done-bar .chev { stroke: var(--m-on-red) !important; }
+/* fim de partida: sem animação nem figura; a faixa vira uma linha de texto com um ponto vermelho */
+html[data-minimal] .controls.done .prog, html[data-minimal] body.acabou .prog { background: transparent !important; border: 0 !important; }
+html[data-minimal] .done-bar { background: transparent !important; color: var(--m-ink) !important; border: 0 !important; }
+html[data-minimal] .done-bar > :not(.txt):not(.chev) { display: none !important; }
+html[data-minimal] .done-bar .txt, html[data-minimal] .gh-fim-bar .t { position: relative; padding-left: 18px !important; }
+html[data-minimal] .done-bar .txt::before, html[data-minimal] .gh-fim-bar .t::before { content: ""; position: absolute; left: 0; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--m-red); }
+/* doca: só glifo e nome, sem as caixinhas */
+html[data-minimal] .gh-doca .px-ic, html[data-minimal] .gh-doca .dk-casa { background: transparent !important; }
+html[data-minimal] .gh-doca .dk-j .px-ic img { padding: 9px !important; }
+html[data-minimal] .gh-doca .dk-sep { background: var(--m-hair) !important; }
+html[data-minimal] .gh-doca .dk-j small { font-weight: 400 !important; color: var(--m-sub) !important; }
+html[data-minimal] .done-bar .txt span { color: var(--m-sub) !important; }
+html[data-minimal] .done-bar .chev { stroke: var(--m-sub) !important; }
+html[data-minimal] .won, html[data-minimal] .won *, html[data-minimal] .done-bar, html[data-minimal] .done-bar *, html[data-minimal] .gh-fim, html[data-minimal] .gh-fim *,
+html[data-minimal] .overlay.open > .modal.fim, html[data-minimal] .modal.fim *, html[data-minimal] .gh-doca, html[data-minimal] .gh-doca *, html[data-minimal] #row-input.fly-win { animation: none !important; transition: none !important; }
+html[data-minimal] .fim-art { display: none !important; }
+html[data-minimal] .modal.fim { padding-top: 14px !important; }
+html[data-minimal] .fim-title { margin-top: 0 !important; }
 html[data-minimal] .tip, html[data-minimal] .tip b { color: var(--m-sub) !important; }
 html[data-minimal] .tip b { color: var(--m-ink) !important; }
 
 /* faixa de resultado e doca (comum/proximo.js) */
-html[data-minimal] .gh-fim-bar, html[data-minimal] .gh-fim { background: var(--m-red) !important; color: var(--m-on-red) !important; border: 0 !important; }
+html[data-minimal] .gh-fim-bar, html[data-minimal] .gh-fim { background: transparent !important; color: var(--m-ink) !important; border: 0 !important; }
+html[data-minimal] .gh-fim-bar > img { display: none !important; }
+html[data-minimal] .gh-fim-bar .t span { color: var(--m-sub) !important; }
+html[data-minimal] .gh-fim-bar svg { stroke: var(--m-sub) !important; }
 html[data-minimal] .gh-doca { background: var(--m-bg) !important; border: 0 !important; border-top: 1px solid var(--m-hair) !important; border-radius: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 html[data-minimal] .gh-doca img { background: none !important; }
 
@@ -73,7 +91,7 @@ html[data-minimal] .btn-main, html[data-minimal] .fim-btn { background: var(--m-
 html[data-minimal] .close, html[data-minimal] .fim-close, html[data-minimal] .fim-share { background: var(--m-tom) !important; border: 0 !important; color: var(--m-ink) !important; }
 html[data-minimal] .fim-art img { box-shadow: none !important; border-radius: 22px !important; }
 html[data-minimal] .fim-semana, html[data-minimal] .fim-grupo, html[data-minimal] .rec-pill, html[data-minimal] .fim-pos {
-  background: transparent !important; border: 1px solid var(--m-hair) !important; color: var(--m-ink) !important;
+  background: transparent !important; border: 0 !important; border-top: 1px solid var(--m-hair) !important; border-radius: 0 !important; color: var(--m-ink) !important;
 }
 html[data-minimal] .fim-semana i, html[data-minimal] .fim-semana .b, html[data-minimal] .fim-semana [class*="barra"] { background: var(--m-ink) !important; }
 
@@ -85,8 +103,8 @@ html[data-minimal] .sg-pill { background: var(--m-ink) !important; }
 html[data-minimal] .segx, html[data-minimal] .seg2, html[data-minimal] [data-seg] { background: var(--m-tom) !important; border: 0 !important; }
 html[data-minimal] .segx [aria-checked="true"], html[data-minimal] .seg2 [aria-checked="true"], html[data-minimal] [data-seg] [aria-pressed="true"], html[data-minimal] [data-seg] .active { color: var(--m-bg) !important; }
 
-/* celebração (comum/celebra.js desenha o glifo em traço) */
-html[data-minimal] .celebra { background: transparent !important; }
+/* celebração: desligada no modo (comum/celebra.js) */
+html[data-minimal] .celebra { display: none !important; }
 
 /* ---------- Novelo: grade de pontos, números em círculos de traço, o fio numa linha só ---------- */
 html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important; }
@@ -101,7 +119,7 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="novelo"] .head-ring, [data-minimal][data-jogo="novelo"] .next-ring { stroke: var(--m-red) !important; stroke-width: 3.5 !important; }
 [data-minimal][data-jogo="novelo"] .btn { fill: var(--m-bg) !important; stroke: var(--m-ink) !important; stroke-width: 2 !important; }
 [data-minimal][data-jogo="novelo"] .btn-n { fill: var(--m-ink) !important; font-family: var(--m-num) !important; font-weight: 900 !important; }
-[data-minimal][data-jogo="novelo"] .won .th-sheen { stroke: var(--m-red) !important; }
+[data-minimal][data-jogo="novelo"] .th-sheen { display: none !important; }
 [data-minimal][data-jogo="novelo"] #piscada { display: none !important; }
 
 /* ---------- Eclipse: regiões em traço grosso, casas em traço fino; sol cheio, lua meia ---------- */
@@ -121,7 +139,7 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="eclipse"] .cnt .pips s { background: transparent !important; border: 1px solid var(--m-ink); }
 [data-minimal][data-jogo="eclipse"] .cnt .pips s.on, [data-minimal][data-jogo="eclipse"] .cnt .pips s.cheio { background: var(--m-ink) !important; }
 [data-minimal][data-jogo="eclipse"] .controls > button { background: transparent !important; border: 0 !important; color: var(--m-ink) !important; }
-[data-minimal][data-jogo="eclipse"] .controls.done .seg { background: var(--m-red) !important; border-color: var(--m-red) !important; }
+[data-minimal][data-jogo="eclipse"] .controls.done .seg { background: transparent !important; }
 [data-minimal][data-jogo="eclipse"] .seg button.completo { background: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="eclipse"] .seg button.completo svg.sun, [data-minimal][data-jogo="eclipse"] .seg button.completo svg.moon { filter: invert(1) !important; }
 
@@ -147,7 +165,6 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="cruzadinha"] .tec button, [data-minimal][data-jogo="cruzadinha"] .nota-barra, [data-minimal][data-jogo="cruzadinha"] .dados button {
   background: var(--m-tom) !important; background-image: none !important; border: 0 !important; outline: 0 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="cruzadinha"] .nota-barra.on { background: var(--m-ink) !important; color: var(--m-bg) !important; }
-[data-minimal][data-jogo="cruzadinha"] .prog { background: var(--m-red) !important; }
 [data-minimal][data-jogo="cruzadinha"] .aviso, [data-minimal][data-jogo="cruzadinha"] .aviso b { color: var(--m-ink) !important; }
 
 /* ---------- Cortado: casas em traço; café = círculo cheio, leite = contorno; pistas = e × em mono ---------- */
@@ -174,7 +191,6 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="brigadeiro"] .chegou .m-doce, [data-minimal][data-jogo="brigadeiro"] .m-doce.m-cheia { fill: var(--m-red); stroke: var(--m-red); }
 [data-minimal][data-jogo="brigadeiro"] .tec button, [data-minimal][data-jogo="brigadeiro"] .acoes button { background: var(--m-tom) !important; background-image: none !important; border: 0 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="brigadeiro"] .tec .seta-btn.empurra { background: var(--m-ink) !important; color: var(--m-bg) !important; }
-[data-minimal][data-jogo="brigadeiro"] .prog { background: var(--m-red) !important; }
 [data-minimal][data-jogo="brigadeiro"] .cont, [data-minimal][data-jogo="brigadeiro"] .aviso { color: var(--m-sub) !important; }
 [data-minimal][data-jogo="brigadeiro"] .cont b, [data-minimal][data-jogo="brigadeiro"] .aviso b { color: var(--m-ink) !important; font-family: var(--m-num) !important; }
 
@@ -187,7 +203,6 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="cordel"] .et.tema { background: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="cordel"] .et.chave { background: var(--m-red) !important; color: var(--m-on-red) !important; }
 [data-minimal][data-jogo="cordel"] .atual { font-family: var(--m-num) !important; }
-[data-minimal][data-jogo="cordel"] .controls.done .prog { background: var(--m-red) !important; }
 
 /* ---------- Gerânio: círculos de traço, miolo cheio; régua e dicas em traço; vermelho = a letra/palavra de agora ---------- */
 [data-minimal][data-jogo="geranio"]:not(#_) { --petala: transparent; --letra: var(--m-ink); --miolo: var(--m-ink); --miolo-txt: var(--m-bg); --acc: var(--m-red); --bom: var(--m-ink);
@@ -312,3 +327,7 @@ html[data-minimal] .celebra > svg { filter: none !important; }
 [data-minimal][data-jogo="painel"] .hrow .em, [data-minimal][data-jogo="painel"] .gl-ics i, [data-minimal][data-jogo="painel"] .gelo-aviso .gi, [data-minimal][data-jogo="painel"] .gelo-regras i { filter: grayscale(1) contrast(1.2); }
 [data-minimal][data-jogo="painel"] .track i { background: var(--m-ink) !important; }
 [data-minimal][data-jogo="painel"] .track { background: var(--m-fraco) !important; height: 2px !important; }
+
+/* ---------- Ranking e amigos: bolinhas das pessoas em traço (sem as cores), coroas e medalhas sem cor ---------- */
+html[data-minimal] .av, html[data-minimal] .av2, html[data-minimal] .pf-av { background: var(--m-bg) !important; color: var(--m-ink) !important; border: 1px solid var(--m-ink) !important; }
+html[data-minimal] .fim-pos, html[data-minimal] .fim-grupo, html[data-minimal] .rk-card, html[data-minimal] .gf { filter: grayscale(1); }

@@ -120,8 +120,9 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
 - Estética Nothing Phone (escolhas do dono): **mono + 1 acento** (vermelho `--m-red` = certo/feito/agora; onde a cor era regra, vira forma —
   Brigadeiro: círculo, quadrado, triângulo, losango; 5PILA: certa vermelha cheia, lugar errado preta cheia, ausente riscada); **contorno sempre,
   cheio = estado**; fundo pontilhado; números/títulos em Doto (pontos), texto em Space Mono; sem sombras.
-- Ícones viram glifos de traço (`GLIFOS` em tema.js, troca as `<img>` …/icon*.png sozinho); celebração = o glifo se desenhando a traço
-  (`arteMin` em celebra.js). Quem carrega ícone com `onload` deve tratar só a 1ª carga (o modo troca o `src` depois; senão vira laço).
+- Ícones viram glifos de traço (`GLIFOS` em tema.js, troca as `<img>` …/icon*.png sozinho). **Sem animação de fim** (27/11/2026: `celebrar`
+  volta na hora; `.won`, faixa, bandeja de fim e doca sem animação) e fim simples: faixa = ponto vermelho + texto, bandeja sem a figura,
+  doca só com glifo e nome. Pessoas do ranking em bolinhas de traço, sem as cores. Quem carrega ícone com `onload` deve tratar só a 1ª carga (o modo troca o `src` depois; senão vira laço).
 - CSS em `comum/minimal.css` (seletores `[data-minimal][data-jogo="x"]`); desenho próprio no JS quando o CSS não basta:
   `jogosMinimal.on()` (Eclipse, Azulejo, Ponto Cruz, Cortado, Brigadeiro, Cordel, Gerânio, Cofre — `mecanismoMin`, Novelo — o fio vira uma linha só). Mexeu num jogo: conferir os dois modos.
 - **Revisão de 27/11/2026 à noite** (o dono achou confuso): **só os objetos do jogo levam contorno** (casas, peças, tabuleiro); botões, teclas,
