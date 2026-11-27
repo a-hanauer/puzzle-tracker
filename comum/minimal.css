@@ -34,6 +34,8 @@ html[data-minimal] body, html[data-minimal] button, html[data-minimal] input, ht
   font-family: var(--m-txt) !important; letter-spacing: 0;
 }
 html[data-minimal] *, html[data-minimal] *::before, html[data-minimal] *::after { box-shadow: none !important; text-shadow: none !important; }
+/* sem volume: nenhum degradê nem textura dentro da página (os poucos que são informação voltam com mais força, mais abaixo) */
+html[data-minimal] body *:not(#_):not(#_), html[data-minimal] body *:not(#_):not(#_)::before, html[data-minimal] body *:not(#_):not(#_)::after { background-image: none !important; }
 html[data-minimal] .gh-brand b, html[data-minimal] #timer, html[data-minimal] .gh-pill, html[data-minimal] .fim-time, html[data-minimal] .fim-title,
 html[data-minimal] .modal h2, html[data-minimal] .done-bar .txt b, html[data-minimal] .prog .n b {
   font-family: var(--m-num) !important; font-weight: 900 !important; letter-spacing: .03em !important;
@@ -93,7 +95,12 @@ html[data-minimal] .fim-art img { box-shadow: none !important; border-radius: 22
 html[data-minimal] .fim-semana, html[data-minimal] .fim-grupo, html[data-minimal] .rec-pill, html[data-minimal] .fim-pos {
   background: transparent !important; border: 0 !important; border-top: 1px solid var(--m-hair) !important; border-radius: 0 !important; color: var(--m-ink) !important;
 }
-html[data-minimal] .fim-semana i, html[data-minimal] .fim-semana .b, html[data-minimal] .fim-semana [class*="barra"] { background: var(--m-ink) !important; }
+/* gráfico da semana no fim: barras finas, sem cantos; hoje em vermelho */
+html[data-minimal] .fim-semana .b i { background: var(--m-fraco) !important; border-radius: 0 !important; max-width: 14px !important; }
+html[data-minimal] .fim-semana .b.hoje i { background: var(--m-red) !important; }
+html[data-minimal] .fim-semana .b.vazio i { background: var(--m-hair) !important; }
+html[data-minimal] .fim-semana .b.perdeu i { background: transparent !important; border: 1px solid var(--m-sub); }
+html[data-minimal] .fim-semana .b small, html[data-minimal] .fim-semana .sem-dias { font-weight: 400 !important; }
 
 /* teclado comum (5PILA, Sando, Gerânio) */
 html[data-minimal] .gh-kb-key, html[data-minimal] .key { background: var(--m-tom) !important; border: 0 !important; color: var(--m-ink) !important; border-radius: 6px !important; }
@@ -130,7 +137,7 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="eclipse"] .cell > svg.sun, [data-minimal][data-jogo="eclipse"] .cell > svg.moon, [data-minimal][data-jogo="eclipse"] .seg button svg { filter: none !important; }
 [data-minimal][data-jogo="eclipse"] .cell > svg.dot { fill: var(--m-sub) !important; }
 [data-minimal][data-jogo="eclipse"] .cell.given::after { border: 1px solid var(--m-ink) !important; background: none !important; }
-[data-minimal][data-jogo="eclipse"] .cell.bad::before { border: 1.5px solid var(--m-red); background: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--m-red) 45%, transparent) 4px 5.5px) !important; }
+html[data-minimal][data-jogo="eclipse"] .cell.bad:not(#_):not(#_):not(#_)::before { border: 1.5px solid var(--m-red); background: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--m-red) 45%, transparent) 4px 5.5px) !important; }
 [data-minimal][data-jogo="eclipse"]:not(#_) { --veil: var(--m-ink); --veu-auto: .045; --veu-fora: .06; --veu-nada: .1; }
 [data-minimal][data-jogo="eclipse"] .seg { background: var(--m-tom) !important; border: 0 !important; }
 [data-minimal][data-jogo="eclipse"] .seg button { background: transparent !important; color: var(--m-ink) !important; }
@@ -162,9 +169,9 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="azulejo"] .b-reboco { display: none !important; }
 
 /* ---------- Ponto Cruz: faces de pontos (sem as cores dos dados); botões em traço ---------- */
-[data-minimal][data-jogo="cruzadinha"] .tec button, [data-minimal][data-jogo="cruzadinha"] .nota-barra, [data-minimal][data-jogo="cruzadinha"] .dados button {
+html[data-minimal][data-jogo="cruzadinha"]:not(#_):not(#_) :is(.tec button, .nota-barra, .dados button, #apagaBtn, #desfazBtn) {
   background: var(--m-tom) !important; background-image: none !important; border: 0 !important; outline: 0 !important; color: var(--m-ink) !important; }
-[data-minimal][data-jogo="cruzadinha"] .nota-barra.on { background: var(--m-ink) !important; color: var(--m-bg) !important; }
+html[data-minimal][data-jogo="cruzadinha"]:not(#_):not(#_) .nota-barra.on:not(#_) { background: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="cruzadinha"] .aviso, [data-minimal][data-jogo="cruzadinha"] .aviso b { color: var(--m-ink) !important; }
 
 /* ---------- Cortado: casas em traço; café = círculo cheio, leite = contorno; pistas = e × em mono ---------- */
@@ -185,7 +192,7 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 /* ---------- Brigadeiro: grade de pontos, barras = quadrados cheios; doce e forminha pela FORMA; doce na forminha = cheio ---------- */
 [data-minimal][data-jogo="brigadeiro"] .m-bandeja { fill: none; stroke: var(--m-ink); stroke-width: 2.5; }
 [data-minimal][data-jogo="brigadeiro"] .m-ponto { fill: var(--m-fraco); }
-[data-minimal][data-jogo="brigadeiro"] .m-parede { fill: color-mix(in srgb, var(--m-ink) 22%, transparent); }
+[data-minimal][data-jogo="brigadeiro"] .m-parede { fill: color-mix(in srgb, var(--m-ink) 22%, var(--m-bg)); }
 [data-minimal][data-jogo="brigadeiro"] .m-forminha { fill: none; stroke: var(--m-sub); stroke-width: 2; stroke-dasharray: 5 6; }
 [data-minimal][data-jogo="brigadeiro"] .m-doce { fill: var(--m-bg); stroke: var(--m-ink); stroke-width: 3.5; }
 [data-minimal][data-jogo="brigadeiro"] .chegou .m-doce, [data-minimal][data-jogo="brigadeiro"] .m-doce.m-cheia { fill: var(--m-red); stroke: var(--m-red); }
@@ -253,9 +260,9 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="5pila"] .tile.cursor { border: 2.2px solid var(--m-red) !important; }
 [data-minimal][data-jogo="5pila"] .tile.correct { background: var(--m-red) !important; border-color: var(--m-red) !important; color: var(--m-on-red) !important; }
 [data-minimal][data-jogo="5pila"] .tile.present { background: var(--m-ink) !important; color: var(--m-bg) !important; }
-[data-minimal][data-jogo="5pila"] .tile.absent { border-color: var(--m-sub) !important; color: var(--m-sub) !important;
+html[data-minimal][data-jogo="5pila"] .tile.absent:not(#_):not(#_):not(#_) { border-color: var(--m-sub) !important; color: var(--m-sub) !important;
   background: linear-gradient(to top right, transparent calc(50% - .7px), var(--m-sub) calc(50% - .7px) calc(50% + .7px), transparent calc(50% + .7px)) !important; }
-[data-minimal][data-jogo="5pila"] .tile.maybe { background: repeating-linear-gradient(135deg, var(--m-red) 0 6px, var(--m-ink) 6px 12px) !important; border-color: var(--m-ink) !important; color: var(--m-bg) !important; }
+html[data-minimal][data-jogo="5pila"] .tile.maybe:not(#_):not(#_):not(#_) { background: repeating-linear-gradient(135deg, var(--m-red) 0 6px, var(--m-ink) 6px 12px) !important; border-color: var(--m-ink) !important; color: var(--m-bg) !important; }
 [data-minimal][data-jogo="5pila"] .row.falta .tile { border-style: dotted !important; }
 [data-minimal][data-jogo="5pila"] .cnt, [data-minimal][data-jogo="5pila"] .cnt:not(.empty) { background: transparent !important; border: 1px solid var(--m-ink) !important; border-radius: 10px; }
 [data-minimal][data-jogo="5pila"] .cnt.empty { border-color: var(--m-fraco) !important; }
@@ -331,3 +338,10 @@ html[data-minimal] .celebra > svg { filter: none !important; }
 /* ---------- Ranking e amigos: bolinhas das pessoas em traço (sem as cores), coroas e medalhas sem cor ---------- */
 html[data-minimal] .av, html[data-minimal] .av2, html[data-minimal] .pf-av { background: var(--m-bg) !important; color: var(--m-ink) !important; border: 1px solid var(--m-ink) !important; }
 html[data-minimal] .fim-pos, html[data-minimal] .fim-grupo, html[data-minimal] .rk-card, html[data-minimal] .gf { filter: grayscale(1); }
+[data-minimal][data-jogo="sando"] #row-top:not(#_) { border-radius: var(--r); }
+[data-minimal][data-jogo="sando"] #row-top .tile:first-child:not(#_) { border-radius: calc(var(--r) - var(--p)) var(--ri) var(--ri) calc(var(--r) - var(--p)); }
+[data-minimal][data-jogo="sando"] #row-top .tile:last-child:not(#_) { border-radius: var(--ri) calc(var(--r) - var(--p)) calc(var(--r) - var(--p)) var(--ri); }
+/* painel: cartão = glifo, nome e o círculo; sem a descrição e sem a faixa de amigos */
+[data-minimal][data-jogo="painel"] .desc, [data-minimal][data-jogo="painel"] a.game .ds, [data-minimal][data-jogo="painel"] .gs, [data-minimal][data-jogo="painel"] .amg { display: none !important; }
+[data-minimal][data-jogo="painel"] a.game { padding-block: 8px !important; }
+html[data-minimal] .tip :not(b) { color: var(--m-ink) !important; }

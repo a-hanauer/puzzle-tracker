@@ -129,6 +129,10 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   seletores e etiquetas ficam sem borda, com fundo leve (`--m-tom`); cabeçalho e controles = só ícones; progresso = linha de 2 px; divisórias
   em `--m-hair`. Fundo = textura fina (pontos de .7 px a cada 4 px). Glifos sem moldura. Painel = lista com linha fina entre os jogos, feito =
   pontinho vermelho; barra de abas plana presa embaixo (linha fina em cima, aba atual em tinta com traço vermelho, não encolhe).
+- **Pureza (27/11/2026, 19h)**: nada de volume — `minimal.css` tira todo `background-image` (degradês, texturas) dentro da página; só voltam os que
+  são informação (5PILA ausente/talvez, erro do Eclipse). Regras do jogo com `#id … !important` pedem seletor com `:is(#id)` para ganhar.
+  Cartão do painel = glifo, nome e círculo (sem descrição nem faixa de amigos). Brigadeiro sem giro das formas nem inclinação da assadeira;
+  Sando com a fatia de cima igual à de baixo; gráfico da semana no fim com barras finas (hoje em vermelho).
 
 ## Publicar
 
