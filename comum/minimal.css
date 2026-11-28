@@ -401,3 +401,4 @@ html[data-minimal][data-jogo="5pila"] .row.falta { opacity: 1 !important; }
 [data-minimal][data-jogo="geranio"] .inis span.acesa:not(#_) { background: transparent !important; color: var(--m-red) !important; }
 [data-minimal][data-jogo="geranio"] .inis span small, [data-minimal][data-jogo="geranio"] .inis span i { color: var(--m-sub) !important; font-weight: 400; }
 [data-minimal][data-jogo="geranio"] .inis span.acesa b:not(#_), [data-minimal][data-jogo="geranio"] .inis span b:not(#_) { color: var(--m-sub) !important; opacity: 1; font-weight: 400; }
+html[data-minimal] .min-ini:has(img) { border: 0 !important; width: auto !important; height: auto !important; display: revert !important; }

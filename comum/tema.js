@@ -332,7 +332,9 @@ window.jogoVeterano = function (prefixo) {
     var ics = document.querySelectorAll(".icon, .em, .px-ic");
     for (var i = 0; i < ics.length; i++) {
       var e = ics[i];
-      if (e.children.length || !TEM.test(e.textContent)) continue;
+      // o emoji era só o lugar do ícone enquanto ele carrega: quando a imagem chega, a inicial (e o círculo) saem
+      if (e.children.length) { if (e.classList.contains("min-ini")) e.classList.remove("min-ini"); continue; }
+      if (!TEM.test(e.textContent)) continue;
       var dono = e.closest(".row, .app, .hrow, .mitem, .dk-j, li") || e.parentNode;
       var nm = dono && dono.querySelector(".nm, .name, small, b, span:not(.em):not(.icon)");
       var t = ((nm && nm.textContent) || "").replace(EMO, "").trim();
@@ -352,7 +354,7 @@ window.jogoVeterano = function (prefixo) {
     var h = document.head || root;
     var f = document.createElement("link"); f.rel = "stylesheet"; f.id = "min-fontes";
     f.href = "https://fonts.googleapis.com/css2?family=Doto:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap"; h.appendChild(f);
-    var l = document.createElement("link"); l.rel = "stylesheet"; l.id = "min-css"; l.href = base + "minimal.css?v=10"; h.appendChild(l);
+    var l = document.createElement("link"); l.rel = "stylesheet"; l.id = "min-css"; l.href = base + "minimal.css?v=11"; h.appendChild(l);
   }
   if (on()) { root.setAttribute("data-minimal", ""); injeta(); }
   window.GLIFOS = G;
