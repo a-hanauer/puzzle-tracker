@@ -359,3 +359,8 @@ html[data-minimal] .gh-brand img { display: none !important; }
 /* jogos de fora na doca: sem cor, como no painel */
 html[data-minimal] .gh-doca img:not([data-min]) { filter: grayscale(1) contrast(1.15); }
 html[data-minimal] .gh-doca .dk-j.ok::after { background: var(--m-red) !important; color: var(--m-on-red) !important; }
+/* painel: pílulas de resultado sem a cor de cada jogo (fundo leve, texto em tinta) */
+html[data-minimal][data-jogo="painel"]:not(#_) :is(.pl, .pl.leve, .grid .app .pl, .grid .app .pl.leve) { background: var(--m-tom) !important; color: var(--m-ink) !important; }
+html[data-minimal][data-jogo="painel"] .pl .dim { color: var(--m-sub); opacity: 1; }
+html[data-minimal][data-jogo="painel"] .pl .tr { color: var(--m-ink) !important; filter: grayscale(1); }
+html[data-minimal][data-jogo="painel"] .pl.perdeu { color: var(--m-sub) !important; }
