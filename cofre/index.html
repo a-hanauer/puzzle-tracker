@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Cofre">
 <title>COFRE — gire os discos até cada raio ter um número de cada</title>
 <link rel="icon" type="image/png" href="icon.png?v=2">
-<script src="../comum/tema.js?v=167"></script>
+<script src="../comum/tema.js?v=168"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=2">
@@ -376,7 +376,7 @@
   }
   // modo minimalista: círculos de traço, eixo = o único disco cheio, marca vermelha no raio destravado (sem graduação nem enfeite)
   function mecanismoMin(A, n, passo, ok, giro, nums, rot, vivo) {
-    let s = `<circle r="${RB}" fill="none" stroke="var(--m-ink)" stroke-width="1.6"/>`;
+    let s = "";   // sem o aro de fora: o disco de fora já fecha o mostrador
     ok.forEach((v, j) => { if (v) s += `<path d="${setor(R0 + 1, R1, j * passo - passo / 2, j * passo + passo / 2)}" fill="var(--m-red)" opacity=".1"/>`; });
     for (let a = 0; a < A; a++) {
       const [r0, r1] = faixa(A, a), g = giro(a), eixo = a === 0;
@@ -607,7 +607,7 @@
   function updateTip(ok) {
     const t = $("tip");
     if (finished) { t.innerHTML = kind === "dia" ? "" : "Desafio extra resolvido · não conta nas estatísticas"; return; }
-    if (!giros) t.innerHTML = jogoVeterano(LS) ? "" : `Arraste um disco para girá-lo; o ${window.jogosMinimal && jogosMinimal.on() ? "disco cheio" : "preto"} do centro é fixo.<br>Em cada raio, um número de cada.`;
+    if (!giros) t.innerHTML = jogoVeterano(LS) ? "" : (window.jogosMinimal && jogosMinimal.on() ? "Gire os discos até ter um número de cada em cada raio." : "Arraste um disco para girá-lo; o preto do centro é fixo.<br>Em cada raio, um número de cada.");
     else t.innerHTML = n - ok === 1 ? "Falta <b>1</b> raio" : `Faltam <b>${n - ok}</b> raios`;
   }
 

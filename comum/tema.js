@@ -324,12 +324,35 @@ window.jogoVeterano = function (prefixo) {
     }
     if (mudou && window.jogosTema) jogosTema.trocaIcones();
   }
+  // sem emoji no modo: medalha vira "1º", lâmpada vira "dica", o resto sai; ícone que era só emoji vira a inicial do nome
+  var MAPA = { "🥇": "1º", "🥈": "2º", "🥉": "3º", "💡": "dica", "❄️": "*", "❄": "*" };
+  var EMO = /\p{Extended_Pictographic}\uFE0F?|\uFE0F|\u200D/gu, TEM = /\p{Extended_Pictographic}/u;
+  function semEmoji() {
+    if (!root.hasAttribute("data-minimal") || !document.body) return;
+    var ics = document.querySelectorAll(".icon, .em, .px-ic");
+    for (var i = 0; i < ics.length; i++) {
+      var e = ics[i];
+      if (e.children.length || !TEM.test(e.textContent)) continue;
+      var dono = e.closest(".row, .app, .hrow, .mitem, .dk-j, li") || e.parentNode;
+      var nm = dono && dono.querySelector(".nm, .name, small, b, span:not(.em):not(.icon)");
+      var t = ((nm && nm.textContent) || "").replace(EMO, "").trim();
+      e.textContent = t ? t.charAt(0).toUpperCase() : "";
+      e.classList.add("min-ini");
+    }
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null), n, muda = [];
+    while ((n = w.nextNode())) if (TEM.test(n.nodeValue) && !(n.parentNode && /^(SCRIPT|STYLE|TEXTAREA|INPUT)$/.test(n.parentNode.nodeName))) muda.push(n);
+    muda.forEach(function (n) {
+      var v = n.nodeValue;
+      for (var k in MAPA) v = v.split(k).join(MAPA[k]);
+      n.nodeValue = v.replace(EMO, "").replace(/ {2,}/g, " ");
+    });
+  }
   function injeta() {
     if (document.getElementById("min-css")) return;
     var h = document.head || root;
     var f = document.createElement("link"); f.rel = "stylesheet"; f.id = "min-fontes";
     f.href = "https://fonts.googleapis.com/css2?family=Doto:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap"; h.appendChild(f);
-    var l = document.createElement("link"); l.rel = "stylesheet"; l.id = "min-css"; l.href = base + "minimal.css?v=9"; h.appendChild(l);
+    var l = document.createElement("link"); l.rel = "stylesheet"; l.id = "min-css"; l.href = base + "minimal.css?v=10"; h.appendChild(l);
   }
   if (on()) { root.setAttribute("data-minimal", ""); injeta(); }
   window.GLIFOS = G;
@@ -341,8 +364,8 @@ window.jogoVeterano = function (prefixo) {
     set: function (v) { try { localStorage.setItem(KEY, v ? "1" : "0"); } catch (e) {} location.reload(); },
   };
   var observa = function () {
-    trocaFiguras();
-    if (root.hasAttribute("data-minimal")) new MutationObserver(function () { trocaFiguras(); }).observe(document.body, { childList: true, subtree: true });
+    trocaFiguras(); semEmoji();
+    if (root.hasAttribute("data-minimal")) new MutationObserver(function () { trocaFiguras(); if (!semEmoji.p) semEmoji.p = requestAnimationFrame(function () { semEmoji.p = 0; semEmoji(); }); }).observe(document.body, { childList: true, subtree: true });
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", observa); else observa();
   window.addEventListener("storage", function (e) { if (e.key === KEY) location.reload(); });

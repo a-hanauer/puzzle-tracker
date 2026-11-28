@@ -143,6 +143,16 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   tracejada. Selo de feito da doca em vermelho.
   Com o painel montado, a etiqueta (número + forma) vai para o meio do painel, a 82% e com folga do contorno (`tagSVG(c, on, p)`).
   Painel: pílulas de resultado (`.pl`) sem a cor de cada jogo — fundo `--m-tom`, texto em tinta, troféu sem cor.
+- **Auditoria (27/11/2026, 23h; o dono pediu coerência, menos emoji e traço mais leve):**
+  - Tipo: Doto só em título e número grande (nome do jogo, tempo do fim, títulos); Space Mono no resto, inclusive a linha do dia dos
+    jogos (`.gh-meta`), cronômetro, progresso e números pequenos (etiquetas do Azulejo, Novelo).
+  - Sem emoji: `semEmoji()` em tema.js troca 🥇🥈🥉 → 1º 2º 3º, 💡 → "dica", ❄️ → "*" e tira os outros; ícone que era só emoji vira a
+    inicial num círculo de traço (`.min-ini`).
+  - Traço: apoio 1 px, objeto ~1,5 px, seleção/estado ~2,5 px. Ponto Cruz: dado do jogo = contorno + pontos, o seu = só pontos.
+    Eclipse sem véu. Cofre sem o aro de fora e com instrução curta. Brigadeiro sem a grade de pontos e Desfazer/Recomeçar só ícone.
+    5PILA: linhas que não chegaram = só a linha de baixo da casa. Sando: balões da régua só texto. Novelo: só o anel do próximo.
+    Cortado: casa fixa em contorno de pontinhos. Gerânio: topo em duas linhas que cabem; começos em texto corrido.
+  - Selo dos protetores no painel em traço (vermelho é "feito"); instrução embaixo do tabuleiro com largura fixa e quebra equilibrada.
 
 ## Publicar
 

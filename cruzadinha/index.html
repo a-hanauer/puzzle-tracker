@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Ponto Cruz">
 <title>PONTO CRUZ — sudoku de dados bordados</title>
 <link rel="icon" type="image/png" href="icon.png?v=24">
-<script src="../comum/tema.js?v=167"></script>
+<script src="../comum/tema.js?v=168"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=24">
@@ -404,7 +404,7 @@
     let s = "";
     for (let i = 0; i < 36; i++) {
       const x = PAD + (i % N) * U, y = PAD + (i / N | 0) * U;
-      if (i !== sel && ((i / N | 0) === rS || i % N === cS || bloco(i) === bS || (vS && val[i] === vS))) s += `<rect x="${x}" y="${y}" width="${U}" height="${U}" style="fill:var(--m-fraco)" opacity=".45"/>`;
+      if (i !== sel && ((i / N | 0) === rS || i % N === cS || bloco(i) === bS || (vS && val[i] === vS))) s += `<rect x="${x}" y="${y}" width="${U}" height="${U}" style="fill:var(--m-fraco)" opacity=".28"/>`;
     }
     let fino = "", grosso = "";
     for (let k = 1; k < N; k++) {
@@ -412,16 +412,16 @@
       if (k === 3) grosso += `M${x} ${PAD}V${PAD + N * U}`; else fino += `M${x} ${PAD}V${PAD + N * U}`;
       if (k % 2 === 0) grosso += `M${PAD} ${y}H${PAD + N * U}`; else fino += `M${PAD} ${y}H${PAD + N * U}`;
     }
-    s += `<path d="${fino}" fill="none" style="stroke:var(--m-fraco)" stroke-width="2"/><path d="${grosso}" fill="none" style="stroke:var(--m-ink)" stroke-width="4.5"/>`;
-    s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" rx="8" fill="none" style="stroke:var(--m-ink)" stroke-width="4.5"/>`;
+    s += `<path d="${fino}" fill="none" style="stroke:var(--m-hair)" stroke-width="1.8"/><path d="${grosso}" fill="none" style="stroke:var(--m-ink)" stroke-width="2.6"/>`;
+    s += `<rect x="${PAD}" y="${PAD}" width="${N * U}" height="${N * U}" rx="8" fill="none" style="stroke:var(--m-ink)" stroke-width="2.6"/>`;
     for (let i = 0; i < 36; i++) {
       const x = PAD + (i % N) * U, y = PAD + (i / N | 0) * U, cx = x + U / 2, cy = y + U / 2;
       let c = "";
       if (val[i]) {
         const dada = !!dadas[i];
-        if (dada) c += `<rect x="${x + 9}" y="${y + 9}" width="${U - 18}" height="${U - 18}" rx="12" style="fill:var(--m-ink)"/>`;
+        if (dada) c += `<rect x="${x + 12}" y="${y + 12}" width="${U - 24}" height="${U - 24}" rx="12" fill="none" style="stroke:var(--m-ink)" stroke-width="2.6"/>`;   // dado do jogo = contorno; o seu = só os pontos
         if (bad.has(i)) c += `<path d="M${x + 14} ${y + 14}L${x + U - 14} ${y + U - 14}M${x + U - 14} ${y + 14}L${x + 14} ${y + U - 14}" style="stroke:var(--m-ink)" stroke-width="3" stroke-linecap="round" opacity=".55"/>`;
-        c += `<g${pulam && pulam.has(i) ? ' class="pula"' : ""}>${pipsMin(val[i], cx, cy, U, dada ? "var(--m-bg)" : "var(--m-ink)")}</g>`;
+        c += `<g${pulam && pulam.has(i) ? ' class="pula"' : ""}>${pipsMin(val[i], cx, cy, U, "var(--m-ink)")}</g>`;
       } else if (notas[i]) {
         for (let m = 1; m <= 6; m++) if (notas[i] & (1 << m)) c += pipsMin(m, x + 18 + ((m - 1) % 3) * 32, y + 30 + ((m - 1) / 3 | 0) * 40, 30, "var(--m-sub)");
       }

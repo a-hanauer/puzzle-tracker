@@ -36,8 +36,7 @@ html[data-minimal] body, html[data-minimal] button, html[data-minimal] input, ht
 html[data-minimal] *, html[data-minimal] *::before, html[data-minimal] *::after { box-shadow: none !important; text-shadow: none !important; }
 /* sem volume: nenhum degradê nem textura dentro da página (os poucos que são informação voltam com mais força, mais abaixo) */
 html[data-minimal] body *:not(#_):not(#_), html[data-minimal] body *:not(#_):not(#_)::before, html[data-minimal] body *:not(#_):not(#_)::after { background-image: none !important; }
-html[data-minimal] .gh-brand b, html[data-minimal] #timer, html[data-minimal] .gh-pill, html[data-minimal] .fim-time, html[data-minimal] .fim-title,
-html[data-minimal] .modal h2, html[data-minimal] .done-bar .txt b, html[data-minimal] .prog .n b {
+html[data-minimal] .gh-brand b, html[data-minimal] .fim-time, html[data-minimal] .fim-title, html[data-minimal] .modal h2, html[data-minimal] .done-bar .txt b {
   font-family: var(--m-num) !important; font-weight: 900 !important; letter-spacing: .03em !important;
 }
 
@@ -125,20 +124,20 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="novelo"] .head { fill: var(--m-ink) !important; stroke: none !important; r: 13px; }
 [data-minimal][data-jogo="novelo"] .head-ring, [data-minimal][data-jogo="novelo"] .next-ring { stroke: var(--m-red) !important; stroke-width: 3.5 !important; }
 [data-minimal][data-jogo="novelo"] .btn { fill: var(--m-bg) !important; stroke: var(--m-ink) !important; stroke-width: 2 !important; }
-[data-minimal][data-jogo="novelo"] .btn-n { fill: var(--m-ink) !important; font-family: var(--m-num) !important; font-weight: 900 !important; }
+[data-minimal][data-jogo="novelo"] .btn-n { fill: var(--m-ink) !important; font-family: var(--m-txt) !important; font-weight: 700 !important; }
 [data-minimal][data-jogo="novelo"] .th-sheen { display: none !important; }
 [data-minimal][data-jogo="novelo"] #piscada { display: none !important; }
 
 /* ---------- Eclipse: regiões em traço grosso, casas em traço fino; sol cheio, lua meia ---------- */
-[data-minimal][data-jogo="eclipse"] .board { background: transparent !important; border: 1.5px solid var(--m-ink) !important; }
+[data-minimal][data-jogo="eclipse"] .board { background: transparent !important; border: 1px solid var(--m-ink) !important; }
 [data-minimal][data-jogo="eclipse"] .board .regions .seams { stroke: var(--m-hair) !important; stroke-width: 1 !important; }
-[data-minimal][data-jogo="eclipse"] .board .regions .reg-min { fill: none; stroke: var(--m-ink); stroke-width: 2; stroke-linejoin: round; }
+[data-minimal][data-jogo="eclipse"] .board .regions .reg-min { fill: none; stroke: var(--m-ink); stroke-width: 1.5; stroke-linejoin: round; }
 [data-minimal][data-jogo="eclipse"] .cell { background: transparent !important; }
 [data-minimal][data-jogo="eclipse"] .cell > svg.sun, [data-minimal][data-jogo="eclipse"] .cell > svg.moon, [data-minimal][data-jogo="eclipse"] .seg button svg { filter: none !important; }
 [data-minimal][data-jogo="eclipse"] .cell > svg.dot { fill: var(--m-sub) !important; }
 [data-minimal][data-jogo="eclipse"] .cell.given::after { border: 1px solid var(--m-ink) !important; background: none !important; }
 html[data-minimal][data-jogo="eclipse"] .cell.bad:not(#_):not(#_):not(#_)::before { border: 1.5px solid var(--m-red); background: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--m-red) 45%, transparent) 4px 5.5px) !important; }
-[data-minimal][data-jogo="eclipse"]:not(#_) { --veil: var(--m-ink); --veu-auto: .045; --veu-fora: .06; --veu-nada: .1; }
+[data-minimal][data-jogo="eclipse"]:not(#_) { --veil: var(--m-ink); --veu-auto: 0; --veu-fora: 0; --veu-nada: .06; }
 [data-minimal][data-jogo="eclipse"] .seg { background: var(--m-tom) !important; border: 0 !important; }
 [data-minimal][data-jogo="eclipse"] .seg button { background: transparent !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="eclipse"] .seg button { border: 0 !important; }
@@ -159,7 +158,7 @@ html[data-minimal][data-jogo="eclipse"] .cell.bad:not(#_):not(#_):not(#_)::befor
 [data-minimal][data-jogo="azulejo"] .p-st, [data-minimal][data-jogo="azulejo"] .p-st.e { stroke: var(--m-ink) !important; }
 [data-minimal][data-jogo="azulejo"] .p-st.b { stroke: var(--m-red) !important; }
 [data-minimal][data-jogo="azulejo"] .tg-sh { fill: transparent !important; stroke: var(--m-ink) !important; stroke-width: 2 !important; filter: none !important; }
-[data-minimal][data-jogo="azulejo"] .tg-n { fill: var(--m-ink) !important; font-family: var(--m-num) !important; font-weight: 900 !important; }
+[data-minimal][data-jogo="azulejo"] .tg-n { fill: var(--m-ink) !important; font-family: var(--m-txt) !important; font-weight: 700 !important; }
 [data-minimal][data-jogo="azulejo"] .tg.on .tg-sh { fill: transparent !important; stroke: var(--m-ink) !important; }
 [data-minimal][data-jogo="azulejo"] .tg.on .tg-n { fill: var(--m-ink) !important; }
 [data-minimal][data-jogo="azulejo"] .prev { fill: transparent !important; stroke: var(--m-ink) !important; stroke-dasharray: 6 5; }
@@ -191,7 +190,7 @@ html[data-minimal][data-jogo="cruzadinha"]:not(#_):not(#_) .nota-barra.on:not(#_
 
 /* ---------- Brigadeiro: grade de pontos, barras = quadrados cheios; doce e forminha pela FORMA; doce na forminha = cheio ---------- */
 [data-minimal][data-jogo="brigadeiro"] .m-bandeja { fill: none; stroke: var(--m-ink); stroke-width: 2.5; }
-[data-minimal][data-jogo="brigadeiro"] .m-ponto { fill: var(--m-fraco); }
+[data-minimal][data-jogo="brigadeiro"] .m-ponto { display: none; }
 [data-minimal][data-jogo="brigadeiro"] .m-parede { fill: color-mix(in srgb, var(--m-ink) 22%, var(--m-bg)); }
 [data-minimal][data-jogo="brigadeiro"] .m-forminha { fill: none; stroke: var(--m-sub); stroke-width: 2; stroke-dasharray: 5 6; }
 [data-minimal][data-jogo="brigadeiro"] .m-doce { fill: var(--m-bg); stroke: var(--m-ink); stroke-width: 3.5; }
@@ -307,7 +306,7 @@ html[data-minimal][data-jogo="5pila"] .tile.maybe:not(#_):not(#_):not(#_) { back
 [data-minimal][data-jogo="painel"] .resumo .gl-b { font-size: .69rem !important; top: -9px; left: -12px; }
 [data-minimal][data-jogo="painel"] .resumo .gl-b { background: var(--m-red); color: var(--m-on-red); }
 [data-minimal][data-jogo="painel"] .app-mark h1, [data-minimal][data-jogo="painel"] .page-head h1 { font-family: var(--m-num); font-weight: 900; letter-spacing: 0; }
-[data-minimal][data-jogo="painel"] .resumo, [data-minimal][data-jogo="painel"] .tiles b, [data-minimal][data-jogo="painel"] .tile-n { font-family: var(--m-num) !important; font-weight: 900; }
+[data-minimal][data-jogo="painel"] .tiles b, [data-minimal][data-jogo="painel"] .tile-n { font-family: var(--m-num) !important; font-weight: 900; }
 /* barra de abas: plana, presa embaixo, linha fina em cima; aba atual = ícone e nome em tinta com um traço vermelho em cima; sem encolher */
 [data-minimal][data-jogo="painel"] .tabbar, [data-minimal][data-jogo="painel"] .tabbar.min {
   left: 0 !important; width: 100% !important; bottom: 0 !important; height: calc(56px + env(safe-area-inset-bottom, 0px)) !important; border-radius: 0 !important;
@@ -364,3 +363,41 @@ html[data-minimal][data-jogo="painel"]:not(#_) :is(.pl, .pl.leve, .grid .app .pl
 html[data-minimal][data-jogo="painel"] .pl .dim { color: var(--m-sub); opacity: 1; }
 html[data-minimal][data-jogo="painel"] .pl .tr { color: var(--m-ink) !important; filter: grayscale(1); }
 html[data-minimal][data-jogo="painel"] .pl.perdeu { color: var(--m-sub) !important; }
+
+/* ---------- Auditoria (27/11/2026, 23h): uma regra só para tipo, traço e componente ---------- */
+/* tipo: Space Mono em tudo que não é número grande; a linha do dia nos jogos também */
+html[data-minimal] .gh-meta, html[data-minimal] .gh-meta * { font-family: var(--m-txt) !important; font-stretch: 100% !important; font-size: .72rem !important; letter-spacing: .04em !important; font-weight: 400 !important; }
+html[data-minimal] .gh-meta b, html[data-minimal] .gh-meta strong { font-weight: 700 !important; }
+html[data-minimal] #timer, html[data-minimal] .gh-pill, html[data-minimal] .prog .n, html[data-minimal] .prog .n b { font-family: var(--m-txt) !important; font-weight: 700 !important; letter-spacing: 0 !important; font-variant-numeric: tabular-nums; }
+/* ícones do cabeçalho com o mesmo traço */
+html[data-minimal] .gh-back svg, html[data-minimal] .gh-btn svg { stroke-width: 1.8 !important; }
+/* instrução embaixo do tabuleiro: largura fixa, quebra equilibrada */
+html[data-minimal] .tip { max-width: 34ch; margin-left: auto !important; margin-right: auto !important; text-wrap: balance; }
+/* ícone que era emoji (comum/tema.js): inicial num círculo de traço */
+html[data-minimal] .min-ini { display: inline-grid !important; place-items: center; width: 28px !important; height: 28px !important; border: 1px solid var(--m-ink) !important; border-radius: 50% !important;
+  font: 700 .8rem var(--m-txt) !important; color: var(--m-ink) !important; background: transparent !important; filter: none !important; }
+/* painel: selo dos protetores em traço (vermelho é "feito") */
+[data-minimal][data-jogo="painel"] .resumo .gl-b { background: var(--m-bg) !important; color: var(--m-ink) !important; border: 1px solid var(--m-ink); }
+/* Novelo: só o anel do próximo número */
+[data-minimal][data-jogo="novelo"] .head-ring { display: none !important; }
+/* Cortado: casa fixa = contorno de pontinhos, bem leve */
+[data-minimal][data-jogo="cortado"]:not(#_) .fix-mark.m1, [data-minimal][data-jogo="cortado"]:not(#_) .fix-mark.m2 { stroke: var(--m-sub) !important; stroke-width: 1.6 !important; stroke-dasharray: .5 7; stroke-linecap: round; }
+/* 5PILA: linhas que ainda não chegaram = só a linha de baixo de cada casa */
+html[data-minimal][data-jogo="5pila"] .row.falta .tile:not(#_):not(#_) { border-width: 0 0 1px 0 !important; border-style: solid !important; border-color: var(--m-fraco) !important; border-radius: 0 !important; }
+html[data-minimal][data-jogo="5pila"] .row.falta .cnt:not(#_) { border-width: 0 0 1px 0 !important; border-radius: 0 !important; }
+html[data-minimal][data-jogo="5pila"] .row.falta { opacity: 1 !important; }
+/* Sando: balões da régua viram só o texto */
+[data-minimal][data-jogo="sando"] .bubble { border: 0 !important; background: transparent !important; font-family: var(--m-txt) !important; font-weight: 700; }
+/* Brigadeiro: Desfazer e Recomeçar só com ícone, como nos outros jogos */
+[data-minimal][data-jogo="brigadeiro"] .acoes button { font-size: 0 !important; background: transparent !important; width: 44px; height: 44px; padding: 0 !important; }
+[data-minimal][data-jogo="brigadeiro"] .acoes button svg { width: 20px !important; height: 20px !important; stroke-width: 1.8 !important; }
+[data-minimal][data-jogo="brigadeiro"] .placar svg, [data-minimal][data-jogo="brigadeiro"] .placar .mini { opacity: .9; }
+/* Gerânio: topo em duas linhas que cabem; começos em texto corrido */
+[data-minimal][data-jogo="geranio"] .rank b { font-family: var(--m-num) !important; font-weight: 900 !important; }
+[data-minimal][data-jogo="geranio"] .rk2 { white-space: normal !important; flex-wrap: wrap; justify-content: flex-start !important; gap: 0 12px !important; font-size: .72rem !important; font-weight: 400 !important; }
+[data-minimal][data-jogo="geranio"] .rk2 > * { white-space: nowrap; overflow: visible !important; text-overflow: clip !important; }
+[data-minimal][data-jogo="geranio"] .inis { gap: 2px 10px !important; }
+[data-minimal][data-jogo="geranio"] .inis span:not(#_) { background: transparent !important; padding: 0 !important; min-width: 0 !important; height: auto !important; font-weight: 700; }
+[data-minimal][data-jogo="geranio"] .inis span.acesa:not(#_) { background: transparent !important; color: var(--m-red) !important; }
+[data-minimal][data-jogo="geranio"] .inis span small, [data-minimal][data-jogo="geranio"] .inis span i { color: var(--m-sub) !important; font-weight: 400; }
+[data-minimal][data-jogo="geranio"] .inis span.acesa b:not(#_), [data-minimal][data-jogo="geranio"] .inis span b:not(#_) { color: var(--m-sub) !important; opacity: 1; font-weight: 400; }
