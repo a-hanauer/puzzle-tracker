@@ -354,7 +354,7 @@ window.jogoVeterano = function (prefixo) {
     var h = document.head || root;
     var f = document.createElement("link"); f.rel = "stylesheet"; f.id = "min-fontes";
     f.href = "https://fonts.googleapis.com/css2?family=Doto:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap"; h.appendChild(f);
-    var l = document.createElement("link"); l.rel = "stylesheet"; l.id = "min-css"; l.href = base + "minimal.css?v=12"; h.appendChild(l);
+    var l = document.createElement("link"); l.rel = "stylesheet"; l.id = "min-css"; l.href = base + "minimal.css?v=13"; h.appendChild(l);
   }
   if (on()) { root.setAttribute("data-minimal", ""); injeta(); }
   window.GLIFOS = G;

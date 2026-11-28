@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Cordel">
 <title>CORDEL — palavras de um tema, ligadas como num fio</title>
 <link rel="icon" type="image/png" href="icon.png?v=22">
-<script src="../comum/tema.js?v=170"></script>
+<script src="../comum/tema.js?v=171"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=22">
@@ -379,10 +379,14 @@
   const LARG = 29;                             // meia largura do bloco (unidades do tabuleiro; casa = 100)
   function pintaBloco(g, p, k, cor, fundo) {
     if (window.jogosMinimal && jogosMinimal.on()) {   // modo minimalista: traço reto, casa a casa, largura constante
-      g.strokeStyle = cor; g.lineCap = g.lineJoin = "round"; g.lineWidth = (LARG - 3) * 2;
+      // cápsula em traço fino (opção "B", 27/11/2026): mais larga que a letra, com vão entre palavras vizinhas (casa = 100; diagonais a 70,7)
+      const W = 60;
+      g.strokeStyle = cor; g.lineCap = g.lineJoin = "round"; g.lineWidth = W;
       g.beginPath(); g.moveTo(...xy(p[0])); for (let q = 1; q < p.length; q++) g.lineTo(...xy(p[q]));
       if (p.length === 1) g.lineTo(...xy(p[0]));
-      g.stroke(); return;
+      g.stroke();
+      g.globalCompositeOperation = "destination-out"; g.lineWidth = W - 6; g.stroke(); g.globalCompositeOperation = "source-over";
+      return;
     }
     const r = sorte(P.w[k].w + k), seg = curva(p);
     g.fillStyle = g.strokeStyle = cor; g.lineCap = g.lineJoin = "round"; g.lineWidth = (LARG - 3) * 2;
@@ -464,7 +468,7 @@
     const g = cv.getContext("2d"), esc = cv.width / (N * U);
     g.setTransform(esc, 0, 0, esc, 0, 0); g.clearRect(0, 0, N * U, R * U);
     const fundo = v("--bg");
-    for (const k of achadas) pintaBloco(g, P.w[k].p, k, v(tinta(k) === "chave" ? "--chave" : "--tema"), fundo);
+    for (const k of achadas) pintaBloco(g, P.w[k].p, k, v(tinta(k) === "chave" && !(window.jogosMinimal && jogosMinimal.on()) ? "--chave" : "--tema"), fundo);
     for (let i = 0; i < C; i++) if (letras[i] === "#") pintaEstrela(g, i, v("--orn"));
     if (alvo >= 0 && !achadas.has(alvo)) {
       g.strokeStyle = v("--dica"); g.lineWidth = 3.5; g.setLineDash([6, 6]);

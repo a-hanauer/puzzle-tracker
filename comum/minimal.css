@@ -200,14 +200,16 @@ html[data-minimal][data-jogo="cruzadinha"]:not(#_):not(#_) .nota-barra.on:not(#_
 [data-minimal][data-jogo="brigadeiro"] .cont, [data-minimal][data-jogo="brigadeiro"] .aviso { color: var(--m-sub) !important; }
 [data-minimal][data-jogo="brigadeiro"] .cont b, [data-minimal][data-jogo="brigadeiro"] .aviso b { color: var(--m-ink) !important; font-family: var(--m-num) !important; }
 
-/* ---------- Cordel: letras em matriz de pontos; palavra achada = cápsula cheia (preta ou vermelha, para separar vizinhas), letras vazadas ---------- */
+/* ---------- Cordel: letras em matriz de pontos; palavra achada = cápsula em traço ---------- */
 [data-minimal][data-jogo="cordel"]:not(#_) { --tema: var(--m-ink); --chave: var(--m-red); --tema-ink: var(--m-bg); --chave-ink: var(--m-on-red); --orn: var(--m-ink);
   --dica: var(--m-red); --sel: color-mix(in srgb, var(--m-red) 28%, transparent); --letra: Doto; }
 [data-minimal][data-jogo="cordel"] .le { font-family: var(--m-num) !important; font-weight: 900 !important; }
 [data-minimal][data-jogo="cordel"] .letras, [data-minimal][data-jogo="cordel"] .achadas { filter: none !important; }
 [data-minimal][data-jogo="cordel"] .et { background: var(--m-tom) !important; border: 0 !important; color: var(--m-ink) !important; }
-[data-minimal][data-jogo="cordel"] .et.tema { background: var(--m-ink) !important; color: var(--m-bg) !important; }
-[data-minimal][data-jogo="cordel"] .et.chave { background: var(--m-red) !important; color: var(--m-on-red) !important; }
+[data-minimal][data-jogo="cordel"] .et.tema, [data-minimal][data-jogo="cordel"] .et.chave { background: transparent !important; color: var(--m-ink) !important; box-shadow: inset 0 0 0 1.2px var(--m-ink) !important; }   /* achada = cápsula em traço, como no tabuleiro */
+/* palavra achada = cápsula em traço fino com folga em volta da letra (opção "B"); sem vermelho (o vão entre cápsulas já separa as vizinhas) */
+[data-minimal][data-jogo="cordel"]:not(#_) { --letra-tam: 42px !important; --chave: var(--tema) !important; --chave-ink: var(--m-ink) !important; --tema-ink: var(--m-ink); }
+[data-minimal][data-jogo="cordel"] .palavras .pa, [data-minimal][data-jogo="cordel"] .palavras .pa.pk, [data-minimal][data-jogo="cordel"] .modal .k { background: var(--m-tom) !important; color: var(--m-ink) !important; letter-spacing: .05em !important; }
 [data-minimal][data-jogo="cordel"] .atual { font-family: var(--m-num) !important; }
 
 /* ---------- Gerânio: círculos de traço, miolo cheio; régua e dicas em traço; vermelho = a letra/palavra de agora ---------- */
