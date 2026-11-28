@@ -153,6 +153,8 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
     5PILA: linhas que não chegaram = só a linha de baixo da casa. Sando: balões da régua só texto. Novelo: só o anel do próximo.
     Cortado: casa fixa em contorno de pontinhos. Gerânio: topo em duas linhas que cabem; começos em texto corrido.
   - Selo dos protetores no painel em traço (vermelho é "feito"); instrução embaixo do tabuleiro com largura fixa e quebra equilibrada.
+- **Doca: feito** (27/11/2026): o selo ✓ ficava cortado pela fileira que rola (que recorta também em cima); agora a fileira tem 3 px de folga em cima e o
+  selo fica dentro dela (normal). No minimalista, feito = pontinho vermelho no canto do ícone, como no painel.
 
 ## Publicar
 
