@@ -155,6 +155,14 @@ O que muda nesse modo (já tratado no código, manter ao mexer):
   - Selo dos protetores no painel em traço (vermelho é "feito"); instrução embaixo do tabuleiro com largura fixa e quebra equilibrada.
 - **Cordel** (27/11/2026, 23h50, opção "B"): palavra achada = cápsula em traço fino (60 de largura, casa = 100; letra 42), com folga em volta
   da letra e vão entre palavras vizinhas; sem vermelho (a palavra-chave fica igual às outras). Etiquetas achadas também em traço.
+- **Padrão dos tabuleiros** (28/11/2026, pedido do dono, "como no Cortado"): nenhum tabuleiro com contorno por fora; casa = peça com linha
+  fina de 1 px (`--m-hair`, `vector-effect: non-scaling-stroke`), canto ~7 px na tela e vão ~4 px (no SVG: `U - 8` e rx ≈ 7 ÷ escala:
+  Cortado 16, Azulejo/Novelo/Brigadeiro 14–15, Ponto Cruz 12; Sando e 5PILA `border-radius: 7px`). Ponto Cruz: blocos 2×3 com vão maior,
+  destaque = fundo em tom, dado do jogo = contorno em tinta (`tabMin`). Brigadeiro: chocolate = casa cheia em tom (`desenhaMin`).
+  Novelo: casas `.m-casa`, paredes em traço de tinta.
+- **Eclipse** (28/11/2026): cada região é uma peça própria (`regionPath` com `GAP` 7 e `R_OUT` 20 no modo), contorno em tinta e linhas de
+  apoio entre as casas; sem contorno do tabuleiro. Visão geral = sol e lua lado a lado (o meio-disco se confundia com a lua); pontinhos da
+  contagem menores; dica mais curta ("Marca · sua · ∘ do jogo").
 - **Doca: feito** (27/11/2026): o selo ✓ ficava cortado pela fileira que rola (que recorta também em cima); agora a fileira tem 3 px de folga em cima e o
   selo fica dentro dela (normal). No minimalista, feito = pontinho vermelho no canto do ícone, como no painel.
 

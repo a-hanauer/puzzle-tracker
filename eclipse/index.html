@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Eclipse">
 <title>ECLIPSE — um sol e uma lua em cada linha</title>
 <link rel="icon" type="image/png" href="icon.png?v=21">
-<script src="../comum/tema.js?v=171"></script>
+<script src="../comum/tema.js?v=172"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=21">
@@ -511,12 +511,13 @@
     const sm = (id, h) => { const e = document.getElementById(id); if (e) e.innerHTML = h; };
     sm("i-orb", '<circle cx="20" cy="20" r="11.5" style="fill:var(--m-ink)"/>');
     sm("i-luna", '<circle cx="20" cy="20" r="11" fill="none" style="stroke:var(--m-ink)" stroke-width="2.2"/><path d="M20 9a11 11 0 0 1 0 22z" style="fill:var(--m-ink)"/>');
-    sm("i-eclipse", '<circle cx="22" cy="22" r="12.5" fill="none" style="stroke:var(--m-ink)" stroke-width="2.2"/><path d="M22 9.5a12.5 12.5 0 0 1 0 25z" style="fill:var(--m-ink)"/>');
+    // visão geral = sol e lua lado a lado (o meio-disco sozinho se confundia com a lua)
+    sm("i-eclipse", '<circle cx="13" cy="22" r="7.5" style="fill:var(--m-ink)"/><circle cx="31" cy="22" r="7.5" fill="none" style="stroke:var(--m-ink)" stroke-width="1.8"/><path d="M31 14.5a7.5 7.5 0 0 1 0 15z" style="fill:var(--m-ink)"/>');
     // marcas só em ponto: a sua = ponto cheio; a do jogo = ponto em contorno
     sm("i-estrela", '<circle cx="20" cy="20" r="3.8" style="fill:var(--m-ink)"/>');
     sm("i-dot", '<circle cx="20" cy="20" r="3.4" style="fill:none;stroke:var(--m-sub)" stroke-width="1.3"/>');
     const troca = () => {
-      const tp = document.getElementById("tipPlay"); if (tp) tp.innerHTML = tp.innerHTML.replace("Estrela <i class=\"dt\"></i> é sua · ponto <i class=\"dt a\"></i> é do jogo", "Ponto cheio <i class=\"dt\"></i> é seu · em contorno <i class=\"dt a\"></i> é do jogo");
+      const tp = document.getElementById("tipPlay"); if (tp) tp.innerHTML = tp.innerHTML.replace("Estrela <i class=\"dt\"></i> é sua · ponto <i class=\"dt a\"></i> é do jogo", "Marca <i class=\"dt\"></i> sua · <i class=\"dt a\"></i> do jogo");
       const ta = document.getElementById("tipAll"); if (ta) ta.innerHTML = ta.innerHTML.replace("a estrela vale nas duas vistas", "o ponto vale nas duas vistas");
     };
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", troca); else troca();
@@ -621,7 +622,8 @@
   let cellEls = [];
   // Contorno de cada região, recuado para abrir o vão entre regiões e com
   // cantos arredondados (externos maiores, internos menores). Unidade: 1 casa = 100.
-  const U = 100, GAP = 5.5, R_OUT = 15, R_IN = R_OUT - 2 * GAP;   // interno concêntrico ao externo do outro lado do vão
+  const MINI = !!(window.jogosMinimal && jogosMinimal.on());   // modo minimalista: vão maior entre regiões e o canto padrão das casas (~7 px)
+  const U = 100, GAP = MINI ? 7 : 5.5, R_OUT = MINI ? 20 : 15, R_IN = R_OUT - 2 * GAP;   // interno concêntrico ao externo do outro lado do vão
   function regionPath(k) {
     const inReg = (r, c) => r >= 0 && c >= 0 && r < N && c < N && regions[r * N + c] === k;
     const edges = [], from = new Map(), key = (x, y) => x + "," + y;
@@ -696,7 +698,8 @@
       const d = regionPath(k), id = "rg" + k;
       svg += `<clipPath id="${id}"><path d="${d}"/></clipPath>`;
       // modo minimalista: a região é só um contorno grosso; as casas, traço fino
-      if (window.jogosMinimal && jogosMinimal.on()) { body += `<path class="seams" d="${seamPath(k)}" clip-path="url(#${id})"/>`; continue; }
+      // modo minimalista: cada região é uma peça própria (contorno fino, vão entre elas), casas com linha de apoio
+      if (MINI) { body += `<path class="seams" d="${seamPath(k)}" clip-path="url(#${id})"/><path class="reg-min" d="${d}"/>`; continue; }
       let pecas = "";
       for (let i = 0; i < N * N; i++) if (regions[i] === k) {
         const t = tom(i + k * 7), x = (i % N) * U, y = ((i / N) | 0) * U;
@@ -709,15 +712,6 @@
         <path d="${d}" fill="url(#vt-luz)"/><path d="${d}" fill="#fff" filter="url(#vt-vidro)"/>
         <path d="M${rx - U} ${ry + U * 1.6}L${rx + U * 1.6} ${ry - U}L${rx + U * 1.9} ${ry - U * .7}L${rx - U * .7} ${ry + U * 1.9}Z" fill="#fff" opacity=".16"/></g>
         <path class="seams" d="${seamPath(k)}" clip-path="url(#${id})"/><path class="chumbo" d="${d}"/>`;
-    }
-    if (window.jogosMinimal && jogosMinimal.on()) {   // divisas entre regiões: uma linha só, onde a casa vizinha é de outra região
-      let e = `M0 0H${W}V${W}H0Z`;
-      for (let i = 0; i < N * N; i++) {
-        const r = (i / N) | 0, c = i % N, x = c * U, y = r * U;
-        if (c < N - 1 && regions[i] !== regions[i + 1]) e += `M${x + U} ${y}v${U}`;
-        if (r < N - 1 && regions[i] !== regions[i + N]) e += `M${x} ${y + U}h${U}`;
-      }
-      body += `<path class="reg-min" d="${e}"/>`;
     }
     svg += "</defs>" + body + "</svg>";
     b.innerHTML = '<div class="grid">' + svg + "</div>";

@@ -114,12 +114,13 @@ html[data-minimal] .celebra { display: none !important; }
 
 /* ---------- Novelo: grade de pontos, números em círculos de traço, o fio numa linha só ---------- */
 html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important; }
-[data-minimal][data-jogo="novelo"] .b-bg { fill: transparent !important; stroke: var(--m-ink) !important; stroke-width: 2 !important; }
+[data-minimal][data-jogo="novelo"] .b-bg { fill: transparent !important; stroke: none !important; }
+[data-minimal][data-jogo="novelo"] .m-casa { fill: none; stroke: var(--m-hair); stroke-width: 1px; vector-effect: non-scaling-stroke; }
 [data-minimal][data-jogo="novelo"] .b-weave, [data-minimal][data-jogo="novelo"] .b-hem, [data-minimal][data-jogo="novelo"] .wall-st,
 [data-minimal][data-jogo="novelo"] .fio-base, [data-minimal][data-jogo="novelo"] .fio-sob, [data-minimal][data-jogo="novelo"] .tw-a,
 [data-minimal][data-jogo="novelo"] .tw-b, [data-minimal][data-jogo="novelo"] .btn-shadow, [data-minimal][data-jogo="novelo"] .btn-rim { display: none !important; }
-[data-minimal][data-jogo="novelo"] .b-mark { stroke: var(--m-fraco) !important; }
-[data-minimal][data-jogo="novelo"] .wall { stroke: var(--m-fraco) !important; stroke-width: 12 !important; stroke-linecap: butt !important; }
+[data-minimal][data-jogo="novelo"] .b-mark { display: none !important; }
+[data-minimal][data-jogo="novelo"] .wall { stroke: var(--m-ink) !important; stroke-width: 6 !important; stroke-linecap: round !important; }
 [data-minimal][data-jogo="novelo"] .fio-min { fill: none; stroke: var(--m-ink); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 [data-minimal][data-jogo="novelo"] .head { fill: var(--m-ink) !important; stroke: none !important; r: 13px; }
 [data-minimal][data-jogo="novelo"] .head-ring, [data-minimal][data-jogo="novelo"] .next-ring { stroke: var(--m-red) !important; stroke-width: 3.5 !important; }
@@ -129,9 +130,9 @@ html[data-minimal] #board, html[data-minimal] .tab svg { filter: none !important
 [data-minimal][data-jogo="novelo"] #piscada { display: none !important; }
 
 /* ---------- Eclipse: regiões em traço grosso, casas em traço fino; sol cheio, lua meia ---------- */
-[data-minimal][data-jogo="eclipse"] .board { background: transparent !important; border: 1px solid var(--m-ink) !important; }
-[data-minimal][data-jogo="eclipse"] .board .regions .seams { stroke: var(--m-hair) !important; stroke-width: 1 !important; }
-[data-minimal][data-jogo="eclipse"] .board .regions .reg-min { fill: none; stroke: var(--m-ink); stroke-width: 1.5; stroke-linejoin: round; }
+[data-minimal][data-jogo="eclipse"] .board { background: transparent !important; border: 0 !important; box-shadow: none !important; }   /* sem contorno do tabuleiro: as regiões são peças separadas por um vão */
+[data-minimal][data-jogo="eclipse"] .board .regions .seams { stroke: var(--m-hair) !important; stroke-width: 1px !important; vector-effect: non-scaling-stroke; }
+[data-minimal][data-jogo="eclipse"] .board .regions .reg-min { fill: none; stroke: var(--m-ink); stroke-width: 1.2px; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
 [data-minimal][data-jogo="eclipse"] .cell { background: transparent !important; }
 [data-minimal][data-jogo="eclipse"] .cell > svg.sun, [data-minimal][data-jogo="eclipse"] .cell > svg.moon, [data-minimal][data-jogo="eclipse"] .seg button svg { filter: none !important; }
 [data-minimal][data-jogo="eclipse"] .cell > svg.dot { fill: var(--m-sub) !important; }
@@ -142,7 +143,7 @@ html[data-minimal][data-jogo="eclipse"] .cell.bad:not(#_):not(#_):not(#_)::befor
 [data-minimal][data-jogo="eclipse"] .seg button { background: transparent !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="eclipse"] .seg button { border: 0 !important; }
 [data-minimal][data-jogo="eclipse"] .seg button[aria-pressed="true"] { background: var(--m-bg) !important; outline: 1.5px solid var(--m-red) !important; outline-offset: -1.5px; }
-[data-minimal][data-jogo="eclipse"] .cnt .pips s { background: transparent !important; border: 1px solid var(--m-ink); }
+[data-minimal][data-jogo="eclipse"] .cnt .pips s { background: var(--m-fraco) !important; border: 0; width: 3px !important; height: 3px !important; left: -1.5px !important; top: -1.5px !important; }
 [data-minimal][data-jogo="eclipse"] .cnt .pips s.on, [data-minimal][data-jogo="eclipse"] .cnt .pips s.cheio { background: var(--m-ink) !important; }
 [data-minimal][data-jogo="eclipse"] .controls > button { background: transparent !important; border: 0 !important; color: var(--m-ink) !important; }
 [data-minimal][data-jogo="eclipse"] .controls.done .seg { background: transparent !important; }
@@ -151,7 +152,7 @@ html[data-minimal][data-jogo="eclipse"] .cell.bad:not(#_):not(#_):not(#_)::befor
 
 /* ---------- Azulejo: casas em traço fino; etiqueta = forma de traço com o número; painel montado = cheio, número vazado ---------- */
 [data-minimal][data-jogo="azulejo"] .b-bg { fill: transparent !important; }
-[data-minimal][data-jogo="azulejo"] .b-cell { fill: transparent !important; stroke: var(--m-hair) !important; stroke-width: 1.5 !important; }
+[data-minimal][data-jogo="azulejo"] .b-cell { fill: transparent !important; stroke: var(--m-hair) !important; stroke-width: 1px !important; vector-effect: non-scaling-stroke; }
 [data-minimal][data-jogo="azulejo"] .b-cell-sombra, [data-minimal][data-jogo="azulejo"] .p-shadow { display: none !important; }
 [data-minimal][data-jogo="azulejo"] .p-min { fill: var(--m-bg); stroke: var(--m-ink); stroke-width: 4; }   /* painel montado = só o contorno (opção "A"); o fundo esconde a grade */
 [data-minimal][data-jogo="azulejo"] .p-empty, [data-minimal][data-jogo="azulejo"] .p-bad { fill: transparent !important; }
@@ -178,7 +179,7 @@ html[data-minimal][data-jogo="cruzadinha"]:not(#_):not(#_) .nota-barra.on:not(#_
 [data-minimal][data-jogo="cortado"] #board > rect[stroke="rgba(255,255,255,.18)"] { display: none !important; }
 [data-minimal][data-jogo="cortado"] .b-cell, [data-minimal][data-jogo="cortado"] .b-cell.vaz, [data-minimal][data-jogo="cortado"] .b-cell.v1, [data-minimal][data-jogo="cortado"] .b-cell.v2,
 [data-minimal][data-jogo="cortado"] .b-cell.fix, [data-minimal][data-jogo="cortado"] .b-cell.fix.v1, [data-minimal][data-jogo="cortado"] .b-cell.fix.v2 {
-  fill: transparent !important; stroke: var(--m-hair) !important; stroke-width: 1.5 !important; filter: none !important; }
+  fill: transparent !important; stroke: var(--m-hair) !important; stroke-width: 1px !important; vector-effect: non-scaling-stroke; filter: none !important; }
 [data-minimal][data-jogo="cortado"] .b-cell.bad { fill: transparent !important; stroke: var(--m-ink) !important; stroke-dasharray: 8 7; stroke-width: 3 !important; }
 [data-minimal][data-jogo="cortado"] .fix-mark.m1, [data-minimal][data-jogo="cortado"] .fix-mark.m2 { stroke: var(--m-sub) !important; stroke-width: 2 !important; stroke-dasharray: 3 5; }
 [data-minimal][data-jogo="cortado"] .m-cafe { fill: var(--m-ink); }
@@ -192,6 +193,7 @@ html[data-minimal][data-jogo="cruzadinha"]:not(#_):not(#_) .nota-barra.on:not(#_
 [data-minimal][data-jogo="brigadeiro"] .m-bandeja { fill: none; stroke: var(--m-ink); stroke-width: 2.5; }
 [data-minimal][data-jogo="brigadeiro"] .m-ponto { display: none; }
 [data-minimal][data-jogo="brigadeiro"] .m-parede { fill: color-mix(in srgb, var(--m-ink) 22%, var(--m-bg)); }
+[data-minimal][data-jogo="brigadeiro"] .m-casa { fill: none; stroke: var(--m-hair); stroke-width: 1px; vector-effect: non-scaling-stroke; }
 [data-minimal][data-jogo="brigadeiro"] .m-forminha { fill: none; stroke: var(--m-sub); stroke-width: 2; stroke-dasharray: 5 6; }
 [data-minimal][data-jogo="brigadeiro"] .m-doce { fill: var(--m-bg); stroke: var(--m-ink); stroke-width: 3.5; }
 [data-minimal][data-jogo="brigadeiro"] .chegou .m-doce, [data-minimal][data-jogo="brigadeiro"] .m-doce.m-cheia { fill: var(--m-red); stroke: var(--m-red); }
@@ -339,9 +341,6 @@ html[data-minimal] .celebra > svg { filter: none !important; }
 /* ---------- Ranking e amigos: bolinhas das pessoas em traço (sem as cores), coroas e medalhas sem cor ---------- */
 html[data-minimal] .av, html[data-minimal] .av2, html[data-minimal] .pf-av { background: var(--m-bg) !important; color: var(--m-ink) !important; border: 1px solid var(--m-ink) !important; }
 html[data-minimal] .fim-pos, html[data-minimal] .fim-grupo, html[data-minimal] .rk-card, html[data-minimal] .gf { filter: grayscale(1); }
-[data-minimal][data-jogo="sando"] #row-top:not(#_) { border-radius: var(--r); }
-[data-minimal][data-jogo="sando"] #row-top .tile:first-child:not(#_) { border-radius: calc(var(--r) - var(--p)) var(--ri) var(--ri) calc(var(--r) - var(--p)); }
-[data-minimal][data-jogo="sando"] #row-top .tile:last-child:not(#_) { border-radius: var(--ri) calc(var(--r) - var(--p)) calc(var(--r) - var(--p)) var(--ri); }
 /* painel: cartão = glifo, nome e o círculo; sem a descrição e sem a faixa de amigos */
 [data-minimal][data-jogo="painel"] .desc, [data-minimal][data-jogo="painel"] a.game .ds, [data-minimal][data-jogo="painel"] .gs, [data-minimal][data-jogo="painel"] .amg { display: none !important; }
 [data-minimal][data-jogo="painel"] a.game { padding-block: 8px !important; }
@@ -350,7 +349,7 @@ html[data-minimal] .tip :not(b) { color: var(--m-ink) !important; }
 [data-minimal][data-jogo="eclipse"] .ceu { display: none !important; }
 [data-minimal][data-jogo="eclipse"] .board.won .cell > svg.sun, [data-minimal][data-jogo="eclipse"] .board.won .cell > svg.moon, [data-minimal][data-jogo="eclipse"] .cell > svg { filter: none !important; }
 [data-minimal][data-jogo="eclipse"] .cell > svg.dot, [data-minimal][data-jogo="eclipse"] .cell > svg.dot.auto { fill: initial !important; opacity: 1 !important; transform: none !important; }
-[data-minimal][data-jogo="eclipse"] .tip .dt { clip-path: none !important; border-radius: 50%; width: 7px; height: 7px; background: var(--m-ink) !important; vertical-align: 1px; }
+[data-minimal][data-jogo="eclipse"] .tip .dt { clip-path: none !important; border-radius: 50%; width: 5px; height: 5px; background: var(--m-ink) !important; vertical-align: 1px; }
 [data-minimal][data-jogo="eclipse"] .tip .dt.a { background: transparent !important; border: 1.2px solid var(--m-sub); box-sizing: border-box; opacity: 1; }
 /* sem enfeites: o ícone ao lado do nome no cabeçalho repete o nome; a ponta (losango) dos balões do Sando não diz nada */
 html[data-minimal] .gh-brand img { display: none !important; }
@@ -404,3 +403,7 @@ html[data-minimal][data-jogo="5pila"] .row.falta { opacity: 1 !important; }
 [data-minimal][data-jogo="geranio"] .inis span small, [data-minimal][data-jogo="geranio"] .inis span i { color: var(--m-sub) !important; font-weight: 400; }
 [data-minimal][data-jogo="geranio"] .inis span.acesa b:not(#_), [data-minimal][data-jogo="geranio"] .inis span b:not(#_) { color: var(--m-sub) !important; opacity: 1; font-weight: 400; }
 html[data-minimal] .min-ini:has(img) { border: 0 !important; width: auto !important; height: auto !important; display: revert !important; }
+
+/* ---------- padrão dos tabuleiros (28/11/2026): sem contorno do tabuleiro; casa = peça com linha fina de 1 px e canto ~7 px; vão ~4 px ---------- */
+html[data-minimal][data-jogo="5pila"] .tile:not(#_), html[data-minimal][data-jogo="sando"] .tile:not(#_) { border-radius: 7px !important; }
+html[data-minimal][data-jogo="5pila"] .cnt:not(#_) { border-radius: 7px; }

@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Brigadeiro">
 <title>BRIGADEIRO — incline a assadeira até cada doce cair na forminha</title>
 <link rel="icon" type="image/png" href="icon.png?v=1">
-<script src="../comum/tema.js?v=171"></script>
+<script src="../comum/tema.js?v=172"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=1">
@@ -329,9 +329,9 @@
     return `<circle ${c} cx="${x}" cy="${y}" r="${z * .95}"/>`;
   }
   function desenhaMin() {
-    let s = `<g id="bandeja"><rect class="m-bandeja" x="4" y="4" width="${LW - 8}" height="${LH - 8}" rx="30"/>`;
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) s += `<circle class="m-ponto" cx="${X(x) + 50}" cy="${Y(y) + 50}" r="3"/>`;
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (T.parede[y * W + x]) s += `<rect class="m-parede" x="${X(x) + 10}" y="${Y(y) + 10}" width="${U - 20}" height="${U - 20}" rx="10"/>`;
+    // padrão dos tabuleiros no modo minimalista: sem contorno da assadeira; cada casa é uma peça (linha fina, canto ~7 px), o chocolate é a casa cheia em tom
+    let s = `<g id="bandeja">`;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) s += `<rect class="${T.parede[y * W + x] ? "m-parede" : "m-casa"}" x="${X(x) + 4}" y="${Y(y) + 4}" width="${U - 8}" height="${U - 8}" rx="15"/>`;
     T.forminhas.forEach(f => { s += formaMin(f.cor, X(f.i % W) + 50, Y(f.i / W | 0) + 50, 34, "m-forminha"); });
     doces.forEach((d, k) => { s += `<g class="peca doce" id="doce${k}"><g><g class="gran">${formaMin(d.cor ?? 0, 0, 0, 25, "m-doce")}</g></g></g>`; });
     s += `</g>`;

@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Novelo">
 <title>NOVELO — um fio por todas as casas</title>
 <link rel="icon" type="image/png" href="icon.png?v=21">
-<script src="../comum/tema.js?v=171"></script>
+<script src="../comum/tema.js?v=172"></script>
 <script src="../comum/cabecalho.js?v=154"></script>
 <script src="../comum/dica.js?v=154"></script>
 <link rel="apple-touch-icon" href="icon.png?v=21">
@@ -542,6 +542,11 @@
       marks += `M${x - 4.5} ${y - 4.5}L${x + 4.5} ${y + 4.5}M${x + 4.5} ${y - 4.5}L${x - 4.5} ${y + 4.5}`;
     }
     s += `<path class="b-mark" d="${marks}"/>`;
+    if (window.jogosMinimal && jogosMinimal.on()) {   // padrão dos tabuleiros no minimalista: cada casa é uma peça (linha fina, canto ~7 px), sem contorno do tabuleiro
+      let cs = "";
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) cs += `<rect class="m-casa" x="${PAD + c * U + 4}" y="${PAD + r * U + 4}" width="${U - 8}" height="${U - 8}" rx="15"/>`;
+      s += cs;
+    }
     s += `<g id="gThread"></g>`;
     // paredes costuradas
     let wl = "";
